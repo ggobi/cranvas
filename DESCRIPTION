@@ -1,0 +1,21 @@
+Package: cranvas
+Type: Package
+Title: Interactive plots on a layered canvas
+Version: 0.1-0
+Author: Hadley Wickham <hadley@rice.edu>,
+        Michael Lawrence <lawrence.michael@gene.com>,
+        Heike Hofmann <hofmann@iastate.edu>,
+        Di Cook <dicook@iastate.edu>,
+        Barret Schloerke <bigbear@iastate.edu>,
+        Marie Vendettuoli <mariev@iastate.edu>,
+        Tengfei Yin <tengfei@iastate.edu>,
+        Yihui Xie <xie@iastate.edu>
+Maintainer: Yihui Xie <xie@iastate.edu>
+Description: Experiments with interactive graphics based on the pipeline
+             design pattern and a layered canvas. Features include coordinated
+             multiple views, linked brushing, ...
+License: GPL
+LazyLoad: yes
+URL: http://www.github.com/bigbear/cranvas
+Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.0-3)
+Suggests: productplots, gWidgetsRGtk2

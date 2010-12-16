@@ -1,0 +1,39 @@
+#create a QGraphicsScene instance, where parent=NULL
+#scene is parent of root and ancestor of subsequent layers
+#Qt documentation: http://doc.qt.nokia.com/4.6/graphicsview.html 
+qscene() #qtpaint
+Qt$QGraphicsScene() #qtbase
+
+#to set limits of a layer
+#limits designates the max and min of what is displayed, in data coordinates
+#"limits" is qrect object
+qlimits(layer) #depreciated
+layer$setLimits(limits)#qtbase, 
+qlayer(....,limits,...)#qtpaint
+
+#to set the portion of a canvas that the layer plots to
+layer$setGeometry(qrect(minX,minY,maxX,maxY))#minX, etc in data units
+
+#to resize the window
+view$setFixedSize(width,height)#width,height in pixels
+
+## Michael on caching (qlayer(..., cache=TRUE/FALSE)):
+# You want cache when you are not updating a layer often, but you do need to redraw it, i.e., it has something dynamic on top of it (or under it, but that's less common).
+# 
+# cache=TRUE slows down static rendering. For example, resizing a static plot will be slower with caching.
+
+## about clipping
+# try qlayer(..., clip=FALSE) if something you draw does not show up even you are using correct limits and coordinate system
+
+## identifying graphical primitives
+# see qtpaint vignette, section ``Mapping Coordinates to Data Records'', where there is an example which actually has general usage (i.e. not limited on identifying points only!)
+pointBrusher <- function(layer, event) {
+  rect <- qrect(0, 0, 20, 20)
+  mat <- layer$deviceTransform(event)$inverted()
+  rect <- mat$mapRect(rect) # 20x20 square now in data space
+  pos <- event$pos()
+  rect$moveCenter(pos) # centered on the pointer data pos
+  hits <- layer$locate(rect) # get indices in rectangle
+  df$color[hits] <- "blue" # color points blue
+  qupdate(scene)
+}

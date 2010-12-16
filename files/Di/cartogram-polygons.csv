@@ -1,0 +1,412 @@
+State,Longitude,Latitude
+alabama,19,5
+alabama,22,5
+alabama,22,8
+alabama,19,8
+alabama,19,5
+alaska,5,2
+alaska,6,2
+alaska,6,3
+alaska,7,3
+alaska,7,4
+alaska,5,4
+alaska,5,2
+arizona,6,9
+arizona,8,9
+arizona,8,8
+arizona,9,8
+arizona,9,10
+arizona,8,10
+arizona,8,13
+arizona,6,13
+arizona,6,9
+arkansas,13,9
+arkansas,16,9
+arkansas,16,11
+arkansas,13,11
+arkansas,13,9
+california,0,9
+california,1,9
+california,1,8
+california,2,8
+california,2,7
+california,3,7
+california,3,6
+california,4,6
+california,4,7
+california,5,7
+california,5,8
+california,6,8
+california,6,13
+california,5,13
+california,5,15
+california,4,15
+california,4,16
+california,2,16
+california,2,18
+california,-1,18
+california,-1,14
+california,0,14
+california,0,9
+colorado,8,12
+colorado,11,12
+colorado,11,15
+colorado,8,15
+colorado,8,12
+connecticut,37,18
+connecticut,40,18
+connecticut,40,20
+connecticut,36,20
+connecticut,36,19
+connecticut,37,19
+connecticut,37,18
+delaware,32,12
+delaware,33,12
+delaware,33,15
+delaware,32,15
+delaware,32,12
+district of columbia,30,11
+district of columbia,32,11
+district of columbia,32,13
+district of columbia,31,13
+district of columbia,31,12
+district of columbia,30,12
+district of columbia,30,11
+florida,18,3
+florida,23,3
+florida,23,2
+florida,24,2
+florida,24,1
+florida,25,1
+florida,25,0
+florida,26,0
+florida,26,1
+florida,27,1
+florida,27,5
+florida,19,5
+florida,19,6
+florida,18,6
+florida,18,3
+georgia,22,5
+georgia,27,5
+georgia,27,8
+georgia,22,8
+georgia,22,5
+hawaii,0,3
+hawaii,2,3
+hawaii,2,2
+hawaii,3,2
+hawaii,3,4
+hawaii,0,4
+hawaii,0,3
+idaho,6,16
+idaho,8,16
+idaho,8,18
+idaho,6,18
+idaho,6,16
+illinois,16,10
+illinois,20,10
+illinois,20,14
+illinois,21,14
+illinois,21,16
+illinois,19,16
+illinois,19,15
+illinois,17,15
+illinois,17,12
+illinois,16,12
+illinois,16,10
+indiana,20,13
+indiana,25,13
+indiana,25,14
+indiana,24,14
+indiana,24,15
+indiana,21,15
+indiana,21,14
+indiana,20,14
+indiana,20,13
+iowa,13,14
+iowa,17,14
+iowa,17,15
+iowa,16,15
+iowa,16,16
+iowa,13,16
+iowa,13,14
+kansas,11,11
+kansas,13,11
+kansas,13,14
+kansas,11,14
+kansas,11,11
+kentucky,20,11
+kentucky,24,11
+kentucky,24,13
+kentucky,20,13
+kentucky,20,11
+louisiana,13,7
+louisiana,16,7
+louisiana,16,9
+louisiana,13,9
+louisiana,13,7
+maine,40,22
+maine,42,22
+maine,42,24
+maine,40,24
+maine,40,22
+maryland,28,14
+maryland,29,14
+maryland,29,13
+maryland,30,13
+maryland,30,12
+maryland,31,12
+maryland,31,13
+maryland,32,13
+maryland,32,15
+maryland,30,15
+maryland,30,16
+maryland,28,16
+maryland,28,14
+massachusetts,36,20
+massachusetts,42,20
+massachusetts,42,22
+massachusetts,36,22
+massachusetts,36,20
+michigan,19,16
+michigan,21,16
+michigan,21,15
+michigan,24,15
+michigan,24,19
+michigan,20,19
+michigan,20,18
+michigan,19,18
+michigan,19,16
+minnesota,13,16
+minnesota,16,16
+minnesota,16,18
+minnesota,17,18
+minnesota,17,19
+minnesota,13,19
+minnesota,13,16
+mississippi,16,6
+mississippi,19,6
+mississippi,19,8
+mississippi,16,8
+mississippi,16,6
+missouri,13,11
+missouri,16,11
+missouri,16,12
+missouri,17,12
+missouri,17,14
+missouri,13,14
+missouri,13,11
+montana,8,16
+montana,9,16
+montana,9,17
+montana,10,17
+montana,10,18
+montana,8,18
+montana,8,16
+nebraska,10,15
+nebraska,11,15
+nebraska,11,14
+nebraska,13,14
+nebraska,13,16
+nebraska,10,16
+nebraska,10,15
+nevada,5,13
+nevada,7,13
+nevada,7,14
+nevada,6,14
+nevada,6,16
+nevada,4,16
+nevada,4,15
+nevada,5,15
+nevada,5,13
+new hampshire,38,22
+new hampshire,40,22
+new hampshire,40,24
+new hampshire,38,24
+new hampshire,38,22
+new jersey,33,12
+new jersey,36,12
+new jersey,36,17
+new jersey,34,17
+new jersey,34,16
+new jersey,32,16
+new jersey,32,15
+new jersey,33,15
+new jersey,33,12
+new mexico,8,10
+new mexico,10,10
+new mexico,10,11
+new mexico,11,11
+new mexico,11,12
+new mexico,8,12
+new mexico,8,10
+new york,32,16
+new york,34,16
+new york,34,17
+new york,38,17
+new york,38,18
+new york,37,18
+new york,37,19
+new york,36,19
+new york,36,23
+new york,32,23
+new york,32,22
+new york,31,22
+new york,31,20
+new york,32,20
+new york,32,16
+north carolina,21,10
+north carolina,23,10
+north carolina,23,9
+north carolina,27,9
+north carolina,27,8
+north carolina,28,8
+north carolina,28,11
+north carolina,21,11
+north carolina,21,10
+north dakota,10,17
+north dakota,13,17
+north dakota,13,18
+north dakota,10,18
+north dakota,10,17
+ohio,24,14
+ohio,26,14
+ohio,26,15
+ohio,28,15
+ohio,28,19
+ohio,26,19
+ohio,26,20
+ohio,24,20
+ohio,24,14
+oklahoma,10,10
+oklahoma,11,10
+oklahoma,11,8
+oklahoma,13,8
+oklahoma,13,11
+oklahoma,10,11
+oklahoma,10,10
+oregon,2,16
+oregon,6,16
+oregon,6,18
+oregon,3,18
+oregon,3,17
+oregon,2,17
+oregon,2,16
+pennsylvania,28,16
+pennsylvania,30,16
+pennsylvania,30,15
+pennsylvania,32,15
+pennsylvania,32,20
+pennsylvania,31,20
+pennsylvania,31,21
+pennsylvania,30,21
+pennsylvania,30,20
+pennsylvania,26,20
+pennsylvania,26,19
+pennsylvania,28,19
+pennsylvania,28,16
+rhode island,40,18
+rhode island,42,18
+rhode island,42,20
+rhode island,40,20
+rhode island,40,18
+south carolina,21,8
+south carolina,27,8
+south carolina,27,9
+south carolina,23,9
+south carolina,23,10
+south carolina,21,10
+south carolina,21,8
+south dakota,10,16
+south dakota,13,16
+south dakota,13,17
+south dakota,10,17
+south dakota,10,16
+tennessee,16,8
+tennessee,21,8
+tennessee,21,11
+tennessee,20,11
+tennessee,20,10
+tennessee,16,10
+tennessee,16,8
+texas,7,7
+texas,8,7
+texas,8,6
+texas,9,6
+texas,9,4
+texas,10,4
+texas,10,3
+texas,11,3
+texas,11,2
+texas,12,2
+texas,12,3
+texas,13,3
+texas,13,4
+texas,14,4
+texas,14,5
+texas,15,5
+texas,15,7
+texas,13,7
+texas,13,8
+texas,11,8
+texas,11,10
+texas,9,10
+texas,9,8
+texas,7,8
+texas,7,7
+utah,6,14
+utah,7,14
+utah,7,13
+utah,8,13
+utah,8,16
+utah,6,16
+utah,6,14
+vermont,36,22
+vermont,38,22
+vermont,38,24
+vermont,37,24
+vermont,37,23
+vermont,36,23
+vermont,36,22
+virginia,24,11
+virginia,30,11
+virginia,30,13
+virginia,29,13
+virginia,29,14
+virginia,28,14
+virginia,28,13
+virginia,24,13
+virginia,24,11
+washington,1,18
+washington,2,18
+washington,2,17
+washington,3,17
+washington,3,18
+washington,6,18
+washington,6,20
+washington,1,20
+washington,1,18
+west virginia,25,13
+west virginia,28,13
+west virginia,28,15
+west virginia,26,15
+west virginia,26,14
+west virginia,25,14
+west virginia,25,13
+wisconsin,16,15
+wisconsin,19,15
+wisconsin,19,18
+wisconsin,18,18
+wisconsin,18,19
+wisconsin,17,19
+wisconsin,17,18
+wisconsin,16,18
+wisconsin,16,15
+wyoming,8,15
+wyoming,10,15
+wyoming,10,17
+wyoming,9,17
+wyoming,9,16
+wyoming,8,16
+wyoming,8,15

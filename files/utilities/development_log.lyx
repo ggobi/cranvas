@@ -1,0 +1,240 @@
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass literate-article
+\begin_preamble
+\usepackage{ae}
+\renewcommand{\rmdefault}{ppl}
+\renewcommand{\sfdefault}{aess}
+\renewcommand{\ttdefault}{aett}
+\end_preamble
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen true
+\pdf_bookmarksopenlevel 2
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Development of Statistical Graphics under Qt
+\end_layout
+
+\begin_layout Author
+ISU Graphics Group
+\end_layout
+
+\begin_layout Section
+Naming conventions
+\end_layout
+
+\begin_layout Subsection
+Naming functions and layers
+\end_layout
+
+\begin_layout Standard
+As Hadley suggested:
+\end_layout
+
+\begin_layout Itemize
+Each layer should be named according to its function: 
+\family typewriter
+brush_layer
+\family default
+, 
+\family typewriter
+identify_layer
+\family default
+, 
+\family typewriter
+points_layer
+\family default
+ etc
+\end_layout
+
+\begin_layout Itemize
+The drawing function should be named 
+\family typewriter
+XXX_draw
+\family default
+: 
+\family typewriter
+brush_draw
+\family default
+, 
+\family typewriter
+identify_draw
+\family default
+, 
+\family typewriter
+points_draw
+\family default
+ 
+\end_layout
+
+\begin_layout Itemize
+Event callbacks should be named similarly: 
+\family typewriter
+brush_mouse_move
+\family default
+, 
+\family typewriter
+identify_key_press
+\end_layout
+
+\begin_layout Standard
+e.g.
+ 
+\end_layout
+
+\begin_layout Scrap
+<<naming-functions, eval=FALSE>>=
+\end_layout
+
+\begin_layout Scrap
+scene = qscene()
+\end_layout
+
+\begin_layout Scrap
+## the root layer
+\end_layout
+
+\begin_layout Scrap
+root_layer = qlayer(scene)
+\end_layout
+
+\begin_layout Scrap
+## draw the brush and redraw the brushed elements
+\end_layout
+
+\begin_layout Scrap
+brush_draw=function(item, painter){
+\end_layout
+
+\begin_layout Scrap
+qdrawRect(painter,...)
+\end_layout
+
+\begin_layout Scrap
+qdrawSegment(painter, ...)
+\end_layout
+
+\begin_layout Scrap
+}
+\end_layout
+
+\begin_layout Scrap
+## locating elements within the rectangle
+\end_layout
+
+\begin_layout Scrap
+brush_mouse_move=function(layer, event){
+\end_layout
+
+\begin_layout Scrap
+pos = event$pos()
+\end_layout
+
+\begin_layout Scrap
+idx=layer$locate(qrect(...))
+\end_layout
+
+\begin_layout Scrap
+}
+\end_layout
+
+\begin_layout Scrap
+## create a layer based on the drawing function and event callback
+\end_layout
+
+\begin_layout Scrap
+brush_layer=qlayer(root_layer, brush_draw, mouseMove=brush_mouse_move)
+\end_layout
+
+\begin_layout Scrap
+@
+\end_layout
+
+\begin_layout Subsection
+Naming mutaframes
+\end_layout
+
+\begin_layout Standard
+Create a mutaframe for dynamic graphics by 
+\emph on
+qmutaframe()
+\emph default
+:
+\end_layout
+
+\begin_layout Scrap
+<<qmutaframe, eval=FALSE>>=
+\end_layout
+
+\begin_layout Scrap
+## example
+\end_layout
+
+\begin_layout Scrap
+x=qmutaframe(iris, .color = 'black', .brushed = FALSE)
+\end_layout
+
+\begin_layout Scrap
+qparallel(x)
+\end_layout
+
+\begin_layout Scrap
+@
+\end_layout
+
+\begin_layout Section
+Examples, Hints & Tricks
+\end_layout
+
+\end_body
+\end_document

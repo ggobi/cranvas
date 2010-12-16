@@ -1,0 +1,34 @@
+setwd('~/Prolang/git/cranvas/Tengfei/eos/R')
+list.files()
+source('qcircle-utils.R')
+source('qcircle-painter.R')
+
+## should write a qcircle to plot categorical data
+
+## library(qtpaint)
+## s <- qscene()
+## paths <- list(qglyphQuadCurve(c(-120,-120),c(0,100),c(140,140)),
+##              c(-120,-120),c(100,0),c(140,140))
+##  myfun <- function(layer,painter){
+##     qantialias(painter) <- FALSE
+##     qlineWidth(painter) <- 2
+##     qdrawPath(painter,paths,stroke=rainbow(length(paths)))  
+##  }
+##  l <- qlayer(s,myfun,limits=qrect(-140,-140,140,140))
+##  v <- qplotView(s)
+##  v$show()
+
+## s <- qscene()
+## paths <- list(qglyphCurveBundle(c(-120,-120),c(-85,60),c(-120,140),
+##               c(-50,140),c(-85,60),c(-50,-120)))
+## paths <- list(qglyphCurveBundle(c(-50,-120),c(-85,60),c(-120,140),
+##               c(-50,140),c(-85,60),c(-120,-120)))
+##  myfun <- function(layer,painter){
+## ##    qantialias(painter) <- FALSE
+##     qfillColor(painter) <- 'red'
+## ##    qlineWidth(painter) <- 2
+##     qdrawPath(painter,paths,stroke=rainbow(length(paths)))
+##  }
+##  l <- qlayer(s,myfun,limits=qrect(-140,-140,140,140))
+##  v <- qplotView(s)
+##  v$show()
