@@ -5,6 +5,9 @@
 
 ## options(verbose = TRUE)
 
+library(qtbase)
+library(qtpaint)
+library(plumbr)
 library(cranvas)
 
 data(nrcstat)
@@ -12,9 +15,11 @@ qnrc = qmutaframe(nrcstat)
 rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = ' -> ')
 
 ## Overview: type, rankings
-qparallel(qnrc, vars=10:13, main='Overview of Rankings', glyph='tick', center=median, horizontal=FALSE, boxplot=TRUE)
+qparallel(qnrc, vars=13:10, main='Overview of Rankings', glyph='tick', horizontal=FALSE, boxplot=TRUE)
 qnrc$.color = 'red'
 
+library(RGtk2)
+library(gWidgets)
 data_selector(qnrc, "Institution.Name", "RGtk2")
 
 ## How to find out ISU by intersection and negation? public, midwest, large program
@@ -31,6 +36,14 @@ qparallel(qnrc, vars=14:19, main='Research, Student Support, Diversity', center=
 
 qparallel(qnrc, vars=20:68, main='Other Indicators', center=median, horizontal=FALSE, glyph='tick', lab.split=NULL, boxplot=TRUE, boxwex=.8)
 
+# Find ISU, and sort by best rank to least on ISU
+median.centering<-function(x) {
+  x<-(x-min(x, na.rm=T))/(max(x, na.rm=T)-min(x, na.rm=T))
+  x<-x-median(x, na.rm=T)
+}
+nrc.medctr<-apply(nrcstat[,20:68], 2, median.centering)
+var.ord<-order(nrc.medctr[13,])+19
+qparallel(qnrc, vars=var.ord, main='Other Indicators', center=median, horizontal=FALSE, glyph='tick', lab.split=NULL, boxplot=TRUE, boxwex=.8)
 
 ## color palette
 library(RColorBrewer)

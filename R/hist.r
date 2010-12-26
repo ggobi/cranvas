@@ -19,7 +19,7 @@ column_coerce <- function(data, column, defaultVal) {
 #' @param ... arguments supplied to hist() or the hist layer
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
-#' @examples # toture
+#' @examples # torture
 #'		rows <- 1000000
 #'		bigData <- qmutaframe(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
 #'		qhist(bigData)
@@ -32,7 +32,7 @@ column_coerce <- function(data, column, defaultVal) {
 #'		qhist(bigData, splitByCol = "y", title = "Toture - dodge", position = "dodge")
 #'
 #'		# range from 0 to 1
-#'		qhist(bigData, splitByCol = "y", title = "Toture - relative", position = "relative")
+#'		qhist(bigData, splitByCol = "y", title = "Torture - relative", position = "relative")
 #'
 #'
 #'  # color tests
