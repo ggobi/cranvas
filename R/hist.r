@@ -54,7 +54,7 @@ qhist <- function(
 	data,
 	xCol = 1,
 	splitByCol = -1,
-	horizontal = TRUE,
+	horizontal = FALSE,
 	position = "none",
 	color = NULL,
 	fill = NULL,
@@ -62,6 +62,7 @@ qhist <- function(
 	title = NULL,
 	name = names(data),
 	ash = FALSE,
+        breaks,
 	...
 ) {
 
@@ -75,19 +76,21 @@ qhist <- function(
 	# print(head(mf_data))
 	# print(head(n_data))
 	.type <- "hist"
-	.binwidth <- range(n_data[,xCol]) / 30
+	if (missing(breaks))
+          breaks <- 10
+        cat("breaks",breaks,"\n")
 	.data_start_pos <- 0
 
-	bars_info <- continuous_to_bars(data = n_data[,xCol], splitBy = n_data[, splitByCol], type = .type, position = position, color = color, fill = fill, stroke = stroke, ...)
+	bars_info <- continuous_to_bars(data = n_data[,xCol], splitBy = n_data[, splitByCol], type = .type, position = position, color = color, fill = fill, stroke = stroke, breaks=breaks, ...)
 	# bars <- bars_info$data
 	# color <- bars$color
 
 
 	# contains c(x_min, x_max, y_min, y_max)
 	if (horizontal) {
-		ranges <- c(make_data_ranges(c(0, bars_info$data$top)), make_data_ranges(bars_info$breaks))
+		ranges <- c(make_data_ranges(c(0, bars_info$data$top)), make_data_ranges(bars_info$breakpts))
 	} else {
-		ranges <- c(make_data_ranges(bars_info$breaks), make_data_ranges( c(0, bars_info$data$top)))
+		ranges <- c(make_data_ranges(bars_info$breakpts), make_data_ranges( c(0, bars_info$data$top)))
 	}
 
 	if (horizontal) {
@@ -155,28 +158,28 @@ qhist <- function(
 		# form <- parse_product_formula(formula)
 
 		altered <- FALSE
-		if (key == Qt$Qt$Key_Up) {						# arrow up
-			.binwidth <<- .binwidth * 1.10
+		if (key == Qt$Qt$Key_Up) {   # arrow up
+			breaks <<- breaks + 1
 			altered <- TRUE
-		} else if (key == Qt$Qt$Key_Down) {		# arrow down
-			.binwidth <<- .binwidth / 1.10
+		} else if (key == Qt$Qt$Key_Down) {  # arrow down
+			breaks <<- breaks - 1
 			altered <- TRUE
-		} else if (key == Qt$Qt$Key_Left) {		# arrow left
+		} else if (key == Qt$Qt$Key_Left) {  # arrow left
 			.data_start_pos <<- .data_start_pos + range(n_data[,xCol]) / 60
 			altered <- TRUE
-		} else if (key == Qt$Qt$Key_Right) {	# arrow left
+		} else if (key == Qt$Qt$Key_Right) { # arrow left
 			.data_start_pos <<- .data_start_pos - range(n_data[,xCol]) / 60
 			altered <- TRUE
-		} else if (key == Qt$Qt$Key_A) {			# 'c' or 'C' for 'condition'
+		} else if (key == Qt$Qt$Key_A) {  # 'c' or 'C' for 'condition'
 			.type <<- "ash"
 			altered <- TRUE
-		} else if (key == Qt$Qt$Key_D) {			# 'c' or 'C' for 'condition'
+		} else if (key == Qt$Qt$Key_D) {  # 'c' or 'C' for 'condition'
 			.type <<- "density"
 			altered <- TRUE
-		} else if (key == Qt$Qt$Key_O) {			# 'c' or 'C' for 'condition'
+		} else if (key == Qt$Qt$Key_O) {  # 'c' or 'C' for 'condition'
 			.type <<- "dot"
 			altered <- TRUE
-		} else if (key == Qt$Qt$Key_H) {			# 'c' or 'C' for 'condition'
+		} else if (key == Qt$Qt$Key_H) {  # 'c' or 'C' for 'condition'
 			.type <<- "hist"
 			altered <- TRUE
 		}
@@ -193,18 +196,18 @@ qhist <- function(
 	.brush <- FALSE
 
 	draw_brush_rect <- function(item, painter, exposed) {
-		cat("\ndraw brush rect\n")
+		#cat("\ndraw brush rect\n")
 		left = min(.startBrush[1], .endBrush[1])
 		right = max(.startBrush[1], .endBrush[1])
 		top = max(.startBrush[2], .endBrush[2])
 		bottom = min(.startBrush[2], .endBrush[2])
 
 		qdrawRect(painter, left, bottom, right, top, fill=rgb(0,0,0,alpha=0.7), stroke="black")
-		cat("\ndraw brush rect - done\n")
+		#cat("\ndraw brush rect - done\n")
 	}
 
 	brushing_draw <- function(item, painter, exposed, ...) {
-		cat("\nbrushing draw\n")
+		#cat("\nbrushing draw\n")
 		if (TRUE) {
 			# if (.brush) {
 				#		if (is.null(data$.brushed))
@@ -227,30 +230,30 @@ qhist <- function(
 		if (!is.null(.endBrush)) {
 			draw_brush_rect(item, painter, exposed)
 		}
-		cat("\nbrushing draw\n")
+		#cat("\nbrushing draw\n")
 	}
 
 	brushing_mouse_press <- function(item, event, ...) {
-		cat("\nBrushing mouse press\n")
+		#cat("\nBrushing mouse press\n")
 		.brush <<- TRUE
 		if (is.null(.startBrush)) {
 			.startBrush <<- as.numeric(event$pos())
 		}
 		qupdate(brushing_layer)
-		cat("\nBrushing mouse press - done\n")
+		#cat("\nBrushing mouse press - done\n")
 	}
 
 	brushing_mouse_move <- function(item, event, ...) {
-		cat("\nbrushing mouse move\n")
+		#cat("\nbrushing mouse move\n")
 		.endBrush <<- as.numeric(event$pos())
 
 		setHiliting()
 		qupdate(brushing_layer)
-		cat("\nbrushing mouse move - done\n")
+		#cat("\nbrushing mouse move - done\n")
 	}
 
 	brushing_mouse_release <- function(item, event, ...) {
-		cat("\nbrushing mouse release\n")
+		#cat("\nbrushing mouse release\n")
 		.endBrush <<- as.numeric(event$pos())
 		setHiliting()
 		qupdate(brushing_layer)
@@ -261,11 +264,11 @@ qhist <- function(
 		.endBrush <<- NULL
 
 		setSelected()
-		cat("\nbrushing mouse release - done\n")
+		#cat("\nbrushing mouse release - done\n")
 	}
 
 	setHiliting <- function() {
-		cat("\nsetHiliting\n")
+		#cat("\nsetHiliting\n")
 
 		leftMouse = min(.startBrush[1], .endBrush[1])
 		rightMouse = max(.startBrush[1], .endBrush[1])
@@ -290,21 +293,17 @@ qhist <- function(
 		bars_info$data <<- ddply(bars_info$data, .(label), transform, .brushed = valid_bar_row(left, right, top, bottom))
 
 		print(head(subset(bars_info$data, .brushed == TRUE)))
-		cat("count of brushed sections: ", sum(bars_info$data$.brushed), "\n")
-		cat("count of left(<=", rightMouse,"): ", sum(bars_info$data$left <= rightMouse), " - ",
-			# paste(rownames(bars_info$data[bars_info$data$left <= rightMouse,]), sep = ", "),
-			"\n")
-		cat("count of right(>= ", leftMouse,"): ", sum(bars_info$data$right >= leftMouse), " - ",
-			# paste(rownames(bars_info$data[bars_info$data$right >= leftMouse,]), sep = ", "),
-			"\n")
-		cat("count of bottom(<= ", topMouse,"): ", sum(bars_info$data$bottom <= topMouse), " - ",
-			# paste(rownames(bars_info$data[bars_info$data$bottom <= topMouse,]), sep = ", "),
-			"\n")
-		cat("count of top(>= ", bottomMouse,"): ", sum(bars_info$data$top >= bottomMouse), " - ",
-			# paste(rownames(bars_info$data[bars_info$data$top >= bottomMouse,]), sep = ", "),
-			"\n")
+		#cat("count of brushed sections: ", sum(bars_info$data$.brushed), "\n")
+		#cat("count of left(<=", rightMouse,"): ", sum(bars_info$data$left <= rightMouse), " - ",
+			# paste(rownames(bars_info$data[bars_info$data$left <= rightMouse,]), sep = ", "),"\n")
+		#cat("count of right(>= ", leftMouse,"): ", sum(bars_info$data$right >= leftMouse), " - ",
+			# paste(rownames(bars_info$data[bars_info$data$right >= leftMouse,]), sep = ", "),"\n")
+		#cat("count of bottom(<= ", topMouse,"): ", sum(bars_info$data$bottom <= topMouse), " - ",
+			# paste(rownames(bars_info$data[bars_info$data$bottom <= topMouse,]), sep = ", "),"\n")
+		#cat("count of top(>= ", bottomMouse,"): ", sum(bars_info$data$top >= bottomMouse), " - ",
+			# paste(rownames(bars_info$data[bars_info$data$top >= bottomMouse,]), sep = ", "),"\n")
 
-		cat("\nsetHiliting - done\n")
+		#cat("\nsetHiliting - done\n")
 	}
 
 	setSelected <- function() {
@@ -360,7 +359,7 @@ qhist <- function(
 	.bar_queryPos <- NULL
 	.bar_hover_section <- list(top = -1, bottom = 1, right = -1, left = 1)
 	bar_hover_draw <- function(item, painter, exposed, ...) {
-		cat("\nBar Hover Draw\n")
+		#cat("\nBar Hover Draw\n")
 		# Don't draw when brushing
 		if (is.null(.bar_queryPos)) return()
 
@@ -442,7 +441,7 @@ qhist <- function(
 		.bar_queryPos <<- as.numeric(event$pos())
 		# qupdate(querylayer)
 
-		cat("\nBar Hover\n")
+		#cat("\nBar Hover\n")
 
 		if (horizontal) {
 			x <- .bar_queryPos[2]
@@ -451,8 +450,8 @@ qhist <- function(
 			x <- .bar_queryPos[1]
 			y <- .bar_queryPos[2]
 		}
-		cat("x: ", x, "\ty: ", y, "\n")
-		cat("top: ", .bar_hover_section$top, "\tbottom: ", .bar_hover_section$bottom, "\tleft: ", .bar_hover_section$left, "\tright: ", .bar_hover_section$right, "\n")
+		#cat("x: ", x, "\ty: ", y, "\n")
+		#cat("top: ", .bar_hover_section$top, "\tbottom: ", .bar_hover_section$bottom, "\tleft: ", .bar_hover_section$left, "\tright: ", .bar_hover_section$right, "\n")
 
 		if ( !((y <= .bar_hover_section$top) & (y >= .bar_hover_section$bottom) & (x <= .bar_hover_section$right) & (x >= .bar_hover_section$left))) {
 			qupdate(hoverlayer)
@@ -464,7 +463,7 @@ qhist <- function(
 		#
 		# .bar_queryPos <<- as.numeric(event$pos())
 		# qupdate(querylayer)
-		cat("\nBar Leave\n")
+		#cat("\nBar Leave\n")
 		print(as.numeric(event$pos()))
 		qupdate(hoverlayer)
 	}

@@ -10,25 +10,25 @@
 
 #' Make dodge positions
 #'
-#' @param breaks break positions
+#' @param breakpts break positions
 #' @param n number of items per break
 #' @keywords internal
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @examples
 #'  make_dodge_pos(c(1:5), 3)
-make_dodge_pos <- function(breaks, n) {
-  gap <- diff(breaks[1:2])
-  breaks <- breaks[-length(breaks)]
+make_dodge_pos <- function(breakpts, n) {
+  gap <- diff(breakpts[1:2])
+  breakpts <- breakpts[-length(breakpts)]
   
   relPos <- seq(from = gap*.1, to = gap * .9, length.out = n+1)
   startRel <- relPos[-(n+1)]
   endRel <- relPos[-1]
   
   starts <- c(sapply(startRel, function(x) { 
-    x + breaks
+    x + breakpts
   }))
   ends <- c(sapply(endRel, function(x) { 
-    x + breaks
+    x + breakpts
   }))
 
   data.frame(start = starts, end = ends)  
@@ -101,7 +101,7 @@ zero_then_top_by_order <- function(vec) {
 #' 	continuous_to_bars(mtcars$disp, mtcars$cyl, position = "identity", stroke = "black")
 #' 	continuous_to_bars(mtcars$disp, mtcars$cyl, position = "relative", stroke = "black")
 #' 	continuous_to_bars(mtcars$disp, mtcars$cyl, position = "stack", stroke = "black")
-continuous_to_bars <- function(data = NULL, splitBy = NULL, type = "hist", position = "none", color = NULL, fill = NULL, stroke = NULL, ...) {
+continuous_to_bars <- function(data = NULL, splitBy = NULL, type = "hist", position = "none", color = NULL, fill = NULL, stroke = NULL, breaks=NULL, ...) {
   
   original = list(
       data = data, 
@@ -109,11 +109,14 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, type = "hist", posit
       color = color,
       stroke = stroke,
       fill = fill,
-      position = position
+      position = position,
+      breaks = breaks
     ) 
-	
+
+  if (missing(breaks)) breaks <- 10
+
   if(identical(type, "hist"))
-  	breaks <- suppressWarnings(hist(data,plot=FALSE,...))$breaks
+  	breakpts <- suppressWarnings(hist(data, plot=FALSE, breaks,...))$breaks
 	else if(identical(type, "ash"))
 		stop("ash not defined yet")
 	else if(identical(type, "dot"))
@@ -125,9 +128,10 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, type = "hist", posit
 	else
 		stop("Please make type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\"")
 	
-	break_len <- length(breaks)
-	
-	bar_top <- table(cut(data, breaks = breaks), splitBy)  
+	break_len <- length(breakpts)
+
+  
+        bar_top <- table(cut(data, breaks = breakpts), splitBy)
 	
 	data_pos <- melt(bar_top)
 	names(data_pos) <- c("label", "group", "top")
@@ -147,14 +151,14 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, type = "hist", posit
 	
 	if (position == "dodge") {
 		
-		pos <- make_dodge_pos( breaks, length(group_names))
+		pos <- make_dodge_pos( breakpts, length(group_names))
 		data_pos$left <- pos$start
 		data_pos$right <- pos$end
 	} else  {
 		# (position == "stack" || position == "relative")
 		
-		data_pos$left <- rep(breaks[1:(break_len-1)], length(group_names))
-		data_pos$right <- rep(breaks[2:break_len] , length(group_names))
+		data_pos$left <- rep(breakpts[1:(break_len-1)], length(group_names))
+		data_pos$right <- rep(breakpts[2:break_len] , length(group_names))
 		
 		if(position != "identity") {
 			# make the bar_top be stacked (cumulative)
@@ -184,7 +188,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, type = "hist", posit
 	
 	list(
 		data = data_pos,
-		breaks = breaks,
+		breakpts = breakpts,
 		label_names = label_names,
 		group_names = group_names,
 		original = original
