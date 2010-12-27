@@ -1,0 +1,11 @@
+CONSISTENCY
+
+1. All the files in the R directory should have the same ending,
+either .R or .r but not both.
+
+2. Formatting the code so that spacing is the same. Does Yihui have a
+code formatting function that can be run on all routines?
+
+DOCUMENTATION
+
+Roxygen'ize the code to make the help files.
