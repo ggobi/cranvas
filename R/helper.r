@@ -69,10 +69,10 @@ make_window_ranges <- function(dataRanges, xlab=NULL, ylab=NULL, xtickmarks=NULL
 
   # based on length of y tickmarks extra space
 	if (!is.null(ytickmarks)) {
-    xwidth = max(str_length(as.character(ytickmarks)))
+    #xwidth = max(str_length(as.character(ytickmarks)))
     # each character gives 0.75% extra space
 #    xmin = dataRanges[1] - 0.0075*xwidth*diff(dataRanges[1:2])		
-    xmin = xmin - 0.0075*xwidth*diff(dataRanges[1:2])
+    xmin = xmin - 0.0075*diff(dataRanges[1:2])
   }
 
   # extra space for window title
