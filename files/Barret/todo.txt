@@ -36,8 +36,11 @@
   √ - up/down = change bin width
   √ - left right = change start pos
   functionality
+2. 
+
 3 Spinogram, Density, Ash, Hist, dOt(jitter)
   change between by key command
+
 
 
 
