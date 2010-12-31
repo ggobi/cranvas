@@ -10,8 +10,6 @@ qnrc = qmutaframe(nrcstat)
 rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = ' -> ')
 qnrc$.color = 'red'
 
-library(RGtk2)
-library(gWidgets)
 data_selector(qnrc, "Institution.Name", "RGtk2")
 
 qscatter(qnrc, R.Rankings.5th.Percentile~R.Rankings.95th.Percentile)
