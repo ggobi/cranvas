@@ -32,11 +32,8 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 
   ## parameters for the brush
   .brush.attr <- attr(data, '.brush.attr')
-  if (!has_attr('.brushed')) {
+  if (!has_attr('.brushed') || is.null(data$.brushed)) {
     data$.brushed = FALSE
-  }
-  if (is.null(data$.brushed)) {
-    data$.brushed <- FALSE
   }
 
   print(head(as.data.frame(data)))
