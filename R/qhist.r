@@ -65,8 +65,8 @@ qhist <- function(
 	title = NULL,
 	name = names(data),
 	ash = FALSE,
-	start = min!,
-	binwidth = 10!,
+	start = min,
+	binwidth = 10,
 	...
 ) {
 
