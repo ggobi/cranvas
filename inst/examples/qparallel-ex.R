@@ -18,9 +18,7 @@ rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = ' -
 qparallel(qnrc, vars=13:10, main='Overview of Rankings', glyph='tick', horizontal=FALSE, boxplot=TRUE)
 qnrc$.color = 'red'
 
-library(RGtk2)
-library(gWidgets)
-data_selector(qnrc, "Institution.Name", "RGtk2")
+data_selector(qnrc, vars = "Institution.Name")
 
 ## How to find out ISU by intersection and negation? public, midwest, large program
 
