@@ -98,10 +98,10 @@ qhist <- function(
 	mf_data <- column_coerce(mf_data, ".brushed", FALSE)
 
 	.bin_col <- data_bin_column(mf_data)
-	
+
 	mf_data[[.bin_col]] <- rep(-1, nrow(mf_data))
 	print(head(mf_data))
-	
+
 	# Set up wrapper functions.
 	dataCol <- function() {mf_data[, xCol]}
 	xColRange <- function() {dataRange(dataCol())}
@@ -119,8 +119,8 @@ qhist <- function(
 	# cat("maxBinwidth(): ", maxBinwidthP(), "\n")
 
 	# Find the maximum height of the counts
-	.yMax <- maxHeightP()	
-	
+	.yMax <- maxHeightP()
+
 	temp_breaks <- baseHistP()$breaks
 	.type <- list(type = "hist", binwidth = diff(temp_breaks[1:2]), start = temp_breaks[1])
 	histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
@@ -129,7 +129,7 @@ qhist <- function(
 		.bars_info <<- continuous_to_bars(
 			data = mf_data[, xCol], splitBy = mf_data[, splitByCol], brushed = mf_data[, ".brushed"],
 			typeInfo = .type, position = position, color = color, fill = fill, stroke = stroke, ...)
-		
+
 		for(i in 1:nrow(.bars_info$data)){
 			rows <- (.bars_info$data$left[i] > dataCol()) & (.bars_info$data$right[i] <= dataCol())
 			if(any(rows))
@@ -221,7 +221,7 @@ qhist <- function(
 		if (key == Qt$Qt$Key_Up) {						# arrow up
 			.type$binwidth <<- .type$binwidth * 1.10
 			if(.type$binwidth > maxBinwidthP()) .type$binwidth <<- maxBinwidthP()
-			
+
 		} else if (key == Qt$Qt$Key_Down) {		# arrow down
 			.type$binwidth <<- .type$binwidth / 1.10
 
@@ -293,7 +293,7 @@ qhist <- function(
 	brushing_draw <- function(item, painter, exposed, ...) {
 		cat("brushing draw\n")
 		section <- subset(.bars_info$data, (.brushed > 0))
-		
+
 		if (nrow(section) > 0) {
 			#  .brush.attr = attr(odata, '.brush.attr')
 			# brushcolor <- .brush.attr[,".brushed.color"]
@@ -303,7 +303,7 @@ qhist <- function(
 			else
 				qdrawRect(painter, section$left, section$bottom, section$right, section$top, fill = brushColor, stroke = "black")
 		}
-		
+
 		if (!is.null(.endBrush)) {
 			draw_brush_rect(item, painter, exposed)
 		}
