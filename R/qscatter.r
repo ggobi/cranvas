@@ -8,7 +8,7 @@
 #rm(vbar)
 
 #' Draw a scatterplot
-#' 
+#'
 #' @param data data.frame source
 #' @param form formula in format y ~x which designates the axis
 #' @param main main title for the plot
@@ -38,7 +38,7 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
   if (is.null(data$.brushed)) {
     data$.brushed <- FALSE
   }
-  
+
   print(head(as.data.frame(data)))
   if (length(form) != 3) {
     stop("invalid formula, requires y ~ x format")
@@ -46,17 +46,17 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
     .levelX <- as.character( form[[3]] )
     .levelY <- as.character(form[[2]])
   }
-  
+
   ## local copy of original data
   odata <- data
-  
+
   ## transform the data
   df <- data.frame(data)
 
   ## parameters for dataRanges
   xlab <- NULL
   ylab <- NULL
-  
+
   ## labels
   ylabels <- NULL
   if (labeled) {
@@ -64,18 +64,18 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
   } else {
     yid <- NA
   }
-  
+
   if (!is.na(yid[1]) ) {
       ylabels <- get_axisPosY(data = df, colName = .levelY)
   }
-  
+
   xlabels <- NULL
   if (labeled) {
     xid <- find_xid(data = df, colName = as.character(.levelX))
   } else {
     xid <- NA
   }
-  
+
   if (!is.na(xid[1])) {
       xlabels <- get_axisPosY(data = df, colName = .levelX)
   }
@@ -85,7 +85,7 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
   dataRanges <- c(
     make_data_ranges(range(subset(df, select = .levelX))),
     make_data_ranges(range(subset(df, select = .levelY))))
- 
+
   windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
     ytickmarks=ylabels, xtickmarks = xlabels, main=main)
   } else {
@@ -93,7 +93,7 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
                     range(subset(df, select = .levelY)))
     windowRanges <- dataRanges
   }
-  
+
   lims <- qrect(windowRanges[c(1,2)], windowRanges[c(3,4)])
 
   ## parameters for bglayer
@@ -101,7 +101,7 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
   sx <- get_axisPosY(data = df, colName = .levelY)
 
   ## parameters for datalayer
-  .radius <- 2	  
+  .radius <- 2
   .alpha <- 1
 
   ## parameters event handling
@@ -116,16 +116,16 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 # layers #
 ##########
 coords <- function(item, painter, exposed) {
- 
+
   # grey background with grid lines
   draw_grid_with_positions_fun(painter, dataRanges, sy, sx)
-    
+
   # labels as appropriate
   if (!is.na(xid[1])) {
     labels <- get_axisPosX(data = df, colName = .levelX)
     print("x axis labels")
     print(labels)
-    draw_x_axes_with_labels_fun(painter, dataRanges, 
+    draw_x_axes_with_labels_fun(painter, dataRanges,
       axisLabel=sy, labelHoriPos=sy, name=xlab)
   } else {
     draw_x_axes_with_labels_fun(painter, dataRanges,
@@ -135,10 +135,10 @@ coords <- function(item, painter, exposed) {
 
   if (!is.na(yid[1])) {
     labels <- get_axisPosY(data = df, colName = .levelY)
-    draw_y_axes_with_labels_fun(painter, dataRanges, 
+    draw_y_axes_with_labels_fun(painter, dataRanges,
       axisLabel=sx, labelVertPos=sx, name=ylab)
   } else {
-    draw_y_axes_with_labels_fun(painter, dataRanges, 
+    draw_y_axes_with_labels_fun(painter, dataRanges,
        axisLabel=rep("",length(sx)), labelVertPos=sx,
        name=ylab)
   }
@@ -156,7 +156,7 @@ scatter.all <- function(item, painter, exposed) {
     stroke <- "black"
   }
   radius <- .radius
-  qdrawCircle(painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)  
+  qdrawCircle(painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
 }
 
 brush.draw <- function(item, painter, exposed) {
@@ -164,14 +164,14 @@ brush.draw <- function(item, painter, exposed) {
   if(!.brush) {
     hdata <- subset(df, (.brushed == T))
   }
-  
+
   if (nrow(hdata) > 0) {
     x <- subset(hdata, select = .levelX)[,1]
     y <- subset(hdata, select = .levelY)[,1]
-    fill <- .brush.attr[,".brushed.color"]   
-    stroke <- .brush.attr[,".brushed.color"]   
+    fill <- .brush.attr[,".brushed.color"]
+    stroke <- .brush.attr[,".brushed.color"]
     radius <- .radius
-    
+
     qdrawCircle( painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
   }
 }
@@ -207,9 +207,9 @@ keyPressFun <- function(item, event, ...) {
 		brushlayer$layer$setOpacity(.alpha)
         qupdate(datalayer$layer)
     }
-	
-		
-  }  
+
+
+  }
 ########## end event handlers
 
 ###################
@@ -233,10 +233,10 @@ keyPressFun <- function(item, event, ...) {
         qupdate(brushlayer$layer)
       }
     }
-	
+
 	  add_listener(odata, func)
   }
 
-  print(view) 
+  print(view)
 
 }
