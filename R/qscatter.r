@@ -36,7 +36,6 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
     data$.brushed = FALSE
   }
 
-  print(head(as.data.frame(data)))
   if (length(form) != 3) {
     stop("invalid formula, requires y ~ x format")
   } else {
@@ -156,10 +155,10 @@ scatter.all <- function(item, painter, exposed) {
   qdrawCircle(painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
 }
 
-brush.draw <- function(item, painter, exposed) {
+brush_draw <- function(item, painter, exposed) {
   df <- as.data.frame(odata)
   if(!.brush) {
-    hdata <- subset(df, (.brushed == T))
+    hdata <- subset(df, (.brushed == TRUE))
   }
 
   if (nrow(hdata) > 0) {
