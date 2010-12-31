@@ -546,6 +546,10 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     }, limits = qrect(c(lims[1], lims[2]), c(0, 1)), row = 2, col = 1)
 
     grid_layer = qlayer(root_layer, grid_draw, limits = qrect(lims), row = 1, col = 1)
+    if (boxplot) {
+        boxplot_layer = qlayer(root_layer, boxplot_draw, limits = qrect(lims),
+        row = 1, col = 1)
+    }
 
     main_layer = qlayer(root_layer, main_draw,
         mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move,
@@ -554,10 +558,6 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         limits = qrect(lims), row = 1, col = 1)
 
     range_layer = qlayer(root_layer, range_draw, limits = qrect(lims), row = 1, col = 1)
-    if (boxplot) {
-        boxplot_layer = qlayer(root_layer, boxplot_draw, limits = qrect(lims),
-        row = 1, col = 1)
-    }
     brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims),
         row = 1, col = 1)
     ## legend layer (currently only acts as place holder)
