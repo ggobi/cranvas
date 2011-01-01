@@ -1,5 +1,3 @@
-	require(stringr)
-
 e <- invisible("hello!")
 class(e) <- "magic"
 
