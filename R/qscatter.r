@@ -43,9 +43,6 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
     .levelY <- as.character(form[[2]])
   }
 
-  ## local copy of original data
-  odata <- data
-
   ## transform the data
   df <- data.frame(data)
 
@@ -103,7 +100,19 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
   ## parameters event handling
   .startBrush <- NULL
   .endBrush <- NULL
-  .brush <- FALSE
+  ## whether in the brush mode
+  .brush <- TRUE
+  ## mouse position
+  .bpos = c(NA, NA)
+  ## drag start
+  .bstart = c(NA, NA)
+  ## move brush?
+  .bmove = TRUE
+   ## brush range: horizontal and vertical
+  .brange = c(diff(windowRanges[c(2,1)]), diff(windowRanges[c(4,3)]))/30
+
+  n = nrow(data)
+
 
 
 ################################ end data processing & parameters
@@ -145,8 +154,8 @@ scatter.all <- function(item, painter, exposed) {
   x <- subset(df, select = .levelX)[,1]
   y <- subset(df, select = .levelY)[,1]
   if (has_attr(".color")) {
-  	fill <- odata$.color
-  	stroke <- odata$.color
+  	fill <- data$.color
+  	stroke <- data$.color
   } else {
     fill <- "black"
     stroke <- "black"
@@ -156,20 +165,38 @@ scatter.all <- function(item, painter, exposed) {
 }
 
 brush_draw <- function(item, painter, exposed) {
-  df <- as.data.frame(odata)
-  if(!.brush) {
-    hdata <- subset(df, (.brushed == TRUE))
-  }
+    df <- as.data.frame(data)
+    .brushed = data$.brushed
+    if(.brush) {
+        if (!any(is.na(.bpos))) {
+            qlineWidth(painter) = brush_attr(data, '.brush.size')
+            ##qdash(painter)=c(1,3,1,3)
+            qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
+                      .bpos[1] + .brange[1], .bpos[2] + .brange[2],
+                      stroke = brush_attr(data, '.brush.color'))
+        }
 
-  if (nrow(hdata) > 0) {
-    x <- subset(hdata, select = .levelX)[,1]
-    y <- subset(hdata, select = .levelY)[,1]
-    fill <- .brush.attr[,".brushed.color"]
-    stroke <- .brush.attr[,".brushed.color"]
-    radius <- .radius
+        hdata <- subset(df, .brushed)
 
-    qdrawCircle( painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
-  }
+        if (nrow(hdata) > 0) {
+            ## draw the brush rectangle
+            if (!any(is.na(.bpos))) {
+                qlineWidth(painter) = brush_attr(data, '.brush.size')
+                ##qdash(painter)=c(1,3,1,3)
+                qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
+                          .bpos[1] + .brange[1], .bpos[2] + .brange[2],
+                          stroke = brush_attr(data, '.brush.color'))
+            }
+            ## (re)draw brushed data points
+            x <- subset(hdata, select = .levelX)[,1]
+            y <- subset(hdata, select = .levelY)[,1]
+            fill <- brush_attr(data, ".brushed.color")
+            stroke <- brush_attr(data, ".brushed.color")
+            radius <- .radius
+
+            qdrawCircle( painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
+        }
+    }
 }
 ########## end layers
 
@@ -206,6 +233,32 @@ keyPressFun <- function(item, event, ...) {
 
 
   }
+
+  ## record the coordinates of the mouse on click
+  brush_mouse_press = function(item, event) {
+      .bstart <<- as.numeric(event$pos())
+      ## on right click, we can resize the brush; left click: only move the brush
+      if (event$button() == Qt$Qt$RightButton) {
+          .bmove <<- FALSE
+      }
+      if (event$button() == Qt$Qt$LeftButton) {
+          .bmove <<- TRUE
+      }
+  }
+
+  identify_mouse_move = function(layer, event) {
+      pos = event$pos()
+      .bpos <<- as.numeric(pos)
+      ## simple click: don't change .brange
+      if (!all(.bpos == .bstart) && (!.bmove)) {
+          .brange <<- .bpos - .bstart
+      }
+      .new.brushed = rep(FALSE, n)
+      rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
+      hits = layer$locate(rect) + 1
+      .new.brushed[hits] = TRUE
+      data$.brushed = mode_selection(data$.brushed, .new.brushed, mode = brush_attr(data, '.brush.mode'))
+  }
 ########## end event handlers
 
 ###################
@@ -214,8 +267,11 @@ keyPressFun <- function(item, event, ...) {
 
   plot1 <- new_plot()
   bglayer <- add_layer(parent = plot1, mark = coords, userlimits = lims)
-  datalayer <- add_layer(parent = plot1, mark = scatter.all, keyPressFun = keyPressFun, userlimits = lims)
-  brushlayer <- add_layer(parent = plot1, mark = brush.draw, userlimits = lims)
+  datalayer <- add_layer(parent = plot1, mark = scatter.all, keyPressFun = keyPressFun,
+                         mouseMove = identify_mouse_move,
+                         mousePressFun = brush_mouse_press,
+                         mouseReleaseFun = identify_mouse_move, userlimits = lims)
+  brushlayer <- add_layer(parent = plot1, mark = brush_draw, userlimits = lims)
   view <- qplotView(scene = plot1$scene)
   view$setWindowTitle(extract.formula(form))
  # view$setMaximumSize(plot1$size)
@@ -223,14 +279,14 @@ keyPressFun <- function(item, event, ...) {
 ######################
 # add some listeners #
 ######################
-  if (is.mutaframe(odata)) {
+  if (is.mutaframe(data)) {
     func <- function(i,j) {
       if (j == ".brushed") {
         qupdate(brushlayer$layer)
       }
     }
 
-	  add_listener(odata, func)
+	  add_listener(data, func)
   }
 
   print(view)
