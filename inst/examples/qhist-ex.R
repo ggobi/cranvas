@@ -5,6 +5,7 @@ library(qtpaint)
 library(plumbr)
 library(cranvas)
 library(ggplot2)
+library(stringr)
 
 data(tennis)
 qtennis <- qmutaframe(tennis)
