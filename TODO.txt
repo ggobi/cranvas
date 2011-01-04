@@ -9,3 +9,7 @@ code formatting function that can be run on all routines?
 DOCUMENTATION
 
 Roxygen'ize the code to make the help files.
+
+SCATTERPLOT
+
+Needs to have brushing implemented.
