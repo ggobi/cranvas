@@ -1,3 +1,6 @@
+COLOR/GLYPH SELECTION
+
+
 CONSISTENCY
 
 1. All the files in the R directory should have the same ending,
@@ -12,4 +15,8 @@ Roxygen'ize the code to make the help files.
 
 SCATTERPLOT
 
-Needs to have brushing implemented.
+Needs to have brushing implemented - done
+
+Command line argument to make aspect ratio 1:1
+
+
