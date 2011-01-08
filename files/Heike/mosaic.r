@@ -1,12 +1,3 @@
-require(qtbase)
-require(qtpaint)
-require(cranvas)
-
-source("labels.r")
-
-require(stringr)
-require(productplots)
-require(plumbr)
 
 ##' Mosaic plot.
 ##' Create a mosaicplot using a formula (as described in prodplot)
@@ -17,8 +8,9 @@ require(plumbr)
 ##' @author Heike Hofmann
 ##' @export
 ##' @example 
-## example code
+## example code in inst/mosaic-ex.R
 
+source("labels.r")
 
 
 paste_formula <- function(form) {
@@ -532,13 +524,3 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
   qplotView(scene = scene)
 }
 
-data(Titanic)
-titanic <- as.data.frame(Titanic)
-
-tit.col = c("gold","red")[as.integer(titanic$Survived)]
-
-qtitanic <- qmutaframe(titanic, .brushed = FALSE, .color=tit.col)
-brush_attr(qtitanic, '.brushed.color') <- "purple"
-
-print(qmosaic(qtitanic, Freq~Sex +Age|Class, mosaic()))
-print(qmosaic(qtitanic, Freq~Survived, "hbar"))
