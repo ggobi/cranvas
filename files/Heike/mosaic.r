@@ -64,6 +64,10 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       attr %in% names(data)
   }
 
+	## parameters for the updating events
+	.recalc <- FALSE
+	.recalchiliting <- FALSE
+
   ## parameters for the brush
   .brush.attr = attr(data, '.brush.attr')
   if (!has_attr('.brushed')) data$.brushed <- FALSE
@@ -82,7 +86,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 	## depends on .formula and data 
 
 		## hilite setup
-##print("recalchiliting")
+#print("recalchiliting")
 
 		form <- parse_product_formula(.formula)
 		form$marg <- c(".brushed", setdiff(form$marg, ".color"))
@@ -100,6 +104,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     df$.brushed <- factor(df$.brushed, levels=c("TRUE","FALSE"))
 		helperdata <- prodcalc(df, hformula, hdivider, cascade, scale_max, na.rm = na.rm)
 		hdata <<- subset(helperdata, (.brushed == TRUE), drop = FALSE)
+		.recalchiliting <<- FALSE
 ##print(summary(helperdata))
   }
 
@@ -132,6 +137,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 		xdata <<- subset(all.data, level==max(all.data$level), drop=FALSE)
 		bkdata <<- subset(all.data, level==max(all.data$level)-.colored, drop=FALSE)
 
+		.recalc <<- FALSE
 		recalchiliting()
 	}
 	
@@ -213,6 +219,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
   # extract data at level .level and draw
 #print("mdraw: full mosaic drawn")
 ##print(summary(xdata))
+		if (.recalc) recalc()
+		
 
     top <- xdata$t
     bottom <- xdata$b
@@ -251,7 +259,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 
 
   brushing_draw <- function(item, painter, exposed, ...) {
-#print("brushing_draw")
+		if (.recalchiliting) recalchiliting()
+
 		if (.brush) {
 	#print(names(xdata))
 			hdata <<- subset(bkdata, .brushed == TRUE)
@@ -498,10 +507,15 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 	## update the brush layer in case of any modifications to the mutaframe
 	add_listener(data, function(i, j) {
 		switch(j, 
-			.brushed = { recalchiliting()
-									 qupdate(brushing_layer) },
-	    .color = { recalc()
-	    					 recalchiliting()
+			.brushed = { 
+					.recalchiliting <<- TRUE
+# recalchiliting should be called but at this point, data is not yet updated - it will be updated before it's called by the qupdate function, though
+#					recalchiliting()
+					qupdate(brushing_layer) },
+	    .color = { 
+					.recalc <<- TRUE
+#	    recalc()
+#	    					 recalchiliting()
 	    					 qupdate(bglayer)
 	    					 qupdate(datalayer)
 	    					 qupdate(brushing_layer)
