@@ -1,3 +1,14 @@
+e <- function() {
+	
+	library(qtbase)
+	library(qtpaint)
+	library(reshape)
+	library(plyr)
+	library(plumbr)
+	library(stringr)
+}
+
+
 #' Create a hist plot
 #' Create a hist plot from 1-D numeric data
 #'
@@ -49,8 +60,10 @@ qhist <- function(
 	title = NULL,
 	name = names(data),
 	ash = FALSE,
-	start = min,
-	binwidth = 10,
+	start = min(data[[xCol]]),
+	nbins = 5,
+	binwidth = NULL,
+	bin_algo_str = NULL,
 	...
 ) {
 
@@ -72,6 +85,7 @@ qhist <- function(
 	.yMax <- 0
 	.xlab <- ""
 	.ylab <- ""
+	.histOriginalBreaksAndStart <- list()
 
 
 	# Set up the data
@@ -107,9 +121,25 @@ qhist <- function(
 	# Find the maximum height of the counts
 	.yMax <- maxHeightP()
 
-	temp_breaks <- baseHistP()$breaks
-	.type <- list(type = "hist", binwidth = diff(temp_breaks[1:2]), start = temp_breaks[1])
-	histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
+	if(!is.null(bin_algo_str)){
+		temp_breaks <- baseHistP(breaks = bin_algo_str)$breaks
+		.type <- list(type = "hist", binwidth = diff(temp_breaks[1:2]), start = temp_breaks[1])
+
+	} else if(!is.null(binwidth)) {
+		.type <- list(type = "hist", binwidth = binwidth, start = start)
+		
+	} else {
+		if(nbins < 1) { stop("please supply a correct bin count") }
+		temp_breaks <- baseHistP(breaks = nbins)$breaks
+		.type <- list(type = "hist", binwidth = diff(xColRange())/nbins, start = start)
+	}
+	.histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
+	# cat("\nOriginal Hist Breaks!\n"); print(.histOriginalBreaksAndStart); 
+	# cat("start: ");print(start)
+	# cat("bin_algo_str: ");print(bin_algo_str)
+	# cat("binwidth: ");print(binwidth)
+	# cat("nbins: ");print(nbins)
+	
 
 	updateBarsInfo <- function() {
 		.bars_info <<- continuous_to_bars(
@@ -234,14 +264,14 @@ qhist <- function(
 			stop("Ash not implemented")
 
 		} else if (key == Qt$Qt$Key_H) {			# 'h' or 'H' for 'condition'
-			.type <- list(type = "hist", binwidth = histOriginalBreaksAndStart$binwidth, start = histOriginalBreaksAndStart$start)
+			.type <- list(type = "hist", binwidth = .histOriginalBreaksAndStart$binwidth, start = .histOriginalBreaksAndStart$start)
 
 		}	else if (key == 82) {			# 'r' or 'R' for 'condition'
 				if(identical(.type$type, "hist")) {
-					print(histOriginalBreaksAndStart)
+					print(.histOriginalBreaksAndStart)
 					.type$type <<- "hist"
-					.type$start <<- histOriginalBreaksAndStart$start
-					.type$binwidth <<- histOriginalBreaksAndStart$binwidth
+					.type$start <<- .histOriginalBreaksAndStart$start
+					.type$binwidth <<- .histOriginalBreaksAndStart$binwidth
 				}
 
 		} else if (key == 87) {
