@@ -70,6 +70,8 @@ qhist <- function(
 	.ranges <- c()
 	.yMin <- 0
 	.yMax <- 0
+	.xlab <- ""
+	.ylab <- ""
 
 
 	# Set up the data
@@ -144,11 +146,11 @@ qhist <- function(
 		# updateLims()
 
 		if (horizontal) {
-			ylab = name
-			xlab = "count"
+			.ylab <<- name
+			.xlab <<- "count"
 		} else {
-			ylab = "count"
-			xlab = name
+			.ylab <<- "count"
+			.xlab <<- name
 		}
 
 		# grey background with grid lines
@@ -159,8 +161,8 @@ qhist <- function(
 		}
 
 		# put labels, if appropriate
-		draw_x_axes_fun(painter, .ranges, xlab)
-		draw_y_axes_fun(painter, .ranges, ylab)
+		draw_x_axes_fun(painter, .ranges, .xlab)
+		draw_y_axes_fun(painter, .ranges, .ylab)
 
 		# title
 		if(!is.null(title))
@@ -506,7 +508,7 @@ qhist <- function(
 	#######################################################
 	# Layout
 	updateLims <- function() {
-		windowRanges <- make_window_ranges(.ranges, xlab, ylab)
+		windowRanges <- make_window_ranges(.ranges, .xlab, .ylab)
 		.lims <<- qrect(windowRanges[c(1,2)], windowRanges[c(3,4)])
 	}
 	updateLims()
