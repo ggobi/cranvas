@@ -45,8 +45,10 @@ qmutaframe = function(data, ...) {
     }
 
     ## prevent converting from characters to factors
-    old_opts = options(stringsAsFactors = FALSE)
-    mf = as.mutaframe(data.frame(data, ...))
+		if(!is.mutaframe(data)) {
+			old_opts = options(stringsAsFactors = FALSE)
+			mf = as.mutaframe(data, ...)
+		}
 
     ## we need to store some attributes somewhere which are not corresponding to rows
     ## e.g. attrs related to the brush (scalars, functions, or data frames)

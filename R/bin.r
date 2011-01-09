@@ -88,9 +88,22 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 	# print(right)
 	# print(dataValue)
 	# print(brushVal)
-	rows <- dataValue < left & dataValue >= right
+	rows <- dataValue > left & dataValue <= right
+	sumB <- sum(brushVal[rows])
+	lengthB <- length(rows)
 	
-	sum(brushVal[rows]) / length(rows)
+	perc <- sumB / lengthB
+
+	cat("left");print(left)
+	cat("right");print(right)
+	cat("dataValue");print(dataValue)
+	cat("brushVal");print(brushVal)
+	cat("rows");print(rows)
+	cat("sumB");print(sumB)
+	cat("lengthB");print(lengthB)
+	cat("perc");print(perc)
+	
+	perc
 }
 
 

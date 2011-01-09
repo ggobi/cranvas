@@ -95,7 +95,10 @@ qhist <- function(
 		data[[splitByCol]] <- 1
 	}
 
-	mf_data <- qmutaframe(data)
+	# mf_data <- qmutaframe(data)
+	if(is.mutaframe(data)) 	mf_data <- qmutaframe(data)
+	else 										mf_data <- data
+	
 	mf_data <- column_coerce(mf_data, ".brushed", FALSE)
 
 	# .bin_col <- data_bin_column(mf_data)
@@ -154,9 +157,9 @@ qhist <- function(
 				.mf_data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
 			}
 		}
-		cat("data: \n");print(head(mf_data))
-		cat("condensed data: \n");print(head(.bars_info$data))
-		cat("columns: "); print(.mf_data_col_names)
+		cat("data: \n");print(mf_data[1:8,])
+		cat("condensed data: \n");print(.bars_info$data)
+		cat("unique columns: "); print(unique(.mf_data_col_names))
 		
 	}
 	updateBarsInfo()
@@ -177,7 +180,7 @@ qhist <- function(
 	# Draw Axes
 	coords <- function(item, painter, exposed) {
 
-		updateBarsInfo()
+		# updateBarsInfo()
 		# updateRanges()
 		# updateLims()
 
@@ -291,7 +294,8 @@ qhist <- function(
 			# , Qt$Qt$Key_A, Qt$Qt$Key_D, Qt$Qt$Key_O, Qt$Qt$Key_H
 			)) {
 			message("updating everything")
-			qupdate(.scene)
+			updateBarsInfo()
+			 qupdate(.scene)
 			# qupdate(datalayer)
 			# qupdate(hoverlayer)
 			# qupdate(brushing_layer)
@@ -320,10 +324,21 @@ qhist <- function(
 			#  .brush.attr = attr(odata, '.brush.attr')
 			# brushcolor <- .brush.attr[,".brushed.color"]
 			brushColor <- brush_attr(mf_data, ".brushed.color")
+			
+			b <- section$bottom
+			t <- (section$top - b) * section$.brushed + b
+			
+			cat("b: "); print(b)
+			cat("t: "); print(t)
+			cat("top: "); print(section$top)
+			cat("perc: "); print(section$.brushed)
+			cat("section:\n"); print(section)
+			cat("real data:\n"); print(mf_data[mf_data$disp < 300, c("disp", "cyl", ".brushed")])
+			
 			if (horizontal)
-				qdrawRect(painter, section$bottom, section$right, section$top, section$left, fill = brushColor, stroke = "black")
+				qdrawRect(painter, b, section$right, t, section$left, fill = brushColor, stroke = "black")
 			else
-				qdrawRect(painter, section$left, section$bottom, section$right, section$top, fill = brushColor, stroke = "black")
+				qdrawRect(painter, section$left, b, section$right, t, fill = brushColor, stroke = "black")
 		}
 
 		if (!is.null(.endBrush)) {
@@ -399,16 +414,16 @@ qhist <- function(
 
 		print(head(subset(.bars_info$data, .brushed > 0)))
 		cat("count of brushed sections: ", sum(.bars_info$data$.brushed), "\n")
-		cat("count of left(<=", rightMouse,"): ", sum(.bars_info$data$left <= rightMouse), " - ",
+		cat("count of left(<=", rightMouse,"): ", sum(.bars_info$data$left <= rightMouse), #" - ",
 			# paste(rownames(.bars_info$data[.bars_info$data$left <= rightMouse,]), sep = ", "),
 			"\n")
-		cat("count of right(>= ", leftMouse,"): ", sum(.bars_info$data$right >= leftMouse), " - ",
+		cat("count of right(>= ", leftMouse,"): ", sum(.bars_info$data$right >= leftMouse), #" - ",
 			# paste(rownames(.bars_info$data[.bars_info$data$right >= leftMouse,]), sep = ", "),
 			"\n")
-		cat("count of bottom(<= ", topMouse,"): ", sum(.bars_info$data$bottom <= topMouse), " - ",
+		cat("count of bottom(<= ", topMouse,"): ", sum(.bars_info$data$bottom <= topMouse), #" - ",
 			# paste(rownames(.bars_info$data[.bars_info$data$bottom <= topMouse,]), sep = ", "),
 			"\n")
-		cat("count of top(>= ", bottomMouse,"): ", sum(.bars_info$data$top >= bottomMouse), " - ",
+		cat("count of top(>= ", bottomMouse,"): ", sum(.bars_info$data$top >= bottomMouse), #" - ",
 			# paste(rownames(.bars_info$data[.bars_info$data$top >= bottomMouse,]), sep = ", "),
 			"\n")
 
@@ -416,6 +431,7 @@ qhist <- function(
 	}
 
 	setSelected <- function() {
+		cat("setSelected\n")
 		section <- subset(.bars_info$data, .brushed == 1)
 
 		rows <- rep(FALSE, nrow(mf_data))
@@ -429,7 +445,10 @@ qhist <- function(
 			mf_data$.brushed[rows] <<- rep(1, on)
 
 		if(off > 0)
-			mf_data$.brushed[[!rows]] <<- rep(0, off)
+			mf_data$.brushed[!rows] <<- rep(0, off)
+		
+		# print(mf_data[1:min(12, nrow(mf_data)), ])
+		cat("setSelected - done\n")
 	}
 
 
