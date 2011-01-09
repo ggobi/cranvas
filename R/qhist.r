@@ -158,7 +158,7 @@ qhist <- function(
 			}
 		}
 		cat("data: \n");print(mf_data[1:8,])
-		cat("condensed data: \n");print(.bars_info$data)
+		cat("condensed data: \n");print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
 		cat("unique columns: "); print(unique(.mf_data_col_names))
 		
 	}
@@ -332,8 +332,20 @@ qhist <- function(
 			cat("t: "); print(t)
 			cat("top: "); print(section$top)
 			cat("perc: "); print(section$.brushed)
-			cat("section:\n"); print(section)
-			cat("real data:\n"); print(mf_data[mf_data$disp < 300, c("disp", "cyl", ".brushed")])
+			cat("section:\n"); print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
+			cat("real data:\n"); print(mf_data[mf_data$disp < 200, c("disp", "cyl", ".brushed")])
+			
+			brushColor <- rep(brushColor, nrow(section))
+			brushColorRGBA <- col2rgb(brushColor, TRUE)
+			if(brushColorRGBA["alpha",][[1]] > 200) {
+				brushColorRGBA["alpha",][[1]] <- 200
+				newBrushColor <- rgb(brushColorRGBA["red",][[1]], brushColorRGBA["green",][[1]], brushColorRGBA["blue",][[1]], brushColorRGBA["alpha",][[1]], maxColorValue = 255)
+				
+				rows <- section$.brushed < 1
+				brushColor[rows] <- newBrushColor
+			}
+			
+			
 			
 			if (horizontal)
 				qdrawRect(painter, b, section$right, t, section$left, fill = brushColor, stroke = "black")

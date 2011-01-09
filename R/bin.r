@@ -90,7 +90,7 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 	# print(brushVal)
 	rows <- dataValue > left & dataValue <= right
 	sumB <- sum(brushVal[rows])
-	lengthB <- length(rows)
+	lengthB <- sum(rows)
 	
 	perc <- sumB / lengthB
 
@@ -219,7 +219,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL, type
 	# Brushing
 	data_pos$.brushed <- 0
 	# data_pos <- ddply(data_pos, c("label", "group"), transform, .brushed = percent_of_brushed(left, right, original$data, brushed))
-	for (i in NROW(data_pos)) {
+	for (i in seq_len(NROW(data_pos))) {
 		data_pos$.brushed[i] <- percent_of_brushed(data_pos[i,"left"], data_pos[i,"right"], data, brushed)
 	}
 	
