@@ -16,6 +16,6 @@ Description: Experiments with interactive graphics based on the pipeline
              multiple views, linked brushing, ...
 License: GPL
 LazyLoad: yes
-URL: http://www.github.com/bigbear/cranvas
+URL: http://www.github.com/ggobi/cranvas
 Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.0-3), stringr
 Suggests: productplots, gWidgetsRGtk2
