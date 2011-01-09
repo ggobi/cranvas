@@ -71,8 +71,9 @@ qhist <- function(
 	.view <- c()
 	.scene <- c()
 	.type <- c()
-	.bin_col <- ""
-	.label_col <- ""
+	# .bin_col <- ""
+	# .label_col <- ""
+	.mf_data_col_names <- c()
 	.startBrush <- NULL
 	.endBrush <- NULL
 	.brush <- FALSE
@@ -97,9 +98,8 @@ qhist <- function(
 	mf_data <- qmutaframe(data)
 	mf_data <- column_coerce(mf_data, ".brushed", FALSE)
 
-	.bin_col <- data_bin_column(mf_data)
-
-	mf_data[[.bin_col]] <- rep(-1, nrow(mf_data))
+	# .bin_col <- data_bin_column(mf_data)
+	.mf_data_col_names <- rep("", nrow(mf_data))
 	print(head(mf_data))
 
 	# Set up wrapper functions.
@@ -146,12 +146,18 @@ qhist <- function(
 			data = mf_data[, xCol], splitBy = mf_data[, splitByCol], brushed = mf_data[, ".brushed"],
 			typeInfo = .type, position = position, color = color, fill = fill, stroke = stroke, ...)
 
+		.mf_data_col_names <<- rep("", length(.mf_data_col_names))
 		for(i in 1:nrow(.bars_info$data)){
-			rows <- (.bars_info$data$left[i] > dataCol()) & (.bars_info$data$right[i] <= dataCol())
-			if(any(rows))
-				mf_data[rows, .bin_col] <<- .bars_info$data[i, "label"]
+			rows <- (.bars_info$data$left[i] <= dataCol()) & (.bars_info$data$right[i] > dataCol())
+			# cat(i, " - "); print(rows)
+			if(any(rows)) {
+				.mf_data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
+			}
 		}
-		print(head(mf_data))
+		cat("data: \n");print(head(mf_data))
+		cat("condensed data: \n");print(head(.bars_info$data))
+		cat("columns: "); print(.mf_data_col_names)
+		
 	}
 	updateBarsInfo()
 
@@ -412,9 +418,18 @@ qhist <- function(
 	setSelected <- function() {
 		section <- subset(.bars_info$data, .brushed == 1)
 
-		rows <- mf_data[[.label_col]]  %in% .bars_info$label
-		mf_data$.brushed[rows] <<- 1
-		mf_data$.brushed[[!rows]] <<- 0
+		rows <- rep(FALSE, nrow(mf_data))
+		if(NROW(section) > 0)
+			rows <- .mf_data_col_names  %in% as.character(section$label)
+		
+		on <- sum(rows)
+		off <- length(rows) - on
+		# browser()
+		if(on > 0)
+			mf_data$.brushed[rows] <<- rep(1, on)
+
+		if(off > 0)
+			mf_data$.brushed[[!rows]] <<- rep(0, off)
 	}
 
 
@@ -545,9 +560,9 @@ qhist <- function(
 
 	.scene <- qscene()
 
-	bglayer <- qlayer(.scene, coords, limits = .lims, clip = FALSE)
+	bglayer <- qlayer(.scene, coords, limits = .lims, clip = FALSE, keyPressFun = keyPressFun)
 
-	datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE, keyPressFun = keyPressFun)
+	datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE)
 
 	hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE,
 		hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave)
