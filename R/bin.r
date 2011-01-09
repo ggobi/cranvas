@@ -146,7 +146,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL, type
 
 	bar_top <- table(cut(data, breaks = breaks), splitBy)  
 	
-	data_pos <- melt(bar_top)
+	data_pos <- reshape::melt(bar_top)
 	names(data_pos) <- c("label", "group", "top")
 	data_pos$count <- data_pos$top
 	data_pos <- data_pos[, c(1,2,4,3)]

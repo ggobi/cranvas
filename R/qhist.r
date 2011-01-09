@@ -1,17 +1,3 @@
-e <- invisible("hello!")
-class(e) <- "magic"
-
-print.magic <- function(x, ...) {
-	files <- dir()
-	for(i in 1:3){
-		source(files[i])
-	}
-	print(qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", position = "stack", title = "mtcars - stack"))
-}
-
-
-
-
 #' Create a hist plot
 #' Create a hist plot from 1-D numeric data
 #'
