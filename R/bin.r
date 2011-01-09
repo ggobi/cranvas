@@ -137,8 +137,10 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL, type
 		stop("spine-o-gram not defined yet")
 	else if(identical(typeInfo$type, "dot"))
 		stop("dot not defined yet")
-	else
+	else {
+		print(typeInfo)
 		stop("Please make typeInfo$type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\"")
+	}
 	
 	print(data[brushed == TRUE])
 	breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, dataRange(data)[2], xMaxEndPos(data))
