@@ -1,0 +1,59 @@
+\name{qmosaic}
+\alias{qmosaic}
+\title{Mosaic plot.}
+\usage{qmosaic(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE, 
+    subset, colour = "grey30", main, ...)
+}
+\description{Mosaic plot.
+Create a mosaicplot using a formula (as described in prodplot)}
+\value{NULL}
+\author{Heike Hofmann}
+\arguments{\item{data}{a mutaframe which is typically built upon a data frame
+along with several row attributes}
+\item{formula}{a formula to describe order in which variables go into the mosaicplot. The first variables are the ones visually most important, i.e. Y ~ X1 + X2 + X3 first splits according to X3, then according to X2, then according to X1}
+\item{divider}{structure of the split in each direction. Choices are "hbar", "vbar" for horizontal/vertical barcharts, "hspine", "vspine" for horizontal/vertical spineplots.}
+\item{cascade}{parameter for prodplot in package productplots}
+\item{scale_max}{parameter for prodplot in package productplots}
+\item{na.rm}{handling of missing values, defaults to FALSE}
+\item{subset}{parameter for prodplot -}
+\item{colour}{fill colour of rectangles - only used if colour is not used in the data}
+\item{main}{parameter for prodplot}
+\item{...}{}
+}
+\examples{require(qtbase)
+require(qtpaint)
+require(cranvas)
+
+
+require(stringr)
+require(productplots)
+require(plumbr)
+
+data(Titanic)
+titanic <- as.data.frame(Titanic)
+
+tit.col = c("grey30", "grey50")[as.integer(titanic$Survived)]
+
+qtitanic <- qmutaframe(titanic, .brushed = FALSE, .color = tit.col)
+brush_attr(qtitanic, ".brushed.color") <- "red"
+
+print(qmosaic(qtitanic, Freq ~ Sex + Age | Class, mosaic()))
+print(qmosaic(qtitanic, Freq ~ Survived, "hbar"))}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
