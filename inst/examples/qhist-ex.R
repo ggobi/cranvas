@@ -1,11 +1,11 @@
 ## examples of qhist()
 
-library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
-library(ggplot2)
-library(stringr)
+require(qtbase)
+require(qtpaint)
+require(plumbr)
+require(cranvas)
+require(ggplot2)
+require(stringr)
 
 data(tennis)
 qtennis <- qmutaframe(tennis)

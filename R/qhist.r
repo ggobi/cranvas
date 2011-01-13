@@ -103,7 +103,7 @@ qhist <- function(
 
 	# .bin_col <- data_bin_column(mf_data)
 	.mf_data_col_names <- rep("", nrow(mf_data))
-	print(head(mf_data))
+	#print(head(mf_data))
 
 	# Set up wrapper functions.
 	dataCol <- function() {mf_data[, xCol]}
@@ -333,7 +333,7 @@ qhist <- function(
 			cat("top: "); print(section$top)
 			cat("perc: "); print(section$.brushed)
 			cat("section:\n"); print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
-			cat("real data:\n"); print(mf_data[mf_data$disp < 200, c("disp", "cyl", ".brushed")])
+			#cat("real data:\n"); print(mf_data[mf_data$disp < 200, c("disp", "cyl", ".brushed")])
 			
 			brushColor <- rep(brushColor, nrow(section))
 			brushColorRGBA <- col2rgb(brushColor, TRUE)
