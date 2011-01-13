@@ -4,6 +4,14 @@
 ## e.g. Rscript roxygenize.R or Rscript roxygenize.R install
 ## if there is an option 'install', this script will try to install the cranvas package
 
+## extract the working directory from the file you provided
+##  e.g. Rscript ~/pkg/cranvas/roxygenize.R
+p = grep('--file=', commandArgs(), fixed = TRUE, value = TRUE)
+if (length(p) == 1) {
+    p = dirname(sub('^--file=', '', p))
+    setwd(p)
+}
+
 ## make sure the working directory is under cranvas
 if (!('cranvas' %in% list.files('../')))
     stop('the cranvas package not found under ', normalizePath(file.path(getwd(), '..')))
