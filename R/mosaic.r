@@ -42,14 +42,14 @@ addDivider <- function(divider, level=length(divider)) {
 ##'
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
-##' @param formula
-##' @param divider
-##' @param cascade
-##' @param scale_max
-##' @param na.rm
-##' @param subset
-##' @param colour
-##' @param main
+##' @param formula a formula to describe order in which variables go into the mosaicplot. The first variables are the ones visually most important, i.e. Y ~ X1 + X2 + X3 first splits according to X3, then according to X2, then according to X1
+##' @param divider structure of the split in each direction. Choices are "hbar", "vbar" for horizontal/vertical barcharts, "hspine", "vspine" for horizontal/vertical spineplots.
+##' @param cascade parameter for prodplot in package productplots
+##' @param scale_max parameter for prodplot in package productplots
+##' @param na.rm handling of missing values, defaults to FALSE
+##' @param subset parameter for prodplot - 
+##' @param colour fill colour of rectangles - only used if colour is not used in the data
+##' @param main parameter for prodplot
 ##' @param ...
 ##' @return NULL
 ##' @author Heike Hofmann
