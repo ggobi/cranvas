@@ -1,14 +1,4 @@
 
-##' Mosaic plot.
-##' Create a mosaicplot using a formula (as described in prodplot)
-##'
-##' @param data a mutaframe which is typically built upon a data frame
-##' along with several row attributes
-##' @return NULL
-##' @author Heike Hofmann
-##' @export
-##' @example cranvas/inst/examples/mosaic-ex.R
-
 
 paste_formula <- function(form) {
 # form has pieces wt, marg and cond
@@ -46,7 +36,25 @@ addDivider <- function(divider, level=length(divider)) {
 	return(dividerhil)
 }
 
-# assume that data is mutaframe
+
+##' Mosaic plot.
+##' Create a mosaicplot using a formula (as described in prodplot)
+##'
+##' @param data a mutaframe which is typically built upon a data frame
+##' along with several row attributes
+##' @param formula
+##' @param divider
+##' @param cascade
+##' @param scale_max
+##' @param na.rm
+##' @param subset
+##' @param colour
+##' @param main
+##' @param ...
+##' @return NULL
+##' @author Heike Hofmann
+##' @export
+##' @example cranvas/inst/examples/mosaic-ex.R
 qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE, subset=NULL, colour="grey30", main=NULL, ...) {
   ## check if an attribute exist
   has_attr = function(attr) {
