@@ -16,6 +16,9 @@ if (length(p) == 1) {
 if (!('cranvas' %in% list.files('../')))
     stop('the cranvas package not found under ', normalizePath(file.path(getwd(), '..')))
 
+## update git as well; someone wants to be really lazy
+system('git pull')
+
 ## requires Rd2roxygen and formatR (don't ask why; just do it)
 if (!require('Rd2roxygen')) install.packages('Rd2roxygen')
 if (!require('formatR')) install.packages('formatR')
