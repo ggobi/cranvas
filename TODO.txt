@@ -1,5 +1,6 @@
 COLOR/GLYPH SELECTION
 
+Next major topic of discussion
 
 CONSISTENCY
 
@@ -15,8 +16,12 @@ Roxygen'ize the code to make the help files.
 
 SCATTERPLOT
 
-Needs to have brushing implemented - done
-
 Command line argument to make aspect ratio 1:1
 
+MOSAIC PLOTS
 
+Need to be added into the package
+
+HISTOGRAMS
+
+Brushing working in one window, but not receiving brush information from others
