@@ -1,0 +1,7 @@
+importFrom(qtbase, Qt)
+importFrom(qtbase, qrect, qfont, qsize)
+import(qtpaint)
+import(plumbr)
+exportPattern("^[^\\.]")
+export(qmosaic)
+export(qparallel)
