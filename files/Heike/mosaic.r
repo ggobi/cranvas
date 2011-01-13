@@ -7,8 +7,7 @@
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
-##' @example
-## example code in inst/mosaic-ex.R
+##' @example cranvas/inst/examples/mosaic-ex.R
 
 source("labels.r")
 
