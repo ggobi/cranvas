@@ -7,7 +7,7 @@
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
-##' @example 
+##' @example
 ## example code in inst/mosaic-ex.R
 
 source("labels.r")
@@ -20,12 +20,12 @@ paste_formula <- function(form) {
 	if (length(form$wt) > 0)
 		wtStr <- form$wt[1]
 	margStr <- "1"
-	if (length(form$marg) > 0) 
+	if (length(form$marg) > 0)
 		margStr <- paste(form$marg,collapse="+")
 	condStr <- ""
-	if (length(form$cond) > 0) 
+	if (length(form$cond) > 0)
 		condStr <- paste("|", paste(form$cond, collapse="+"))
-	
+
 	formstring <- paste(wtStr,"~", margStr, condStr)
 	return(formstring)
 }
@@ -33,7 +33,7 @@ paste_formula <- function(form) {
 extract.formula <- function(formula) {
 	form <- parse_product_formula(formula)
 	form$marg <- setdiff(form$marg, c(".brushed", ".color"))
-		
+
 	return(paste_formula(form))
 }
 
@@ -42,7 +42,7 @@ addDivider <- function(divider, level=length(divider)) {
 # adds a spine divider orthogonal to the previous direction
 	if (is.function(divider)) return(divider)
 
-	if (level > length(divider)) level <- length(divider)	
+	if (level > length(divider)) level <- length(divider)
 	dvd <- rev(rev(divider)[1:level])
     if (dvd[1] %in% c("hspine", "hbar")) dividerhil <- c("vspine",dvd)
     else if (dvd[1] %in% c("vspine", "vbar")) dividerhil <- c("hspine",dvd)
@@ -75,7 +75,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 	.divider <- divider
 
   recalchiliting <- function() {
-	## depends on .formula and data 
+	## depends on .formula and data
 
 		## hilite setup
 #print("recalchiliting")
@@ -83,7 +83,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 		form <- parse_product_formula(.formula)
 		form$marg <- c(".brushed", setdiff(form$marg, ".color"))
 		hformula <- as.formula(paste_formula(form))
-		
+
 		hdivider <- addDivider(tail(divider, length(.activevars)))
 #print(hdivider)
 
@@ -101,8 +101,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
   }
 
 	recalc <- function() {
-	# depends on .formula 
-	# sets xdata and bkdata 
+	# depends on .formula
+	# sets xdata and bkdata
 	# (bkdata is equal to xdata without color, if color is used, bkdata is step before color)
 	# all.data contains all steps of hierarchical build
 #print("recalc")
@@ -114,11 +114,11 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 		# move .color variable to the front, whereever it was before
 		# it probably should not be part of .formula - that's the plan at least
 			form$marg <- c(".color", setdiff(form$marg, ".color"))
-	
+
 			.formula <- as.formula(paste_formula(form))
 			.divider <- addDivider(divider)
 		}
-		
+
 		## calculate all bin sizes & positions
 		df <- data.frame(data)
 		all.data <<- prodcalc(df, .formula, .divider, cascade, scale_max, na.rm = na.rm)
@@ -132,11 +132,11 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 		.recalc <<- FALSE
 		recalchiliting()
 	}
-	
-## initialize cross-tabulated data	
+
+## initialize cross-tabulated data
 	all.data <- NULL
-	xdata <- NULL 
-	bkdata <- NULL 
+	xdata <- NULL
+	bkdata <- NULL
 
 ## initialize hiliting data hdata
 	hdata <- NULL
@@ -212,7 +212,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 #print("mdraw: full mosaic drawn")
 ##print(summary(xdata))
 		if (.recalc) recalc()
-		
+
 
     top <- xdata$t
     bottom <- xdata$b
@@ -221,14 +221,14 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 		if (.colored)
       color <- as.character(xdata$.color)
     else color <- colour
-    
+
     qdrawRect(painter,
       left,
       bottom,
       right,
       top,
       fill=color)
-	
+
     if (.df.title) {
       add_title_fun(painter, dataRanges, title=extract.formula(.formula)) #, .level))
     }
@@ -257,14 +257,14 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 	#print(names(xdata))
 			hdata <<- subset(bkdata, .brushed == TRUE)
 		}
-    if (nrow(hdata)>0) {    
+    if (nrow(hdata)>0) {
 			top <- hdata$t
 			bottom <- hdata$b
 			left <- hdata$l
 			right <- hdata$r
-		
+
 		#  .brush.attr = attr(odata, '.brush.attr')
-		
+
 			brushcolor <- brush_attr(data, ".brushed.color")
 			qdrawRect(painter, left, bottom, right, top, fill=brushcolor)
 		}
@@ -319,14 +319,14 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 # use .level - .colored to select all bins, independently of color
 # if colored bins should be available for highlighting separately use level == .level
 
-    bkdata$.brushed <<- # (bkdata$level == .level-.colored) & 
+    bkdata$.brushed <<- # (bkdata$level == .level-.colored) &
     (bkdata$l <= right) &
       (bkdata$r >= left) & (bkdata$b <= top) & (bkdata$t >= bottom)
   }
 
   setSelected <- function() {
 	# propagate highlighting to the data set and other plots
-	
+
 		hdata <- subset(bkdata, (.brushed==TRUE), drop=FALSE)[,.activevars, drop=FALSE]
 		if (nrow(hdata) > 0) {
 			hdata$ID <- 1:nrow(hdata)
@@ -339,13 +339,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			res.cond <- res.cond[,-3]
 			names(res.cond)[3] <- "value"
 			cast.res <- cast(res.cond, ID~., function(x) return(paste(x, collapse=" & ")))
-	
+
 			cond1 <- paste("(",cast.res[,2],")", sep="",collapse=" | ")
 			idx <- with(data.frame(data), which(eval(parse(text=cond1))))
-	
+
 			.brushed <- rep(FALSE, nrow(data))
 			if (length(idx)) .brushed[idx] <- TRUE
-	
+
 			data$.brushed <- .brushed
 		} else {
 			data$.brushed <- FALSE
@@ -383,10 +383,10 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 					form$cond <- c(form$cond, .inactivevars[1])
 				} else {
 					form$marg <- c(.inactivevars[1], form$marg)
-				} 
+				}
 				.activevars <<- c(.activevars, .inactivevars[1])
 				.inactivevars <<- .inactivevars[-1]
-			
+
 #      	.level <<- .level + 1
       } else return()
     } else if (key == Qt$Qt$Key_Left) {        # arrow left
@@ -394,7 +394,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 				.inactivevars <<- c(.inactivevars, form$marg[1])
 				.activevars <<- c(setdiff(.activevars, form$marg[1]), .inactivevars[1])
 				form$marg[1] <- .inactivevars[1]
-				.inactivevars <<- .inactivevars[-1]				
+				.inactivevars <<- .inactivevars[-1]
 			} else return()
     } else if (key == Qt$Qt$Key_Right) {        # arrow right
 			if (length(.inactivevars)>0) {
@@ -402,7 +402,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 				.inactivevars <<- c(.inactivevars, form$marg[1])
 				.activevars <<- c(setdiff(.activevars, form$marg[1]), .inactivevars[lastone])
 				form$marg[1] <- .inactivevars[lastone]
-				.inactivevars <<- .inactivevars[-lastone]				
+				.inactivevars <<- .inactivevars[-lastone]
 			} else return()
     } else if (key == Qt$Qt$Key_R) {     # 'r' or 'R' for 'rotate'
         lindx <- length(divider)-length(.activevars)+1
@@ -414,7 +414,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     } else if (key == Qt$Qt$Key_U) {     # 'u' or 'U' for 'unconditioning'
 			if (length(form$cond) > 0) {
 				# take first conditioning variable and use as last marginal variable
-				
+
 				form$marg <- c(form$marg, form$cond[1])
 				form$cond <- form$cond[-1]
 			} else return()
@@ -427,11 +427,11 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			} else return()
     } else if (key == Qt$Qt$Key_S) {     # 's' or 'S' for 'spine'
       lindx <- length(divider)-length(.activevars)+1
-			
+
 			divider[lindx] <<- gsub("bar","spine", divider[lindx])
     } else if (key == Qt$Qt$Key_B) {     # 'b' or 'B' for 'bar'
       lindx <- length(divider)-length(.activevars)+1
-			
+
 			divider[lindx] <<- gsub("spine","bar", divider[lindx])
     }
 #    if (.colored) {
@@ -484,13 +484,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     qupdate(querylayer)
   }
 
-  
+
   scene = qscene()
   bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
   datalayer = qlayer(scene, mdraw, limits = lims, clip = FALSE)
-  brushing_layer = qlayer(scene, brushing_draw, 
+  brushing_layer = qlayer(scene, brushing_draw,
     mousePressFun = brushing_mouse_press, mouseMoveFun = brushing_mouse_move,
-    mouseReleaseFun = brushing_mouse_release, keyPressFun=keyPressFun, 
+    mouseReleaseFun = brushing_mouse_release, keyPressFun=keyPressFun,
     limits = lims, clip = FALSE)
   querylayer = qlayer(scene, query_draw, limits = lims, clip = FALSE,
     hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave)
@@ -498,13 +498,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 
 	## update the brush layer in case of any modifications to the mutaframe
 	add_listener(data, function(i, j) {
-		switch(j, 
-			.brushed = { 
+		switch(j,
+			.brushed = {
 					.recalchiliting <<- TRUE
 # recalchiliting should be called but at this point, data is not yet updated - it will be updated before it's called by the qupdate function, though
 #					recalchiliting()
 					qupdate(brushing_layer) },
-	    .color = { 
+	    .color = {
 					.recalc <<- TRUE
 #	    recalc()
 #	    					 recalchiliting()
@@ -520,7 +520,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 	add_listener(.brush.attr, function(i, j) {
 			qupdate(brush_layer)
 	})
-	
+
   qplotView(scene = scene)
 }
 
