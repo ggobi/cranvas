@@ -9,8 +9,6 @@
 ##' @export
 ##' @example cranvas/inst/examples/mosaic-ex.R
 
-source("labels.r")
-
 
 paste_formula <- function(form) {
 # form has pieces wt, marg and cond
