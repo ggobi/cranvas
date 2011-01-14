@@ -314,7 +314,7 @@ qhist <- function(
 		top = max(.startBrush[2], .endBrush[2])
 		bottom = min(.startBrush[2], .endBrush[2])
 
-		qdrawRect(painter, left, bottom, right, top, fill=rgb(0,0,0,alpha=0.7), stroke="black")
+		qdrawRect(painter, left, bottom, right, top, fill=rgb(0,0,0,alpha=0.7), stroke="grey50")
 		cat("draw brush rect - done\n")
 	}
 
@@ -352,9 +352,9 @@ qhist <- function(
 			
 			
 			if (horizontal)
-				qdrawRect(painter, b, section$right, t, section$left, fill = brushColor, stroke = "black")
+				qdrawRect(painter, b, section$right, t, section$left, fill = brushColor, stroke = "grey50")
 			else
-				qdrawRect(painter, section$left, b, section$right, t, fill = brushColor, stroke = "black")
+				qdrawRect(painter, section$left, b, section$right, t, fill = brushColor, stroke = "grey50")
 		}
 
 		if (!is.null(.endBrush)) {
