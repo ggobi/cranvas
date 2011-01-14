@@ -88,7 +88,6 @@ qhist <- function(
 	.ylab <- ""
 	.histOriginalBreaksAndStart <- list()
 
-
 	# Set up the data
 	if (splitByCol == -1) {
 		splitByCol <- "qhist_split_column"
@@ -96,9 +95,10 @@ qhist <- function(
 	}
 
 	# mf_data <- qmutaframe(data)
-	if(is.mutaframe(data)) 	mf_data <- qmutaframe(data)
-	else 										mf_data <- data
+	if(!is.mutaframe(data)) 	mf_data <- qmutaframe(data)
+	else 										  mf_data <- data
 	
+	# sets values to FALSE only if brush does not exist yet
 	mf_data <- column_coerce(mf_data, ".brushed", FALSE)
 
 	# .bin_col <- data_bin_column(mf_data)
@@ -454,10 +454,10 @@ qhist <- function(
 		off <- length(rows) - on
 		# browser()
 		if(on > 0)
-			mf_data$.brushed[rows] <<- rep(1, on)
+			mf_data$.brushed[rows] <<- rep(TRUE, on)
 
 		if(off > 0)
-			mf_data$.brushed[!rows] <<- rep(0, off)
+			mf_data$.brushed[!rows] <<- rep(FALSE, off)
 		
 		# print(mf_data[1:min(12, nrow(mf_data)), ])
 		cat("setSelected - done\n")
@@ -605,18 +605,17 @@ qhist <- function(
 	)
 
 
-	# # update the brush layer in case of any modifications to the mutaframe
-	# if (is.mutaframe(odata)) {
-	# 	add_listener(odata, function(i,j) {
-	# 		if (j == ".brushed") {
-	# 			qupdate(brushing_layer)
-	# 		}
-	# 	})
-	# }
-	# add_listener(.brush.attr, function(i, j) {
-	# 	# wouldn't need to call recalchiliting ...
-	# 	qupdate(brushing_layer)
-	# })
+#	# update the brush layer in case of any modifications to the mutaframe
+	add_listener(mf_data, function(i,j) {
+		if (j == ".brushed") {
+			updateBarsInfo()
+			qupdate(brushing_layer)
+		}
+	})
+	
+#	add_listener(.brush.attr, function(i, j) {
+#			qupdate(brushing_layer)
+#	})
 
 	.view <- qplotView(scene = .scene)
 	.view
