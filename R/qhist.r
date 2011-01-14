@@ -61,7 +61,7 @@ qhist <- function(
 	name = names(data),
 	ash = FALSE,
 	start = min(data[[xCol]]),
-	nbins = 5,
+	nbins = round(sqrt(nrow(data)),0),
 	binwidth = NULL,
 	bin_algo_str = NULL,
 	...
@@ -87,16 +87,17 @@ qhist <- function(
 	.xlab <- ""
 	.ylab <- ""
 	.histOriginalBreaksAndStart <- list()
+	.updateinfo <- FALSE
+
+	# mf_data <- qmutaframe(data)
+	if(!is.mutaframe(data)) 	mf_data <- qmutaframe(data)
+	else 										mf_data <- data
 
 	# Set up the data
 	if (splitByCol == -1) {
 		splitByCol <- "qhist_split_column"
-		data[[splitByCol]] <- 1
+		mf_data[[splitByCol]] <- 1
 	}
-
-	# mf_data <- qmutaframe(data)
-	if(!is.mutaframe(data)) 	mf_data <- qmutaframe(data)
-	else 										  mf_data <- data
 	
 	# sets values to FALSE only if brush does not exist yet
 	mf_data <- column_coerce(mf_data, ".brushed", FALSE)
@@ -151,7 +152,7 @@ qhist <- function(
 
 		.mf_data_col_names <<- rep("", length(.mf_data_col_names))
 		for(i in 1:nrow(.bars_info$data)){
-			rows <- (.bars_info$data$left[i] <= dataCol()) & (.bars_info$data$right[i] > dataCol())
+			rows <- (.bars_info$data$left[i] < dataCol()) & (.bars_info$data$right[i] >= dataCol())
 			# cat(i, " - "); print(rows)
 			if(any(rows)) {
 				.mf_data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
@@ -161,6 +162,7 @@ qhist <- function(
 		cat("condensed data: \n");print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
 		cat("unique columns: "); print(unique(.mf_data_col_names))
 		
+		.updateinfo <<- FALSE
 	}
 	updateBarsInfo()
 
@@ -318,6 +320,7 @@ qhist <- function(
 
 	brushing_draw <- function(item, painter, exposed, ...) {
 		cat("brushing draw\n")
+		if (.updateinfo) updateBarsInfo()
 		section <- subset(.bars_info$data, (.brushed > 0))
 
 		if (nrow(section) > 0) {
@@ -337,6 +340,7 @@ qhist <- function(
 			
 			brushColor <- rep(brushColor, nrow(section))
 			brushColorRGBA <- col2rgb(brushColor, TRUE)
+#browser()
 			if(brushColorRGBA["alpha",][[1]] > 200) {
 				brushColorRGBA["alpha",][[1]] <- 200
 				newBrushColor <- rgb(brushColorRGBA["red",][[1]], brushColorRGBA["green",][[1]], brushColorRGBA["blue",][[1]], brushColorRGBA["alpha",][[1]], maxColorValue = 255)
@@ -365,6 +369,9 @@ qhist <- function(
 		if (is.null(.startBrush)) {
 			.startBrush <<- as.numeric(event$pos())
 		}
+		.endBrush <<- as.numeric(event$pos())
+
+		setHiliting()
 		qupdate(brushing_layer)
 		cat("brushing mouse press - done\n")
 	}
@@ -438,7 +445,6 @@ qhist <- function(
 		cat("count of top(>= ", bottomMouse,"): ", sum(.bars_info$data$top >= bottomMouse), #" - ",
 			# paste(rownames(.bars_info$data[.bars_info$data$top >= bottomMouse,]), sep = ", "),
 			"\n")
-
 		cat("setHiliting - done\n")
 	}
 
@@ -450,15 +456,8 @@ qhist <- function(
 		if(NROW(section) > 0)
 			rows <- .mf_data_col_names  %in% as.character(section$label)
 		
-		on <- sum(rows)
-		off <- length(rows) - on
-		# browser()
-		if(on > 0)
-			mf_data$.brushed[rows] <<- rep(TRUE, on)
-
-		if(off > 0)
-			mf_data$.brushed[!rows] <<- rep(FALSE, off)
-		
+# update original data
+		data$.brushed <- rows
 		# print(mf_data[1:min(12, nrow(mf_data)), ])
 		cat("setSelected - done\n")
 	}
@@ -608,7 +607,7 @@ qhist <- function(
 #	# update the brush layer in case of any modifications to the mutaframe
 	add_listener(mf_data, function(i,j) {
 		if (j == ".brushed") {
-			updateBarsInfo()
+			.updateinfo <<- TRUE
 			qupdate(brushing_layer)
 		}
 	})
