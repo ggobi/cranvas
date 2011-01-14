@@ -44,3 +44,29 @@ qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", position = "d
 
 # range from 0 to 1
 qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", position = "relative", title = "mtcars - relative")
+
+####################
+# interplay between different types of charts:
+
+library(cranvas)
+library(qtpaint)
+library(plumbr)
+library(productplots)
+
+
+## color palette
+library(RColorBrewer)
+
+data(tennis)
+
+qtennis = qmutaframe(tennis)
+qtennis$.brushed = FALSE
+qtennis$.color = "grey30"
+
+brush_attr(qtennis, '.brushed.size') <- 2
+brush_attr(qtennis, '.brushed.color') <- "orange"
+
+print(qhist(qtennis, "First.Serve.Pct", horizontal=FALSE))
+print(qparallel(qtennis))
+require(productplots)
+print(qmosaic(qtennis, ~Country, "hbar"))
