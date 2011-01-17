@@ -20,8 +20,9 @@ Command line argument to make aspect ratio 1:1
 
 MOSAIC PLOTS
 
-Need to be added into the package
+Done: Need to be added into the package
 
 HISTOGRAMS
 
-Brushing working in one window, but not receiving brush information from others
+Done: Brushing working in one window, but not receiving brush information from others
+
