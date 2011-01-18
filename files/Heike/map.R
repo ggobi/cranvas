@@ -48,6 +48,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 	.groupsdata$.color <- "grey30"
 	if (!(".brushed" %in% names(.groupsdata))) .groupsdata$.brushed <- FALSE
 	.recalcbrushed <- FALSE
+	.recalclbrushed <- FALSE
 	# extended infostring - shift turns this to TRUE
 	.extended <- FALSE
 	
@@ -60,17 +61,19 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 	if (!is.null(by.x)) {
 		# assume they are the same, if only one is specified
 		# labeldata is a subset of the groups - i.e. only one value for each group on each variable
+		if (!is.mutaframe(labeldata)) labeldata <- qmutaframe(labeldata)
 		
 		xid <- as.character(substitute(by.x))
 		yid <- as.character(substitute(by.y))
-		.groupsdata <- merge(.groupsdata, data.frame(labeldata), by.x=xid, by.y=yid, all.x=TRUE)
+		idx <- setdiff(names(labeldata), c(".color", ".brushed"))
+		.groupsdata <- merge(.groupsdata, data.frame(labeldata)[,idx], by.x=xid, by.y=yid, all.x=TRUE)
 		
 		cname <- as.character(substitute(colour))
 		.colored  <- cname %in% attr(labeldata,"col.names")
 #		browser()
 		if (.colored) .groupsdata$.color <- as.character(.groupsdata[,cname])
 	}
-print(summary(.groupsdata))
+#print(summary(.groupsdata))
 #	.colored <- has_attr('.color')
 
   if (is.null(main)) .df.title <- paste("Map of",deparse(substitute(data)))
@@ -135,17 +138,31 @@ print(summary(.groupsdata))
 			
 		}
 		.recalcbrushed <<- FALSE
+
+		setSelectedLabel()
+	}
+
+	recalclbrushed <- function() {
+	for (i in unique(.groupsdata[,xid])) {
+			brushed <- labeldata[labeldata[,yid]==i, ".brushed"]
+			.groupsdata$.brushed[.groupsdata[,xid]==i] <<- any(brushed)			
+		}
+		.recalclbrushed <<- FALSE
+
+		setSelected()
 	}
 
   brushing_draw <- function(item, painter, exposed, ...) {
 		if (.recalcbrushed) recalcbrushed()
+		if (.recalclbrushed) recalclbrushed()
 print("brushing_draw")
     if (!is.null(.endBrush)) {
       drawBrush(item, painter, exposed)
     }
 
 		bgroups <- subset(.groupsdata, .brushed == TRUE)
-print(bgroups)
+		if (nrow(bgroups) == 0) return()
+#print(bgroups)
 		brushcolor <- brush_attr(data, ".brushed.color")
 		
 		for (i in bgroups$ID) {
@@ -219,8 +236,18 @@ print("set selected")
 		bdata <- subset(.groupsdata, .brushed == TRUE)		
 		brushed <- group %in% bdata$ID
 
-		data$.brushed <- brushed
+		if (any(data$.brushed != brushed))	data$.brushed <- brushed
+
+		if (!is.null(labeldata)) setSelectedLabel()
   }
+
+	setSelectedLabel <- function () {
+	print("set selected labeldata")
+		bdata <- subset(.groupsdata, .brushed == TRUE)		
+		brushed <- labeldata[, yid] %in% bdata[, xid]
+			
+		if (any(labeldata$.brushed != brushed)) labeldata$.brushed <- brushed
+	}
 
   # Key board events ---------------------------------------------------------
 
@@ -308,6 +335,19 @@ print("set selected")
 			.brushed = { 
 print("addlistener: brushed")
 									.recalcbrushed <<- TRUE
+									qupdate(brushing_layer) },
+	    .color = { 
+	    					 qupdate(datalayer)
+	    					 qupdate(brushing_layer)
+	    				 }
+		)
+	})
+
+	add_listener(labeldata, function(i, j) {
+		switch(j, 
+			.brushed = { 
+print("addlistener: labeldata brushed")
+									.recalclbrushed <<- TRUE
 									qupdate(brushing_layer) },
 	    .color = { 
 	    					 qupdate(datalayer)
