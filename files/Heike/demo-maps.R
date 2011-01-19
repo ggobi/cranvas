@@ -23,19 +23,20 @@ crimes$nines <- with(crimes, cut(Burglary/Population, 9))
 #crimes$nines <- with(crimes, cut(Violent.crime/Population, 9))
 crimes$nines <- brewer.pal(9,"Greys")[crimes$nines]
 qcrimes <- qmutaframe(crimes)
-qparallel(qcrimes)
+print(qparallel(qcrimes))
 
 source("map.R")
-qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=nines)
+print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=Violent.crime))
+#qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=I(Violent.crime/Population))
 
 
-qtmap(qstates, long, lat, group, label=region)
-qtmap(qstates, long, lat, group)
+#qtmap(qstates, long, lat, group, label=region)
+#qtmap(qstates, long, lat, group)
 
 
 
 
-world <- map_data("world")
-qworld <- qmutaframe(world)
+#world <- map_data("world")
+#qworld <- qmutaframe(world)
 
-qtmap(qworld, long, lat, group)
+#qtmap(qworld, long, lat, group)
