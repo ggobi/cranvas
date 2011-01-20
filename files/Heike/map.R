@@ -51,7 +51,6 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 	x <- eval(arguments$longitude, df.data)
 	y <- eval(arguments$latitude, df.data)
 	group <- eval(arguments$group, df.data)
-	label <- eval(arguments$label, df.data)
 
 	
 	.groupsdata <- ddply(df.data,.(group), mysummary)
@@ -81,6 +80,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 		idx <- setdiff(names(labeldata), c(".color", ".brushed"))
 		df.labeldata <- data.frame(labeldata)
 		.groupsdata <- merge(.groupsdata, df.labeldata[,idx], by.x=xid, by.y=yid, all.x=TRUE)
+		label <- eval(arguments$label, .groupsdata)
 		
 #		browser()
 		if (!is.null(arguments$colour)) .groupsdata$.color <- scale_color(eval(arguments$colour, .groupsdata))
@@ -291,7 +291,8 @@ print("set selected")
 
 		infostring = paste(deparse(arguments$label), label[hits],collapse="\n", sep=":")
 		if (.extended) {
-		  idx <- setdiff(names(.groupsdata), c("order", ".color", ".brushed", xname, yname, gname))
+#browser()
+		  idx <- setdiff(names(.groupsdata), c("order", ".color", ".brushed", as.character(arguments$longitude), as.character(arguments$latitude), as.character(arguments$group)))
       infodata <- as.character(unlist(info[1,idx]))
       infostring <- paste(idx, infodata,collapse="\n", sep=":")
 		}
@@ -326,6 +327,19 @@ print("set selected")
 
 	coords <- function(item, painter, exposed) {
 	}
+
+  # Display legend information for colour ----------------------------
+
+  legend_draw <- function(item, painter, exposed, ...) {
+		if (is.null(arguments$colour)) return()
+		
+		xpos = (max(x)- min(x))/2
+		ypos = (max(y)- min(y))/2
+		
+    qstrokeColor(painter) <- 'white'
+    qdrawText(painter, deparse(arguments$colour), xpos, ypos, valign="top", halign="left")
+		
+	}
 	
   scene = qscene()
   bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
@@ -338,6 +352,8 @@ print("set selected")
     limits = lims, clip = FALSE)
   querylayer = qlayer(scene, query_draw,    
   	hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
+  	limits = lims, clip = FALSE)
+  legendlayer = qlayer(scene, legend_draw,    
   	limits = lims, clip = FALSE)
 
 
