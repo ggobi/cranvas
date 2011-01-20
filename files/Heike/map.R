@@ -11,6 +11,20 @@ mysummary <- function(x) {
 	ldply(x, myvarsummary)
 }
 
+scale_color <- function(colour, na.color = 0) {
+	if (is.numeric(colour)) {
+	# assume grey colour scheme
+		cmin <- min(colour, na.rm=T)
+		cmax <- max(colour, na.rm=T)
+		grey <- (colour-cmin)/(cmax-cmin)
+		nas <- is.na(grey)
+		grey[nas] <- na.color
+		return(rgb(grey,grey,grey))
+	}
+	
+	print(paste("colour not implemented for type", mode(colour)))
+}
+
 ##' Interactive Maps.
 ##' Create an interactive map from qmutaframe
 ##'
@@ -25,24 +39,22 @@ mysummary <- function(x) {
 ##' @author Heike Hofmann
 ##' @export
 ##' @example cranvas/inst/examples/maps-ex.R
-qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, labeldata=NULL, by.y=by.x,  colour="grey30", main=NULL, ...) {
+qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, labeldata=NULL, by.y=by.x,  colour=NULL, main=NULL, ...) {
   ## check if an attribute exist
   has_attr = function(attr) {
       attr %in% names(data)
   }
-	xname <- as.character(substitute(longitude))
-	yname <- as.character(substitute(latitude))
-	gname <- as.character(substitute(group))
-	lname <- as.character(substitute(label))
-	
-	if (!xname %in% attr(data,"col.names")) stop(paste("object",xname,"not found"))
-	if (!yname %in% attr(data,"col.names")) stop(paste("object",yname,"not found"))
-	if (!gname %in% attr(data,"col.names")) stop(paste("object",gname,"not found"))
+#  browser()
+  arguments <- as.list(match.call()[-1])
+ 	df.data <- data.frame(data)
+ 	
+	x <- eval(arguments$longitude, df.data)
+	y <- eval(arguments$latitude, df.data)
+	group <- eval(arguments$group, df.data)
+	label <- eval(arguments$label, df.data)
 
-	x <- data[ ,xname]
-	y <- data[ ,yname]
-	group <- data[ ,gname]
-	.groupsdata <- ddply(data.frame(data),.(group), mysummary)
+	
+	.groupsdata <- ddply(df.data,.(group), mysummary)
 	.groupsdata <- cast(.groupsdata, group ~ .id, value="V1")
 	names(.groupsdata)[1] <- "ID"
 	.groupsdata$.color <- "grey30"
@@ -62,16 +74,17 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 		# assume they are the same, if only one is specified
 		# labeldata is a subset of the groups - i.e. only one value for each group on each variable
 		if (!is.mutaframe(labeldata)) labeldata <- qmutaframe(labeldata)
-		
+
+			
 		xid <- as.character(substitute(by.x))
 		yid <- as.character(substitute(by.y))
 		idx <- setdiff(names(labeldata), c(".color", ".brushed"))
-		.groupsdata <- merge(.groupsdata, data.frame(labeldata)[,idx], by.x=xid, by.y=yid, all.x=TRUE)
+		df.labeldata <- data.frame(labeldata)
+		.groupsdata <- merge(.groupsdata, df.labeldata[,idx], by.x=xid, by.y=yid, all.x=TRUE)
 		
-		cname <- as.character(substitute(colour))
-		.colored  <- cname %in% attr(labeldata,"col.names")
 #		browser()
-		if (.colored) .groupsdata$.color <- as.character(.groupsdata[,cname])
+		if (!is.null(arguments$colour)) .groupsdata$.color <- scale_color(eval(arguments$colour, .groupsdata))
+
 	}
 #print(summary(.groupsdata))
 #	.colored <- has_attr('.color')
@@ -276,7 +289,7 @@ print("set selected")
     if (is.null(info)) return()
     if (nrow(info) == 0) return()
 
-		infostring = paste(lname, .groupsdata[hits, lname],collapse="\n", sep=":")
+		infostring = paste(deparse(arguments$label), label[hits],collapse="\n", sep=":")
 		if (.extended) {
 		  idx <- setdiff(names(.groupsdata), c("order", ".color", ".brushed", xname, yname, gname))
       infodata <- as.character(unlist(info[1,idx]))
