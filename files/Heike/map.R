@@ -11,12 +11,14 @@ mysummary <- function(x) {
 	ldply(x, myvarsummary)
 }
 
-scale_color <- function(colour, na.color = 0) {
+scale_color <- function(colour, value = colour, na.color = 0) {
 	if (is.numeric(colour)) {
 	# assume grey colour scheme
 		cmin <- min(colour, na.rm=T)
 		cmax <- max(colour, na.rm=T)
-		grey <- (colour-cmin)/(cmax-cmin)
+		grey <- (value-cmin)/(cmax-cmin)
+		grey <- pmin(grey, 1)
+		grey <- pmax(grey, 0)
 		nas <- is.na(grey)
 		grey[nas] <- na.color
 		return(rgb(grey,grey,grey))
@@ -24,6 +26,7 @@ scale_color <- function(colour, na.color = 0) {
 	
 	print(paste("colour not implemented for type", mode(colour)))
 }
+
 
 ##' Interactive Maps.
 ##' Create an interactive map from qmutaframe
@@ -62,6 +65,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 	.recalclbrushed <- FALSE
 	# extended infostring - shift turns this to TRUE
 	.extended <- FALSE
+	.legendspace <- 0
 	
   ## parameters for the brush
   .brush.attr = attr(data, '.brush.attr')
@@ -83,18 +87,18 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 		label <- eval(arguments$label, .groupsdata)
 		
 #		browser()
-		if (!is.null(arguments$colour)) .groupsdata$.color <- scale_color(eval(arguments$colour, .groupsdata))
-
+		if (!is.null(arguments$colour)) {
+			.groupsdata$.color <- scale_color(eval(arguments$colour, .groupsdata))
+			.legendspace <- nchar(deparse(arguments$colour)) * 0.015 * diff(range(x)) # qstrWidth(p, deparse(arguments$colour)) #p is painter object - don't know yet
+		}
 	}
-#print(summary(.groupsdata))
-#	.colored <- has_attr('.color')
 
   if (is.null(main)) .df.title <- paste("Map of",deparse(substitute(data)))
 #  xlab <- find_x_label(xdata)
 #  ylab <- find_y_label(xdata)
 
   dataRanges <- c(
-    make_data_ranges(range(x)),
+    make_data_ranges(c(min(x), max(x)+.legendspace)),
     make_data_ranges(range(y)))
 
   # space in window around plot (margins in base R)
@@ -331,13 +335,34 @@ print("set selected")
   # Display legend information for colour ----------------------------
 
   legend_draw <- function(item, painter, exposed, ...) {
+print("legend_draw")
 		if (is.null(arguments$colour)) return()
 		
-		xpos = (max(x)- min(x))/2
-		ypos = (max(y)- min(y))/2
-		
-    qstrokeColor(painter) <- 'white'
+		xpos = max(x)
+		ypos = (max(y)+ min(y))/2
+#browser()		
+    qstrokeColor(painter) <- 'black'
     qdrawText(painter, deparse(arguments$colour), xpos, ypos, valign="top", halign="left")
+		fontHeight <- qstrHeight(painter, deparse(arguments$colour))
+		
+		# create a set of rectangles 
+		r0 <- 0.05 * c(0,0,diff(range(x)), diff(range(y))) # initial rectangle
+		ypos <- ypos - 3*qstrHeight(painter, deparse(arguments$colour))
+		r0 <- r0 + c(xpos, ypos)
+		
+		col <- eval(arguments$colour, .groupsdata)
+  	d <- options()$str$digits.d
+#  	browser()
+		qcol <- round(quantile(col, probs=c(0,.25,.5,.75,1), na.rm=T, names=FALSE), d)
+		
+		for (i in 1:length(qcol)) {
+			qdrawRect(painter, r0[1], r0[2],r0[3],r0[4],
+      fill=scale_color(col, qcol[i]), stroke="black")
+			qdrawText(painter, as.character(qcol[i]), xpos+ 1.5*(r0[3]-r0[1]), ypos+fontHeight, valign="top", halign="left")
+			ypos <- ypos - 1.5*fontHeight
+			r0[2] <- r0[2] - 1.5*fontHeight
+			r0[4] <- r0[4] - 1.5*fontHeight			
+		}
 		
 	}
 	
