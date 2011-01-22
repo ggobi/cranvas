@@ -42,13 +42,17 @@ qmutaframe = function(data, ...) {
     if(any(conflict_attrs)) {
         stop(sprintf('variable names conflicts: %s already exist(s) in data',
                      paste(row_attrs[conflict_attrs], collapse = ', ')))
+    } else {
+        mf = data
+        ## initialize here; TODO: get rid of this in qparallel, qmosaic...
+        mf$.brushed = FALSE
+        ## prevent converting from characters to factors
+        if(!is.mutaframe(mf)) {
+            old_opts = options(stringsAsFactors = FALSE)
+            mf = as.mutaframe(mf, ...)
+            on.exit(options(old_opts))
+        }
     }
-
-    ## prevent converting from characters to factors
-		if(!is.mutaframe(data)) {
-			old_opts = options(stringsAsFactors = FALSE)
-			mf = as.mutaframe(data, ...)
-		}
 
     ## we need to store some attributes somewhere which are not corresponding to rows
     ## e.g. attrs related to the brush (scalars, functions, or data frames)
@@ -58,9 +62,10 @@ qmutaframe = function(data, ...) {
         .brush.history = list(), .brush.index = 0, .history.size = 30)
     ## here '.brush.mode' is explained in the documentation of mode_selection()
 
-    ## and other possible attributes
+    ## specifies which variable is used for (hot/cold) linking
+    attr(mf, '.linking') = mutalist(.linkvar = NULL, .type = 'hot')
 
-    options(old_opts)
+    ## and other possible attributes
 
     mf
 }
