@@ -2,6 +2,7 @@
 \alias{summary_one}
 \title{Give a Column-wise Scalar Summary of the Data Frame or Matrix}
 \usage{summary_one(x, fun = median, ...)
+
 }
 \description{Give a column-wise scalar summary of the data frame or matrix.}
 \details{For numeric columns, the function specified by \code{fun} will be applied

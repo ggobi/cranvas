@@ -2,6 +2,7 @@
 \alias{make_new_plot}
 \title{make a plot object...}
 \usage{make_new_plot(windowRanges, width = 600, height = 600)
+
 }
 \description{make a plot object
 make a plot object}

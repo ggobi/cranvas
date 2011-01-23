@@ -2,6 +2,7 @@
 \alias{brush_attr}
 \title{Get or set brush attributes...}
 \usage{brush_attr(data, attr)
+brush_attr(data, attr) <- value
 }
 \description{Get or set brush attributes}
 \alias{brush_attr}

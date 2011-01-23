@@ -1,8 +1,9 @@
 \name{draw_x_axes_with_labels}
 \alias{draw_x_axes_with_labels}
 \title{draw x axes...}
-\usage{draw_x_axes_with_labels(plotObj, dataRanges, axisLabels, labelHoriPos, name, row = 0, 
-    col = 0)
+\usage{draw_x_axes_with_labels(plotObj, dataRanges, axisLabels, 
+    labelHoriPos, name, row = 0, col = 0)
+
 }
 \description{draw x axes
 draws the x axes with the labels and label positions given}

@@ -1,9 +1,12 @@
 \name{qmosaic}
 \alias{qmosaic}
 \title{Mosaic plot.}
-\usage{qmosaic(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE, 
-    subset, colour = "grey30", main, ...)
+\usage{qmosaic(data, formula, divider = mosaic(), cascade = 0, 
+    scale_max = TRUE, na.rm = FALSE, subset, colour = "grey30", 
+    main, ...)
+
 }
+
 \description{Mosaic plot.
 Create a mosaicplot using a formula (as described in prodplot)}
 \value{NULL}
@@ -34,10 +37,12 @@ titanic <- as.data.frame(Titanic)
 
 tit.col = c("grey30", "grey50")[as.integer(titanic$Survived)]
 
-qtitanic <- qmutaframe(titanic, .brushed = FALSE, .color = tit.col)
+qtitanic <- qmutaframe(titanic, .brushed = FALSE, 
+    .color = tit.col)
 brush_attr(qtitanic, ".brushed.color") <- "red"
 
-print(qmosaic(qtitanic, Freq ~ Sex + Age | Class, mosaic()))
+print(qmosaic(qtitanic, Freq ~ Sex + Age | Class, 
+    mosaic()))
 print(qmosaic(qtitanic, Freq ~ Survived, "hbar"))}
 
 

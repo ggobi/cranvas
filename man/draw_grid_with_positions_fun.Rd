@@ -1,8 +1,9 @@
 \name{draw_grid_with_positions_fun}
 \alias{draw_grid_with_positions_fun}
 \title{draw grid with qt...}
-\usage{draw_grid_with_positions_fun(plotObj, dataRanges, horiPos, vertPos, minor.horiPos, 
-    minor.vertPos)
+\usage{draw_grid_with_positions_fun(plotObj, dataRanges, 
+    horiPos, vertPos, minor.horiPos, minor.vertPos)
+
 }
 \description{draw grid with qt
 draws the grid at given positions

@@ -2,6 +2,7 @@
 \alias{data_selector}
 \title{Select a subset of data through a GUI to be brushed.}
 \usage{data_selector(data, vars, gui.type = c("RGtk2", "Qt"))
+
 }
 \description{Select a subset of data through a GUI to be brushed.}
 \details{We use a \pkg{gWidgets}-based GUI to subset the data based on the
@@ -29,7 +30,8 @@ based on \pkg{gWidgetsQt}}
     ## NRC rankings
     data(nrcstat)
     qnrc = qmutaframe(nrcstat)
-    qparallel(qnrc, vars = 10:13, main = "Overview of Rankings", horizontal = FALSE)
+    qparallel(qnrc, vars = 10:13, main = "Overview of Rankings", 
+        horizontal = FALSE)
     data_selector(qnrc, "Institution.Name")
     qparallel(qnrc, vars = 14:19, main = "Research, Student Support, Diversity")
     qparallel(qnrc, vars = 20:26, main = "Publication, Award, Time to Degree")

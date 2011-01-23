@@ -2,6 +2,7 @@
 \alias{qmutaframe}
 \title{Create a Mutaframe from Data with Several Attributes for Interaction}
 \usage{qmutaframe(data, ...)
+
 }
 \description{Create a mutaframe from data with several attributes for interaction}
 \details{Create a mutaframe from data with several attributes for interaction:

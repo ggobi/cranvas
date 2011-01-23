@@ -2,6 +2,7 @@
 \alias{truncate_str}
 \title{Truncate Strings to the Specified Length}
 \usage{truncate_str(x, length, extra = "...")
+
 }
 \description{Truncate Strings}
 \details{Truncate a string if its length is greater than a specified \code{length},

@@ -2,6 +2,7 @@
 \alias{make_data_ranges}
 \title{makes the data ranges...}
 \usage{make_data_ranges(dataColumn)
+
 }
 \description{makes the data ranges
 makes the data ranges with a small buffer}

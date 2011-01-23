@@ -2,6 +2,7 @@
 \alias{mode_selection}
 \title{Logical Operations Under Different Selection Mode}
 \usage{mode_selection(x, y, mode = "none")
+
 }
 \description{Logical operations under different selection mode.}
 \details{There are five selection modes:

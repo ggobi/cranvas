@@ -2,6 +2,7 @@
 \alias{na.impute}
 \title{Data Imputation}
 \usage{na.impute(x, method = "below.min")
+
 }
 \description{Data Imputation}
 \details{Impute data by various methods.}

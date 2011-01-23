@@ -2,6 +2,7 @@
 \alias{qscatter}
 \title{Draw a scatterplot...}
 \usage{qscatter(data, form, main, labeled = TRUE)
+
 }
 \description{Draw a scatterplot}
 \arguments{\item{data}{data.frame source}

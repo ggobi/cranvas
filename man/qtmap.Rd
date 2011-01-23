@@ -5,6 +5,7 @@
     labeldata, by.y = by.x, colour, main, ...)
 
 }
+
 \description{Interactive Maps.
 Create an interactive map from qmutaframe}
 \value{NULL}

@@ -2,6 +2,7 @@
 \alias{divide_by_maximum}
 \title{Divide by maximum.}
 \usage{divide_by_maximum(val, maxVal = val)
+
 }
 \description{Divide by maximum.
 Divides a vector by a maximum value of a vector}

@@ -2,6 +2,7 @@
 \alias{fill_and_stroke}
 \title{Fill and Stroke by Color...}
 \usage{fill_and_stroke(color, fill, stroke)
+
 }
 \description{Fill and Stroke by Color
 Set the fill and stroke by the color if they are already not defined}

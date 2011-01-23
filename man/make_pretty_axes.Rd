@@ -2,6 +2,7 @@
 \alias{make_pretty_axes}
 \title{pretty axes...}
 \usage{make_pretty_axes(dataRange, minimum, maximum)
+
 }
 \description{pretty axes
 make 'pretty' axes and make sure that they are within the minimum and maximum}

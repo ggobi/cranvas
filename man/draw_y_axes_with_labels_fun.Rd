@@ -1,7 +1,9 @@
 \name{draw_y_axes_with_labels_fun}
 \alias{draw_y_axes_with_labels_fun}
 \title{draw y axes with qt...}
-\usage{draw_y_axes_with_labels_fun(plotObj, dataRanges, axisLabels, labelVertPos, name)
+\usage{draw_y_axes_with_labels_fun(plotObj, dataRanges, axisLabels, 
+    labelVertPos, name)
+
 }
 \description{draw y axes with qt
 draws the y axes with the labels and label positions given
