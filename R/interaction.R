@@ -63,7 +63,8 @@ qmutaframe = function(data, ...) {
     ## here '.brush.mode' is explained in the documentation of mode_selection()
 
     ## specifies which variable is used for (hot/cold) linking
-    attr(mf, '.linking') = mutalist(.linkvar = NULL, .type = 'hot')
+    attr(mf, '.linking') = mutalist(.linkvar = NULL, .type = 'hot', .focused = FALSE)
+
 
     ## and other possible attributes
 
@@ -143,6 +144,35 @@ brush_attr = function(data, attr) {
 }
 
 
+##' Set or query the focus status.
+##'
+##' The plot on top of all the rest of plots is on focus, and the
+##' corresponding mutaframe is said to be on focus too.
+##' @param data the mutaframe
+##' @return a logical value: whether the plot corresponding to this
+##' mutaframe is on focus or not
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples
+##' mf = qmutaframe(head(iris))
+##'
+##' focused(mf)
+##'
+##' focused(mf) = TRUE
+##'
+focused = function(data) {
+    attr(data, '.linking')[['.focused']]
+}
+
+##' @rdname focused
+##' @usage focused(data) <- value
+##' @param value a logical value: whether on focus or not
+##' @export "focused<-"
+##' @return \code{NULL}; the status of focus is changed to \code{value}
+`focused<-` = function(data, value) {
+    attr(data, '.linking')[['.focused']] = value
+    data
+}
 
 ##' Truncate Strings
 ##'
