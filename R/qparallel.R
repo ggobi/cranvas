@@ -530,6 +530,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
 
     scene = qscene()
     root_layer = qlayer(scene)
+
     ## title
     title_layer = qlayer(root_layer, function(item, painter) {
         qdrawText(painter, main, (lims[1] + lims[2])/2, 0, "center", "bottom")
@@ -555,6 +556,11 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move,
         mouseMove = identify_mouse_move, keyPressFun = identify_key_press,
         keyReleaseFun = identify_key_release,
+        focusInFun = function(item, painter) {
+            focused(data) = TRUE
+        }, focusOutFun = function(item, painter) {
+            focused(data) = FALSE
+        },
         limits = qrect(lims), row = 1, col = 1)
 
     range_layer = qlayer(root_layer, range_draw, limits = qrect(lims), row = 1, col = 1)
