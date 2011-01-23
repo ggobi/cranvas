@@ -286,7 +286,7 @@ qhist <- function(
 				}
 
 		} else if (key == 87) {
-			cat("\n\n\nClosing window!!!! - ", qclose(.view), "\n")
+			cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
 		}
 
 

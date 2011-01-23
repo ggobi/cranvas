@@ -192,8 +192,3 @@ focused = function(data) {
 truncate_str = function(x, length, extra = '...') {
     paste(substr(x, 1, length), ifelse(nchar(x) > length, extra, ''), sep = '')
 }
-
-
-qclose <- function(x) {
-	x$close()
-}
