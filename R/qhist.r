@@ -1,5 +1,5 @@
 e <- function() {
-	
+
 	library(qtbase)
 	library(qtpaint)
 	library(reshape)
@@ -98,7 +98,7 @@ qhist <- function(
 		splitByCol <- "qhist_split_column"
 		mf_data[[splitByCol]] <- 1
 	}
-	
+
 	# sets values to FALSE only if brush does not exist yet
 	mf_data <- column_coerce(mf_data, ".brushed", FALSE)
 
@@ -131,19 +131,19 @@ qhist <- function(
 
 	} else if(!is.null(binwidth)) {
 		.type <- list(type = "hist", binwidth = binwidth, start = start)
-		
+
 	} else {
 		if(nbins < 1) { stop("please supply a correct bin count") }
 		temp_breaks <- baseHistP(breaks = nbins)$breaks
 		.type <- list(type = "hist", binwidth = diff(xColRange())/nbins, start = start)
 	}
 	.histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
-	# cat("\nOriginal Hist Breaks!\n"); print(.histOriginalBreaksAndStart); 
+	# cat("\nOriginal Hist Breaks!\n"); print(.histOriginalBreaksAndStart);
 	# cat("start: ");print(start)
 	# cat("bin_algo_str: ");print(bin_algo_str)
 	# cat("binwidth: ");print(binwidth)
 	# cat("nbins: ");print(nbins)
-	
+
 
 	updateBarsInfo <- function() {
 		.bars_info <<- continuous_to_bars(
@@ -161,7 +161,7 @@ qhist <- function(
 		cat("data: \n");print(mf_data[1:8,])
 		cat("condensed data: \n");print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
 		cat("unique columns: "); print(unique(.mf_data_col_names))
-		
+
 		.updateinfo <<- FALSE
 	}
 	updateBarsInfo()
@@ -327,30 +327,30 @@ qhist <- function(
 			#  .brush.attr = attr(odata, '.brush.attr')
 			# brushcolor <- .brush.attr[,".brushed.color"]
 			brushColor <- brush_attr(mf_data, ".brushed.color")
-			
+
 			b <- section$bottom
 			t <- (section$top - b) * section$.brushed + b
-			
+
 			cat("b: "); print(b)
 			cat("t: "); print(t)
 			cat("top: "); print(section$top)
 			cat("perc: "); print(section$.brushed)
 			cat("section:\n"); print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
 			#cat("real data:\n"); print(mf_data[mf_data$disp < 200, c("disp", "cyl", ".brushed")])
-			
+
 			brushColor <- rep(brushColor, nrow(section))
 			brushColorRGBA <- col2rgb(brushColor, TRUE)
 #browser()
 			if(brushColorRGBA["alpha",][[1]] > 200) {
 				brushColorRGBA["alpha",][[1]] <- 200
 				newBrushColor <- rgb(brushColorRGBA["red",][[1]], brushColorRGBA["green",][[1]], brushColorRGBA["blue",][[1]], brushColorRGBA["alpha",][[1]], maxColorValue = 255)
-				
+
 				rows <- section$.brushed < 1
 				brushColor[rows] <- newBrushColor
 			}
-			
-			
-			
+
+
+
 			if (horizontal)
 				qdrawRect(painter, b, section$right, t, section$left, fill = brushColor, stroke = "grey50")
 			else
@@ -455,7 +455,7 @@ qhist <- function(
 		rows <- rep(FALSE, nrow(mf_data))
 		if(NROW(section) > 0)
 			rows <- .mf_data_col_names  %in% as.character(section$label)
-		
+
 # update original data
 		data$.brushed <- rows
 		# print(mf_data[1:min(12, nrow(mf_data)), ])
@@ -611,7 +611,7 @@ qhist <- function(
 			qupdate(brushing_layer)
 		}
 	})
-	
+
 #	add_listener(.brush.attr, function(i, j) {
 #			qupdate(brushing_layer)
 #	})
