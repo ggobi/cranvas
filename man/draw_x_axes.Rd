@@ -1,7 +1,8 @@
 \name{draw_x_axes}
 \alias{draw_x_axes}
 \title{draw x axes...}
-\usage{draw_x_axes(plotObj, dataRanges, name, row = 0, col = 0)
+\usage{draw_x_axes(plotObj, dataRanges, name, row = 0, 
+    col = 0)
 
 }
 \description{draw x axes

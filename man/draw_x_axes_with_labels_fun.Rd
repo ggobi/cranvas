@@ -1,8 +1,8 @@
 \name{draw_x_axes_with_labels_fun}
 \alias{draw_x_axes_with_labels_fun}
 \title{draw x axes with qt...}
-\usage{draw_x_axes_with_labels_fun(plotObj, dataRanges, axisLabels, 
-    labelHoriPos, name)
+\usage{draw_x_axes_with_labels_fun(plotObj, dataRanges, 
+    axisLabels, labelHoriPos, name)
 
 }
 \description{draw x axes with qt

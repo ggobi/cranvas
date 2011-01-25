@@ -1,8 +1,8 @@
 \name{qtmap}
 \alias{qtmap}
 \title{Interactive Maps.}
-\usage{qtmap(data, longitude, latitude, group, by.x, label, 
-    labeldata, by.y = by.x, colour, main, ...)
+\usage{qtmap(data, longitude, latitude, group, by.x, 
+    label, labeldata, by.y = by.x, colour, main, ...)
 
 }
 
@@ -41,18 +41,19 @@ crimes$State <- tolower(crimes$State)
 library(RColorBrewer)
 crimes$nines <- with(crimes, cut(Burglary/Population, 
     9))
-#crimes$nines <- with(crimes, cut(Violent.crime/Population,
-#   9))
+#crimes$nines <- with(crimes,
+#   cut(Violent.crime/Population, 9))
 crimes$nines <- brewer.pal(9, "Greys")[crimes$nines]
 qcrimes <- qmutaframe(crimes)
 print(qparallel(qcrimes))
 
 source("map.R")
 print(qtmap(qstates, long, lat, group, label = region, 
-    labeldata = qcrimes, by.x = "region", by.y = "State", colour = Violent.crime))
+    labeldata = qcrimes, by.x = "region", by.y = "State", 
+    colour = Violent.crime))
 q <- qtmap(qstates, long, lat, group, label = region, 
-    labeldata = qcrimes, by.x = "region", by.y = "State", colour = log(Violent.crime/Population + 
-        1))
+    labeldata = qcrimes, by.x = "region", by.y = "State", 
+    colour = log(Violent.crime/Population + 1))
 
 
 #qtmap(qstates, long, lat, group, label=region)

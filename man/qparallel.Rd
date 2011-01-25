@@ -3,11 +3,13 @@
 \title{Parallel coordinates plot.}
 \usage{qparallel(data, vars, scale = "range", na.action = na.impute, 
     center, order = c("none", "MDS", "ANOVA"), horizontal = TRUE, 
-    glyph = c("auto", "line", "tick", "circle", "square", "triangle"), 
-    boxplot = FALSE, boxwex, jitter, amount, mar = c(0.04, 0.04, 
-        0.04, 0.04), main, lab.split = "[^[:alnum:]]", verbose = getOption("verbose"))
+    glyph = c("auto", "line", "tick", "circle", "square", 
+        "triangle"), boxplot = FALSE, boxwex, jitter, amount, 
+    mar = c(0.04, 0.04, 0.04, 0.04), main, lab.split = "[^[:alnum:]]", 
+    verbose = getOption("verbose"))
 
 }
+
 
 
 
@@ -76,8 +78,8 @@ library(cranvas)
 
 data(nrcstat)
 qnrc = qmutaframe(nrcstat)
-rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, 
-    sep = " -> ")
+rownames(qnrc) = paste(nrcstat$Institution.Name, 
+    nrcstat$Program.Name, sep = " -> ")
 
 ## Overview: type, rankings
 qparallel(qnrc, vars = 13:10, main = "Overview of Rankings", 
@@ -101,8 +103,8 @@ qparallel(qnrc, vars = 14:19, main = "Research, Student Support, Diversity",
     center = median, horizontal = FALSE, glyph = "tick")
 
 qparallel(qnrc, vars = 20:68, main = "Other Indicators", 
-    center = median, horizontal = FALSE, glyph = "tick", lab.split = NULL, 
-    boxplot = TRUE, boxwex = 0.8)
+    center = median, horizontal = FALSE, glyph = "tick", 
+    lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
 
 # Find ISU, and sort by best rank to least on ISU
 median.centering <- function(x) {
@@ -113,8 +115,8 @@ median.centering <- function(x) {
 nrc.medctr <- apply(nrcstat[, 20:68], 2, median.centering)
 var.ord <- order(nrc.medctr[13, ]) + 19
 qparallel(qnrc, vars = var.ord, main = "Other Indicators", 
-    center = median, horizontal = FALSE, glyph = "tick", lab.split = NULL, 
-    boxplot = TRUE, boxwex = 0.8)
+    center = median, horizontal = FALSE, glyph = "tick", 
+    lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
 
 ## color palette
 library(RColorBrewer)
@@ -202,54 +204,57 @@ qparallel(qmtcars, order = "MDS")
 qparallel(qmtcars, order = "ANOVA")
 
 ## test speed
-test.mat1 = qmutaframe(matrix(rnorm(1000 * 10), ncol = 10), 
-    .color = rgb(1, 0, 0, 0.2))
+test.mat1 = qmutaframe(matrix(rnorm(1000 * 10), 
+    ncol = 10), .color = rgb(1, 0, 0, 0.2))
 qparallel(test.mat1, mar = c(0.2, 0.1, 0.1, 0.1))
 
-test.mat2 = qmutaframe(matrix(rnorm(1000 * 15), ncol = 15), 
-    .color = rgb(1, 0, 0, 0.2))
+test.mat2 = qmutaframe(matrix(rnorm(1000 * 15), 
+    ncol = 15), .color = rgb(1, 0, 0, 0.2))
 qparallel(test.mat2, boxplot = TRUE)
 
 ## slow for brushing in my laptop
-test.mat3 = qmutaframe(matrix(rnorm(5000 * 10), ncol = 10), 
-    .color = rgb(1, 0, 0, 0.05))
+test.mat3 = qmutaframe(matrix(rnorm(5000 * 10), 
+    ncol = 10), .color = rgb(1, 0, 0, 0.05))
 qparallel(test.mat3, verbose = TRUE)
 
 ## speed tests
 ## on my laptop, 10000x10 takes 5 secs to build the
 #   brushing cache
-## identifying is generally very fast once the cache was
-#   built
-qhuge1 = qmutaframe(matrix(rbeta(10000 * 10, 5, 30), 
-    ncol = 10))
+## identifying is generally very fast once the cache
+#   was built
+qhuge1 = qmutaframe(matrix(rbeta(10000 * 10, 5, 
+    30), ncol = 10))
 qparallel(qhuge1, verbose = TRUE)
 ## 30000x10 takes 45 seconds
-qhuge2 = qmutaframe(matrix(rbeta(30000 * 10, 5, 30), 
-    ncol = 10))
+qhuge2 = qmutaframe(matrix(rbeta(30000 * 10, 5, 
+    30), ncol = 10))
 qparallel(qhuge2, verbose = TRUE)
 ## 1 million points to torture Qt!!
-qhuge3 = qmutaframe(matrix(rbeta(1e+05 * 10, 5, 30), 
-    ncol = 10))
+qhuge3 = qmutaframe(matrix(rbeta(1e+05 * 10, 5, 
+    30), ncol = 10))
 qparallel(qhuge3, verbose = TRUE)
 
-## linking two parcoords plots: split the data into 2 parts
+## linking two parcoords plots: split the data into 2
+#   parts
 testdata = qmutaframe(as.data.frame(matrix(rnorm(2000 * 
     10), ncol = 10)))
 qparallel(testdata, vars = sprintf("V\%d", 1:6))
 qparallel(testdata, vars = sprintf("V\%d", 4:10))
 
 library(ggplot2)
-qdiamonds = qmutaframe(diamonds, .color = rgb(1, 0, 
-    0, 0.01))
-qparallel(qdiamonds, vars = 1:7, glyph = "line", jitter = ~cut + 
-    color + clarity)
+qdiamonds = qmutaframe(diamonds, .color = rgb(1, 
+    0, 0, 0.01))
+qparallel(qdiamonds, vars = 1:7, glyph = "line", 
+    jitter = ~cut + color + clarity)
 qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
-qparallel(qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
+qparallel(qdiamonds, vars = 1:7, glyph = "line", 
+    order = "ANOVA")
 qdiamonds$.color = brewer.pal(7, "Set1")[as.integer(diamonds$color)]
-qparallel(qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
+qparallel(qdiamonds, vars = 1:7, glyph = "line", 
+    order = "ANOVA")
 
-## for large data, glyphs (short ticks) are automatically
-#   used instead of segments
+## for large data, glyphs (short ticks) are
+#   automatically used instead of segments
 
 ## residential data: 18221x8
 if (!require("YaleToolkit")) install.packages("YaleToolkit")
@@ -279,13 +284,14 @@ qparallel(qnhr, horizontal = FALSE)
 # jitter is hopeless for huge data...
 qnhr$.color = rgb(1, 0, 0, 0.01)
 qparallel(qnhr, jitter = "zone", amount = 0.3)
-qparallel(qnhr, jitter = c("bedrms", "zone"), amount = 0.2)
+qparallel(qnhr, jitter = c("bedrms", "zone"), 
+    amount = 0.2)
 
 
 library(animation)
 data(pollen)
-qpollen = qmutaframe(pollen, .color = rgb(0, 0, 1, 
-    0.01))
+qpollen = qmutaframe(pollen, .color = rgb(0, 0, 
+    1, 0.01))
 qparallel(qpollen)}
 
 

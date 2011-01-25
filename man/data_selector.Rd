@@ -1,7 +1,8 @@
 \name{data_selector}
 \alias{data_selector}
 \title{Select a subset of data through a GUI to be brushed.}
-\usage{data_selector(data, vars, gui.type = c("RGtk2", "Qt"))
+\usage{data_selector(data, vars, gui.type = c("RGtk2", 
+    "Qt"))
 
 }
 \description{Select a subset of data through a GUI to be brushed.}

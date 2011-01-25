@@ -5,6 +5,7 @@
     horiPos, vertPos, minor.horiPos, minor.vertPos)
 
 }
+
 \description{draw grid with qt
 draws the grid at given positions
 can be used as part of a recall function to update a particular layer}

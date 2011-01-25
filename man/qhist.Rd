@@ -44,20 +44,20 @@ qhist(mtcars, "disp", horizontal = TRUE, fill = "gold",
     stroke = "red4")
 
 # stacked items
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", 
-    position = "stack", title = "mtcars - stack")
+qhist(mtcars, "disp", "cyl", horizontal = FALSE, 
+    stroke = "black", position = "stack", title = "mtcars - stack")
 
 # raw value items
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", 
-    position = "identity", title = "mtcars - identity")
+qhist(mtcars, "disp", "cyl", horizontal = FALSE, 
+    stroke = "black", position = "identity", title = "mtcars - identity")
 
 # dodged items
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", 
-    position = "dodge", title = "mtcars - dodge")
+qhist(mtcars, "disp", "cyl", horizontal = FALSE, 
+    stroke = "black", position = "dodge", title = "mtcars - dodge")
 
 # range from 0 to 1
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", 
-    position = "relative", title = "mtcars - relative")}
+qhist(mtcars, "disp", "cyl", horizontal = FALSE, 
+    stroke = "black", position = "relative", title = "mtcars - relative")}
 
 
 
