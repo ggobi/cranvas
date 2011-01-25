@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 ## this script will automatically run roxygen on cranvas; it can be used as a shell script
-## e.g. Rscript roxygenize.R or Rscript roxygenize.R install
+## e.g. Rscript roxygenize.R or Rscript roxygenize.R install or Rscript roxyenize.R update install
 ## if there is an option 'install', this script will try to install the cranvas package
 
 ## extract the working directory from the file you provided
@@ -17,7 +17,7 @@ if (!('cranvas' %in% list.files('../')))
     stop('the cranvas package not found under ', normalizePath(file.path(getwd(), '..')))
 
 ## update git as well; someone wants to be really lazy
-system('git pull')
+if ('update' %in% commandArgs(TRUE)) system('git pull')
 
 ## requires Rd2roxygen and formatR (don't ask why; just do it)
 if (!require('Rd2roxygen')) install.packages('Rd2roxygen')
