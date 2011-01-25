@@ -333,22 +333,26 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         }
         qstrokeColor(painter) = "black"
         for (i in (1:p)[numcol]) {
-            x0 = c(rep(i - boxwex/2, 6), i + boxwex/2, rep(i, 2))
-            y0 = c(bxpstats[, i], rep(bxpstats[2, i], 2), bxpstats[c(1, 4), i])
-            x1 = c(rep(i + boxwex/2, 5), i - boxwex/2, i + boxwex/2, rep(i, 2))
-            y1 = c(bxpstats[, i], rep(bxpstats[4, i], 2), bxpstats[c(2, 5), i])
-            if (horizontal) {
-                qdrawSegment(painter, x0, y0, x1, y1)
-                qlineWidth(painter) = 3
-                qdrawSegment(painter, x0[3], y0[3], x1[3], y1[3])
-                qlineWidth(painter) = 1
+            x0 = c(rep(i - boxwex/2, 3), rep(i, 2))
+            y0 = bxpstats[c(1, 3, 5, 1, 4), i]
+            x1 = c(rep(i + boxwex/2, 3), rep(i, 2))
+            y1 = bxpstats[c(1, 3, 5, 2, 5), i]
+            xleft = i - boxwex/2
+            ybottom = bxpstats[2, i]
+            xright = i + boxwex/2
+            ytop = bxpstats[4, i]
+            ## exchange x and y if vertical
+            if (!horizontal) {
+                tmp = x0; x0 = y0; y0 = tmp
+                tmp = x1; x1 = y1; y1 = tmp
+                tmp = xleft; xleft = ybottom; ybottom = tmp
+                tmp = xright; xright = ytop; ytop = tmp
             }
-            else {
-                qdrawSegment(painter, y0, x0, y1, x1)
-                qlineWidth(painter) = 3
-                qdrawSegment(painter, y0[3], x0[3], y1[3], x1[3])
-                qlineWidth(painter) = 1
-            }
+            qdrawSegment(painter, x0, y0, x1, y1)
+            qdrawRect(painter, xleft, ybottom, xright, ytop, fill = 'darkgray')
+            qlineWidth(painter) = 3
+            qdrawSegment(painter, x0[2], y0[2], x1[2], y1[2])
+            qlineWidth(painter) = 1
         }
         if (verbose)
             message(format(difftime(Sys.time(), ntime)))
