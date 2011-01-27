@@ -42,9 +42,6 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 ##' @example cranvas/inst/examples/maps-ex.R
 qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, labeldata=NULL, by.y=by.x,  colour=NULL, main=NULL, ...) {
   ## check if an attribute exist
-  has_attr = function(attr) {
-      attr %in% names(data)
-  }
 #  browser()
   arguments <- as.list(match.call()[-1])
  	df.data <- data.frame(data)
@@ -67,7 +64,6 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 
   ## parameters for the brush
   .brush.attr = attr(data, '.brush.attr')
-  if (!has_attr('.brushed')) data$.brushed <- FALSE
 
 	# by.x and by.y connect datasets data and labeldata
 	# check that connection works

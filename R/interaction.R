@@ -46,6 +46,7 @@ qmutaframe = function(data, ...) {
         mf = data
         ## initialize here; TODO: get rid of this in qparallel, qmosaic...
         mf$.brushed = FALSE
+        mf$.color = 'black'
         ## prevent converting from characters to factors
         if(!is.mutaframe(mf)) {
             old_opts = options(stringsAsFactors = FALSE)

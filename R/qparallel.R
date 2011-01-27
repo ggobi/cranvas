@@ -68,11 +68,6 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     ## move brush?
     .bmove = TRUE
 
-    ## check if an attribute exists
-    has_attr = function(attr) {
-        attr %in% names(data)
-    }
-
     ## the title string
     dataname = deparse(substitute(data))
     if (missing(main)) {
@@ -89,11 +84,6 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
 
     if (length(vars) <= 1L)
         stop("parallel cooridinates plots need at least 2 variables!")
-
-    ## obtain colors from the original mutaframe
-    if (!has_attr('.color')) data$.color = 'black'
-    ## brushed
-    if (!has_attr('.brushed')) data$.brushed = FALSE
 
     glyph = match.arg(glyph)
     order = match.arg(order)
