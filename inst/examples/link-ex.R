@@ -1,3 +1,6 @@
+### (1) proof of concept
+library(cranvas)
+
 ## link the original data with a frequency table
 data1 = qmutaframe(iris)
 tab2 = as.data.frame(table(iris$Species))
@@ -30,3 +33,19 @@ data1
 data2$.brushed[1] = FALSE  # do not brush 'setosa'
 data2
 data1
+
+
+
+### (2) linking two par-coords plots: one original data, one aggregated
+data(nrcstat)
+nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code), function(x) round(mean(x), 1))
+qnrc = qmutaframe(nrcstat)
+qnrc.agg = qmutaframe(nrcstat.agg)
+## link by region
+link_var(qnrc) = link_var(qnrc.agg) = 'Regional.Code'
+link(qnrc, qnrc.agg)
+
+qparallel(qnrc, vars = c(8, 10:19))
+qparallel(qnrc.agg)
+
+brush_attr(qnrc.agg, '.label.show') = TRUE  # turn on labels
