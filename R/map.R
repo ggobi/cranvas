@@ -1,5 +1,3 @@
-require(plumbr)
-
 myvarsummary <- function(x) {
 	if (is.factor(x) || is.character(x)) return(names(sort(table(x), decreasing=TRUE))[1])
 	if (is.logical(x)) return(any(x, na.rm=TRUE))
