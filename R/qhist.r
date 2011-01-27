@@ -1,14 +1,3 @@
-e <- function() {
-
-	library(qtbase)
-	library(qtpaint)
-	library(reshape)
-	library(plyr)
-	library(plumbr)
-	library(stringr)
-}
-
-
 #' Create a hist plot
 #' Create a hist plot from 1-D numeric data
 #'
