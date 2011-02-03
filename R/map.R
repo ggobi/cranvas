@@ -40,7 +40,7 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 ##' @author Heike Hofmann
 ##' @export
 ##' @example cranvas/inst/examples/maps-ex.R
-qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, labeldata=NULL, by.y=by.x,  colour=NULL, main=NULL, ...) {
+qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labeldata=NULL, by.y=by.x,  colour=NULL, main=NULL, ...) {
   ## check if an attribute exist
 #  browser()
   arguments <- as.list(match.call()[-1])
