@@ -20,5 +20,5 @@ Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.0-3),
 Suggests: productplots, gWidgetsRGtk2
 Collate: 'api-sketch.r' 'axes.r' 'bin.r' 'bin_utils.r' 'bprint.r'
     'cranvas-package.R' 'data.R' 'GUI.R' 'helper.r'
-    'interaction.R' 'labels.r' 'link.R' 'map.R' 'qhist.r'
+    'interaction.R' 'labels.r' 'link.R' 'map.R' 'mval.R' 'qhist.r'
     'qmosaic.R' 'qparallel.R' 'qscatter.r' 'shared.r'

@@ -1,18 +1,18 @@
 \name{link}
 \alias{link}
-\title{Link two mutaframes by a common categorical variable.}
-\usage{link(mf1, mf2)
+\title{Link mutaframes by a common categorical variable.}
+\usage{link(...)
 
 }
-\description{Link two mutaframes by a common categorical variable.}
-\details{This function links two mutaframes together by a common
+\description{Link mutaframes by a common categorical variable.}
+\details{This function links several mutaframes together by a common
 categorical variable; this linking variable can be specified with
 \code{\link{link_var}}.}
-\value{the two mutaframes will be linked together by their
+\value{the mutaframes will be linked together by their
 linking variables (listeners added)}
 \author{Yihui Xie <\url{http://yihui.name}>}
-\arguments{\item{mf1}{the first mutaframe}
-\item{mf2}{the second mutaframe}
+\arguments{\item{...}{the mutaframes (at least two mutaframes); the
+mutaframes are typically created by \code{\link{qmutaframe}}}
 }
 \examples{### (1) proof of concept
 library(cranvas)
