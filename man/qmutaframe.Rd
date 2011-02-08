@@ -1,17 +1,18 @@
 \name{qmutaframe}
 \alias{qmutaframe}
-\title{Create a Mutaframe from Data with Several Attributes for Interaction}
+\title{Create a mutaframe from data with several attributes for interaction.}
 \usage{qmutaframe(data, ...)
 
 }
-\description{Create a mutaframe from data with several attributes for interaction}
-\details{Create a mutaframe from data with several attributes for interaction:
-first check if the names of some predefined row attributes (e.g. .color, .brushed)
-exist in the data (will issue an error if this happens); then augment the ...
-arguments to the data and convert the augmented data to a mutaframe; in the end
-add some attributes to the mutaframe to control the appearance of elements for
-interaction (e.g. the color of the brush, the size of the brushed objects, and
-whether to show the labels of the brushed objects).}
+\description{Create a mutaframe from data with several attributes for interaction.}
+\details{First check if the names of some predefined row attributes
+(e.g. .color, .brushed) exist in the data (will issue an error if
+this happens); then augment the ...  arguments to the data and
+convert the augmented data to a mutaframe; in the end add some
+attributes to the mutaframe to control the appearance of elements
+for interaction (e.g. the color of the brush, the size of the
+brushed objects, and whether to show the labels of the brushed
+objects).}
 \value{a mutaframe}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{data}{a data frame (typically); it will be coerced to a data

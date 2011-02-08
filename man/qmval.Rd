@@ -1,22 +1,14 @@
-\name{qtmap}
-\alias{qtmap}
-\title{Interactive Maps.}
-\usage{qtmap(data, longitude, latitude, group, by.x, 
-    label = group, labeldata, by.y = by.x, colour, main, 
-    ...)
+\name{qmval}
+\alias{qmval}
+\title{Interactive Missing Value Plot.}
+\usage{qmval(data, vars, main, ...)
 
 }
-
-\description{Interactive Maps.
-Create an interactive map from qmutaframe}
+\description{Interactive Missing Value Plot.}
 \value{NULL}
 \author{Heike Hofmann}
 \arguments{\item{data}{a mutaframe which is typically built upon a data frame
 along with several row attributes}
-\item{latitude}{spatial x variable}
-\item{longitude}{spatial y variable}
-\item{group}{grouping variable for polygons}
-\item{colour}{fill colour of the polygons}
 \item{...}{}
 }
 \examples{library(qtbase)

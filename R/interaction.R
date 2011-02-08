@@ -1,19 +1,20 @@
-##' Create a mutaframe from data with several attributes for interaction
+##' Create a mutaframe from data with several attributes for interaction.
 ##'
-##' Create a mutaframe from data with several attributes for interaction:
-##' first check if the names of some predefined row attributes (e.g. .color, .brushed)
-##' exist in the data (will issue an error if this happens); then augment the ...
-##' arguments to the data and convert the augmented data to a mutaframe; in the end
-##' add some attributes to the mutaframe to control the appearance of elements for
-##' interaction (e.g. the color of the brush, the size of the brushed objects, and
-##' whether to show the labels of the brushed objects).
-##' @title Create a Mutaframe from Data with Several Attributes for Interaction
+##' First check if the names of some predefined row attributes
+##' (e.g. .color, .brushed) exist in the data (will issue an error if
+##' this happens); then augment the ...  arguments to the data and
+##' convert the augmented data to a mutaframe; in the end add some
+##' attributes to the mutaframe to control the appearance of elements
+##' for interaction (e.g. the color of the brush, the size of the
+##' brushed objects, and whether to show the labels of the brushed
+##' objects).
 ##' @param data a data frame (typically); it will be coerced to a data
 ##' frame
 ##' @param ... other attributes corresponding to rows such as colors,
 ##' sizes and so on
 ##' @return a mutaframe
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
 ##' @examples
 ##' iris0 = qmutaframe(iris, .color = 'red', .brushed = FALSE)
 ##' ## the line width >= 2 does not work for me, so use 1
@@ -126,6 +127,8 @@ mode_selection = function(x, y, mode = 'none'){
 ##' @return the brush attribute(s) (or as a side effect, change the attribute of
 ##' \code{data})
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export brush_attr
+##' @export "brush_attr<-"
 ##' @examples qiris = qmutaframe(head(iris))
 ##' brush_attr(qiris)  # all attributes
 ##' brush_attr(qiris, '.brush.color')
@@ -153,7 +156,7 @@ brush_attr = function(data, attr) {
 ##' @return a logical value: whether the plot corresponding to this
 ##' mutaframe is on focus or not
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @export
+##' @export focused
 ##' @examples
 ##' mf = qmutaframe(head(iris))
 ##'
