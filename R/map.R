@@ -50,7 +50,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 	y <- eval(arguments$latitude, df.data)
 	group <- eval(arguments$group, df.data)
 	if (is.null(labeldata))
-		label <- eval(arguments$label, df.data)
+		label <- unique(eval(arguments$label, df.data))
 
 
 	.groupsdata <- ddply(df.data,.(group), mysummary)
@@ -316,8 +316,27 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 				fill=NULL
 			)
 		}
-    qstrokeColor(painter) <- brushcolor
-    qdrawText(painter, infostring, xpos, ypos, valign="top", halign="left")
+
+    bgwidth = qstrWidth(painter, infostring)
+    bgheight = qstrHeight(painter, infostring)
+
+#    qdrawText(painter, infostring, xpos, ypos, valign="top", halign="left")
+    
+    
+		## adjust drawing directions when close to the boundary
+		hflag = windowRanges[2] - xpos > bgwidth
+		vflag = ypos - windowRanges[3] > bgheight
+		qdrawRect(painter, xpos, ypos,
+							xpos + ifelse(hflag, 1, -1) * bgwidth,
+							ypos + ifelse(vflag, -1, 1) * bgheight,
+							stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
+
+		qstrokeColor(painter) = brush_attr(data, '.label.color')
+    qdrawText(painter, infostring, xpos, ypos,
+    	halign = ifelse(hflag, "left", "right"),
+      valign = ifelse(vflag, "top", "bottom"))
+    
+    
   }
 
   query_hover <- function(item, event, ...) {
