@@ -49,10 +49,13 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 	x <- eval(arguments$longitude, df.data)
 	y <- eval(arguments$latitude, df.data)
 	group <- eval(arguments$group, df.data)
+	if (is.null(labeldata))
+		label <- eval(arguments$label, df.data)
 
 
 	.groupsdata <- ddply(df.data,.(group), mysummary)
 	.groupsdata <- cast(.groupsdata, group ~ .id, value="V1")
+#	.groupsdata$ID <- 1:nrow(.groupsdata)
 	names(.groupsdata)[1] <- "ID"
 	.groupsdata$.color <- "grey30"
 	if (!(".brushed" %in% names(.groupsdata))) .groupsdata$.brushed <- FALSE
@@ -64,6 +67,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 
   ## parameters for the brush
   .brush.attr = attr(data, '.brush.attr')
+	
 
 	# by.x and by.y connect datasets data and labeldata
 	# check that connection works
@@ -113,14 +117,15 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 #		if (.recalc) recalc()
 
 
-		for (i in .groupsdata$ID) {
+		for (j in 1:length(.groupsdata$ID)) {
+			i <- .groupsdata$ID[j]
 			xx <- x[group==i]
 			yy <- y[group==i]
 			qdrawPolygon(painter,
 				xx,
 				yy,
 				stroke="grey80",
-				fill=.groupsdata$.color[i]
+				fill=.groupsdata$.color[j]
 			)
 		}
 
@@ -143,14 +148,15 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
   }
 
 	recalcbrushed <- function() {
-		for (i in .groupsdata$ID) {
-			brushed <- data$.brushed[group == i]
+#browser()
+		for (i in 1:length(.groupsdata$ID)) {
+			brushed <- data$.brushed[group == .groupsdata$ID[i]]
 			.groupsdata$.brushed[i] <<- any(brushed)
 
 		}
 		.recalcbrushed <<- FALSE
 
-		setSelectedLabel()
+		if (!is.null(labeldata)) setSelectedLabel()
 	}
 
 	recalclbrushed <- function() {
@@ -165,8 +171,8 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 
   brushing_draw <- function(item, painter, exposed, ...) {
 		if (.recalcbrushed) recalcbrushed()
-		if (.recalclbrushed) recalclbrushed()
-print("brushing_draw")
+		if (!is.null(labeldata) && (.recalclbrushed)) recalclbrushed()
+#print("brushing_draw")
     if (!is.null(.endBrush)) {
       drawBrush(item, painter, exposed)
     }
@@ -238,7 +244,7 @@ print("brushing_draw")
   }
 
   setSelected <- function() {
-print("set selected")
+#print("set selected")
 	# propagate highlighting to the data set and other plots
 #browser()
 #		brushed <- data$.brushed
@@ -253,8 +259,11 @@ print("set selected")
   }
 
 	setSelectedLabel <- function () {
-	print("set selected labeldata")
+	#print("set selected labeldata")
 		bdata <- subset(.groupsdata, .brushed == TRUE)
+		if (is.null(yid)) return()
+		if (is.null(xid)) return()
+		
 		brushed <- labeldata[, yid] %in% bdata[, xid]
 
 		if (any(labeldata$.brushed != brushed)) labeldata$.brushed <- brushed
@@ -329,7 +338,7 @@ print("set selected")
   # Display legend information for colour ----------------------------
 
   legend_draw <- function(item, painter, exposed, ...) {
-print("legend_draw")
+#print("legend_draw")
 		if (is.null(arguments$colour)) return()
 
 		xpos = max(x)
@@ -390,7 +399,7 @@ print("addlistener: brushed")
 	    				 }
 		)
 	})
-
+if(!is.null(labeldata)) {
 	add_listener(labeldata, function(i, j) {
 		switch(j,
 			.brushed = {
@@ -403,7 +412,7 @@ print("addlistener: labeldata brushed")
 	    				 }
 		)
 	})
-
+}
 
 	## update the brush layer if brush attributes change
 	add_listener(.brush.attr, function(i, j) {
