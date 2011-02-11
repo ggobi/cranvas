@@ -172,10 +172,6 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
   brushing_draw <- function(item, painter, exposed, ...) {
 		if (.recalcbrushed) recalcbrushed()
 		if (!is.null(labeldata) && (.recalclbrushed)) recalclbrushed()
-#print("brushing_draw")
-    if (!is.null(.endBrush)) {
-      drawBrush(item, painter, exposed)
-    }
 
 		bgroups <- subset(.groupsdata, .brushed == TRUE)
 		if (nrow(bgroups) == 0) return()
@@ -191,8 +187,13 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 				stroke="grey80",
 				fill=brushcolor
 			)
-
 		}
+		
+#print("brushing_draw")
+    if (!is.null(.endBrush)) {
+      drawBrush(item, painter, exposed)
+    }
+		
   }
 
   brushing_mouse_press <- function(item, event, ...) {
@@ -434,9 +435,10 @@ print("addlistener: labeldata brushed")
 }
 
 	## update the brush layer if brush attributes change
-	add_listener(.brush.attr, function(i, j) {
-			qupdate(brushing_layer)
-	})
+# commented out for now to get the code to run, but we do need the capability
+#	add_listener(.brush.attr, function(i, j) {
+#			qupdate(brushing_layer)
+#	})
 
   qplotView(scene = scene)
 }
