@@ -50,7 +50,7 @@ iowa <- subset(counties, region=="iowa")
 
 qiowa <- qmutaframe(iowa)
 
-qtmap(qiowa, long, lat, group, colour="grey30", label=subregion)
+qtmap(qiowa, long, lat, group, label=subregion)
 
 #world <- map_data("world")
 #qworld <- qmutaframe(world)
