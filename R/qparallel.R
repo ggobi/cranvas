@@ -41,10 +41,8 @@
 ##' characters which are not alphanumeric will be replaced by
 ##' \code{'\n'}, i.e. the labels will be broken into several lines;
 ##' this can be useful when the axis labels are too long (if we do not
-##' break them, they will be squeezed together along the axes)
-##' @param verbose print some extra information (mainly the time
-##' consumed in each step); set \code{lab.split = NULL} to keep the
-##' labels untouched
+##' break them, they will be squeezed together along the axes); set
+##' \code{lab.split = NULL} to keep the labels untouched
 ##' @return NULL
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
@@ -53,8 +51,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    mar = c(0.04, 0.04, 0.04, 0.04), main, lab.split = '[^[:alnum:]]',
-    verbose = getOption("verbose")) {
+    mar = c(0.04, 0.04, 0.04, 0.04), main, lab.split = '[^[:alnum:]]') {
 
     ## parameters for the brush
     .brush.attr = brush_attr(data)
@@ -286,10 +283,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
 
     ## par-coords segments
     main_draw = function(item, painter) {
-        if (verbose) {
-            ntime = Sys.time()
-            message("drawing pcp segments")
-        }
+        cranvas_debug()
         if (glyph == 'line') {
             segcol = rep(data$.color, each = p - 1)
             qdrawSegment(painter, segx0, segy0, segx1, segy1, stroke = segcol)
@@ -297,8 +291,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
             col.glyph = rep(data$.color, each = p)
             qdrawGlyph(painter, draw.glyph, x0, y0, stroke = col.glyph)
         }
-        if (verbose)
-            message(format(difftime(Sys.time(), ntime)))
+        cranvas_debug()
     }
 
     ## annotate maximum and minimum values for each axis
@@ -317,10 +310,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
 
     ## (optional) boxplots
     boxplot_draw = function(item, painter) {
-        if (verbose) {
-            message("Drawing boxplots")
-            ntime = Sys.time()
-        }
+        cranvas_debug()
         qstrokeColor(painter) = "black"
         for (i in (1:p)[numcol]) {
             x0 = c(rep(i - boxwex/2, 3), rep(i, 2))
@@ -344,8 +334,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
             qdrawSegment(painter, x0[2], y0[2], x1[2], y1[2])
             qlineWidth(painter) = 1
         }
-        if (verbose)
-            message(format(difftime(Sys.time(), ntime)))
+        cranvas_debug()
     }
 
     ## record the coordinates of the mouse on click
@@ -436,10 +425,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
 
     ## identify segments being brushed when the mouse is moving
     identify_mouse_move = function(layer, event) {
-        if (verbose) {
-            message("identifying mouse location and looking for segments within range")
-            ntime = Sys.time()
-        }
+        cranvas_debug()
         pos = event$pos()
         .bpos <<- as.numeric(pos)
         ## simple click: don't change .brange
@@ -462,17 +448,12 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
             }
             .brush.attr$.brush.index = length(.brush.attr$.brush.history)
         }
-        if (verbose)
-            message(format(difftime(Sys.time(), ntime)))
+        cranvas_debug()
     }
 
     ## draw the segments under the brush with another appearance
     brush_draw = function(item, painter) {
-        if (verbose) {
-            message("drawing brushed segments")
-            ntime = Sys.time()
-        }
-
+        cranvas_debug()
         if (!any(is.na(.bpos))) {
             qlineWidth(painter) = brush_attr(data, '.brush.size')
             ##qdash(painter)=c(1,3,1,3)
@@ -518,8 +499,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
                           valign = ifelse(vflag, "top", "bottom"))
             }
         }
-        if (verbose)
-            message(format(difftime(Sys.time(), ntime)))
+        cranvas_debug()
     }
 
     scene = qscene()

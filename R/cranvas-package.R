@@ -21,3 +21,15 @@ NULL
 ##' data(nrcstat)
 ##' summary(nrcstat)
 NULL
+
+
+## set options(cranvas_debug = TRUE) to print the debug message
+
+cranvas_debug = function(msg) {
+    if (isTRUE(getOption('cranvas_debug'))) {
+        if (missing(msg)) msg = paste('calling', as.character(sys.call(1)[1]))
+        message(msg)
+        cat('##------ ', date(), ' ------##', '\n\n')
+        flush.console()
+    }
+}
