@@ -20,17 +20,17 @@
 ##' ## old iris as the toy example
 ##' qiris = qmutaframe(iris)
 ##' qparallel(qiris)
-##' data_selector(qiris)
+##' record_selector(qiris)
 ##'
 ##' ## NRC rankings
 ##' data(nrcstat)
 ##' qnrc = qmutaframe(nrcstat)
 ##' qparallel(qnrc, vars = 10:13, main = 'Overview of Rankings', horizontal=FALSE)
-##' data_selector(qnrc, 'Institution.Name')
+##' record_selector(qnrc, 'Institution.Name')
 ##' qparallel(qnrc, vars = 14:19, main = 'Research, Student Support, Diversity')
 ##' qparallel(qnrc, vars = 20:26, main = 'Publication, Award, Time to Degree')
 ##' }
-data_selector = function(data, vars, gui.type = c('RGtk2', 'Qt')) {
+record_selector = function(data, vars, gui.type = c('RGtk2', 'Qt')) {
     if (missing(vars)) {
         vars = names(data)[!(sapply(as.data.frame(data), class)
                            %in% c('numeric', 'integer'))][1]

@@ -19,7 +19,7 @@ qnrc = qmutaframe(nrcstat)
 rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = ' -> ')
 qnrc$.color = 'red'
 
-data_selector(qnrc, "Institution.Name", "RGtk2")
+record_selector(qnrc, "Institution.Name", "RGtk2")
 
 qscatter(qnrc, R.Rankings.5th.Percentile~R.Rankings.95th.Percentile)
 qscatter(qnrc, S.Rankings.5th.Percentile~S.Rankings.95th.Percentile)
