@@ -16,9 +16,9 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples
-##' iris0 = qmutaframe(iris, .color = 'red', .brushed = FALSE)
-##' ## the line width >= 2 does not work for me, so use 1
-##' brush_attr(iris0, '.brushed.size') = 1
+##' iris0 = qdata(iris, .color = 'red', .brushed = FALSE)
+##' ## thicker line for brushed elements
+##' brush(iris0, 'size') = 3
 ##' qparallel(iris0)
 ##' ## random colors
 ##' iris0$.color = sample(1:8, nrow(iris), replace = TRUE)
@@ -30,10 +30,10 @@
 ##'     Sys.sleep(1)
 ##' }
 ##' ## change the brush color to green
-##' brush_attr(iris0, '.brush.color') = 'green'
+##' brush(iris0, 'color') = 'green'
 ##' ## change brushed lines to black
-##' brush_attr(iris0, '.brushed.color') = 'black'
-qmutaframe = function(data, ...) {
+##' brush(iris0, 'color') = 'black'
+qdata = function(data, color = 'black', size = 1, brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data)) data = as.data.frame(data)
     ## check if the attribute exists
     ## row attributes needed by all plotting functions
@@ -43,30 +43,36 @@ qmutaframe = function(data, ...) {
     if(any(conflict_attrs)) {
         stop(sprintf('variable names conflicts: %s already exist(s) in data',
                      paste(row_attrs[conflict_attrs], collapse = ', ')))
-    } else {
-        mf = data
-        ## initialize here; TODO: get rid of this in qparallel, qmosaic...
-        mf$.brushed = FALSE
-        mf$.color = 'black'
-        ## prevent converting from characters to factors
-        if(!is.mutaframe(mf)) {
-            old_opts = options(stringsAsFactors = FALSE)
-            mf = as.mutaframe(mf, ...)
-            on.exit(options(old_opts))
-        }
+    }
+    mf = data
+    ## initialize here; TODO: get rid of this in qparallel, qmosaic...
+    mf$.brushed = brushed
+    mf$.color = color
+    mf$.size = size
+    mf$.visible = TRUE
+
+    ## prevent converting from characters to factors
+    if(!is.mutaframe(mf)) {
+        old_opts = options(stringsAsFactors = FALSE)
+        mf = as.mutaframe(mf)
+        on.exit(options(old_opts))
     }
 
-    ## we need to store some attributes somewhere which are not corresponding to rows
-    ## e.g. attrs related to the brush (scalars, functions, or data frames)
-    attr(mf, '.brush.attr') = mutalist(.brush.color = 'yellow', .brush.size = 1,
-        .brushed.color = 'yellow', .brushed.size = 2, .brush.mode = 'none',
-        .label.show = FALSE, .label.fun = summary_one, .label.color = 'gray40',
-        .brush.history = list(), .brush.index = 0, .history.size = 30)
-    ## here '.brush.mode' is explained in the documentation of mode_selection()
+
+    ## attach a brush to this data; we need to create the xxxChanged event in specific plots
+    ## use brush(data) to access this brush
+    attr(mf, 'Brush') =  brushGen$new(style = list(color = "yellow", size = 1, linetype = NULL),
+        color = 'yellow', color.gen = function(...) NULL,
+        size = 2, size.gen = function(...) NULL,
+        mode = 'none', identify = FALSE, label.gen = function(...) 'label',
+        label.color = 'darkgray', history.size = 30, history.index = 0,
+        history.list = list())
+
+    ## here 'mode' is explained in the documentation of mode_selection()
 
     ## specifies which variable is used for (hot/cold) linking
-    attr(mf, '.linking') = mutalist(.linkvar = NULL, .type = 'hot', .focused = FALSE)
-
+    ## use link_var(data) to access the linking variable
+    attr(mf, 'Link') = mutalist(linkvar = NULL, type = 'hot', focused = FALSE)
 
     ## and other possible attributes
 
@@ -92,6 +98,7 @@ qmutaframe = function(data, ...) {
 ##' @param mode the selection mode string; see Details
 ##' @return a logical vector indicating whether the objects are selected
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
 ##' @examples
 ##' x1 = c(TRUE, TRUE, FALSE, FALSE)
 ##' x2 = c(FALSE, TRUE, TRUE, FALSE)
@@ -106,45 +113,6 @@ mode_selection = function(x, y, mode = 'none'){
     ## if mode is not specified, return y, the current status
     switch(mode, none = y, and = x & y, or = x | y, xor = xor(x, y), not = x & !y,
            complement = !y, y)
-}
-
-
-
-##' Get or set brush attributes
-##'
-##' @aliases brush_attr brush_attr<-
-##' @usage brush_attr(data, attr)
-##' brush_attr(data, attr) <- value
-##' @param data the mutaframe created by \code{\link{qmutaframe}},
-##' with an attribute '.brush.attr'
-##' @param attr the name of the brush attribute, e.g. '.brush.color'
-##' (the color of the brush), '.brushed.color' (the color of the
-##' objects selected by the brush), '.brush.size' (the line width of
-##' the brush), and '.brushed.size' (the size of the selected objects,
-##' e.g. line width or size of points); \code{attr} can be a vector to
-##' access multiple attributes when querying brush attributes (but it
-##' is only allowed to set one attribute at a time)
-##' @return the brush attribute(s) (or as a side effect, change the attribute of
-##' \code{data})
-##' @author Yihui Xie <\url{http://yihui.name}>
-##' @export brush_attr
-##' @export "brush_attr<-"
-##' @examples qiris = qmutaframe(head(iris))
-##' brush_attr(qiris)  # all attributes
-##' brush_attr(qiris, '.brush.color')
-##' brush_attr(qiris, c('.brushed.color', '.brushed.size'))
-##' brush_attr(qiris, '.brush.color') = 'green'  # set brush color to green
-brush_attr = function(data, attr) {
-    .brush.attr = base::attr(data, '.brush.attr')
-    if (missing(attr)) {
-        .brush.attr
-    } else {
-        if (length(attr) == 1) .brush.attr[[attr]] else .brush.attr[attr]
-    }
-}
-`brush_attr<-` = function(data, attr, value) {
-    attr(data, '.brush.attr')[[attr]] = value
-    data
 }
 
 
