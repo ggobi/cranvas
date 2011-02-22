@@ -5,7 +5,7 @@ require(plumbr)
 
 
 mtcars.col <- brewer.pal(8, "Set1")[as.integer(mtcars$cyl)]
-qmtcars <- qmutaframe(mtcars, .brushed = FALSE, .color = mtcars.col)
+qmtcars <- qdata(mtcars, .brushed = FALSE, .color = mtcars.col)
 
 set_brush_attr(qmtcars, '.brushed.size', 2)
 set_brush_attr(qmtcars, '.brushed.color', "orange")

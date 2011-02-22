@@ -20,8 +20,8 @@ Create a hist plot from 1-D numeric data}
 }
 \examples{# torture
 rows <- 1e+06
-bigData <- qmutaframe(data.frame(x = rnorm(rows), 
-    y = floor(rnorm(rows) * 7)))
+bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 
+    7)))
 qhist(bigData)
 
 # each column is split evenly

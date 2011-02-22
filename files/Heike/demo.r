@@ -15,7 +15,7 @@ library(RColorBrewer)
 #  create mutaframes inside the data first
 
 iris.col = brewer.pal(3, "Set1")[as.integer(iris$Species)]
-qiris = qmutaframe(iris, .brushed = FALSE, .color = iris.col)
+qiris = qdata(iris, .brushed = FALSE, .color = iris.col)
 
 brush_attr(qiris, '.brushed.size') <- 2
 
@@ -32,7 +32,7 @@ brush_attr(qiris, '.brushed.color') <- "orange"
 # mosaics on their own
 
 
-qhappy <- qmutaframe(happy, .brushed = FALSE)
+qhappy <- qdata(happy, .brushed = FALSE)
 brush_attr(qhappy, '.brushed.color') <- "yellow"
 
 

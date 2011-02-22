@@ -12,16 +12,16 @@ categorical variable; this linking variable can be specified with
 linking variables (listeners added)}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{...}{the mutaframes (at least two mutaframes); the
-mutaframes are typically created by \code{\link{qmutaframe}}}
+mutaframes are typically created by \code{\link{qdata}}}
 }
 \examples{### (1) proof of concept
 library(cranvas)
 
 ## link the original data with a frequency table
-data1 = qmutaframe(iris)
+data1 = qdata(iris)
 tab2 = as.data.frame(table(iris$Species))
 colnames(tab2) = c("type", "freq")
-data2 = qmutaframe(tab2)
+data2 = qdata(tab2)
 
 data1
 data2
@@ -58,8 +58,8 @@ data1
 data(nrcstat)
 nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code), 
     function(x) round(mean(x), 1))
-qnrc = qmutaframe(nrcstat)
-qnrc.agg = qmutaframe(nrcstat.agg)
+qnrc = qdata(nrcstat)
+qnrc.agg = qdata(nrcstat.agg)
 ## link by region
 link_var(qnrc) = link_var(qnrc.agg) = "Regional.Code"
 link(qnrc, qnrc.agg)

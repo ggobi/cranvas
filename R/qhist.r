@@ -8,7 +8,7 @@
 #' @keywords hplot
 #' @examples # torture
 #'		rows <- 1000000
-#'		bigData <- qmutaframe(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
+#'		bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
 #'		qhist(bigData)
 #'
 #'		# each column is split evenly
@@ -78,8 +78,8 @@ qhist <- function(
 	.histOriginalBreaksAndStart <- list()
 	.updateinfo <- FALSE
 
-	# mf_data <- qmutaframe(data)
-	if(!is.mutaframe(data)) 	mf_data <- qmutaframe(data)
+	# mf_data <- qdata(data)
+	if(!is.mutaframe(data)) 	mf_data <- qdata(data)
 	else 										mf_data <- data
 
 	# Set up the data

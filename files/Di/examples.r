@@ -15,7 +15,7 @@ source("/Users/dicook/cranvas/code/files/Yihui/qparallel.R")
 ## old iris...
 #  create mutaframes inside the data first
 iris.col = brewer.pal(3, "Set1")[as.integer(iris$Species)]
-qiris = qmutaframe(iris, .brushed = FALSE, .color = iris.col)
+qiris = qdata(iris, .brushed = FALSE, .color = iris.col)
 
 brush_attr(qiris, '.brushed.size') <- 1
 
@@ -41,7 +41,7 @@ source("/Users/dicook/cranvas/code/files/utilities/interaction.R")
 source("/Users/dicook/cranvas/code/files/Di/tourr-gui.r")
 
 olive.col <- brewer.pal(3, "Set1")[as.integer(olive$region)]
-qolive <- qmutaframe(olive, .brushed = FALSE, .color = olive.col)
+qolive <- qdata(olive, .brushed = FALSE, .color = olive.col)
 qparallel(qolive)
 gui_xy(qolive)
 
@@ -59,7 +59,7 @@ source("/Users/dicook/cranvas/code/files//utilities/interaction.R")
 qmosaic(qiris, ~Species,"hbar")
 qparallel(qiris)
 
-qhappy <- qmutaframe(happy, .brushed = FALSE)
+qhappy <- qdata(happy, .brushed = FALSE)
 brush_attr(qhappy, '.brushed.color') <- "yellow"
 qmosaic(qhappy, ~ happy, c("hbar"))
 qmosaic(qhappy, ~ degree+sex+happy, c("vspine","hspine","hspine"))
@@ -71,7 +71,7 @@ options(stringsAsFactors=FALSE)
 
 # NRC data
 nrcstat = read.csv('/Users/dicook/cranvas/code/files/Yihui/nrcstat.csv')
-qnrc = qmutaframe(nrcstat)
+qnrc = qdata(nrcstat)
 rownames(qnrc)=paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = ' -> ')
 nms = names(nrcstat)
 
@@ -103,7 +103,7 @@ source("/Users/dicook/cranvas/code/R/bin.r")
 source("/Users/dicook/cranvas/code/R/bprint.r")
 
 rows <- 1000000
-bigData <- qmutaframe(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
+bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
 qhist(bigData)
 
 # each column is split evenly

@@ -13,7 +13,7 @@ library(plumbr)
 # st.all<-read.csv("/Users/dicook/cranvas/code/files/Di/cartogram-polygons.csv")
 # qmap(st)
 # qmap(st.all, id="State", x="Longitude", y="Latitude")
-# qst.all <- qmutaframe(st.all, .brushed=FALSE)
+# qst.all <- qdata(st.all, .brushed=FALSE)
 # qmap(qst.all, id="State", x="Longitude", y="Latitude")
 # qmap(qst.all, id="State", x="Longitude", y="Latitude", label="State")
 qmap<-function(data, id="id", x="x", y="y", label="label", vars, ...) {

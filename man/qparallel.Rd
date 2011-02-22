@@ -73,7 +73,7 @@ library(plumbr)
 library(cranvas)
 
 data(nrcstat)
-qnrc = qmutaframe(nrcstat)
+qnrc = qdata(nrcstat)
 rownames(qnrc) = paste(nrcstat$Institution.Name, 
     nrcstat$Program.Name, sep = " -> ")
 
@@ -120,7 +120,7 @@ library(RColorBrewer)
 ## old iris...
 ## create a mutaframe containing row attributes first
 iris.col = brewer.pal(3, "Set1")[as.integer(iris$Species)]
-qiris = qmutaframe(iris, .brushed = FALSE, .color = iris.col)
+qiris = qdata(iris, .brushed = FALSE, .color = iris.col)
 
 qparallel(qiris)
 qparallel(qiris, scale = "I")
@@ -174,7 +174,7 @@ for (i in 1:30) {
 }
 
 ## what if there are missing values?
-xna = qmutaframe(sapply(iris, function(x) {
+xna = qdata(sapply(iris, function(x) {
     x[sample(length(x), 50)] = NA
     x
 }))
@@ -193,24 +193,24 @@ brush_attr(qiris, ".label.show") = TRUE
 rownames(qiris) = paste(abbreviate(iris$Species), 
     1:50, sep = "")
 
-qmtcars = qmutaframe(mtcars)
+qmtcars = qdata(mtcars)
 qparallel(qmtcars)
 qparallel(qmtcars, center = median)
 qparallel(qmtcars, order = "MDS")
 qparallel(qmtcars, order = "ANOVA")
 
 ## test speed
-test.mat1 = qmutaframe(matrix(rnorm(1000 * 10), 
-    ncol = 10), .color = rgb(1, 0, 0, 0.2))
+test.mat1 = qdata(matrix(rnorm(1000 * 10), ncol = 10), 
+    .color = rgb(1, 0, 0, 0.2))
 qparallel(test.mat1, mar = c(0.2, 0.1, 0.1, 0.1))
 
-test.mat2 = qmutaframe(matrix(rnorm(1000 * 15), 
-    ncol = 15), .color = rgb(1, 0, 0, 0.2))
+test.mat2 = qdata(matrix(rnorm(1000 * 15), ncol = 15), 
+    .color = rgb(1, 0, 0, 0.2))
 qparallel(test.mat2, boxplot = TRUE)
 
 ## slow for brushing in my laptop
-test.mat3 = qmutaframe(matrix(rnorm(5000 * 10), 
-    ncol = 10), .color = rgb(1, 0, 0, 0.05))
+test.mat3 = qdata(matrix(rnorm(5000 * 10), ncol = 10), 
+    .color = rgb(1, 0, 0, 0.05))
 qparallel(test.mat3, verbose = TRUE)
 
 ## speed tests
@@ -218,28 +218,28 @@ qparallel(test.mat3, verbose = TRUE)
 #   brushing cache
 ## identifying is generally very fast once the cache
 #   was built
-qhuge1 = qmutaframe(matrix(rbeta(10000 * 10, 5, 
-    30), ncol = 10))
+qhuge1 = qdata(matrix(rbeta(10000 * 10, 5, 30), 
+    ncol = 10))
 qparallel(qhuge1, verbose = TRUE)
 ## 30000x10 takes 45 seconds
-qhuge2 = qmutaframe(matrix(rbeta(30000 * 10, 5, 
-    30), ncol = 10))
+qhuge2 = qdata(matrix(rbeta(30000 * 10, 5, 30), 
+    ncol = 10))
 qparallel(qhuge2, verbose = TRUE)
 ## 1 million points to torture Qt!!
-qhuge3 = qmutaframe(matrix(rbeta(1e+05 * 10, 5, 
-    30), ncol = 10))
+qhuge3 = qdata(matrix(rbeta(1e+05 * 10, 5, 30), 
+    ncol = 10))
 qparallel(qhuge3, verbose = TRUE)
 
 ## linking two parcoords plots: split the data into 2
 #   parts
-testdata = qmutaframe(as.data.frame(matrix(rnorm(2000 * 
+testdata = qdata(as.data.frame(matrix(rnorm(2000 * 
     10), ncol = 10)))
 qparallel(testdata, vars = sprintf("V\%d", 1:6))
 qparallel(testdata, vars = sprintf("V\%d", 4:10))
 
 library(ggplot2)
-qdiamonds = qmutaframe(diamonds, .color = rgb(1, 
-    0, 0, 0.01))
+qdiamonds = qdata(diamonds, .color = rgb(1, 0, 
+    0, 0.01))
 qparallel(qdiamonds, vars = 1:7, glyph = "line", 
     jitter = ~cut + color + clarity)
 qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
@@ -256,7 +256,7 @@ qparallel(qdiamonds, vars = 1:7, glyph = "line",
 if (!require("YaleToolkit")) install.packages("YaleToolkit")
 library(YaleToolkit)
 data(NewHavenResidential)
-qnhr = qmutaframe(NewHavenResidential, .color = rgb(1, 
+qnhr = qdata(NewHavenResidential, .color = rgb(1, 
     0, 0, 0.1))
 qparallel(qnhr)
 
@@ -286,8 +286,8 @@ qparallel(qnhr, jitter = c("bedrms", "zone"),
 
 library(animation)
 data(pollen)
-qpollen = qmutaframe(pollen, .color = rgb(0, 0, 
-    1, 0.01))
+qpollen = qdata(pollen, .color = rgb(0, 0, 1, 
+    0.01))
 qparallel(qpollen)}
 
 

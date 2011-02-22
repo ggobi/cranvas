@@ -20,7 +20,7 @@ library(maps)
 library(ggplot2)
 
 states <- map_data("state")
-qstates <- qmutaframe(states)
+qstates <- qdata(states)
 
 #qtmap(qstates, long, lat, group)
 
@@ -37,7 +37,7 @@ crimes$nines <- with(crimes, cut(Burglary/Population,
 #crimes$nines <- with(crimes,
 #   cut(Violent.crime/Population, 9))
 crimes$nines <- brewer.pal(9, "Greys")[crimes$nines]
-qcrimes <- qmutaframe(crimes)
+qcrimes <- qdata(crimes)
 print(qparallel(qcrimes))
 
 source("map.R")
@@ -53,12 +53,44 @@ q <- qtmap(qstates, long, lat, group, label = region,
 #qtmap(qstates, long, lat, group)
 
 
+##############
 
+library(qtbase)
+library(qtpaint)
+library(plumbr)
+library(cranvas)
+
+
+library(maps)
+library(ggplot2)
+
+counties <- map_data("county")
+iowa <- subset(counties, region == "iowa")
+
+qiowa <- qdata(iowa)
+
+qtmap(qiowa, long, lat, group, label = subregion)
 
 #world <- map_data('world')
-#qworld <- qmutaframe(world)
+#qworld <- qdata(world)
 
 #qtmap(qworld, long, lat, group)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

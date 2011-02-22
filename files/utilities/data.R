@@ -34,7 +34,7 @@ na.impute = function(x, method = 'below.min') {
 ##' summary_one(iris[1:70, ])
 ##' summary_one(mtcars)
 summary_one = function(x, fun = median, ...) {
-    ## it is not easy to use this function in qmutaframe(); current implementation
+    ## it is not easy to use this function in qdata(); current implementation
     ## is ugly; we need mutalist; but how many people really care about the
     ## summarizing function other than median?
     x = as.data.frame(x)

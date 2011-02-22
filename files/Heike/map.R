@@ -29,7 +29,7 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 
 
 ##' Interactive Maps.
-##' Create an interactive map from qmutaframe
+##' Create an interactive map from qdata
 ##'
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
@@ -76,7 +76,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=NULL, label
 	if (!is.null(by.x)) {
 		# assume they are the same, if only one is specified
 		# labeldata is a subset of the groups - i.e. only one value for each group on each variable
-		if (!is.mutaframe(labeldata)) labeldata <- qmutaframe(labeldata)
+		if (!is.mutaframe(labeldata)) labeldata <- qdata(labeldata)
 
 			
 		xid <- as.character(substitute(by.x))

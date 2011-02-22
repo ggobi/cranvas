@@ -5,7 +5,7 @@
 ##' \code{\link{link_var}}.
 ##'
 ##' @param ... the mutaframes (at least two mutaframes); the
-##' mutaframes are typically created by \code{\link{qmutaframe}}
+##' mutaframes are typically created by \code{\link{qdata}}
 ##' @return the mutaframes will be linked together by their
 ##' linking variables (listeners added)
 ##' @author Yihui Xie <\url{http://yihui.name}>
@@ -49,13 +49,13 @@ link = function(...) {
 ##' Set or query the linking variable in a mutaframe.
 ##'
 ##' @param data the mutaframe (typically created by
-##' \code{\link{qmutaframe}}), with an attribute \code{Link}
+##' \code{\link{qdata}}), with an attribute \code{Link}
 ##' @return the name of the linking variable
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export link_var
 ##' @export "link_var<-"
 ##' @examples
-##' mf = qmutaframe(head(iris))
+##' mf = qdata(head(iris))
 ##' link_var(mf)  # NULL
 ##' link_var(mf) = 'Species'  # linking by 'Species'
 ##' link_var(mf)

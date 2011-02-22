@@ -8,14 +8,14 @@ require(ggplot2)
 require(stringr)
 
 data(tennis)
-qtennis <- qmutaframe(tennis)
+qtennis <- qdata(tennis)
 
 qhist(qtennis, "First.Serve.Pct", horizontal=FALSE)
 
 # Barret's testing examples
 # torture
 rows <- 1000000
-bigData <- qmutaframe(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
+bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
 qhist(bigData)
 
 # each column is split evenly
@@ -59,7 +59,7 @@ library(RColorBrewer)
 
 data(tennis)
 
-qtennis = qmutaframe(tennis)
+qtennis = qdata(tennis)
 qtennis$.brushed = FALSE
 qtennis$.color = "grey30"
 

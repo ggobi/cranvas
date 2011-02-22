@@ -13,10 +13,10 @@ link_var(data) <- value
 }
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{data}{the mutaframe (typically created by
-\code{\link{qmutaframe}}), with an attribute \code{Link}}
+\code{\link{qdata}}), with an attribute \code{Link}}
 \item{value}{the name of the linking variable}
 }
-\examples{mf = qmutaframe(head(iris))
+\examples{mf = qdata(head(iris))
 link_var(mf)  # NULL
 link_var(mf) = "Species"  # linking by 'Species'
 link_var(mf)}

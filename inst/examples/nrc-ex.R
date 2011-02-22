@@ -15,7 +15,7 @@ data(nrcstat)
 nrcstat[,26]<- -nrcstat[,26]
 colnames(nrcstat)[26]<-"Neg.Median.Time.to.Degree"
   
-qnrc = qmutaframe(nrcstat)
+qnrc = qdata(nrcstat)
 rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = ' -> ')
 qnrc$.color = 'red'
 

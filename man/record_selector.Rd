@@ -24,13 +24,13 @@ based on \pkg{gWidgetsQt}}
 }
 \examples{if (require("gWidgetsRGtk2")) {
     ## old iris as the toy example
-    qiris = qmutaframe(iris)
+    qiris = qdata(iris)
     qparallel(qiris)
     record_selector(qiris)
     
     ## NRC rankings
     data(nrcstat)
-    qnrc = qmutaframe(nrcstat)
+    qnrc = qdata(nrcstat)
     qparallel(qnrc, vars = 10:13, main = "Overview of Rankings", 
         horizontal = FALSE)
     record_selector(qnrc, "Institution.Name")

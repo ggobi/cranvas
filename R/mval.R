@@ -43,7 +43,7 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 qmval <- function(data, vars, main, ...) {
   ## check if an attribute exist
 #  browser()
-#	if (!is.mutaframe(data)) data <- qmutaframe(data)
+#	if (!is.mutaframe(data)) data <- qdata(data)
 	if (! (".brushed" %in% names(data))) data$.brushed <- FALSE
 	
   ## parameters for the brush

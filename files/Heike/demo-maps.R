@@ -7,7 +7,7 @@ library(maps)
 library(ggplot2)
 
 states <- map_data("state")
-qstates <- qmutaframe(states)
+qstates <- qdata(states)
 
 #qtmap(qstates, long, lat, group)
 
@@ -22,7 +22,7 @@ library(RColorBrewer)
 crimes$nines <- with(crimes, cut(Burglary/Population, 9))
 #crimes$nines <- with(crimes, cut(Violent.crime/Population, 9))
 crimes$nines <- brewer.pal(9,"Greys")[crimes$nines]
-qcrimes <- qmutaframe(crimes)
+qcrimes <- qdata(crimes)
 print(qparallel(qcrimes))
 
 source("map.R")
@@ -37,6 +37,6 @@ print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="re
 
 
 #world <- map_data("world")
-#qworld <- qmutaframe(world)
+#qworld <- qdata(world)
 
 #qtmap(qworld, long, lat, group)
