@@ -77,7 +77,7 @@ qmval <- function(data, vars, main, ...) {
 	
   dataRanges <- c(
     make_data_ranges(c(0,1)),
-    make_data_ranges(c(0,p)))
+    make_data_ranges(c(0,1)))
 
   # space in window around plot (margins in base R)
   # this space depends on the labels needed on the left
@@ -95,10 +95,10 @@ qmval <- function(data, vars, main, ...) {
 
   draw <- function(item, painter, exposed) {
 		# basic rectangle:
-		top <- 0.25
+		top <- 0.1
 		left <- 0
 		right <- 1
-		bottom <- 0.75
+		bottom <- 0.1 + .6*1/p
 
 		n <- nrow(data)
   	for (i in 1:p) { 		
@@ -107,15 +107,15 @@ qmval <- function(data, vars, main, ...) {
 			qdrawRect(painter, right*.data.summary$Values[i]/n, bottom, right, top, 
 				fill="white", stroke="black")
 #			qdrawText(painter, .data.summary$Names[i], left, bottom,  halign = "left", valign = 'bottom')
-			bottom <- bottom + 1
-			top <- top + 1			
+			bottom <- bottom + 1/p
+			top <- top + 1/p			
   	}
 
 		# put labels on top
-		bottom <- 0.25
+		bottom <- 0.1
 		for (i in 1:p) {
 			qdrawText(painter, .data.summary$Names[i], left, bottom,  halign = "left", valign = 'bottom')
-			bottom <- bottom + 1
+			bottom <- bottom + 1/p
 		}
 
     add_title_fun(painter, dataRanges, title=main)
@@ -140,17 +140,14 @@ qmval <- function(data, vars, main, ...) {
 
 
   brushing_draw <- function(item, painter, exposed, ...) {
-    if (!is.null(.endBrush)) {
-      drawBrush(item, painter, exposed)
-    }
 
 		brushcolor <- brush_attr(data, ".brushed.color")
 
 		# basic rectangle:
-		top <- 0.25
+		top <- 0.1
 		left <- 0
-		right <- 1.0
-		bottom <- 0.75
+		right <- 1
+		bottom <- 0.1 + .6*1/p
 
 		n <- nrow(data)
   	for (i in 1:p) { 		
@@ -158,18 +155,21 @@ qmval <- function(data, vars, main, ...) {
 				fill=brushcolor, stroke=brushcolor)
 			qdrawRect(painter, (right*(n-.data.summary$mvBrushed[i]))/n, bottom, right, top, 
 				fill=brushcolor, stroke=brushcolor)
-			bottom <- bottom + 1
-			top <- top + 1			
+			bottom <- bottom + 1/p
+			top <- top + 1/p			
   	}
 
 		# put labels on top
-		bottom <- 0.25
+		bottom <- 0.1
     qstrokeColor(painter) <- "black"
 		for (i in 1:p) {
 			qdrawText(painter, .data.summary$Names[i], left, bottom,  halign = "left", valign = 'bottom')
-			bottom <- bottom + 1
+			bottom <- bottom + 1/p
 		}
 		
+    if (!is.null(.endBrush)) {
+      drawBrush(item, painter, exposed)
+    }
   }
 
   brushing_mouse_press <- function(item, event, ...) {
@@ -216,20 +216,19 @@ qmval <- function(data, vars, main, ...) {
 
  		rect = qrect(matrix(c(left, bottom, right, top), 2, byrow = TRUE))
     hits = datalayer$locate(rect) + 1
-		print (hits)
 #		browser()
 		for (i in 1:p) {
 			.data.summary$mvBrushed[i] <<- 0
 			.data.summary$valBrushed[i] <<- 0
 		}
 		for (i in hits) {
-			var <- i %/% 2
+			var <- (i +1) %/% 2
 			missing <- (i %% 2) == 0
 
 			if (missing)
 				.data.summary$mvBrushed[var] <<- .data.summary$NAs[var]
 			else
-				.data.summary$valBrushed[var+1] <<- .data.summary$Values[var+1]
+				.data.summary$valBrushed[var] <<- .data.summary$Values[var]
 		}
   }
 
@@ -257,8 +256,8 @@ qmval <- function(data, vars, main, ...) {
 		if (event$key() == Qt$Qt$Key_S) {
 			# sort according to number missing values
 			.data.summary <<- .data.summary[order(.data.summary$Values),]
-			qupdate(datalayer)
 			datalayer$invalidateIndex()
+			qupdate(datalayer)
 			qupdate(brushing_layer)
 		}
 	}
@@ -276,35 +275,28 @@ qmval <- function(data, vars, main, ...) {
  		rect = qrect(matrix(c(xpos,ypos,xpos+1e-4, ypos+1e-4), 2, byrow = TRUE))
     hits = datalayer$locate(rect) + 1
 
-		info <- NULL
-		#.groupsdata[hits,]
+    # Nothing under mouse?
+    if (length(hits)==0) return()
 
-    # Nothing under mouse
-    if (is.null(info)) return()
-    if (nrow(info) == 0) return()
+		var <- (hits+1) %/% 2
+		info <- .data.summary[var,]
+		infostring = with(info, paste(Names[1],": ", valBrushed[1],"/",Values[1], " NAs: ", mvBrushed[1],"/",NAs[1]), sep="")
 
-		infostring = paste(deparse(arguments$label), label[hits],collapse="\n", sep=":")
-		if (.extended) {
-#browser()
-		  idx <- setdiff(names(.groupsdata), c("order", ".color", ".brushed", as.character(arguments$longitude), as.character(arguments$latitude), as.character(arguments$group)))
-      infodata <- as.character(unlist(info[1,idx]))
-      infostring <- paste(idx, infodata,collapse="\n", sep=":")
-		}
+    bgwidth = qstrWidth(painter, infostring)
+    bgheight = qstrHeight(painter, infostring)    
+    
+		## adjust drawing directions when close to the boundary
+		hflag = windowRanges[2] - xpos > bgwidth
+		vflag = ypos - windowRanges[3] > bgheight
+		qdrawRect(painter, xpos, ypos,
+							xpos + ifelse(hflag, 1, -1) * bgwidth,
+							ypos + ifelse(vflag, -1, 1) * bgheight,
+							stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
 
-
-		brushcolor <- brush_attr(data, ".brushed.color")
-		for (i in info$ID) {
-			xx <- x[group==i]
-			yy <- y[group==i]
-			qdrawPolygon(painter,
-				xx,
-				yy,
-				stroke=brushcolor,
-				fill=NULL
-			)
-		}
-    qstrokeColor(painter) <- brushcolor
-    qdrawText(painter, infostring, xpos, ypos, valign="top", halign="left")
+		qstrokeColor(painter) = brush_attr(data, '.label.color')
+    qdrawText(painter, infostring, xpos, ypos,
+    	halign = ifelse(hflag, "left", "right"),
+      valign = ifelse(vflag, "top", "bottom"))
   }
 
   query_hover <- function(item, event, ...) {
@@ -330,12 +322,12 @@ qmval <- function(data, vars, main, ...) {
 
   scene = qscene()
   bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
-  datalayer = qlayer(scene, draw,
+  datalayer = qlayer(scene, draw, 
+  	keyPressFun=keyPressFun,
     limits = lims, clip = FALSE)
   brushing_layer = qlayer(scene, brushing_draw,
 		mousePressFun = brushing_mouse_press, mouseMoveFun = brushing_mouse_move,
     mouseReleaseFun = brushing_mouse_release,
-    keyPressFun=keyPressFun,
     limits = lims, clip = FALSE)
   querylayer = qlayer(scene, query_draw,
   	hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,

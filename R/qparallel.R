@@ -80,7 +80,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     if (is.numeric(vars)) vars = names(data)[as.integer(vars)]
 
     if (length(vars) <= 1L)
-        stop("parallel cooridinates plots need at least 2 variables!")
+        stop("parallel coordinate plots need at least 2 variables!")
 
     glyph = match.arg(glyph)
     order = match.arg(order)

@@ -49,10 +49,13 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 	x <- eval(arguments$longitude, df.data)
 	y <- eval(arguments$latitude, df.data)
 	group <- eval(arguments$group, df.data)
+	if (is.null(labeldata))
+		label <- unique(eval(arguments$label, df.data))
 
 
 	.groupsdata <- ddply(df.data,.(group), mysummary)
 	.groupsdata <- cast(.groupsdata, group ~ .id, value="V1")
+#	.groupsdata$ID <- 1:nrow(.groupsdata)
 	names(.groupsdata)[1] <- "ID"
 	.groupsdata$.color <- "grey30"
 	if (!(".brushed" %in% names(.groupsdata))) .groupsdata$.brushed <- FALSE
@@ -64,6 +67,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 
   ## parameters for the brush
   .brush.attr = attr(data, '.brush.attr')
+	
 
 	# by.x and by.y connect datasets data and labeldata
 	# check that connection works
@@ -113,14 +117,15 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 #		if (.recalc) recalc()
 
 
-		for (i in .groupsdata$ID) {
+		for (j in 1:length(.groupsdata$ID)) {
+			i <- .groupsdata$ID[j]
 			xx <- x[group==i]
 			yy <- y[group==i]
 			qdrawPolygon(painter,
 				xx,
 				yy,
 				stroke="grey80",
-				fill=.groupsdata$.color[i]
+				fill=.groupsdata$.color[j]
 			)
 		}
 
@@ -143,14 +148,15 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
   }
 
 	recalcbrushed <- function() {
-		for (i in .groupsdata$ID) {
-			brushed <- data$.brushed[group == i]
+#browser()
+		for (i in 1:length(.groupsdata$ID)) {
+			brushed <- data$.brushed[group == .groupsdata$ID[i]]
 			.groupsdata$.brushed[i] <<- any(brushed)
 
 		}
 		.recalcbrushed <<- FALSE
 
-		setSelectedLabel()
+		if (!is.null(labeldata)) setSelectedLabel()
 	}
 
 	recalclbrushed <- function() {
@@ -165,11 +171,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 
   brushing_draw <- function(item, painter, exposed, ...) {
 		if (.recalcbrushed) recalcbrushed()
-		if (.recalclbrushed) recalclbrushed()
-print("brushing_draw")
-    if (!is.null(.endBrush)) {
-      drawBrush(item, painter, exposed)
-    }
+		if (!is.null(labeldata) && (.recalclbrushed)) recalclbrushed()
 
 		bgroups <- subset(.groupsdata, .brushed == TRUE)
 		if (nrow(bgroups) == 0) return()
@@ -185,8 +187,13 @@ print("brushing_draw")
 				stroke="grey80",
 				fill=brushcolor
 			)
-
 		}
+		
+#print("brushing_draw")
+    if (!is.null(.endBrush)) {
+      drawBrush(item, painter, exposed)
+    }
+		
   }
 
   brushing_mouse_press <- function(item, event, ...) {
@@ -238,7 +245,7 @@ print("brushing_draw")
   }
 
   setSelected <- function() {
-print("set selected")
+#print("set selected")
 	# propagate highlighting to the data set and other plots
 #browser()
 #		brushed <- data$.brushed
@@ -253,8 +260,11 @@ print("set selected")
   }
 
 	setSelectedLabel <- function () {
-	print("set selected labeldata")
+	#print("set selected labeldata")
 		bdata <- subset(.groupsdata, .brushed == TRUE)
+		if (is.null(yid)) return()
+		if (is.null(xid)) return()
+		
 		brushed <- labeldata[, yid] %in% bdata[, xid]
 
 		if (any(labeldata$.brushed != brushed)) labeldata$.brushed <- brushed
@@ -307,8 +317,27 @@ print("set selected")
 				fill=NULL
 			)
 		}
-    qstrokeColor(painter) <- brushcolor
-    qdrawText(painter, infostring, xpos, ypos, valign="top", halign="left")
+
+    bgwidth = qstrWidth(painter, infostring)
+    bgheight = qstrHeight(painter, infostring)
+
+#    qdrawText(painter, infostring, xpos, ypos, valign="top", halign="left")
+    
+    
+		## adjust drawing directions when close to the boundary
+		hflag = windowRanges[2] - xpos > bgwidth
+		vflag = ypos - windowRanges[3] > bgheight
+		qdrawRect(painter, xpos, ypos,
+							xpos + ifelse(hflag, 1, -1) * bgwidth,
+							ypos + ifelse(vflag, -1, 1) * bgheight,
+							stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
+
+		qstrokeColor(painter) = brush_attr(data, '.label.color')
+    qdrawText(painter, infostring, xpos, ypos,
+    	halign = ifelse(hflag, "left", "right"),
+      valign = ifelse(vflag, "top", "bottom"))
+    
+    
   }
 
   query_hover <- function(item, event, ...) {
@@ -329,7 +358,7 @@ print("set selected")
   # Display legend information for colour ----------------------------
 
   legend_draw <- function(item, painter, exposed, ...) {
-print("legend_draw")
+#print("legend_draw")
 		if (is.null(arguments$colour)) return()
 
 		xpos = max(x)
@@ -390,7 +419,7 @@ print("addlistener: brushed")
 	    				 }
 		)
 	})
-
+if(!is.null(labeldata)) {
 	add_listener(labeldata, function(i, j) {
 		switch(j,
 			.brushed = {
@@ -403,12 +432,13 @@ print("addlistener: labeldata brushed")
 	    				 }
 		)
 	})
-
+}
 
 	## update the brush layer if brush attributes change
-	add_listener(.brush.attr, function(i, j) {
-			qupdate(brushing_layer)
-	})
+# commented out for now to get the code to run, but we do need the capability
+#	add_listener(.brush.attr, function(i, j) {
+#			qupdate(brushing_layer)
+#	})
 
   qplotView(scene = scene)
 }

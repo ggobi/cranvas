@@ -34,7 +34,23 @@ q <- qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="reg
 #qtmap(qstates, long, lat, group)
 
 
+##############
 
+library(qtbase)
+library(qtpaint)
+library(plumbr)
+library(cranvas)
+
+
+library(maps)
+library(ggplot2)
+
+counties <- map_data("county")
+iowa <- subset(counties, region=="iowa")
+
+qiowa <- qmutaframe(iowa)
+
+qtmap(qiowa, long, lat, group, label=subregion)
 
 #world <- map_data("world")
 #qworld <- qmutaframe(world)

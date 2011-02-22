@@ -473,8 +473,24 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     infodata <- as.character(unlist(info[1,idx]))
     infostring <- paste(idx, infodata,collapse="\n", sep=":")
 
-    qstrokeColor(painter) <- "white"
-    qdrawText(painter, infostring, x, y, valign="top", halign="left")
+#    qstrokeColor(painter) <- "white"
+#    qdrawText(painter, infostring, x, y, valign="top", halign="left")
+    bgwidth = qstrWidth(painter, infostring)
+    bgheight = qstrHeight(painter, infostring)    
+    
+		## adjust drawing directions when close to the boundary
+		hflag = windowRanges[2] - xpos > bgwidth
+		vflag = ypos - windowRanges[3] > bgheight
+		qdrawRect(painter, xpos, ypos,
+							xpos + ifelse(hflag, 1, -1) * bgwidth,
+							ypos + ifelse(vflag, -1, 1) * bgheight,
+							stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
+
+		qstrokeColor(painter) = brush_attr(data, '.label.color')
+    qdrawText(painter, infostring, xpos, ypos,
+    	halign = ifelse(hflag, "left", "right"),
+      valign = ifelse(vflag, "top", "bottom"))
+
   }
 
   query_hover <- function(item, event, ...) {
