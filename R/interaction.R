@@ -146,8 +146,69 @@ focused = function(data) {
     data
 }
 
+##' Set or query the visibility of observations.
+##'
+##' There is a column \code{.visible} to control the visibility of
+##' observations. This can be useful for ``deleting'' certain
+##' observations from the plot (set their visibility to \code{FALSE}).
+##' @param data the mutaframe
+##' @return \code{visible(data)} returns the logical vector to control
+##' the visibility of observations, and \code{visible(data) <- value}
+##' changes this logical vector
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples df = qdata(iris)
+##'
+##' visible(df)
+##'
+##' visible(df) = rep(c(TRUE, FALSE), c(100, 50))  # hide the last 50 obs
+##'
+##' visible(df)
+##'
+visible = function(data) {
+    data$.visible
+}
+##' @rdname visible
+##' @usage visible(data) <- value
+##' @param value a logical vector of the length \code{nrow(data)}
+##' @export "visible<-"
+`visible<-` = function(data, value) {
+    data$.visible = value
     data
 }
+
+##' Set or query the selected (brushed) observations.
+##'
+##' The column \code{.brushed} controls which observations are being
+##' brushed (i.e. those \code{TRUE}'s are selected).
+##' @param data the mutaframe
+##' @return \code{selected(data)} returns the logical vector
+##' corresponding to whether the observations are selected or not;
+##' \code{selected(data) <- value} sets the selected status of
+##' observations.
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples df = qdata(iris)
+##'
+##' selected(df)
+##'
+##' selected(df) = rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
+##'
+##' selected(df)
+##'
+selected = function(data) {
+    data$.brushed
+}
+##' @rdname selected
+##' @usage selected(data) <- value
+##' @param value a logical vector of the length \code{nrow(data)}
+##' @export "selected<-"
+`selected<-` = function(data, value) {
+    data$.brushed = value
+    data
+}
+
+
 
 ##' Truncate Strings
 ##'
