@@ -1,8 +1,7 @@
 #!/usr/bin/env Rscript
 
 ## this script will automatically run roxygen on cranvas; it can be used as a shell script
-## e.g. Rscript roxygenize.R or Rscript roxygenize.R install or Rscript roxyenize.R update install
-## if there is an option 'install', this script will try to install the cranvas package
+## e.g. Rscript roxygenize.R or Rscript roxyenize.R update
 
 ## extract the working directory from the file you provided
 ##  e.g. Rscript ~/pkg/cranvas/roxygenize.R
@@ -33,7 +32,6 @@ library(Rd2roxygen)
 options(width = 75)
 
 ## run roxygen and several cleaning up steps
-rab('cranvas', 'cranvas', install = ('install' %in% commandArgs(TRUE)),
-    copy.package = FALSE)
+try(rab('cranvas', install = TRUE))
 
 setwd(owd)
