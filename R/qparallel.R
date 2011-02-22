@@ -545,7 +545,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     legend_layer = qlayer(root_layer, row = 1, col = 2)
 
     ## update the brush layer in case of any modifications to the mutaframe
-    add_listener(data, function(i, j) {
+    d.idx = add_listener(data, function(i, j) {
         switch(j, .brushed = qupdate(brush_layer),
                .color = qupdate(main_layer), {
                    data_preprocess()
@@ -565,7 +565,11 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     brush_update = function() {
         qupdate(brush_layer)
     }
-    b$colorChanged$connect(brush_update)
+    b.idx = b$colorChanged$connect(brush_update)
+    qconnect(main_layer, 'destroyed', function(x) {
+        b$colorChanged$disconnect(b.idx)
+        remove_listener(data, d.idx)
+    })
     ## more attributes to come
 
     layout = root_layer$gridLayout()
