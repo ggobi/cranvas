@@ -19,13 +19,11 @@ record_selector(qnrc, vars = "Institution.Name")
 
 ## How to find out ISU by intersection and negation? public, midwest, large program
 
-## show data labels
-brush_attr(qnrc, '.label.show') = TRUE
-brush_attr(qnrc, '.label.color') = 'yellow'
+## show data labels (identifying)
+brush(qnrc, 'identify') = TRUE
+brush(qnrc, 'label.color') = 'black'
 
-brush_attr(qnrc, '.label.show') = FALSE
-
-qnrc$.color = 'red'
+brush(qnrc, 'identify') = FALSE  # turn off identification
 
 qparallel(qnrc, vars=14:19, main='Research, Student Support, Diversity', center=median, horizontal=FALSE, glyph='tick')
 
@@ -43,10 +41,14 @@ qparallel(qnrc, vars=var.ord, main='Other Indicators', center=median, horizontal
 ## color palette
 library(RColorBrewer)
 
+qnrc$.color = brewer.pal(3, "Set1")[as.integer(nrcstat$Control)]  # public or private
+qparallel(qnrc, vars=13:10, main='Overview of Rankings', boxplot=TRUE)
+
+
 ## old iris...
 ##  create a mutaframe containing row attributes first
 iris.col = brewer.pal(3, "Set1")[as.integer(iris$Species)]
-qiris = qdata(iris, .brushed = FALSE, .color = iris.col)
+qiris = qdata(iris, brushed = FALSE, color = iris.col)
 
 qparallel(qiris)
 qparallel(qiris, scale = "I")
@@ -112,7 +114,7 @@ qparallel(qiris, scale = 'I', center = mean)
 qparallel(qiris, center = median, boxplot = TRUE)
 
 ## labeling
-brush_attr(qiris, '.label.show') = TRUE
+brush(qiris, 'identify') = TRUE
 ## we can also change the row names and the labels will change accordingly
 rownames(qiris) = paste(abbreviate(iris$Species), 1:50, sep = '')
 
@@ -195,5 +197,5 @@ qparallel(qnhr, jitter = c("bedrms", "zone"), amount = 0.2)
 
 library(animation)
 data(pollen)
-qpollen = qdata(pollen, .color = rgb(0, 0, 1, 0.01))
+qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
 qparallel(qpollen)
