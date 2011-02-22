@@ -124,16 +124,16 @@ mode_selection = function(x, y, mode = 'none'){
 ##' @return a logical value: whether the plot corresponding to this
 ##' mutaframe is on focus or not
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @export focused
+##' @export
 ##' @examples
-##' mf = qmutaframe(head(iris))
+##' mf = qdata(head(iris))
 ##'
 ##' focused(mf)
 ##'
 ##' focused(mf) = TRUE
 ##'
 focused = function(data) {
-    attr(data, '.linking')[['.focused']]
+    attr(data, 'Link')[['focused']]
 }
 
 ##' @rdname focused
@@ -142,7 +142,10 @@ focused = function(data) {
 ##' @export "focused<-"
 ##' @return \code{NULL}; the status of focus is changed to \code{value}
 `focused<-` = function(data, value) {
-    attr(data, '.linking')[['.focused']] = value
+    attr(data, 'Link')[['focused']] = value
+    data
+}
+
     data
 }
 
