@@ -5,9 +5,6 @@
 
 ## options(verbose = TRUE)
 
-library(qtbase)
-library(qtpaint)
-library(plumbr)
 library(cranvas)
 
 data(nrcstat)
