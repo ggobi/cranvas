@@ -1,7 +1,7 @@
 ##' Interactive Statistical Graphics Based on Qt.
 ##'
 ##' @importFrom qtbase Qt
-##' @importFrom qtbase qrect qfont qsize
+##' @importFrom qtbase qrect qfont qsize qconnect
 ##' @import qtpaint
 ##' @import plumbr
 ##' @exportPattern "^[^\\.]"
