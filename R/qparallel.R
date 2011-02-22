@@ -53,8 +53,8 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
     mar = c(0.04, 0.04, 0.04, 0.04), main, lab.split = '[^[:alnum:]]') {
 
-    ## parameters for the brush
-    .brush.attr = brush_attr(data)
+    b = brush(data)    # the brush attached to the data
+
     ## background color
     .bgcolor = "grey80"
     ## .bgcolor = rgb(0,0,0,0)
@@ -354,7 +354,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         ## Key X: XOR; O: OR; A: AND; N: NOT
         i = which(event$key() == c(Qt$Qt$Key_A, Qt$Qt$Key_O, Qt$Qt$Key_X, Qt$Qt$Key_N, Qt$Qt$Key_C))
         if (length(i))
-            brush_attr(data, '.brush.mode') = c('and', 'or', 'xor', 'not', 'complement')[i]
+            b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
         i = which(event$key() == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
         if (length(i) && !any(is.na(.bpos))) {
             if (horizontal) {
@@ -410,16 +410,15 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         ## data range labels
     }
     identify_key_release = function(layer, event) {
-        ## set brush mode to 'none' when release the key
-        brush_attr(data, '.brush.mode') = 'none'
+        b$mode = 'none'  # set brush mode to 'none' when release the key
         direction = which(event$key() == c(Qt$Qt$Key_PageUp, Qt$Qt$Key_PageDown))
         if (length(direction)) {
-            .brush.index = .brush.attr$.brush.index + c(-1, 1)[direction]
-            .brush.index = max(1, min(length(.brush.attr$.brush.history), .brush.index))
-            .brush.attr$.brush.index = .brush.index
+            idx = b$history.index + c(-1, 1)[direction]
+            idx = max(1, min(length(b$history.list)), idx)
+            b$history.index = idx
             .brushed = logical(n)
-            .brushed[.brush.attr$.brush.history[[.brush.index]]] = TRUE
-            data$.brushed = .brushed
+            .brushed[b$history.list[[idx]]] = TRUE
+            selected(data) = .brushed
         }
     }
 
@@ -438,15 +437,17 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(glyph == 'line', p - 1, p))
         .new.brushed[hits] = TRUE
-        data$.brushed = mode_selection(data$.brushed, .new.brushed, mode = brush_attr(data, '.brush.mode'))
+        selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
         ## on mouse release
         if (event$button() != Qt$Qt$NoButton) {
-            .brush.attr$.brush.history[[(csize <- length(.brush.attr$.brush.history) + 1)]] = which(data$.brushed)
+            .cur.sel = which(selected(data))
+            if (length(.cur.sel) > 0)
+                b$history.list[[(csize <- length(b$history.list) + 1)]] = .cur.sel
             ## remove the first few columns due to the hisotory size limit
-            if (csize > (hsize <- brush_attr(data, '.history.size'))) {
-                .brush.attr$.brush.history[1:(csize - hsize)] = NULL
+            if (csize > (hsize <- b$history.size)) {
+                b$history.list[1:(csize - hsize)] = NULL
             }
-            .brush.attr$.brush.index = length(.brush.attr$.brush.history)
+            b$history.index = length(b$history.list)
         }
         cranvas_debug()
     }
@@ -455,16 +456,16 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     brush_draw = function(item, painter) {
         cranvas_debug()
         if (!any(is.na(.bpos))) {
-            qlineWidth(painter) = brush_attr(data, '.brush.size')
+            qlineWidth(painter) = b$style$size
             ##qdash(painter)=c(1,3,1,3)
             qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                       .bpos[1] + .brange[1], .bpos[2] + .brange[2],
-                      stroke = brush_attr(data, '.brush.color'))
+                      stroke = b$style$color)
         }
-        .brushed = data$.brushed
+        .brushed = selected(data)
         if (sum(.brushed, na.rm = TRUE) >= 1) {
-            qlineWidth(painter) = brush_attr(data, '.brushed.size')
-            qstrokeColor(painter) = brush_attr(data, '.brushed.color')
+            qlineWidth(painter) = b$size
+            qstrokeColor(painter) = b$color
             x = x[.brushed, , drop = FALSE]
             y = y[.brushed, , drop = FALSE]
             tmpx = as.vector(t.default(cbind(x, NA)))
@@ -473,10 +474,9 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
 
             ## show data labels and row ids
-            if (brush_attr(data, '.label.show') && !any(is.na(.bpos))) {
+            if (b$identify && !any(is.na(.bpos))) {
                 ## retrieve labels from the original data (possibly w/ transformation)
-                .label.fun = brush_attr(data, '.label.fun')
-                .brush.labels = .label.fun(data[.brushed, vars])
+                .brush.labels = b$label.gen(data[.brushed, vars])
                 .vars = c('case id', vars)
                 ## truncate the id strings if too long
                 .caseid = ifelse(sum(.brushed) == 1, rownames(data)[.brushed],
@@ -493,7 +493,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
                           .bpos[1] + ifelse(hflag, 1, -1) * bgwidth,
                           .bpos[2] + ifelse(vflag, -1, 1) * bgheight,
                           stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
-                qstrokeColor(painter) = brush_attr(data, '.label.color')
+                qstrokeColor(painter) = b$label.color
                 qdrawText(painter, .brush.labels, .bpos[1], .bpos[2],
                           halign = ifelse(hflag, "left", "right"),
                           valign = ifelse(vflag, "top", "bottom"))
@@ -559,10 +559,13 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
                    }
                })
     })
+
     ## update the brush layer if brush attributes change
-    add_listener(.brush.attr, function(i, j) {
+    brush_update = function() {
         qupdate(brush_layer)
-    })
+    }
+    b$colorChanged$connect(brush_update)
+    ## more attributes to come
 
     layout = root_layer$gridLayout()
     layout$setRowPreferredHeight(0, 30)
