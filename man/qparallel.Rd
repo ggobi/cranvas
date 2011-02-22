@@ -67,9 +67,6 @@ break them, they will be squeezed together along the axes); set
 
 ## options(cranvas_debug = TRUE)
 
-library(qtbase)
-library(qtpaint)
-library(plumbr)
 library(cranvas)
 
 data(nrcstat)
@@ -289,9 +286,6 @@ data(pollen)
 qpollen = qdata(pollen, .color = rgb(0, 0, 1, 
     0.01))
 qparallel(qpollen)}
-
-
-
 
 
 
