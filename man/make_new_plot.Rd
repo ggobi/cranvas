@@ -1,6 +1,6 @@
 \name{make_new_plot}
 \alias{make_new_plot}
-\title{make a plot object...}
+\title{make a plot object..}
 \usage{make_new_plot(windowRanges, width = 600, height = 600)
 
 }

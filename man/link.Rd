@@ -1,6 +1,6 @@
 \name{link}
 \alias{link}
-\title{Link mutaframes by a common categorical variable.}
+\title{Link mutaframes by a common categorical variable}
 \usage{link(...)
 
 }

@@ -1,6 +1,6 @@
 \name{make_window_ranges}
 \alias{make_window_ranges}
-\title{make the window ranges...}
+\title{make the window ranges..}
 \usage{make_window_ranges(dataRanges, xlab, ylab, xtickmarks, 
     ytickmarks, main)
 

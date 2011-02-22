@@ -1,6 +1,6 @@
 \name{make_data_ranges}
 \alias{make_data_ranges}
-\title{makes the data ranges...}
+\title{makes the data ranges..}
 \usage{make_data_ranges(dataColumn)
 
 }

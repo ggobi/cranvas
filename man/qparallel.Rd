@@ -1,20 +1,18 @@
 \name{qparallel}
 \alias{qparallel}
-\title{Parallel coordinates plot.}
+\title{Parallel coordinates plot}
 \usage{qparallel(data, vars, scale = "range", na.action = na.impute, 
     center, order = c("none", "MDS", "ANOVA"), horizontal = TRUE, 
     glyph = c("auto", "line", "tick", "circle", "square", 
         "triangle"), boxplot = FALSE, boxwex, jitter, amount, 
-    mar = c(0.04, 0.04, 0.04, 0.04), main, lab.split = "[^[:alnum:]]", 
-    verbose = getOption("verbose"))
+    mar = c(0.04, 0.04, 0.04, 0.04), main, lab.split = "[^[:alnum:]]")
 
 }
 
 
 
 
-
-\description{Parallel coordinates plot.
+\description{
 Create a parallel coordinates plot from a data frame or matrix, with each
 line representing a row.}
 \value{NULL}
@@ -58,10 +56,8 @@ variables (usually those categorical vars)}
 characters which are not alphanumeric will be replaced by
 \code{'\n'}, i.e. the labels will be broken into several lines;
 this can be useful when the axis labels are too long (if we do not
-break them, they will be squeezed together along the axes)}
-\item{verbose}{print some extra information (mainly the time
-consumed in each step); set \code{lab.split = NULL} to keep the
-labels untouched}
+break them, they will be squeezed together along the axes); set
+\code{lab.split = NULL} to keep the labels untouched}
 }
 \examples{## examples of qparallel()
 
@@ -86,7 +82,7 @@ qparallel(qnrc, vars = 13:10, main = "Overview of Rankings",
     glyph = "tick", horizontal = FALSE, boxplot = TRUE)
 qnrc$.color = "red"
 
-data_selector(qnrc, vars = "Institution.Name")
+record_selector(qnrc, vars = "Institution.Name")
 
 ## How to find out ISU by intersection and negation?
 #   public, midwest, large program

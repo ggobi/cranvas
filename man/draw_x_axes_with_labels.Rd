@@ -1,6 +1,6 @@
 \name{draw_x_axes_with_labels}
 \alias{draw_x_axes_with_labels}
-\title{draw x axes...}
+\title{draw x axes..}
 \usage{draw_x_axes_with_labels(plotObj, dataRanges, axisLabels, 
     labelHoriPos, name, row = 0, col = 0)
 

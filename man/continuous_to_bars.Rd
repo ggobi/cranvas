@@ -1,6 +1,6 @@
 \name{continuous_to_bars}
 \alias{continuous_to_bars}
-\title{Continuous items to bins...}
+\title{Continuous items to bins..}
 \usage{continuous_to_bars(data, splitBy, brushed, typeInfo = "hist", 
     position = "none", color, fill, stroke, ...)
 

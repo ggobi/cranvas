@@ -1,6 +1,6 @@
 \name{draw_y_axes}
 \alias{draw_y_axes}
-\title{draw y axes...}
+\title{draw y axes..}
 \usage{draw_y_axes(plotObj, dataRanges, name, row = 0, 
     col = 0)
 

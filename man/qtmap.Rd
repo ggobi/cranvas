@@ -1,13 +1,13 @@
 \name{qtmap}
 \alias{qtmap}
-\title{Interactive Maps.}
+\title{Interactive Maps}
 \usage{qtmap(data, longitude, latitude, group, by.x, 
     label = group, labeldata, by.y = by.x, colour, main, 
     ...)
 
 }
 
-\description{Interactive Maps.
+\description{
 Create an interactive map from qmutaframe}
 \value{NULL}
 \author{Heike Hofmann}

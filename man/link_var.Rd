@@ -1,6 +1,6 @@
 \name{link_var}
 \alias{link_var}
-\title{Set or query the linking variable in a mutaframe.}
+\title{Set or query the linking variable in a mutaframe}
 \usage{link_var(data)
 link_var(data) <- value
 }
@@ -13,7 +13,7 @@ link_var(data) <- value
 }
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{data}{the mutaframe (typically created by
-\code{\link{qmutaframe}}), with an attribute \code{.linking}}
+\code{\link{qmutaframe}}), with an attribute \code{Link}}
 \item{value}{the name of the linking variable}
 }
 \examples{mf = qmutaframe(head(iris))

@@ -5,13 +5,14 @@
 
 }
 \description{Truncate Strings}
-\details{Truncate a string if its length is greater than a specified \code{length},
-with an extra flag appended in the end.}
+\details{Truncate a string if its length is greater than a specified
+\code{length}, with an extra flag appended in the end.}
 \value{the truncated strings}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{x}{a character vector}
 \item{length}{the desired length}
-\item{extra}{the characters to be appended to the strings if their lengths are greater than the specified \code{length}}
+\item{extra}{the characters to be appended to the strings if their
+lengths are greater than the specified \code{length}}
 }
 \examples{truncate_str("asdfasdf", 5)
 truncate_str(c("asdf", "qwer"), 2)

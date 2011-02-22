@@ -1,7 +1,7 @@
-\name{data_selector}
-\alias{data_selector}
-\title{Select a subset of data through a GUI to be brushed.}
-\usage{data_selector(data, vars, gui.type = c("RGtk2", 
+\name{record_selector}
+\alias{record_selector}
+\title{Select a subset of data through a GUI to be brushed}
+\usage{record_selector(data, vars, gui.type = c("RGtk2", 
     "Qt"))
 
 }
@@ -26,14 +26,14 @@ based on \pkg{gWidgetsQt}}
     ## old iris as the toy example
     qiris = qmutaframe(iris)
     qparallel(qiris)
-    data_selector(qiris)
+    record_selector(qiris)
     
     ## NRC rankings
     data(nrcstat)
     qnrc = qmutaframe(nrcstat)
     qparallel(qnrc, vars = 10:13, main = "Overview of Rankings", 
         horizontal = FALSE)
-    data_selector(qnrc, "Institution.Name")
+    record_selector(qnrc, "Institution.Name")
     qparallel(qnrc, vars = 14:19, main = "Research, Student Support, Diversity")
     qparallel(qnrc, vars = 20:26, main = "Publication, Award, Time to Degree")
 }}

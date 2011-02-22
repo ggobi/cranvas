@@ -1,6 +1,6 @@
 \name{draw_grid}
 \alias{draw_grid}
-\title{draw grid...}
+\title{draw grid..}
 \usage{draw_grid(plotObj, dataRanges, row = 0, col = 0)
 
 }

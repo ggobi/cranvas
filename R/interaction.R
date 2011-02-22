@@ -212,12 +212,13 @@ selected = function(data) {
 
 ##' Truncate Strings
 ##'
-##' Truncate a string if its length is greater than a specified \code{length},
-##' with an extra flag appended in the end.
+##' Truncate a string if its length is greater than a specified
+##' \code{length}, with an extra flag appended in the end.
 ##' @title Truncate Strings to the Specified Length
 ##' @param x a character vector
 ##' @param length the desired length
-##' @param extra the characters to be appended to the strings if their lengths are greater than the specified \code{length}
+##' @param extra the characters to be appended to the strings if their
+##' lengths are greater than the specified \code{length}
 ##' @return the truncated strings
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @examples

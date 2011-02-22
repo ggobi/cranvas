@@ -1,7 +1,8 @@
-\name{qmutaframe}
-\alias{qmutaframe}
-\title{Create a mutaframe from data with several attributes for interaction.}
-\usage{qmutaframe(data, ...)
+\name{qdata}
+\alias{qdata}
+\title{Create a mutaframe from data with several attributes for interaction}
+\usage{qdata(data, color = "black", size = 1, brushed = FALSE, 
+    visible = TRUE)
 
 }
 \description{Create a mutaframe from data with several attributes for interaction.}
@@ -20,9 +21,9 @@ frame}
 \item{...}{other attributes corresponding to rows such as colors,
 sizes and so on}
 }
-\examples{iris0 = qmutaframe(iris, .color = "red", .brushed = FALSE)
-## the line width >= 2 does not work for me, so use 1
-brush_attr(iris0, ".brushed.size") = 1
+\examples{iris0 = qdata(iris, .color = "red", .brushed = FALSE)
+## thicker line for brushed elements
+brush(iris0, "size") = 3
 qparallel(iris0)
 ## random colors
 iris0$.color = sample(1:8, nrow(iris), replace = TRUE)
@@ -34,9 +35,9 @@ for (i in 1:10) {
     Sys.sleep(1)
 }
 ## change the brush color to green
-brush_attr(iris0, ".brush.color") = "green"
+brush(iris0, "color") = "green"
 ## change brushed lines to black
-brush_attr(iris0, ".brushed.color") = "black"}
+brush(iris0, "color") = "black"}
 
 
 

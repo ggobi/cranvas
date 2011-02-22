@@ -1,13 +1,13 @@
 \name{qmosaic}
 \alias{qmosaic}
-\title{Mosaic plot.}
+\title{Mosaic plot}
 \usage{qmosaic(data, formula, divider = mosaic(), cascade = 0, 
     scale_max = TRUE, na.rm = FALSE, subset, colour = "grey30", 
     main, ...)
 
 }
 
-\description{Mosaic plot.
+\description{
 Create a mosaicplot using a formula (as described in prodplot)}
 \value{NULL}
 \author{Heike Hofmann}

@@ -1,6 +1,6 @@
 \name{fill_and_stroke}
 \alias{fill_and_stroke}
-\title{Fill and Stroke by Color...}
+\title{Fill and Stroke by Color..}
 \usage{fill_and_stroke(color, fill, stroke)
 
 }

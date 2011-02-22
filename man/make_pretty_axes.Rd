@@ -1,6 +1,6 @@
 \name{make_pretty_axes}
 \alias{make_pretty_axes}
-\title{pretty axes...}
+\title{pretty axes..}
 \usage{make_pretty_axes(dataRange, minimum, maximum)
 
 }

@@ -1,6 +1,6 @@
 \name{qmval}
 \alias{qmval}
-\title{Interactive Missing Value Plot.}
+\title{Interactive Missing Value Plot}
 \usage{qmval(data, vars, main, ...)
 
 }

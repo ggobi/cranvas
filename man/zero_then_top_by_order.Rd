@@ -1,6 +1,6 @@
 \name{zero_then_top_by_order}
 \alias{zero_then_top_by_order}
-\title{Collect 0 and ordered vector...}
+\title{Collect 0 and ordered vector..}
 \usage{zero_then_top_by_order(vec)
 
 }

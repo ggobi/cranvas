@@ -1,6 +1,6 @@
 \name{make_dodge_pos}
 \alias{make_dodge_pos}
-\title{Make dodge positions...}
+\title{Make dodge positions..}
 \usage{make_dodge_pos(breaks, n)
 
 }

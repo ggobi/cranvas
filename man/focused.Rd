@@ -1,6 +1,6 @@
 \name{focused}
 \alias{focused}
-\title{Set or query the focus status.}
+\title{Set or query the focus status}
 \usage{focused(data)
 focused(data) <- value
 }
@@ -20,7 +20,7 @@ mutaframe is on focus or not
 \arguments{\item{data}{the mutaframe}
 \item{value}{a logical value: whether on focus or not}
 }
-\examples{mf = qmutaframe(head(iris))
+\examples{mf = qdata(head(iris))
 
 focused(mf)
 

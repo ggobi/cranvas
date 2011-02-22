@@ -1,6 +1,6 @@
 \name{qhist}
 \alias{qhist}
-\title{Create a hist plot...}
+\title{Create a hist plot..}
 \usage{qhist(data, xCol = 1, splitByCol = -1, horizontal = TRUE, 
     position = "none", color, fill, stroke, title, name = names(data), 
     ash = FALSE, start = min(data[[xCol]]), nbins = round(sqrt(nrow(data)), 

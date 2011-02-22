@@ -1,6 +1,6 @@
 \name{bprint}
 \alias{bprint}
-\title{Print Item Information...}
+\title{Print Item Information..}
 \usage{bprint(...)
 
 }

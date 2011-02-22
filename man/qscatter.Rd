@@ -1,6 +1,6 @@
 \name{qscatter}
 \alias{qscatter}
-\title{Draw a scatterplot...}
+\title{Draw a scatterplot..}
 \usage{qscatter(data, form, main, labeled = TRUE)
 
 }

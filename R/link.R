@@ -49,7 +49,7 @@ link = function(...) {
 ##' Set or query the linking variable in a mutaframe.
 ##'
 ##' @param data the mutaframe (typically created by
-##' \code{\link{qmutaframe}}), with an attribute \code{.linking}
+##' \code{\link{qmutaframe}}), with an attribute \code{Link}
 ##' @return the name of the linking variable
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export link_var
@@ -61,7 +61,7 @@ link = function(...) {
 ##' link_var(mf)
 ##'
 link_var = function(data) {
-    attr(data, '.linking')[['.linkvar']]
+    attr(data, 'Link')[['linkvar']]
 }
 
 ##' @rdname link_var
@@ -71,6 +71,6 @@ link_var = function(data) {
 `link_var<-` = function(data, value) {
     if (!(value %in% colnames(data)))
         stop(value, ' is not in the column names of data')
-    attr(data, '.linking')[['.linkvar']] = value
+    attr(data, 'Link')[['linkvar']] = value
     data
 }
