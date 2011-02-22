@@ -65,7 +65,7 @@ break them, they will be squeezed together along the axes); set
 ## drag with the right button to resize the brush; left
 #   button to move the brush
 
-## options(verbose = TRUE)
+## options(cranvas_debug = TRUE)
 
 library(qtbase)
 library(qtpaint)

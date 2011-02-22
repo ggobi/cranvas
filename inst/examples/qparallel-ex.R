@@ -3,7 +3,7 @@
 ## hints for interaction:
 ## drag with the right button to resize the brush; left button to move the brush
 
-## options(verbose = TRUE)
+## options(cranvas_debug = TRUE)
 
 library(cranvas)
 
