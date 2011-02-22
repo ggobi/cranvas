@@ -414,7 +414,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         direction = which(event$key() == c(Qt$Qt$Key_PageUp, Qt$Qt$Key_PageDown))
         if (length(direction)) {
             idx = b$history.index + c(-1, 1)[direction]
-            idx = max(1, min(length(b$history.list)), idx)
+            idx = max(1, min(length(b$history.list), idx))
             b$history.index = idx
             .brushed = logical(n)
             .brushed[b$history.list[[idx]]] = TRUE
