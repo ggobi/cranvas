@@ -440,9 +440,10 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
         ## on mouse release
         if (event$button() != Qt$Qt$NoButton) {
+            csize = length(b$history.list) + 1
             .cur.sel = which(selected(data))
             if (length(.cur.sel) > 0)
-                b$history.list[[(csize <- length(b$history.list) + 1)]] = .cur.sel
+                b$history.list[[csize]] = .cur.sel
             ## remove the first few columns due to the hisotory size limit
             if (csize > (hsize <- b$history.size)) {
                 b$history.list[1:(csize - hsize)] = NULL
