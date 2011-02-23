@@ -34,7 +34,6 @@
 ##' @param jitter NULL (no jittering) or a character vector to jitter
 ##' variables (usually those categorical vars)
 ##' @param amount jitter amount
-##' @param mar margin (in proportion to the whole canvas)
 ##' @param main the title
 ##' @param lab.split the pattern to ``break'' the axis labels by
 ##' \code{'\n'}; the default \code{'[^[:alnum:]]'} means any
@@ -51,7 +50,7 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    mar = c(0.04, 0.04, 0.04, 0.04), main, lab.split = '[^[:alnum:]]') {
+    main, lab.split = '[^[:alnum:]]') {
 
     b = brush(data)    # the brush attached to the data
 
@@ -199,9 +198,9 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         yr <<- diff(yspan)
 
         ## margins for the plot region
-        mar = rep(mar, length.out = 4)
-        lims <<- matrix(c(xspan + c(-1, 1) * xr * mar[c(2, 4)],
-                          yspan + c(-1, 1) * yr * mar[c(1, 3)]), 2)
+        mar = qpar('mar')
+        lims <<- matrix(c(xspan + c(-1, 1) * xr * mar,
+                          yspan + c(-1, 1) * yr * mar), 2)
         ## adjust axis ticks locations (some may exceed the range of 'lims')
         idx = (xtickloc > lims[1, 1]) & (xtickloc < lims[2, 1])
         xtickloc <<- xtickloc[idx]
