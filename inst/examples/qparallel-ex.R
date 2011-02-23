@@ -125,30 +125,31 @@ qparallel(qmtcars, order = 'MDS')
 qparallel(qmtcars, order = 'ANOVA')
 
 ## test speed
-test.mat1 = qdata(matrix(rnorm(1000 * 10), ncol = 10),
-    .color = rgb(1, 0, 0, 0.2))
-qparallel(test.mat1, mar = c(0.2, 0.1, 0.1, 0.1))
+test.mat1 = qdata(matrix(rnorm(1000 * 10), ncol = 10), color = rgb(1, 0, 0, 0.2))
+qparallel(test.mat1)
 
-test.mat2 = qdata(matrix(rnorm(1000 * 15), ncol = 15),
-    .color = rgb(1, 0, 0, 0.2))
+test.mat2 = qdata(matrix(rnorm(1000 * 15), ncol = 15), color = rgb(1, 0, 0, 0.2))
 qparallel(test.mat2, boxplot = TRUE)
 
 ## slow for brushing in my laptop
-test.mat3 = qdata(matrix(rnorm(5000 * 10), ncol = 10),
-     .color = rgb(1, 0, 0, 0.05))
-qparallel(test.mat3, verbose = TRUE)
+test.mat3 = qdata(matrix(rnorm(5000 * 10), ncol = 10), color = rgb(1, 0, 0, 0.05))
+
+options(cranvas_debug = TRUE)
+qparallel(test.mat3)
 
 ## speed tests
 ## on my laptop, 10000x10 takes 5 secs to build the brushing cache
 ## identifying is generally very fast once the cache was built
 qhuge1 = qdata(matrix(rbeta(1e+04 * 10, 5, 30), ncol = 10))
-qparallel(qhuge1, verbose = TRUE)
+qparallel(qhuge1)
 ## 30000x10 takes 45 seconds
 qhuge2 = qdata(matrix(rbeta(3e+04 * 10, 5, 30), ncol = 10))
-qparallel(qhuge2, verbose = TRUE)
+qparallel(qhuge2)
 ## 1 million points to torture Qt!!
 qhuge3 = qdata(matrix(rbeta(1e+05 * 10, 5, 30), ncol = 10))
-qparallel(qhuge3, verbose = TRUE)
+qparallel(qhuge3)
+
+options(cranvas_debug = FALSE)
 
 ## linking two parcoords plots: split the data into 2 parts
 testdata = qdata(as.data.frame(matrix(rnorm(2000 * 10), ncol = 10)))
@@ -156,7 +157,7 @@ qparallel(testdata, vars = sprintf("V%d", 1:6))
 qparallel(testdata, vars = sprintf("V%d", 4:10))
 
 library(ggplot2)
-qdiamonds = qdata(diamonds, .color = rgb(1, 0, 0, .01))
+qdiamonds = qdata(diamonds, color = rgb(1, 0, 0, .01))
 qparallel(qdiamonds, vars = 1:7, glyph = 'line', jitter = ~ cut + color + clarity)
 qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
 qparallel(qdiamonds, vars = 1:7, glyph = 'line', order = 'ANOVA')
@@ -169,7 +170,7 @@ qparallel(qdiamonds, vars = 1:7, glyph = 'line', order = 'ANOVA')
 if (!require("YaleToolkit")) install.packages("YaleToolkit")
 library(YaleToolkit)
 data(NewHavenResidential)
-qnhr = qdata(NewHavenResidential, .color = rgb(1, 0, 0, 0.1))
+qnhr = qdata(NewHavenResidential, color = rgb(1, 0, 0, 0.1))
 qparallel(qnhr)
 
 qparallel(qnhr, vars = names(NewHavenResidential)[1:4])
