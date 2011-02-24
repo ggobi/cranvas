@@ -283,11 +283,13 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
     ## par-coords segments
     main_draw = function(item, painter) {
         cranvas_debug()
+        .color = data$.color
+        .color[!visible(data)] = NA
         if (glyph == 'line') {
-            segcol = rep(data$.color, each = p - 1)
+            segcol = rep(.color, each = p - 1)
             qdrawSegment(painter, segx0, segy0, segx1, segy1, stroke = segcol)
         } else {
-            col.glyph = rep(data$.color, each = p)
+            col.glyph = rep(.color, each = p)
             qdrawGlyph(painter, draw.glyph, x0, y0, stroke = col.glyph)
         }
         cranvas_debug()
@@ -354,6 +356,10 @@ qparallel = function(data, vars, scale = "range", na.action = na.impute,
         i = which(event$key() == c(Qt$Qt$Key_A, Qt$Qt$Key_O, Qt$Qt$Key_X, Qt$Qt$Key_N, Qt$Qt$Key_C))
         if (length(i))
             b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
+
+        ## make the brushed observations invisible when hitting Delete
+        if (event$key() == Qt$Qt$Key_Delete)
+            visible(data) = !selected(data)
         i = which(event$key() == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
         if (length(i) && !any(is.na(.bpos))) {
             if (horizontal) {
