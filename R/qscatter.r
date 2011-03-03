@@ -264,15 +264,18 @@ keyPressFun <- function(item, event, ...) {
 ###################
 # draw the canvas #
 ###################
-
-  plot1 <- new_plot()
-  bglayer <- add_layer(parent = plot1, mark = coords, userlimits = lims)
-  datalayer <- add_layer(parent = plot1, mark = scatter.all, keyPressFun = keyPressFun,
+  size <- qsize(as.integer(c(600, 400)))
+  limits <- qrect(c(0,1), c(0,1))
+  scene <- qscene()
+  root <- qlayer(scene)
+  root$setGeometry(qrect(0, 0, 600, 400))
+  bglayer <- qlayer(parent = root, paintFun = coords, limits=lims)
+  datalayer <- qlayer(parent = root, paintFun = scatter.all, keyPressFun = keyPressFun,
                          mouseMove = identify_mouse_move,
                          mousePressFun = brush_mouse_press,
-                         mouseReleaseFun = identify_mouse_move, userlimits = lims)
-  brushlayer <- add_layer(parent = plot1, mark = brush_draw, userlimits = lims)
-  view <- qplotView(scene = plot1$scene)
+                         mouseReleaseFun = identify_mouse_move, limits = lims)
+  brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims)
+  view <- qplotView(scene = scene)
   view$setWindowTitle(extract.formula(form))
  # view$setMaximumSize(plot1$size)
 
@@ -282,13 +285,13 @@ keyPressFun <- function(item, event, ...) {
   if (is.mutaframe(data)) {
     func <- function(i,j) {
       if (j == ".brushed") {
-        qupdate(brushlayer$layer)
+        qupdate(brushlayer)
       }
     }
 
 	  add_listener(data, func)
   }
 
-  print(view)
+  return(view)
 
 }

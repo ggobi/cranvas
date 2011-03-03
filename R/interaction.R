@@ -10,13 +10,17 @@
 ##' objects).
 ##' @param data a data frame (typically); it will be coerced to a data
 ##' frame
-##' @param ... other attributes corresponding to rows such as colors,
-##' sizes and so on
-##' @return a mutaframe
+##' @param color colors of rows (default black)
+##' @param size sizes of rows (default 1)
+##' @param brushed a logical vector indicating whether the rows are
+##' brushed (default all \code{FALSE})
+##' @param visible a logical vector indicating whether the rows are
+##' visible (default all \code{TRUE})
+##' @return a mutaframe with some attributes like the brush
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples
-##' iris0 = qdata(iris, .color = 'red', .brushed = FALSE)
+##' iris0 = qdata(iris, color = 'red', brushed = FALSE)
 ##' ## thicker line for brushed elements
 ##' brush(iris0, 'size') = 3
 ##' qparallel(iris0)

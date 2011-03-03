@@ -2,11 +2,11 @@
 ##' Create a parallel coordinates plot from a data frame or matrix, with each
 ##' line representing a row.
 ##'
-##' @param data a mutaframe which is typically built upon a data frame
-##' along with several row attributes
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
 ##' + x2'
+##' @param data a mutaframe which is typically built upon a data frame
+##' along with several row attributes
 ##' @param scale standardizing method - 'range' --> [0, 1], 'I' --> do
 ##' nothing, 'var' --> mean 0 var 1, 'custom_function_name' --> use
 ##' your own function (see examples.R)
@@ -46,7 +46,7 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example cranvas/inst/examples/qparallel-ex.R
-qparallel = function(data, vars, scale = "range", na.action = na.impute,
+qparallel = function(vars, data, scale = "range", na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
