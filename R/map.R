@@ -247,6 +247,7 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
 
  		rect = qrect(matrix(c(left, bottom, right, top), 2, byrow = TRUE))
     hits = datalayer$locate(rect) + 1
+
 		.groupsdata$.brushed <<- FALSE
 		.groupsdata$.brushed[hits] <<- TRUE
   }
@@ -304,9 +305,9 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
     if (is.null(info)) return()
     if (nrow(info) == 0) return()
 
-		infostring = paste(deparse(arguments$label), label[hits],collapse="\n", sep=":")
+		lid <- deparse(arguments$label)
+		infostring = paste(lid, .groupsdata[hits, lid],collapse="\n", sep=": ")
 		if (.extended) {
-#browser()
 		  idx <- setdiff(names(.groupsdata), c("order", ".color", ".brushed", as.character(arguments$longitude), as.character(arguments$latitude), as.character(arguments$group)))
       infodata <- as.character(unlist(info[1,idx]))
       infostring <- paste(idx, infodata,collapse="\n", sep=":")
