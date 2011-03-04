@@ -141,7 +141,7 @@ qmval <- function(data, vars, main, ...) {
 
   brushing_draw <- function(item, painter, exposed, ...) {
 
-		brushcolor <- brush_attr(data, ".brushed.color")
+		brushcolor <- brush(data)$color
 
 		# basic rectangle:
 		top <- 0.1
@@ -293,7 +293,7 @@ qmval <- function(data, vars, main, ...) {
 							ypos + ifelse(vflag, -1, 1) * bgheight,
 							stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
 
-		qstrokeColor(painter) = brush_attr(data, '.label.color')
+		qstrokeColor(painter) = brush(data)$label.color
     qdrawText(painter, infostring, xpos, ypos,
     	halign = ifelse(hflag, "left", "right"),
       valign = ifelse(vflag, "top", "bottom"))
