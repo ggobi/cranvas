@@ -271,7 +271,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         square = qglyphSquare(), triangle = qglyphTriangle())
 
     ## background grid
-    grid_draw = function(item, painter) {
+    grid_draw = function(layer, painter) {
         qdrawRect(painter, lims[1, 1], lims[1, 2], lims[2, 1], lims[2, 2],
                   stroke = .bgcolor, fill = .bgcolor)
         qdrawSegment(painter, xtickloc, lims[1, 2], xtickloc, lims[2, 2],
@@ -281,7 +281,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## par-coords segments
-    main_draw = function(item, painter) {
+    main_draw = function(layer, painter) {
         cranvas_debug()
         .color = data$.color
         .color[!visible(data)] = NA
@@ -296,7 +296,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## annotate maximum and minimum values for each axis
-    range_draw = function(item, painter) {
+    range_draw = function(layer, painter) {
         if (any(numcol)) {
             dat = as.data.frame(data)[, vars][, numcol]
             if (horizontal) {
@@ -310,7 +310,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## (optional) boxplots
-    boxplot_draw = function(item, painter) {
+    boxplot_draw = function(layer, painter) {
         cranvas_debug()
         qstrokeColor(painter) = "black"
         for (i in (1:p)[numcol]) {
@@ -339,7 +339,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## record the coordinates of the mouse on click
-    brush_mouse_press = function(item, event) {
+    brush_mouse_press = function(layer, event) {
         .bstart <<- as.numeric(event$pos())
         ## on right click, we can resize the brush; left click: only move the brush
         if (event$button() == Qt$Qt$RightButton) {
@@ -459,7 +459,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## draw the segments under the brush with another appearance
-    brush_draw = function(item, painter) {
+    brush_draw = function(layer, painter) {
         cranvas_debug()
         if (!any(is.na(.bpos))) {
             qlineWidth(painter) = b$style$size
@@ -512,16 +512,16 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     root_layer = qlayer(scene)
 
     ## title
-    title_layer = qlayer(root_layer, function(item, painter) {
+    title_layer = qlayer(root_layer, function(layer, painter) {
         qdrawText(painter, main, (lims[1] + lims[2])/2, 0, "center", "bottom")
     }, limits = qrect(c(lims[1], lims[2]), c(0, 1)), row = 0, col = 1)
     ## y-axis
-    yaxis_layer = qlayer(root_layer, function(item, painter) {
+    yaxis_layer = qlayer(root_layer, function(layer, painter) {
         qdrawText(painter, yticklab, 0.9, ytickloc, "right", "center")
         qdrawSegment(painter, .91, ytickloc, 1, ytickloc, stroke='black')
     }, limits = qrect(c(0, 1), c(lims[3], lims[4])), row = 1, col = 0)
     ## x-axis
-    xaxis_layer = qlayer(root_layer, function(item, painter) {
+    xaxis_layer = qlayer(root_layer, function(layer, painter) {
         qdrawText(painter, xticklab, xtickloc, 0.9, "center", "top")
         qdrawSegment(painter, xtickloc, .91, xtickloc, 1, stroke='black')
     }, limits = qrect(c(lims[1], lims[2]), c(0, 1)), row = 2, col = 1)
@@ -536,9 +536,9 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move,
         mouseMove = identify_mouse_move, keyPressFun = identify_key_press,
         keyReleaseFun = identify_key_release,
-        focusInFun = function(item, painter) {
+        focusInFun = function(layer, painter) {
             focused(data) = TRUE
-        }, focusOutFun = function(item, painter) {
+        }, focusOutFun = function(layer, painter) {
             focused(data) = FALSE
         },
         limits = qrect(lims), row = 1, col = 1)
