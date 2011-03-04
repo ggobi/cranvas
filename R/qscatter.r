@@ -258,7 +258,8 @@ keyPressFun <- function(item, event, ...) {
       }
       .new.brushed = rep(FALSE, n)
       rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
-      hits = layer$locate(rect) + 1
+			hits = layer$locate(rect) + 1
+ 			
       .new.brushed[hits] = TRUE
       data$.brushed = mode_selection(data$.brushed, .new.brushed, mode = brush(data)$mode)
   }
