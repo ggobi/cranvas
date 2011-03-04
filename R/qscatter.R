@@ -26,15 +26,15 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 ################################
 
   ## check if an attribute exist
-  has_attr <- function(attr) {
-    attr %in% names(data)
-  }
+#  has_attr <- function(attr) {
+#    attr %in% names(data)
+#  }
 
   ## parameters for the brush
-  .brush.attr <- attr(data, '.brush.attr')
-  if (!has_attr('.brushed') || is.null(data$.brushed)) {
-    data$.brushed = FALSE
-  }
+#  .brush.attr <- attr(data, '.brush.attr')
+#  if (!has_attr('.brushed') || is.null(data$.brushed)) {
+#    data$.brushed = FALSE
+#  }
 
   if (length(form) != 3) {
     stop("invalid formula, requires y ~ x format")
@@ -153,13 +153,16 @@ coords <- function(item, painter, exposed) {
 scatter.all <- function(item, painter, exposed) {
   x <- subset(df, select = .levelX)[,1]
   y <- subset(df, select = .levelY)[,1]
-  if (has_attr(".color")) {
-  	fill <- data$.color
-  	stroke <- data$.color
-  } else {
-    fill <- "black"
-    stroke <- "black"
-  }
+	fill <- data$.color
+	stroke <- data$.color
+	
+#  if (has_attr(".color")) {
+#  	fill <- data$.color
+#  	stroke <- data$.color
+#  } else {
+#    fill <- "black"
+#    stroke <- "black"
+#  }
   radius <- .radius
   qdrawCircle(painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
 }
@@ -169,11 +172,11 @@ brush_draw <- function(item, painter, exposed) {
     .brushed = data$.brushed
     if(.brush) {
         if (!any(is.na(.bpos))) {
-            qlineWidth(painter) = brush_attr(data, '.brush.size')
+            qlineWidth(painter) = brush(data)$size
             ##qdash(painter)=c(1,3,1,3)
             qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                       .bpos[1] + .brange[1], .bpos[2] + .brange[2],
-                      stroke = brush_attr(data, '.brush.color'))
+                      stroke = brush(data)$color)
         }
 
         hdata <- subset(df, .brushed)
@@ -181,17 +184,17 @@ brush_draw <- function(item, painter, exposed) {
         if (nrow(hdata) > 0) {
             ## draw the brush rectangle
             if (!any(is.na(.bpos))) {
-                qlineWidth(painter) = brush_attr(data, '.brush.size')
+                qlineWidth(painter) = brush(data)$size
                 ##qdash(painter)=c(1,3,1,3)
                 qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                           .bpos[1] + .brange[1], .bpos[2] + .brange[2],
-                          stroke = brush_attr(data, '.brush.color'))
+                      		stroke = brush(data)$color)
             }
             ## (re)draw brushed data points
             x <- subset(hdata, select = .levelX)[,1]
             y <- subset(hdata, select = .levelY)[,1]
-            fill <- brush_attr(data, ".brushed.color")
-            stroke <- brush_attr(data, ".brushed.color")
+            fill = brush(data)$color
+            stroke = brush(data)$color
             radius <- .radius
 
             qdrawCircle( painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
@@ -257,7 +260,7 @@ keyPressFun <- function(item, event, ...) {
       rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
       hits = layer$locate(rect) + 1
       .new.brushed[hits] = TRUE
-      data$.brushed = mode_selection(data$.brushed, .new.brushed, mode = brush_attr(data, '.brush.mode'))
+      data$.brushed = mode_selection(data$.brushed, .new.brushed, mode = brush(data)$mode)
   }
 ########## end event handlers
 

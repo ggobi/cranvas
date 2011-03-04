@@ -1,8 +1,10 @@
+library(plumbr)
+
 myvarsummary <- function(x) {
 	if (is.factor(x) || is.character(x)) return(names(sort(table(x), decreasing=TRUE))[1])
 	if (is.logical(x)) return(any(x, na.rm=TRUE))
 
-	return(mean(x))
+	return(mean(x, na.rm=TRUE))
 }
 
 mysummary <- function(x) {
@@ -52,6 +54,9 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 	if (is.null(labeldata))
 		label <- unique(eval(arguments$label, df.data))
 
+#browser()
+if (!is.null(by.x)) link_var(data) = by.x
+if (!is.null(by.y)) link_var(labeldata) = by.y
 
 	.groupsdata <- ddply(df.data,.(group), mysummary)
 	.groupsdata <- cast(.groupsdata, group ~ .id, value="V1")
@@ -156,7 +161,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 		}
 		.recalcbrushed <<- FALSE
 
-		if (!is.null(labeldata)) setSelectedLabel()
+#		if (!is.null(labeldata)) setSelectedLabel()
 	}
 
 	recalclbrushed <- function() {
@@ -166,7 +171,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 		}
 		.recalclbrushed <<- FALSE
 
-		setSelected()
+#		setSelected()
 	}
 
   brushing_draw <- function(item, painter, exposed, ...) {
@@ -176,7 +181,9 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 		bgroups <- subset(.groupsdata, .brushed == TRUE)
 		if (nrow(bgroups) == 0) return()
 #print(bgroups)
-		brushcolor <- brush_attr(data, ".brushed.color")
+#browser()
+		brushcolor <- brush(data)$color
+
 
 		for (i in bgroups$ID) {
 			xx <- x[group==i]
@@ -240,6 +247,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 
  		rect = qrect(matrix(c(left, bottom, right, top), 2, byrow = TRUE))
     hits = datalayer$locate(rect) + 1
+
 		.groupsdata$.brushed <<- FALSE
 		.groupsdata$.brushed[hits] <<- TRUE
   }
@@ -297,16 +305,16 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
     if (is.null(info)) return()
     if (nrow(info) == 0) return()
 
-		infostring = paste(deparse(arguments$label), label[hits],collapse="\n", sep=":")
+		lid <- deparse(arguments$label)
+		infostring = paste(lid, .groupsdata[hits, lid],collapse="\n", sep=": ")
 		if (.extended) {
-#browser()
 		  idx <- setdiff(names(.groupsdata), c("order", ".color", ".brushed", as.character(arguments$longitude), as.character(arguments$latitude), as.character(arguments$group)))
       infodata <- as.character(unlist(info[1,idx]))
       infostring <- paste(idx, infodata,collapse="\n", sep=":")
 		}
 
 
-		brushcolor <- brush_attr(data, ".brushed.color")
+		brushcolor <- brush(data)$color
 		for (i in info$ID) {
 			xx <- x[group==i]
 			yy <- y[group==i]
@@ -332,7 +340,7 @@ qtmap <- function(data, longitude, latitude, group, by.x=NULL, label=group, labe
 							ypos + ifelse(vflag, -1, 1) * bgheight,
 							stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
 
-		qstrokeColor(painter) = brush_attr(data, '.label.color')
+		qstrokeColor(painter) = brush(data)$label.color
     qdrawText(painter, infostring, xpos, ypos,
     	halign = ifelse(hflag, "left", "right"),
       valign = ifelse(vflag, "top", "bottom"))
