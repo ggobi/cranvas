@@ -128,8 +128,8 @@ coords <- function(item, painter, exposed) {
   # labels as appropriate
   if (!is.na(xid[1])) {
     labels <- get_axisPosX(data = df, colName = .levelX)
-    print("x axis labels")
-    print(labels)
+#    print("x axis labels")
+#    print(labels)
     draw_x_axes_with_labels_fun(painter, dataRanges,
       axisLabel=sy, labelHoriPos=sy, name=xlab)
   } else {
@@ -156,13 +156,6 @@ scatter.all <- function(item, painter, exposed) {
 	fill <- data$.color
 	stroke <- data$.color
 	
-#  if (has_attr(".color")) {
-#  	fill <- data$.color
-#  	stroke <- data$.color
-#  } else {
-#    fill <- "black"
-#    stroke <- "black"
-#  }
   radius <- .radius
   qdrawCircle(painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
 }
@@ -212,26 +205,24 @@ keyPressFun <- function(item, event, ...) {
 
     if (key == Qt$Qt$Key_Up) {        # arrow up
 		.radius <<- .radius+1
-        qupdate(datalayer$layer)
-		qupdate(brushlayer$layer)
+        qupdate(datalayer)
+		qupdate(brushlayer)
     } else if (key == Qt$Qt$Key_Down & .radius > 0) {        # arrow down
         .radius <<- .radius - 1
-        qupdate(datalayer$layer)
-		qupdate(datalayer$layer)
+        qupdate(datalayer)
+		qupdate(datalayer)
     } else if (key == Qt$Qt$Key_Right & .alpha < 1) {        # arrow right
 	# increase alpha blending
-        .alpha <<- .alpha + 0.01
-        datalayer$layer$setOpacity(.alpha)
-		brushlayer$layer$setOpacity(.alpha)
-        qupdate(datalayer$layer)
-		qupdate(datalayer$layer)
-
-    } else if (key == Qt$Qt$Key_Left & .alpha > 0) {        # arrow left
+        .alpha <<- 1.1*.alpha
+        datalayer$setOpacity(.alpha)
+#		brushlayer$setOpacity(.alpha)
+        qupdate(datalayer)
+    } else if (key == Qt$Qt$Key_Left & .alpha > 0.01) {        # arrow left
 	# decrease alpha blending
-        .alpha <<- .alpha - 0.01
-        datalayer$layer$setOpacity(.alpha)
-		brushlayer$layer$setOpacity(.alpha)
-        qupdate(datalayer$layer)
+        .alpha <<- 0.9*.alpha 
+        datalayer$setOpacity(.alpha)
+#		brushlayer$setOpacity(.alpha)
+        qupdate(datalayer)
     }
 
 
@@ -263,6 +254,68 @@ keyPressFun <- function(item, event, ...) {
       .new.brushed[hits] = TRUE
       data$.brushed = mode_selection(data$.brushed, .new.brushed, mode = brush(data)$mode)
   }
+
+  # Display category information on hover (query) ----------------------------
+  .queryPos <- NULL
+
+  query_draw <- function(item, painter, exposed, ...) {
+    if (is.null(.queryPos)) return()
+
+    xpos <- .queryPos[1]
+    ypos <- .queryPos[2]
+
+ 		rect = qrect(matrix(c(xpos,ypos,xpos+1, ypos+1), 2, byrow = TRUE))
+#		qdrawCircle(painter,
+#							x=xpos,
+#							y=ypos,
+#							r=.radius, fill = "purple")
+#		hits = datalayer$locate(rect) + 1
+#print(hits)
+#print(.queryPos)
+    # Nothing under mouse?
+    if (length(hits)==0) return()
+
+    info <- as.data.frame(data[hits, c(.levelX, .levelY)])
+#browser()
+    
+    # Nothing under mouse
+#    if (nrow(info) == 0) return()
+
+    # Work out label text
+    idx <- names(info)
+    infodata <- as.character(unlist(info[1,idx]))
+    infostring <- paste(idx, infodata,collapse="\n", sep=": ")
+
+    bgwidth = qstrWidth(painter, infostring)
+    bgheight = qstrHeight(painter, infostring)    
+    
+		## adjust drawing directions when close to the boundary
+		hflag = windowRanges[2] - xpos > bgwidth
+		vflag = ypos - windowRanges[3] > bgheight
+		qdrawRect(painter, xpos, ypos,
+							xpos + ifelse(hflag, 1, -1) * bgwidth,
+							ypos + ifelse(vflag, -1, 1) * bgheight,
+							stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
+
+		qstrokeColor(painter) = brush(data)$label.color
+    qdrawText(painter, infostring, xpos, ypos,
+    	halign = ifelse(hflag, "left", "right"),
+      valign = ifelse(vflag, "top", "bottom"))
+
+  }
+
+  query_hover <- function(item, event, ...) {
+#    if (.brush) return()
+
+    .queryPos <<- as.numeric(event$pos())
+    qupdate(querylayer)
+  }
+
+  query_hover_leave <- function(item, event, ...) {
+    .queryPos <<- NULL
+    qupdate(querylayer)
+  }
+
 ########## end event handlers
 
 ###################
@@ -279,6 +332,8 @@ keyPressFun <- function(item, event, ...) {
                          mousePressFun = brush_mouse_press,
                          mouseReleaseFun = identify_mouse_move, limits = lims)
   brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims)
+  querylayer = qlayer(parent = root, query_draw, limits = lims, clip = FALSE,
+    hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave)
   view <- qplotView(scene = scene)
   view$setWindowTitle(extract.formula(form))
  # view$setMaximumSize(plot1$size)
