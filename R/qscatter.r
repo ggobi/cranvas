@@ -109,7 +109,7 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
   ## move brush?
   .bmove = TRUE
    ## brush range: horizontal and vertical
-  .brange = c(diff(windowRanges[c(2,1)]), diff(windowRanges[c(4,3)]))/30
+  .brange = c(diff(windowRanges[c(1,2)]), diff(windowRanges[c(3,4)]))/30
 
   n = nrow(data)
 
@@ -217,7 +217,7 @@ keyPressFun <- function(item, event, ...) {
         datalayer$setOpacity(.alpha)
 #		brushlayer$setOpacity(.alpha)
         qupdate(datalayer)
-    } else if (key == Qt$Qt$Key_Left & .alpha > 0.01) {        # arrow left
+    } else if (key == Qt$Qt$Key_Left & .alpha > 1.0/n) {        # arrow left
 	# decrease alpha blending
         .alpha <<- 0.9*.alpha 
         datalayer$setOpacity(.alpha)
@@ -248,7 +248,14 @@ keyPressFun <- function(item, event, ...) {
           .brange <<- .bpos - .bstart
       }
       .new.brushed = rep(FALSE, n)
-      rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
+		xrange <- .radius/root$size$width()*diff(windowRanges[c(1,2)])
+		yrange <- .radius/root$size$height()*diff(windowRanges[c(3,4)])
+#
+			rect = qrect(matrix(c(.bpos - .brange - c(xrange, yrange), 
+													  .bpos + .brange + c(xrange, yrange)), 
+									 2, byrow = TRUE))
+#browser()									 
+#			rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
 			hits = layer$locate(rect) + 1
  			
       .new.brushed[hits] = TRUE
@@ -264,14 +271,15 @@ keyPressFun <- function(item, event, ...) {
     xpos <- .queryPos[1]
     ypos <- .queryPos[2]
 
- 		rect = qrect(matrix(c(xpos,ypos,xpos+1, ypos+1), 2, byrow = TRUE))
-#		qdrawCircle(painter,
-#							x=xpos,
-#							y=ypos,
-#							r=.radius, fill = "purple")
+		xrange <- .radius/root$size$width()*diff(windowRanges[c(1,2)])
+		yrange <- .radius/root$size$height()*diff(windowRanges[c(3,4)])
+#		print(xrange)
+#		print(yrange)
+ 		rect = qrect(matrix(c(xpos-xrange,ypos-yrange,xpos+xrange, ypos+yrange), 2, byrow = TRUE))
 		hits = datalayer$locate(rect) + 1
 #print(hits)
 #print(.queryPos)
+#browser()
     # Nothing under mouse?
     if (length(hits)==0) return()
 
