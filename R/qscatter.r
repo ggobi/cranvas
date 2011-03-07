@@ -269,7 +269,7 @@ keyPressFun <- function(item, event, ...) {
 #							x=xpos,
 #							y=ypos,
 #							r=.radius, fill = "purple")
-#		hits = datalayer$locate(rect) + 1
+		hits = datalayer$locate(rect) + 1
 #print(hits)
 #print(.queryPos)
     # Nothing under mouse?
