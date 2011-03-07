@@ -291,9 +291,17 @@ keyPressFun <- function(item, event, ...) {
 
     # Work out label text
     idx <- names(info)
-    infodata <- as.character(unlist(info[1,idx]))
-    infostring <- paste(idx, infodata,collapse="\n", sep=": ")
-
+		if (length(hits)==1) {
+			infodata <- as.character(unlist(info[,idx]))
+			infostring <- paste(idx, infodata,collapse="\n", sep=": ")
+		} else {
+#browser()
+			xymin <- unlist(lapply(info[, idx], min, na.rm = T))
+			xymax <- unlist(lapply(info[, idx], max, na.rm = T))
+			infostring <- paste(idx, paste(xymin, xymax, sep=" - "),collapse="\n", sep=": ")
+			infostring <- paste(" xxhitsxx points\n", infostring)
+			infostring <- gsub("xxhitsxx", length(hits), infostring)
+		}
     bgwidth = qstrWidth(painter, infostring)
     bgheight = qstrHeight(painter, infostring)    
     
