@@ -156,6 +156,9 @@ coords <- function(item, painter, exposed) {
 scatter.all <- function(item, painter, exposed) {
 	fill <- data$.color
 	stroke <- data$.color
+	df <- data.frame(data)
+	x <- eval(arguments$x, df)
+	y <- eval(arguments$y, df)
 	
   radius <- .radius
   qdrawCircle(painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
@@ -338,11 +341,11 @@ keyPressFun <- function(item, event, ...) {
 ###################
 # draw the canvas #
 ###################
-  size <- qsize(as.integer(c(600, 400)))
+  size <- qsize(as.integer(c(400, 400)))
   limits <- qrect(c(0,1), c(0,1))
   scene <- qscene()
   root <- qlayer(scene)
-  root$setGeometry(qrect(0, 0, 600, 400))
+  root$setGeometry(qrect(0, 0, 400, 400))
   bglayer <- qlayer(parent = root, paintFun = coords, limits=lims)
   datalayer <- qlayer(parent = root, paintFun = scatter.all, keyPressFun = keyPressFun,
                          mouseMove = identify_mouse_move,
