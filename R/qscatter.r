@@ -14,7 +14,8 @@
 #' @param main main title for the plot
 #' @param labeled whether axes should be labeled
 
-qscatter <- function (data, form, main = NULL, labeled = TRUE) {
+#qscatter <- function (data, form, main = NULL, labeled = TRUE) {
+qscatter <- function (data, x, y, main = NULL, labeled = TRUE) {
 #############################
 # internal helper functions #
 #############################
@@ -25,26 +26,22 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 # data processing & parameters #
 ################################
 
-  ## check if an attribute exist
-#  has_attr <- function(attr) {
-#    attr %in% names(data)
-#  }
-
-  ## parameters for the brush
-#  .brush.attr <- attr(data, '.brush.attr')
-#  if (!has_attr('.brushed') || is.null(data$.brushed)) {
-#    data$.brushed = FALSE
-#  }
-
-  if (length(form) != 3) {
-    stop("invalid formula, requires y ~ x format")
-  } else {
-    .levelX <- as.character( form[[3]] )
-    .levelY <- as.character(form[[2]])
-  }
+  arguments <- as.list(match.call()[-1])
 
   ## transform the data
   df <- data.frame(data)
+	x <- eval(arguments$x, df)
+	y <- eval(arguments$y, df)
+
+#  if (length(form) != 3) {
+#    stop("invalid formula, requires y ~ x format")
+#  } else {
+#    .levelX <- as.character( form[[3]] )
+#    .levelY <- as.character(form[[2]])
+#  }
+    .levelX <- deparse(arguments$x)
+    .levelY <- deparse(arguments$y)
+
 
   ## parameters for dataRanges
   xlab <- NULL
@@ -53,45 +50,49 @@ qscatter <- function (data, form, main = NULL, labeled = TRUE) {
   ## labels
   ylabels <- NULL
   if (labeled) {
-    yid <- find_yid(data = df, colName = as.character(.levelY))
+    yid <- find_id(y)
   } else {
     yid <- NA
   }
 
   if (!is.na(yid[1]) ) {
-      ylabels <- get_axisPosY(data = df, colName = .levelY)
+      ylabels <- get_axisPos(y)
   }
 
   xlabels <- NULL
   if (labeled) {
-    xid <- find_xid(data = df, colName = as.character(.levelX))
+    xid <- find_id(x)
   } else {
     xid <- NA
   }
 
   if (!is.na(xid[1])) {
-      xlabels <- get_axisPosY(data = df, colName = .levelX)
+      xlabels <- get_axisPos(x)
   }
 
   ## parameters for all layers
   if (labeled) {
   dataRanges <- c(
-    make_data_ranges(range(subset(df, select = .levelX))),
-    make_data_ranges(range(subset(df, select = .levelY))))
+    make_data_ranges(range(x)),
+    make_data_ranges(range(y)))
 
   windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
     ytickmarks=ylabels, xtickmarks = xlabels, main=main)
   } else {
-    dataRanges <- c(range(subset(df, select = .levelX)),
-                    range(subset(df, select = .levelY)))
+    dataRanges <- c(range(x),
+                    range(y))
     windowRanges <- dataRanges
   }
 
   lims <- qrect(windowRanges[c(1,2)], windowRanges[c(3,4)])
 
   ## parameters for bglayer
-  sy <- get_axisPosX(data = df, colName = .levelX)
-  sx <- get_axisPosY(data = df, colName = .levelY)
+#  sy <- get_axisPosX(data = df, colName = .levelX)
+#  sx <- get_axisPosY(data = df, colName = .levelY)
+
+  sy <- get_axisPos(x)
+  sx <- get_axisPos(y)
+
 
   ## parameters for datalayer
   .radius <- 2
@@ -127,7 +128,8 @@ coords <- function(item, painter, exposed) {
 
   # labels as appropriate
   if (!is.na(xid[1])) {
-    labels <- get_axisPosX(data = df, colName = .levelX)
+#    labels <- get_axisPosX(data = df, colName = .levelX)
+    labels <- get_axisPos(x)
 #    print("x axis labels")
 #    print(labels)
     draw_x_axes_with_labels_fun(painter, dataRanges,
@@ -139,7 +141,8 @@ coords <- function(item, painter, exposed) {
   }
 
   if (!is.na(yid[1])) {
-    labels <- get_axisPosY(data = df, colName = .levelY)
+#    labels <- get_axisPosY(data = df, colName = .levelY)
+    labels <- get_axisPos(y)
     draw_y_axes_with_labels_fun(painter, dataRanges,
       axisLabel=sx, labelVertPos=sx, name=ylab)
   } else {
@@ -151,8 +154,6 @@ coords <- function(item, painter, exposed) {
 }
 
 scatter.all <- function(item, painter, exposed) {
-  x <- subset(df, select = .levelX)[,1]
-  y <- subset(df, select = .levelY)[,1]
 	fill <- data$.color
 	stroke <- data$.color
 	
@@ -184,13 +185,13 @@ brush_draw <- function(item, painter, exposed) {
                       		stroke = brush(data)$color)
             }
             ## (re)draw brushed data points
-            x <- subset(hdata, select = .levelX)[,1]
-            y <- subset(hdata, select = .levelY)[,1]
+            brushx <- eval(arguments$x, hdata)
+            brushy <- eval(arguments$y, hdata)
             fill = brush(data)$color
             stroke = brush(data)$color
             radius <- .radius
 
-            qdrawCircle( painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
+            qdrawCircle( painter, x = brushx, y = brushy, r = radius, fill = fill, stroke = stroke)
         }
     }
 }
@@ -351,7 +352,10 @@ keyPressFun <- function(item, event, ...) {
   querylayer = qlayer(parent = root, query_draw, limits = lims, clip = FALSE,
     hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave)
   view <- qplotView(scene = scene)
-  view$setWindowTitle(extract.formula(form))
+	title <- "Scatterplot of XXX and YYY"
+	title <- gsub("XXX", .levelX, title)
+	title <- gsub("YYY", .levelY, title)
+  view$setWindowTitle(title)
  # view$setMaximumSize(plot1$size)
 
 ######################
