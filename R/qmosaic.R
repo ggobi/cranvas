@@ -17,7 +17,7 @@ paste_formula <- function(form) {
 	return(formstring)
 }
 
-extract.formula <- function(formula) {
+extract_formula <- function(formula) {
 	form <- parse_product_formula(formula)
 	form$marg <- setdiff(form$marg, c(".brushed", ".color"))
 
@@ -172,7 +172,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 
 
   if (.df.title) {
-    main <- as.character(.formula)
+    main <- extract_formula(.formula)
+#		print(main)
   }
   windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
     ytickmarks=ylabels, main=main)
@@ -234,7 +235,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       fill=color)
 
     if (.df.title) {
-      add_title_fun(painter, dataRanges, title=extract.formula(.formula)) #, .level))
+      add_title_fun(painter, dataRanges, title=extract_formula(.formula)) #, .level))
     }
   }
 
@@ -260,6 +261,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 		if (.brush) {
 	#print(names(xdata))
 			hdata <<- subset(bkdata, .brushed == TRUE)
+					print(names(bkdata))
+
 		}
     if (nrow(hdata)>0) {
 			top <- hdata$t
@@ -331,7 +334,10 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
   setSelected <- function() {
 	# propagate highlighting to the data set and other plots
 
+		print(names(bkdata))
+		print(.activevars)
 		hdata <- subset(bkdata, (.brushed==TRUE), drop=FALSE)[,.activevars, drop=FALSE]
+		
 		if (nrow(hdata) > 0) {
 			hdata$ID <- 1:nrow(hdata)
 			res.melt <- melt(hdata,id.var="ID")
@@ -443,6 +449,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     	recalc()
 #    	recalchiliting()
 #    }
+		.activevars <<- na.omit(.activevars)
     qupdate(bglayer)
     qupdate(datalayer)
     qupdate(brushing_layer)
