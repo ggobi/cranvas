@@ -1,7 +1,7 @@
 library(qtbase)
 library(qtpaint)
 library(cranvas)
-
+library(plumbr)
 
 library(maps)
 library(ggplot2)
@@ -26,9 +26,9 @@ qcrimes <- qdata(crimes)
 print(qparallel(qcrimes))
 
 source("map.R")
-print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=Violent.crime))
+#print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=Violent.crime))
 q <- qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=log(Violent.crime/Population+1))
-
+q
 
 #qtmap(qstates, long, lat, group, label=region)
 #qtmap(qstates, long, lat, group)
@@ -52,7 +52,21 @@ qiowa <- qdata(iowa)
 
 qtmap(qiowa, long, lat, group, label=subregion)
 
-#world <- map_data("world")
-#qworld <- qdata(world)
 
-#qtmap(qworld, long, lat, group)
+library(qtbase)
+library(qtpaint)
+library(plumbr)
+library(cranvas)
+library(ggplot2)
+
+#world <- map_data("world")
+data(world)
+qworld <- qdata(world)
+
+source("map.R")
+qtmap(qworld, long, lat, group, label=id)
+
+
+library(profr)
+
+#res <- profr(print(qtmap(qworld, long, lat, group, label=id)))
