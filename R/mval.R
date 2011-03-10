@@ -40,14 +40,14 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 ##' @author Heike Hofmann
 ##' @export
 ##' @example cranvas/inst/examples/maps-ex.R
-qmval <- function(data, vars, main, ...) {
+qmval <- function(data, vars, main, varmax=20, ...) {
   ## check if an attribute exist
 #  browser()
 #	if (!is.mutaframe(data)) data <- qdata(data)
 	if (! (".brushed" %in% names(data))) data$.brushed <- FALSE
 	
-  ## parameters for the brush
-  .brush.attr = attr(data, '.brush.attr')
+#  ## parameters for the brush
+#  .brush.attr = attr(data, '.brush.attr')
 
 	## 
 	if (missing(vars)) vars <- names(data)
@@ -57,7 +57,11 @@ qmval <- function(data, vars, main, ...) {
 	df.data <- as.data.frame(data[,vars])
 	nmis <- sapply(df.data, function(x) return(sum(is.na(x))), simplify=T)
 	vars <- vars[nmis > 0]
-	
+	## use only varmax many variables
+	if (length(vars) > varmax) {
+		print(paste("warning: only first",varmax,"variables out of", length(vars), "are shown."))
+		vars <- vars[1:varmax]
+	}
 	# get data summary
 	.data.summary <- ldply(df.data[,vars], function(x) return(sum(is.na(x))))
 	names(.data.summary) <- c("Names","NAs")
