@@ -1,7 +1,7 @@
 library(plumbr)
 
 myvarsummary <- function(x) {
-	if (is.factor(x) || is.character(x)) return(names(sort(table(x), decreasing=TRUE))[1])
+	if (is.factor(x) || is.character(x)) return(names(which.max(table(x))))
 	if (is.logical(x)) return(any(x, na.rm=TRUE))
 
 	return(mean(x, na.rm=TRUE))
@@ -226,8 +226,8 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
   brushing_mouse_release <- function(item, event, ...) {
  	#print("brushing_mouse_release")
     .endBrush <<- as.numeric(event$pos())
-    setHiliting()
-    qupdate(brushing_layer)
+		setHiliting()
+		qupdate(brushing_layer)
 
 
     .brush <<- FALSE
@@ -235,8 +235,7 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
 
     .startBrush <<- NULL
     .endBrush <<- NULL
-
-	  setSelected()
+		setSelected()
   }
 
   setHiliting <- function() {
@@ -246,7 +245,7 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
     bottom = min(.startBrush[2], .endBrush[2])
 
  		rect = qrect(matrix(c(left, bottom, right, top), 2, byrow = TRUE))
-    hits = datalayer$locate(rect) + 1
+    hits <- datalayer$locate(rect) + 1
 
 		.groupsdata$.brushed <<- FALSE
 		.groupsdata$.brushed[hits] <<- TRUE
@@ -262,9 +261,9 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
 		bdata <- subset(.groupsdata, .brushed == TRUE)
 		brushed <- group %in% bdata$ID
 
-		if (any(data$.brushed != brushed))	data$.brushed <- brushed
+		if (data$.brushed != brushed)	data$.brushed <- brushed
 
-		if (!is.null(labeldata)) setSelectedLabel()
+#		if (!is.null(labeldata)) setSelectedLabel()
   }
 
 	setSelectedLabel <- function () {
@@ -275,7 +274,7 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
 		
 		brushed <- labeldata[, yid] %in% bdata[, xid]
 
-		if (any(labeldata$.brushed != brushed)) labeldata$.brushed <- brushed
+		if (labeldata$.brushed != brushed) labeldata$.brushed <- brushed
 	}
 
   # Key board events ---------------------------------------------------------
@@ -297,7 +296,7 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
     xpos <- .queryPos[1]
     ypos <- .queryPos[2]
  		rect = qrect(matrix(c(xpos,ypos,xpos+1e-4, ypos+1e-4), 2, byrow = TRUE))
-    hits = datalayer$locate(rect) + 1
+		hits <- datalayer$locate(rect) + 1
 
 		info <- .groupsdata[hits,]
 
@@ -343,9 +342,7 @@ if (!is.null(by.y)) link_var(labeldata) = by.y
 		qstrokeColor(painter) = brush(data)$label.color
     qdrawText(painter, infostring, xpos, ypos,
     	halign = ifelse(hflag, "left", "right"),
-      valign = ifelse(vflag, "top", "bottom"))
-    
-    
+      valign = ifelse(vflag, "top", "bottom"))    
   }
 
   query_hover <- function(item, event, ...) {
