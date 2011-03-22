@@ -2,12 +2,7 @@ qaxis = function(parent = NULL, data, side = 1, at = NULL, labels = NULL, limits
     lims = if(side %% 2) qrect(limits, c(0, 1)) else qrect(c(0, 1), limits)
     draw_axis = function(layer, painter) {
         if (is.null(at)) {
-            if (is.factor(data)) {
-                at = as.integer(data)
-            } else {
-                at = pretty(data)
-            }
-            at = at[at <= max(data) & at >= min(data)]
+            at = .axis.loc(data)
         }
         if (is.null(labels)) {
             labels = if (is.factor(data)) levels(data) else format(at)
@@ -40,4 +35,13 @@ qaxis = function(parent = NULL, data, side = 1, at = NULL, labels = NULL, limits
         qdrawSegment(painter, xat + xshift1, yat + yshift1, xat + xshift2, yat + yshift2)
     }
     qlayer(parent, paintFun = draw_axis, limits = lims, ...)
+}
+
+.axis.loc = function(data) {
+    if (is.factor(data)) {
+        at = as.integer(data)
+    } else {
+        at = pretty(data)
+    }
+    at[at <= max(data) & at >= min(data)]
 }
