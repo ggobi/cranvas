@@ -54,9 +54,6 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
     b = brush(data)    # the brush attached to the data
 
-    ## background color
-    .bgcolor = "grey80"
-    ## .bgcolor = rgb(0,0,0,0)
     ## mouse position
     .bpos = c(NA, NA)
     ## drag start
@@ -269,16 +266,6 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
     draw.glyph = switch(glyph, tick = qglyphSegment(b = ifelse(horizontal, 0, Inf)), circle = qglyphCircle(),
         square = qglyphSquare(), triangle = qglyphTriangle())
-
-    ## background grid
-    grid_draw = function(layer, painter) {
-        qdrawRect(painter, lims[1, 1], lims[1, 2], lims[2, 1], lims[2, 2],
-                  stroke = .bgcolor, fill = .bgcolor)
-        qdrawSegment(painter, xtickloc, lims[1, 2], xtickloc, lims[2, 2],
-                     stroke = "white")
-        qdrawSegment(painter, lims[1, 1], ytickloc, lims[2, 1], ytickloc,
-                     stroke = "white")
-    }
 
     ## par-coords segments
     main_draw = function(layer, painter) {
@@ -525,10 +512,11 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
     xaxis_layer = qaxis(at = xat, labels = xticklab, side = 1, limits = lims[1:2])
     yaxis_layer = qaxis(at = yat, labels = yticklab, side = 2, limits = lims[3:4])
+    grid_layer = qgrid(xat = xat, yat = yat, xlim = lims[1:2], ylim = lims[3:4])
     root_layer[2, 1] = xaxis_layer
     root_layer[1, 0] = yaxis_layer
+    root_layer[1, 1] = grid_layer
 
-    grid_layer = qlayer(root_layer, grid_draw, limits = qrect(lims), row = 1, col = 1)
     if (boxplot) {
         boxplot_layer = qlayer(root_layer, boxplot_draw, limits = qrect(lims),
         row = 1, col = 1)

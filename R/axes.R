@@ -45,3 +45,16 @@ qaxis = function(parent = NULL, data, side = 1, at = NULL, labels = NULL, limits
     }
     at[at <= max(data) & at >= min(data)]
 }
+
+qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
+    ## background color
+    .bgcolor = "grey80"
+
+    draw_grid = function(layer, painter) {
+        qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor,
+                  fill = .bgcolor)
+        qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
+        qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
+    }
+    qlayer(parent, paintFun = draw_grid, limits = qrect(xlim, ylim), ...)
+}
