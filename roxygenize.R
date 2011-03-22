@@ -19,7 +19,7 @@ if (!('cranvas' %in% list.files('../')))
 ## update git as well; someone wants to be really lazy
 if ('update' %in% commandArgs(TRUE)) system('git pull')
 
-try(update.packages(ask = FALSE, repos = 'http://cran.r-project.org'))
+## try(update.packages(ask = FALSE, repos = 'http://cran.r-project.org'))
 
 ## requires Rd2roxygen and formatR (don't ask why; just do it)
 if (!require('Rd2roxygen')) install.packages('Rd2roxygen', repos = 'http://cran.r-project.org')
