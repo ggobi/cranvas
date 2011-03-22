@@ -516,8 +516,8 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         qdrawText(painter, main, (lims[1] + lims[2])/2, 0, "center", "bottom")
     }, limits = qrect(c(lims[1], lims[2]), c(0, 1)), row = 0, col = 1)
     ## x and y-axis
-    xaxis_layer = qaxis(data = x, side = 1, limits = lims[1:2], row = 2, col = 1)
-    yaxis_layer = qaxis(data = y, side = 2, limits = lims[3:4], row = 1, col = 0)
+    xaxis_layer = qaxis(data = x, side = 1, limits = lims[1:2])
+    yaxis_layer = qaxis(data = y, side = 2, limits = lims[3:4])
     root_layer[2, 1] = xaxis_layer
     root_layer[1, 0] = yaxis_layer
     ## yaxis_layer = qlayer(root_layer, function(layer, painter) {
