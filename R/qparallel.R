@@ -1,4 +1,4 @@
-\##' Parallel coordinates plot.
+##' Parallel coordinates plot.
 ##' Create a parallel coordinates plot from a data frame or matrix, with each
 ##' line representing a row.
 ##'
