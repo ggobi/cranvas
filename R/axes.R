@@ -1,11 +1,11 @@
-qaxis = function(parent = NULL, data, side = 1, at = NULL, labels = NULL, limits, ...) {
+qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL, limits, ...) {
     lims = if(side %% 2) qrect(limits, c(0, 1)) else qrect(c(0, 1), limits)
     draw_axis = function(layer, painter) {
         if (is.null(at)) {
             at = .axis.loc(data)
         }
         if (is.null(labels)) {
-            labels = if (is.factor(data)) levels(data) else format(at)
+            labels = if (!is.null(data) && is.factor(data)) levels(data) else format(at)
         }
         xat = yat = at; xalign = yalign = 'center'
         xshift1 = yshift1 = xshift2 = yshift2 = 0
