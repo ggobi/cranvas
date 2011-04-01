@@ -1,9 +1,10 @@
 #setwd('/home/xiaoyue/Cranvas')
-load("nasa11.rda")
+
 library(qtbase)
 library(qtpaint)
 library(plumbr)
 library(cranvas)
+
 qts <- function(time, y, data) {
     tmpdata <- mutaframe(time = data[, time], zoomgroup = rep(1, 
         nrow(data)))
@@ -106,6 +107,9 @@ qts <- function(time, y, data) {
     view <- qplotView(scene = scene)
     view
 }
+
+data(nasa)
+nasa11 <- subset(nasa, Gridx==1 & Gridy==1)
 qnasa <- qdata(nasa11)
 # selected(qnasa)[1] <- TRUE
 qts("TimeIndx", "ts", qnasa) 
