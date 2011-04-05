@@ -21,13 +21,15 @@ crimes$State <- tolower(crimes$State)
 library(RColorBrewer)
 crimes$nines <- with(crimes, cut(Burglary/Population, 9))
 #crimes$nines <- with(crimes, cut(Violent.crime/Population, 9))
-crimes$nines <- brewer.pal(9,"Greys")[crimes$nines]
+crimes$nines <- brewer.pal(9, "Greys")[crimes$nines]
 qcrimes <- qdata(crimes)
 print(qparallel(qcrimes))
 
 source("map.R")
-#print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=Violent.crime))
-q <- qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=log(Violent.crime/Population+1))
+#print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes,
+#   by.x='region', by.y='State', colour=Violent.crime))
+q <- qtmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
+    by.x = "region", by.y = "State", colour = log(Violent.crime/Population + 1))
 q
 
 #qtmap(qstates, long, lat, group, label=region)
@@ -46,11 +48,11 @@ library(maps)
 library(ggplot2)
 
 counties <- map_data("county")
-iowa <- subset(counties, region=="iowa")
+iowa <- subset(counties, region == "iowa")
 
 qiowa <- qdata(iowa)
 
-qtmap(qiowa, long, lat, group, label=subregion)
+qtmap(qiowa, long, lat, group, label = subregion)
 
 
 library(qtbase)
@@ -59,14 +61,14 @@ library(plumbr)
 library(cranvas)
 library(ggplot2)
 
-#world <- map_data("world")
+#world <- map_data('world')
 data(world)
 qworld <- qdata(world)
 
 source("map.R")
-qtmap(qworld, long, lat, group, label=id)
+qtmap(qworld, long, lat, group, label = id)
 
 
 library(profr)
 
-#res <- profr(print(qtmap(qworld, long, lat, group, label=id)))
+#res <- profr(print(qtmap(qworld, long, lat, group, label=id))) 

@@ -2,11 +2,11 @@
 time_f <- function(f, name = deparse(substitute(f))) {
     force(f)
     function(...) {
-        if (!verbose)
+        if (!verbose) 
             return(f(...))
-
+        
         message("Timing ", name)
         timing <- system.time(f(...))
         message("Took: ", formatC(timing[3]), "s")
     }
-}
+} 

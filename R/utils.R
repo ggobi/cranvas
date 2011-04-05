@@ -12,12 +12,13 @@
 ##' .extend.ranges(1:10)
 ##' .extend.ranges(matrix(c(c(1,10), c(5, 8)), nrow = 2))
 ##'
-.extend.ranges = function(x, f = qpar('mar')) {
+.extend.ranges = function(x, f = qpar("mar")) {
     if (is.matrix(x)) {
-        if (!identical(dim(x), c(2L, 2L))) stop('the range matrix must be of dim 2x2')
+        if (!identical(dim(x), c(2L, 2L))) 
+            stop("the range matrix must be of dim 2x2")
         x = apply(x, 2, sort)
         return(x + f * t((x[2, ] - x[1, ]) %*% t(c(-1, 1))))
     }
     x = range(x)
     x + c(-1, 1) * f * (x[2] - x[1])
-}
+} 

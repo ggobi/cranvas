@@ -4,15 +4,15 @@ library(cranvas)
 ## link the original data with a frequency table
 data1 = qdata(iris)
 tab2 = as.data.frame(table(iris$Species))
-colnames(tab2) = c('type', 'freq')
+colnames(tab2) = c("type", "freq")
 data2 = qdata(tab2)
 
 data1
 data2
 
 ## specify the linking variable respectively: link 'Species' with 'type'
-link_var(data1) = 'Species'
-link_var(data2) = 'type'
+link_var(data1) = "Species"
+link_var(data2) = "type"
 
 link(data1, data2)
 
@@ -38,14 +38,15 @@ data1
 
 ### (2) linking two par-coords plots: one original data, one aggregated
 data(nrcstat)
-nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code), function(x) round(mean(x), 1))
+nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code), 
+    function(x) round(mean(x), 1))
 qnrc = qdata(nrcstat)
 qnrc.agg = qdata(nrcstat.agg)
 ## link by region
-link_var(qnrc) = link_var(qnrc.agg) = 'Regional.Code'
+link_var(qnrc) = link_var(qnrc.agg) = "Regional.Code"
 link(qnrc, qnrc.agg)
 
 qparallel(qnrc, vars = c(8, 10:19))
 qparallel(qnrc.agg)
 
-brush_attr(qnrc.agg, '.label.show') = TRUE  # turn on labels
+brush_attr(qnrc.agg, ".label.show") = TRUE  # turn on labels 

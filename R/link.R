@@ -13,14 +13,14 @@
 ##' @example cranvas/inst/examples/link-ex.R
 link = function(...) {
     s = list(...)
-    if ((n <- length(s)) < 2)
-        stop('the number of mutaframes to be linked must be greater than one')
+    if ((n <- length(s)) < 2) 
+        stop("the number of mutaframes to be linked must be greater than one")
     for (k in 1:n) {
-        if (!is.mutaframe(s[[k]]))
-            stop('argument ', k, ' is not a mutaframe')
-        if (is.null(link_var(s[[k]])))
-            stop('mutaframe ', k, ' must have a linking variable; see ?link_var')
-        if (!('.brushed' %in% colnames(s[[k]])))
+        if (!is.mutaframe(s[[k]])) 
+            stop("argument ", k, " is not a mutaframe")
+        if (is.null(link_var(s[[k]]))) 
+            stop("mutaframe ", k, " must have a linking variable; see ?link_var")
+        if (!(".brushed" %in% colnames(s[[k]]))) 
             stop("mutaframe ", k, " must have a column '.brushed'")
     }
     for (k in 1:(n - 1)) {
@@ -53,7 +53,7 @@ link = function(...) {
 ##' @return the name of the linking variable
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export link_var
-##' @export "link_var<-"
+##' @export 'link_var<-'
 ##' @examples
 ##' mf = qdata(head(iris))
 ##' link_var(mf)  # NULL
@@ -61,7 +61,7 @@ link = function(...) {
 ##' link_var(mf)
 ##'
 link_var = function(data) {
-    attr(data, 'Link')[['linkvar']]
+    attr(data, "Link")[["linkvar"]]
 }
 
 ##' @rdname link_var
@@ -69,8 +69,8 @@ link_var = function(data) {
 ##' @param value the name of the linking variable
 ##' @return set the linking variable
 `link_var<-` = function(data, value) {
-    if (!(value %in% colnames(data)))
-        stop(value, ' is not in the column names of data')
-    attr(data, 'Link')[['linkvar']] = value
+    if (!(value %in% colnames(data))) 
+        stop(value, " is not in the column names of data")
+    attr(data, "Link")[["linkvar"]] = value
     data
-}
+} 

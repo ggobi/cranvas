@@ -22,10 +22,13 @@ qpar = function(...) {
     if (length(p)) {
         if (is.null(names(p)) && !is.list(p[[1]])) {
             p = unlist(p)
-            if (length(p) == 1) .opts[[p]] else .opts[p]
-        } else {
+            if (length(p) == 1) 
+                .opts[[p]]
+            else .opts[p]
+        }
+        else {
             omf = .opts
-            if (is.list(p[[1]]))
+            if (is.list(p[[1]])) 
                 p = p[[1]]
             if (length(p) > 0) {
                 .opts[names(p)] = p
@@ -33,7 +36,8 @@ qpar = function(...) {
             }
             invisible(omf)
         }
-    } else {
+    }
+    else {
         .opts
     }
-}
+} 

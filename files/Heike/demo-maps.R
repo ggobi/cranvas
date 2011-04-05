@@ -21,13 +21,15 @@ crimes$State <- tolower(crimes$State)
 library(RColorBrewer)
 crimes$nines <- with(crimes, cut(Burglary/Population, 9))
 #crimes$nines <- with(crimes, cut(Violent.crime/Population, 9))
-crimes$nines <- brewer.pal(9,"Greys")[crimes$nines]
+crimes$nines <- brewer.pal(9, "Greys")[crimes$nines]
 qcrimes <- qdata(crimes)
 print(qparallel(qcrimes))
 
 source("map.R")
-print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=Violent.crime))
-#qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="region", by.y="State", colour=I(Violent.crime/Population))
+print(qtmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
+    by.x = "region", by.y = "State", colour = Violent.crime))
+#qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes,
+#   by.x='region', by.y='State', colour=I(Violent.crime/Population))
 
 
 #qtmap(qstates, long, lat, group, label=region)
@@ -36,7 +38,7 @@ print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes, by.x="re
 
 
 
-#world <- map_data("world")
+#world <- map_data('world')
 #qworld <- qdata(world)
 
-#qtmap(qworld, long, lat, group)
+#qtmap(qworld, long, lat, group) 

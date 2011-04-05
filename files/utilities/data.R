@@ -9,11 +9,11 @@
 ##' }
 ##' @return the imputed data
 ##' @author Yihui Xie <\url{http://yihui.name}>
-na.impute = function(x, method = 'below.min') {
+na.impute = function(x, method = "below.min") {
     apply(x, 2, function(xx) {
         if (any(is.na(xx))) {
-            xx[is.na(xx)] = switch(method,
-              'below.min' = min(xx, na.rm = TRUE) - 0.2 * diff(range(xx, na.rm = TRUE)))
+            xx[is.na(xx)] = switch(method, below.min = min(xx, na.rm = TRUE) - 0.2 * 
+                diff(range(xx, na.rm = TRUE)))
         }
         xx
     })
@@ -40,9 +40,9 @@ summary_one = function(x, fun = median, ...) {
     x = as.data.frame(x)
     mode_label = function(x) {
         tb = table(x)
-        paste(names(which(tb == max(tb))), collapse = ', ')
+        paste(names(which(tb == max(tb))), collapse = ", ")
     }
-    sapply(x, function(xx){
+    sapply(x, function(xx) {
         ifelse(is.numeric(xx), fun(xx, ...), mode_label(xx))
     })
-}
+} 
