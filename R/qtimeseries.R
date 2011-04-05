@@ -1,10 +1,5 @@
 #setwd('/home/xiaoyue/Cranvas')
 
-library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
-
 qts <- function(time, y, data) {
     tmpdata <- mutaframe(time = data[, time], zoomgroup = rep(1, nrow(data)))
     cy <- y[1]
