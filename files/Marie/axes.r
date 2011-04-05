@@ -14,7 +14,7 @@ make_pretty_axes <- function(dataRange, minimum, maximum) {
   prettyness <- pretty(dataRange)
   prettyness <- prettyness[prettyness >= minimum]
   prettyness <- prettyness[prettyness <= maximum]
-  
+
   bprint(prettyness)
   prettyness
 }
@@ -33,24 +33,24 @@ make_pretty_axes <- function(dataRange, minimum, maximum) {
 #' @author Marie Vendettuoli \email{mariev@@iastate.edu}
 
 draw_grid_with_positions <- function(
-  plotObj, 
+  plotObj,
   border_x,
   border_y,
-  horiPos = NULL, 
-  vertPos = NULL, 
-  minor.horiPos = NULL, 
+  horiPos = NULL,
+  vertPos = NULL,
+  minor.horiPos = NULL,
   minor.vertPos = NULL,
   row = 0,
   col = 0,
   geometry = qrect(0,0,600,400)) {
 
-  #background: one grey rectangle 
-  add_layer(parent = plotObj, mark = rect( left = border_x, 
+  #background: one grey rectangle
+  add_layer(parent = plotObj, mark = rect( left = border_x,
                                            right = border_x * 0.25,
-                                           bottom = border_y, 
+                                           bottom = border_y,
                                            top = border_y * 0.75,
                                            fill = "grey90",
-                                           stroke  = "grey90", 
+                                           stroke  = "grey90",
                                            parent = plotObj),row = row, col = col, geometry = geometry)
 
   #vertical major grid lines
@@ -73,8 +73,8 @@ draw_grid_with_positions <- function(
   }
 
   #minor horizontal
-  if (!is.null(minor.horiPos)) {	
-    add_layer(parent = plotObj, mark = hbar( bottom = minor.horiPos, 
+  if (!is.null(minor.horiPos)) {
+    add_layer(parent = plotObj, mark = hbar( bottom = minor.horiPos,
                                              stroke = "white",
                                              width = 1,
                                              parent = plotObj),row=row, col=col, geometry = geometry)
@@ -82,7 +82,7 @@ draw_grid_with_positions <- function(
   }
 
   #minor vertical
-  if (!is.null(minor.vertPos)) { 
+  if (!is.null(minor.vertPos)) {
     add_layer( parent = plotObj, mark = vbar( left =minor.vertPos,
                                               stroke  = "white",
                                               width   = 1,
@@ -96,7 +96,7 @@ draw_grid_with_positions <- function(
 #'
 #' @param plotObj Qt plot object to have the layer added to
 #' @param dataRanges ranges of the data so a buffer of space may be added
-#' @param axisLabels vector of labels 
+#' @param axisLabels vector of labels
 #' @param labelHoriPos horizontal position of the axisLabels
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
@@ -113,7 +113,7 @@ draw_grid_with_positions <- function(
                                            top = 0.78*plotObj$limits$height(),
                                            stroke = "grey30",
                                            parent = plotObj), row = row, col = col, geometry = geometry)
-  
+
   #draw data labels, x axis
   add_layer(parent = plotObj, mark = text( text = axisLabels,
                                            left = labelHoriPos - plotObj$limits$left(),
@@ -122,14 +122,14 @@ draw_grid_with_positions <- function(
                                            valign = "top",
                                            parent = plotObj), row = row, col = col, geometry = geometry)
 
-  #draw x axis label  
+  #draw x axis label
   if (!is.null(name)) {
     add_layer( parent = plotObj, mark = text( text = name,
                                               left = x_left[1] + 0.5 * diff(x_left),
                                               bottom = dataRanges[3] - 0.13 * diff(dataRanges[3:4]),
                                               stroke = "black",
                                               valign = "center",
-                                              parent = plotObj), row = row, col = col, geometry = geometry)  
+                                              parent = plotObj), row = row, col = col, geometry = geometry)
   }
 }
 #' draw y axes
@@ -137,11 +137,11 @@ draw_grid_with_positions <- function(
 #'
 #' @param plotObj Qt plot object to have the layer added to
 #' @param dataRanges ranges of the data so a buffer of space may be added
-#' @param axisLabels vector of labels 
+#' @param axisLabels vector of labels
 #' @param labelVertPos vertical position of the axisLabels
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
-draw_y_axes_with_labels <- function(plotObj, dataRanges, axisLabels, labelVertPos, name = NULL,row = 0L,col = 0L, xspan = NULL, yspan = NULL, geometry = qrect(0, 0, 600, 400)) { 
+draw_y_axes_with_labels <- function(plotObj, dataRanges, axisLabels, labelVertPos, name = NULL,row = 0L,col = 0L, xspan = NULL, yspan = NULL, geometry = qrect(0, 0, 600, 400)) {
   # Y label
   y_left <- dataRanges[1] - 0.03 * diff(dataRanges[1:2])
   y_bottom = dataRanges[3:4]
@@ -152,20 +152,19 @@ draw_y_axes_with_labels <- function(plotObj, dataRanges, axisLabels, labelVertPo
 
   # draw axis
   add_layer(parent = plotObj, mark = hbar( left = 0.15 * xspan,
-#                                           right = .915 * xspan,
                                            right = 0.86 * xspan,
                                            bottom = labelVertPos - plotObj$limits$top(),
                                            stroke = "grey30",
                                            parent = plotObj), row = row, col = col, geometry = geometry)
   # draw labels
-  add_layer(parent = plotObj, mark = text( text = axisLabels, 
-                                           right = .87 *xspan, 
-                                           bottom = labelVertPos - plotObj$limits$top(), 
+  add_layer(parent = plotObj, mark = text( text = axisLabels,
+                                           right = .87 *xspan,
+                                           bottom = labelVertPos - plotObj$limits$top(),
                                            stroke = "grey30",
                                            halign = "right",
                                            valign = "center",
                                            parent = plotObj), row = row, col = col, geometry = geometry)
-  
+
   if (!is.null(name)) {
     add_layer(parent = plotObj, mark = text( text = name,
                                              left = dataRanges[1] - 0.18 * diff(dataRanges[1:2]),
@@ -173,12 +172,12 @@ draw_y_axes_with_labels <- function(plotObj, dataRanges, axisLabels, labelVertPo
                                              stroke = "black",
                                              valign = "center",
                                              rot = 90,
-                                             parent = plotObj), row = row, col = col, geometry = geometry)  
+                                             parent = plotObj), row = row, col = col, geometry = geometry)
   }
 }
 
 draw_x_facet_labels <- function (plotObj, border_x, yspan, xspan,row = 0L, col = 0L, geometry = qrect(0, 0, 600, 400), name) {
-  add_layer (parent = plotObj, mark = rect( left = border_x, 
+  add_layer (parent = plotObj, mark = rect( left = border_x,
                                             right = border_x * 0.25,
                                             bottom = 0.93 * yspan,
                                             top = 0,
@@ -212,20 +211,19 @@ draw_y_facet_labels <- function (plotObj, border_y, xspan, yspan, row = 0L, col 
 }
 
 draw_grid_with_positions_fun <- function(
-  plotObj, 
-  dataRanges, 
-  horiPos = NULL, 
-  vertPos = NULL, 
-  minor.horiPos = NULL, 
+  plotObj,
+  dataRanges,
+  horiPos = NULL,
+  vertPos = NULL,
+  minor.horiPos = NULL,
   minor.vertPos = NULL
 ) {
 
-  #background  
+  #background
     qdrawRect(plotObj,
-    
-      dataRanges[1], 
+      dataRanges[1],
       dataRanges[3],
-      dataRanges[2], 
+      dataRanges[2],
       dataRanges[4],
       fill    = "grey80",
       stroke  = "grey80"
@@ -234,7 +232,7 @@ draw_grid_with_positions_fun <- function(
   #horizontal
   if (!is.null(vertPos)) {
   	qlineWidth(plotObj) <- 2
- 
+
     qdrawLine(
       plotObj,
       x      = rep(c(dataRanges[1:2],NA), length(vertPos)),
@@ -248,7 +246,7 @@ draw_grid_with_positions_fun <- function(
   #vertical
   if (!is.null(horiPos)) {
   	qlineWidth(plotObj) <- 2
- 
+
     qdrawLine(
       plotObj,
       x       = rep(horiPos,each=3),
@@ -260,7 +258,7 @@ draw_grid_with_positions_fun <- function(
   }
 
   #minor horizontal
-  if (!is.null(minor.vertPos)) {	
+  if (!is.null(minor.vertPos)) {
     # change linewidth to smaller width
     qlineWidth(plotObj) <- 0.1
     qdrawLine(
@@ -273,8 +271,8 @@ draw_grid_with_positions_fun <- function(
   }
 
   #minor vertical
-  if (!is.null(minor.horiPos)) { 
-  
+  if (!is.null(minor.horiPos)) {
+
     # change linewidth to smaller width
 	qlineWidth(plotObj) <- 0.1
     qdrawLine(
@@ -312,16 +310,16 @@ print(labelHoriPos)
   	x = rep(labelHoriPos,each=3),
   	y = rep(c(dataRanges[3],dataRanges[3] - 0.02 * diff(dataRanges[3:4]),NA), length(labelHoriPos)),
   	stroke = "grey30")
-  
+
   qstrokeColor(plotObj) <- "grey30"
   qdrawText(
     plotObj,
     text = axisLabels,
     x = labelHoriPos,
-    y = x_labelpos, 
+    y = x_labelpos,
     valign = "top"
   )
-  
+
   if (!is.null(name)) {
     qstrokeColor(plotObj) <- "black"
  	  qdrawText(
@@ -329,11 +327,11 @@ print(labelHoriPos)
       text = name,
       x = x_left[1] + 0.5 * diff(x_left),
       y = dataRanges[3] - 0.13 * diff(dataRanges[3:4]),
-      valign = "center"        
+      valign = "center"
     )
-  }  
+  }
 
-  
+
 #  x_axisLabels <- axisLabels
 #  bprint(x_left)
 #  bprint(x_bottom)
@@ -359,17 +357,17 @@ draw_y_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels, labelVe
   	y = rep(labelVertPos,each=3),
   	stroke = "grey30"
   )
-  
-  
+
+
   qstrokeColor(plotObj) <- "grey30"
   qdrawText(
     plotObj,
-    text = axisLabels, 
-    x = y_labelpos, 
-    y = labelVertPos, 
+    text = axisLabels,
+    x = y_labelpos,
+    y = labelVertPos,
     halign = "right"
   )
-  
+
   if (!is.null(name)) {
   	qstrokeColor(plotObj) <- "black"
     qdrawText(plotObj,
@@ -379,7 +377,7 @@ draw_y_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels, labelVe
       valign = "center",
       rot=90
     )
-  }  
+  }
 
 #  y_axisLabels <- axisLabels
 #  bprint(y_left)

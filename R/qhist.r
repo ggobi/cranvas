@@ -282,7 +282,6 @@ qhist <- function(
 
 
 		if (key %in% c(Qt$Qt$Key_Up, Qt$Qt$Key_Down, Qt$Qt$Key_Left, Qt$Qt$Key_Right, 82
-			# , Qt$Qt$Key_A, Qt$Qt$Key_D, Qt$Qt$Key_O, Qt$Qt$Key_H
 			)) {
 			message("updating everything")
 			updateBarsInfo()
@@ -423,16 +422,12 @@ qhist <- function(
 		print(head(subset(.bars_info$data, .brushed > 0)))
 		cat("count of brushed sections: ", sum(.bars_info$data$.brushed), "\n")
 		cat("count of left(<=", rightMouse,"): ", sum(.bars_info$data$left <= rightMouse), #" - ",
-			# paste(rownames(.bars_info$data[.bars_info$data$left <= rightMouse,]), sep = ", "),
 			"\n")
 		cat("count of right(>= ", leftMouse,"): ", sum(.bars_info$data$right >= leftMouse), #" - ",
-			# paste(rownames(.bars_info$data[.bars_info$data$right >= leftMouse,]), sep = ", "),
 			"\n")
 		cat("count of bottom(<= ", topMouse,"): ", sum(.bars_info$data$bottom <= topMouse), #" - ",
-			# paste(rownames(.bars_info$data[.bars_info$data$bottom <= topMouse,]), sep = ", "),
 			"\n")
 		cat("count of top(>= ", bottomMouse,"): ", sum(.bars_info$data$top >= bottomMouse), #" - ",
-			# paste(rownames(.bars_info$data[.bars_info$data$top >= bottomMouse,]), sep = ", "),
 			"\n")
 		cat("setHiliting - done\n")
 	}
