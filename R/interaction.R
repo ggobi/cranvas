@@ -38,7 +38,7 @@
 ##' ## change brushed lines to black
 ##' brush(iris0, 'color') = 'black'
 qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRUE) {
-    if (!is.data.frame(data)) 
+    if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
     ## row attributes needed by all plotting functions
@@ -46,7 +46,7 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
     ## once in a blue moon...
     conflict_attrs = row_attrs %in% colnames(data)
     if (any(conflict_attrs)) {
-        stop(sprintf("variable names conflicts: %s already exist(s) in data", paste(row_attrs[conflict_attrs], 
+        stop(sprintf("variable names conflicts: %s already exist(s) in data", paste(row_attrs[conflict_attrs],
             collapse = ", ")))
     }
     mf = data
@@ -55,31 +55,31 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
     mf$.color = color
     mf$.size = size
     mf$.visible = TRUE
-    
+
     ## prevent converting from characters to factors
     if (!is.mutaframe(mf)) {
         old_opts = options(stringsAsFactors = FALSE)
         mf = as.mutaframe(mf)
         on.exit(options(old_opts))
     }
-    
-    
+
+
     ## attach a brush to this data; we need to create the xxxChanged event in
     #   specific plots
     ## use brush(data) to access this brush
-    attr(mf, "Brush") = brushGen$new(style = list(color = "yellow", size = 1, linetype = NULL), 
-        color = "yellow", color.gen = function(...) NULL, size = 2, size.gen = function(...) NULL, 
-        mode = "none", identify = FALSE, label.gen = function(...) "label", label.color = "darkgray", 
+    attr(mf, "Brush") = brushGen$new(style = list(color = "yellow", size = 1, linetype = NULL),
+        color = "yellow", color.gen = function(...) NULL, size = 2, size.gen = function(...) NULL,
+        mode = "none", identify = FALSE, label.gen = function(...) "label", label.color = "darkgray",
         history.size = 30, history.index = 0, history.list = list())
-    
+
     ## here 'mode' is explained in the documentation of mode_selection()
-    
+
     ## specifies which variable is used for (hot/cold) linking
     ## use link_var(data) to access the linking variable
     attr(mf, "Link") = mutalist(linkvar = NULL, type = "hot", focused = FALSE)
-    
+
     ## and other possible attributes
-    
+
     mf
 }
 
@@ -115,7 +115,7 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
 mode_selection = function(x, y, mode = "none") {
     ## a series of logical operations
     ## if mode is not specified, return y, the current status
-    switch(mode, none = y, and = x & y, or = x | y, xor = xor(x, y), not = x & !y, 
+    switch(mode, none = y, and = x & y, or = x | y, xor = xor(x, y), not = x & !y,
         complement = !y, y)
 }
 
@@ -143,7 +143,7 @@ focused = function(data) {
 ##' @rdname focused
 ##' @usage focused(data) <- value
 ##' @param value a logical value: whether on focus or not
-##' @export 'focused<-'
+##' @export "focused<-"
 ##' @return \code{NULL}; the status of focus is changed to \code{value}
 `focused<-` = function(data, value) {
     attr(data, "Link")[["focused"]] = value
@@ -175,7 +175,7 @@ visible = function(data) {
 ##' @rdname visible
 ##' @usage visible(data) <- value
 ##' @param value a logical vector of the length \code{nrow(data)}
-##' @export 'visible<-'
+##' @export "visible<-"
 `visible<-` = function(data, value) {
     data$.visible = value
     data
@@ -206,7 +206,7 @@ selected = function(data) {
 ##' @rdname selected
 ##' @usage selected(data) <- value
 ##' @param value a logical vector of the length \code{nrow(data)}
-##' @export 'selected<-'
+##' @export "selected<-"
 `selected<-` = function(data, value) {
     data$.brushed = value
     data
@@ -232,4 +232,4 @@ selected = function(data) {
 ##' truncate_str(c('asdf', 'qwer'), 3, '??')
 truncate_str = function(x, length, extra = "...") {
     paste(substr(x, 1, length), ifelse(nchar(x) > length, extra, ""), sep = "")
-} 
+}
