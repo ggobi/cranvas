@@ -1,13 +1,9 @@
 #setwd('/home/xiaoyue/Cranvas')
-library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
 
 qtime <- function(time,y,data){
   tmpdata <- mutaframe(time=data[,time],zoomgroup=rep(1,nrow(data)))
   cy <- y[1]
-  
+
   brush_mouse_press <- function(layer, event) {
     .bstart <<- as.numeric(event$pos())
     if (event$button() == Qt$Qt$RightButton) {
@@ -41,11 +37,11 @@ qtime <- function(time,y,data){
           left <- which(tmpdata$time<.bstart[1])
           right <- which(tmpdata$time>=.bstart[1])
           center <- NULL
-          
+
         } else {
           left <- which(tmpdata$time<.bstart[1])
           right <- which(tmpdata$time>fisheye_bars[2])
-          center <- which(tmpdata$time>=.bstart[1]) &
+          center <- which(tmpdata$time>=.bstart[1] &
                           tmpdata$time<=fisheye_bars[2])
           if (length(center)==0) center=NULL
         }
@@ -67,7 +63,7 @@ qtime <- function(time,y,data){
       }
     }
   }
-  
+
   mouse_double_click <- function(layer, event){
     fisheye_toggle <<-!fisheye_toggle
     tmpdata$time <- data[,time]
@@ -149,7 +145,7 @@ qtime <- function(time,y,data){
                  limits=range(data[,cy]),
                         row = 1, col = 0)
   fisheye_toggle <<- FALSE
-  
+
   main_layer <- qlayer(root_layer,paintFun=main_draw,
                        mousePressFun=brush_mouse_press,
                        mouseReleaseFun=brush_mouse_release,
@@ -170,7 +166,7 @@ qtime <- function(time,y,data){
     layout$setRowStretchFactor(0, 0)
     layout$setColumnStretchFactor(0, 0)
     layout$setRowStretchFactor(2, 0)
-  
+
   view <- qplotView(scene=scene)
   view
 
