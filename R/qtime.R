@@ -11,7 +11,7 @@ qtime <- function(time,y,data){
       .bmove <<- TRUE
     }
     if (fisheye_toggle) {
-      tmp_fisheye_bars <<- fisheye <- bars
+      tmp_fisheye_bars <<- fisheye_bars
       fisheye_bars <<- .bstart[c(1,1)]
       qupdate(main_layer)
     }
