@@ -1,5 +1,3 @@
-#setwd('/home/xiaoyue/Cranvas')
-
 qtime <- function(time,y,data){
   tmpdata <- mutaframe(time=data[,time],zoomgroup=rep(1,nrow(data)))
   cy <- y[1]
@@ -171,9 +169,3 @@ qtime <- function(time,y,data){
   view
 
 }
-
-load('nasa11.rda')
-qnasa <- qdata(nasa11)
-# selected(qnasa)[1] <- TRUE
-
-qtime("TimeIndx","ts",qnasa)
