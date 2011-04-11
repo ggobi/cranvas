@@ -67,8 +67,14 @@ qtime <- function(time,y,data){
     tmpdata$time <- data[,time]
     tmpdata$zoomgroup <- rep(1,nrow(data))
     if (fisheye_toggle){
-      fisheye_bars <<- c(0.3,0.7)*(max(tmpdata$time)-min(tmpdata$time))
+      fisheye_bars <<- c(0.3,0.7)*(max(tmpdata$time)-min(tmpdata$time))+min(tmpdata$time)
     }
+    main_layer$setLimits(qrect(range(tmpdata$time),
+                       range(data[,cy])))
+    brush_layer$setLimits(qrect(range(tmpdata$time),
+                       range(data[,cy])))
+    qupdate(main_layer)
+    qupdate(xaxis)
   }
 
   mouse_wheel <- function(layer, event){
@@ -77,9 +83,9 @@ qtime <- function(time,y,data){
   }
 
   key_press <- function(layer, event){
-    crt_range <- max(tmpdata$time)-min(tmpdata$time)
+    crt_range <- max(tmpdata$time)-min(tmpdata$time)+1
     if (event$key()==Qt$Qt$Key_Plus){
-      zoombound=round(0.96*crt_range)
+      zoombound=min(round(0.96*crt_range),crt_range-1)
       if (zoombound<3)zoombound <- 3
       tmpdata$time <- data[,time]%%zoombound
       tmpdata$zoomgroup <- ceiling(data[,time]/zoombound)
@@ -89,8 +95,8 @@ qtime <- function(time,y,data){
       }
     }
     if (event$key()==Qt$Qt$Key_Minus){
-      zoombound=round(crt_range*25/24)
-      if (zoombound>crt_range) zoombound <- crt_range
+      zoombound=max(round(crt_range*25/24),crt_range+1)
+      if (zoombound>(max(data[,time])-min(data[,time])+1)) zoombound <- max(data[,time])-min(data[,time])+1
       tmpdata$time <- data[,time]%%zoombound
       tmpdata$zoomgroup <- ceiling(data[,time]/zoombound)
       if (sum(tmpdata$time==0)){
@@ -141,7 +147,7 @@ qtime <- function(time,y,data){
                  row = 2, col = 1)
   yaxis <- qaxis(root_layer, data = data[,cy], side = 2,
                  limits=range(data[,cy]),
-                        row = 1, col = 0)
+                 row = 1, col = 0)
   fisheye_toggle <<- FALSE
 
   main_layer <- qlayer(root_layer,paintFun=main_draw,
