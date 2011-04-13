@@ -11,8 +11,8 @@ qtime <- function(time,y,data){
       .bmove <<- TRUE
     }
     if (fisheye_toggle) {
-      tmp_fisheye_bars <<- fisheye_bars
-      fisheye_bars <<- .bstart[c(1,1)]
+      tmp_fisheye_bars <<- sort(fisheye_bars, decreasing=FALSE)
+      fisheye_bars <<- .bstart[c(1,1)]+c(0,0.5)
       qupdate(main_layer)
     }
   }
@@ -30,18 +30,27 @@ qtime <- function(time,y,data){
       if (.bend[1]<=.bstart[1]){
         fisheye_bars[1] <<- .bend[1]
         fisheye_bars[2] <<- tmp_fisheye_bars[2]
-        fisheye_bars <<- sort(fisheye_bars, decreasing=FALSE)
+        #fisheye_bars <<- sort(fisheye_bars, decreasing=FALSE)
         if (.bstart[1]>=tmp_fisheye_bars[2]){
           left <- which(tmpdata$time<.bstart[1])
           right <- which(tmpdata$time>=.bstart[1])
           center <- NULL
-
+          tmpdata$time[left] <- (tmpdata$time[left]-min(tmpdata$time[left]))/(max(tmpdata$time[left])-min(tmpdata$time[left]))*(.bend[1]-min(tmpdata$time[left]))+min(tmpdata$time[left])
+          tmpdata$time[right] <- (tmpdata$time[right]-min(tmpdata$time[right]))/(max(tmpdata$time[right])-min(tmpdata$time[right]))*(max(tmpdata$time[right])-.bend[1])+min(tmpdata$time[right])
         } else {
           left <- which(tmpdata$time<.bstart[1])
           right <- which(tmpdata$time>fisheye_bars[2])
           center <- which(tmpdata$time>=.bstart[1] &
                           tmpdata$time<=fisheye_bars[2])
-          if (length(center)==0) center=NULL
+          if (length(center)==0) {
+            center <- NULL
+            tmpdata$time[left] <- (tmpdata$time[left]-min(tmpdata$time[left]))/(max(tmpdata$time[left])-min(tmpdata$time[left]))*(.bend[1]-min(tmpdata$time[left]))+min(tmpdata$time[left])
+          tmpdata$time[right] <- (tmpdata$time[right]-min(tmpdata$time[right]))/(max(tmpdata$time[right])-min(tmpdata$time[right]))*(max(tmpdata$time[right])-.bend[1])+min(tmpdata$time[right])
+          } else {
+            tmpdata$time[left] <- (tmpdata$time[left]-min(tmpdata$time[left]))/(max(tmpdata$time[left])-min(tmpdata$time[left]))*(fisheye_bars[1]-min(tmpdata$time[left]))+min(tmpdata$time[left])
+            tmpdata$time[right] <- (tmpdata$time[right]-min(tmpdata$time[right]))/(max(tmpdata$time[right])-min(tmpdata$time[right]))*(max(tmpdata$time[right])-fisheye_bars[2])+min(tmpdata$time[right])
+            tmpdata$time[center] <- (tmpdata$time[center]-min(tmpdata$time[center]))/(max(tmpdata$time[center])-min(tmpdata$time[center]))*(fisheye_bars[1]-fisheye_bars[2])+min(tmpdata$time[center])
+          }
         }
       } else {
         fisheye_bars[2] <<- .bend[1]
@@ -51,14 +60,30 @@ qtime <- function(time,y,data){
           left <- which(tmpdata$time<=.bstart[1])
           right <- which(tmpdata$time>.bstart[1])
           center <- NULL
+          tmpdata$time[left] <- (tmpdata$time[left]-min(tmpdata$time[left]))/(max(tmpdata$time[left])-min(tmpdata$time[left]))*(.bend[1]-min(tmpdata$time[left]))+min(tmpdata$time[left])
+          tmpdata$time[right] <- (tmpdata$time[right]-min(tmpdata$time[right]))/(max(tmpdata$time[right])-min(tmpdata$time[right]))*(max(tmpdata$time[right])-.bend[1])+min(tmpdata$time[right])
         } else {
           left <- which(tmpdata$time<fisheye_bars[1])
           right <- which(tmpdata$time>.bstart[1])
           center <- which(tmpdata$time>=fisheye_bars[1] &
                           tmpdata$time<=.bstart[1])
-          if (length(center)==0) center=NULL
+          if (length(center)==0) {
+            center <- NULL
+            tmpdata$time[left] <- (tmpdata$time[left]-min(tmpdata$time[left]))/(max(tmpdata$time[left])-min(tmpdata$time[left]))*(.bend[1]-min(tmpdata$time[left]))+min(tmpdata$time[left])
+          tmpdata$time[right] <- (tmpdata$time[right]-min(tmpdata$time[right]))/(max(tmpdata$time[right])-min(tmpdata$time[right]))*(max(tmpdata$time[right])-.bend[1])+min(tmpdata$time[right])
+          } else {
+            tmpdata$time[left] <- (tmpdata$time[left]-min(tmpdata$time[left]))/(max(tmpdata$time[left])-min(tmpdata$time[left]))*(fisheye_bars[1]-min(tmpdata$time[left]))+min(tmpdata$time[left])
+            tmpdata$time[right] <- (tmpdata$time[right]-min(tmpdata$time[right]))/(max(tmpdata$time[right])-min(tmpdata$time[right]))*(max(tmpdata$time[right])-fisheye_bars[2])+min(tmpdata$time[right])
+            tmpdata$time[center] <- (tmpdata$time[center]-min(tmpdata$time[center]))/(max(tmpdata$time[center])-min(tmpdata$time[center]))*(fisheye_bars[1]-fisheye_bars[2])+min(tmpdata$time[center])
+          }
         }
       }
+      main_layer$setLimits(qrect(range(tmpdata$time),
+                       range(data[,cy])))
+      brush_layer$setLimits(qrect(range(tmpdata$time),
+                       range(data[,cy])))
+      qupdate(main_layer)
+      qupdate(xaxis)
     }
   }
 
@@ -113,6 +138,14 @@ qtime <- function(time,y,data){
   }
 
   main_draw <- function(layer,painter){
+    if (fisheye_toggle){
+      qdrawRect(painter,fisheye_bars[1]-0.25,min(data[,cy]),
+                fisheye_bars[1]+0.25,max(data[,cy]),
+                stroke='grey',fill='grey')
+      qdrawRect(painter,fisheye_bars[2]-0.25,min(data[,cy]),
+                fisheye_bars[2]+0.25,max(data[,cy]),
+                stroke='grey',fill='grey')
+    }
     color=gray(seq(0,0.8,length=max(tmpdata$zoomgroup)))
     for (i in 1:max(tmpdata$zoomgroup)) {
       qdrawCircle(painter,tmpdata[tmpdata$zoomgroup==i,1],
@@ -120,14 +153,6 @@ qtime <- function(time,y,data){
                   fill=color[i],stroke=color[i])
       qdrawLine(painter,tmpdata[tmpdata$zoomgroup==i,1],
                 data[tmpdata$zoomgroup==i,cy],stroke=color[i])
-    }
-    if (fisheye_toggle){
-      qdrawRect(painter,fisheye_bars[1]-0.05,min(data[,cy]),
-                fisheye_bars[1]+0.05,max(data[,cy]),
-                stroke='grey',fill='grey')
-      qdrawRect(painter,fisheye_bars[2]-0.05,min(data[,cy]),
-                fisheye_bars[2]+0.05,max(data[,cy]),
-                stroke='grey',fill='grey')
     }
   }
   brush_draw <- function(layer, painter) {
