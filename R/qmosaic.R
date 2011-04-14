@@ -181,7 +181,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     
     if (.df.title) {
         main <- extract_formula(.formula)
-        #\t\tprint(main)
+        #  print(main)
     }
     windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = ylabels, 
         main = main)
@@ -396,7 +396,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
                 }
                 .inactivevars <<- c(dmvar, .inactivevars)
                 .activevars <<- setdiff(.activevars, dmvar)
-                #\t\t\t\t.level <<- .level-1
+                #    .level <<- .level-1
             }
             else return()
         }
@@ -412,7 +412,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
                 .activevars <<- c(.activevars, .inactivevars[1])
                 .inactivevars <<- .inactivevars[-1]
                 
-                #      \t.level <<- .level + 1
+                #       .level <<- .level + 1
             }
             else return()
         }
@@ -481,7 +481,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         #    if (.colored) {
         .formula <<- as.formula(paste_formula(form))
         recalc()
-        #    \trecalchiliting()
+        #     recalchiliting()
         #    }
         .activevars <<- na.omit(.activevars)
         qupdate(bglayer)
@@ -564,12 +564,12 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
             .recalchiliting <<- TRUE
             # recalchiliting should be called but at this point, data is not yet updated -
             #   it will be updated before it's called by the qupdate function, though
-            #\t\t\t\t\trecalchiliting()
+            #     recalchiliting()
             qupdate(brushing_layer)
         }, .color = {
             .recalc <<- TRUE
-            #\t    recalc()
-            #\t    \t\t\t\t\t recalchiliting()
+            #     recalc()
+            #           recalchiliting()
             qupdate(bglayer)
             qupdate(datalayer)
             qupdate(brushing_layer)
@@ -578,9 +578,9 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     
     
     ## update the brush layer if brush attributes change
-    #\tadd_listener(.brush.attr, function(i, j) {
-    #\t\t\tqupdate(brush_layer)
-    #\t})
+    # add_listener(.brush.attr, function(i, j) {
+    #   qupdate(brush_layer)
+    # })
     
     qplotView(scene = scene)
 }
