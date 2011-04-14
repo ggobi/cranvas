@@ -65,7 +65,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
     
     .groupsdata <- ddply(df.data, .(group), mysummary)
     .groupsdata <- cast(.groupsdata, group ~ .id, value = "V1")
-    #\t.groupsdata$ID <- 1:nrow(.groupsdata)
+    # .groupsdata$ID <- 1:nrow(.groupsdata)
     names(.groupsdata)[1] <- "ID"
     .groupsdata$.color <- "grey30"
     if (!(".brushed" %in% names(.groupsdata))) 
@@ -98,7 +98,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
             all.x = TRUE)
         label <- eval(arguments$label, .groupsdata)
         
-        #\t\tbrowser()
+        #  browser()
         if (!is.null(arguments$colour)) {
             .groupsdata$.color <- scale_color(eval(arguments$colour, .groupsdata))
             .legendspace <- nchar(deparse(arguments$colour)) * 0.015 * diff(range(x))
@@ -126,7 +126,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         # extract data at level .level and draw
         #print('mdraw: full mosaic drawn')
         ##print(summary(xdata))
-        #\t\tif (.recalc) recalc()
+        #  if (.recalc) recalc()
         
         
         for (j in 1:length(.groupsdata$ID)) {
@@ -163,7 +163,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         }
         .recalcbrushed <<- FALSE
         
-        #\t\tif (!is.null(labeldata)) setSelectedLabel()
+        #  if (!is.null(labeldata)) setSelectedLabel()
     }
     
     recalclbrushed <- function() {
@@ -173,7 +173,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         }
         .recalclbrushed <<- FALSE
         
-        #\t\tsetSelected()
+        #  setSelected()
     }
     
     brushing_draw <- function(item, painter, exposed, ...) {
@@ -255,8 +255,8 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         #print('set selected')
         # propagate highlighting to the data set and other plots
         #browser()
-        #\t\tbrushed <- data$.brushed
-        #\t\tbrushed <- FALSE
+        #  brushed <- data$.brushed
+        #  brushed <- FALSE
         
         bdata <- subset(.groupsdata, .brushed == TRUE)
         brushed <- group %in% bdata$ID
@@ -264,7 +264,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         if (data$.brushed != brushed) 
             data$.brushed <- brushed
         
-        #\t\tif (!is.null(labeldata)) setSelectedLabel()
+        #  if (!is.null(labeldata)) setSelectedLabel()
     }
     
     setSelectedLabel <- function() {
@@ -386,7 +386,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         
         col <- eval(arguments$colour, .groupsdata)
         d <- options()$str$digits.d
-        #  \tbrowser()
+        #   browser()
         qcol <- round(quantile(col, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = T, 
             names = FALSE), d)
         
@@ -440,9 +440,9 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
     
     ## update the brush layer if brush attributes change
     # commented out for now to get the code to run, but we do need the capability
-    #\tadd_listener(.brush.attr, function(i, j) {
-    #\t\t\tqupdate(brushing_layer)
-    #\t})
+    # add_listener(.brush.attr, function(i, j) {
+    #   qupdate(brushing_layer)
+    # })
     
     qplotView(scene = scene)
 }
