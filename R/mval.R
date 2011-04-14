@@ -45,7 +45,7 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 qmval <- function(data, vars, main, varmax = 20, ...) {
     ## check if an attribute exist
     #  browser()
-    #\tif (!is.mutaframe(data)) data <- qdata(data)
+    # if (!is.mutaframe(data)) data <- qdata(data)
     if (!(".brushed" %in% names(data))) 
         data$.brushed <- FALSE
     
@@ -228,7 +228,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
         
         rect = qrect(matrix(c(left, bottom, right, top), 2, byrow = TRUE))
         hits = datalayer$locate(rect) + 1
-        #\t\tbrowser()
+        #  browser()
         for (i in 1:p) {
             .data.summary$mvBrushed[i] <<- 0
             .data.summary$valBrushed[i] <<- 0
@@ -245,7 +245,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     
     setSelected <- function() {
         .brushed <- rep(FALSE, nrow(data))
-        #\t\tbrowser()
+        #  browser()
         for (i in 1:p) {
             if (.data.summary$mvBrushed[i] == .data.summary$NAs[i]) {
                 print(.data.summary$Names[i])
@@ -263,7 +263,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     # Key board events ---------------------------------------------------------
     
     keyPressFun <- function(item, event, ...) {
-        #\t\tif (event$key() == Qt$Qt$Key_Shift) .extended <<- !.extended
+        #  if (event$key() == Qt$Qt$Key_Shift) .extended <<- !.extended
         if (event$key() == Qt$Qt$Key_S) {
             # sort according to number missing values
             .data.summary <<- .data.summary[order(.data.summary$Values), ]
@@ -358,10 +358,10 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     })
     
     
-    #\t## update the brush layer if brush attributes change
-    #\tadd_listener(.brush.attr, function(i, j) {
-    #\t\t\tqupdate(brushing_layer)
-    #\t})
+    # ## update the brush layer if brush attributes change
+    # add_listener(.brush.attr, function(i, j) {
+    #   qupdate(brushing_layer)
+    # })
     
     qplotView(scene = scene)
 }
