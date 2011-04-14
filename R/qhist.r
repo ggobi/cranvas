@@ -629,17 +629,17 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     
     
     #\t# update the brush layer in case of any modifications to the mutaframe
-    add_listener(mf_data, function(i, j) {
-        if (j == ".brushed") {
-            .updateinfo <<- TRUE
-            qupdate(brushing_layer)
-        }
-    })
-    
-    #\tadd_listener(.brush.attr, function(i, j) {
-    #\t\t\tqupdate(brushing_layer)
-    #\t})
-    
+#    add_listener(mf_data, function(i, j) {
+#        if (j == ".brushed") {
+#            .updateinfo <<- TRUE
+#            qupdate(brushing_layer)
+#        }
+#    })
+
+    brush_update = function() {
+        qupdate(brush_layer)
+    }
+        
     .view <- qplotView(scene = .scene)
     .view
 } 
