@@ -15,7 +15,7 @@
 #' @param labeled whether axes should be labeled
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {
-qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
+qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRUE, ...) {
     #############################
     # internal helper functions #
     #############################
@@ -223,7 +223,7 @@ qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
             # increase alpha blending
             .alpha <<- 1.1 * .alpha
             datalayer$setOpacity(.alpha)
-            #\t\tbrushlayer$setOpacity(.alpha)
+            #  brushlayer$setOpacity(.alpha)
             qupdate(datalayer)
         }
         else if (key == Qt$Qt$Key_Left & .alpha > 1/n) {
@@ -231,7 +231,7 @@ qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
             # decrease alpha blending
             .alpha <<- 0.9 * .alpha
             datalayer$setOpacity(.alpha)
-            #\t\tbrushlayer$setOpacity(.alpha)
+            #  brushlayer$setOpacity(.alpha)
             qupdate(datalayer)
         }
         
@@ -264,7 +264,7 @@ qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
         rect = qrect(matrix(c(.bpos - .brange - c(xrange, yrange), .bpos + .brange + 
             c(xrange, yrange)), 2, byrow = TRUE))
         #browser()
-        #\t\t\trect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
+        #   rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         
         .new.brushed[hits] = TRUE
@@ -283,8 +283,8 @@ qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
         
         xrange <- .radius/root$size$width() * diff(windowRanges[c(1, 2)])
         yrange <- .radius/root$size$height() * diff(windowRanges[c(3, 4)])
-        #\t\tprint(xrange)
-        #\t\tprint(yrange)
+        #  print(xrange)
+        #  print(yrange)
         rect = qrect(matrix(c(xpos - xrange, ypos - yrange, xpos + xrange, ypos + 
             yrange), 2, byrow = TRUE))
         hits = datalayer$locate(rect) + 1
@@ -349,11 +349,17 @@ qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
     ###################
     # draw the canvas #
     ###################
-    size <- qsize(as.integer(c(400, 400)))
+		xWidth <- 400
+		yWidth <- 400
+		if (!is.null(aspect.ratio)) yWidth <- round(1.0*yWidth*aspect.ratio,0)
+
+print(yWidth)
+
+#    size <- qsize(as.integer(c(xWidth, yWidth)))
     limits <- qrect(c(0, 1), c(0, 1))
     scene <- qscene()
     root <- qlayer(scene)
-    root$setGeometry(qrect(0, 0, 400, 400))
+    root$setGeometry(qrect(0, 0, xWidth, yWidth))
     bglayer <- qlayer(parent = root, paintFun = coords, limits = lims)
     datalayer <- qlayer(parent = root, paintFun = scatter.all, keyPressFun = keyPressFun, 
         mouseMove = identify_mouse_move, mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move, 
@@ -362,6 +368,7 @@ qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
     querylayer = qlayer(parent = root, query_draw, limits = lims, clip = FALSE, hoverMoveFun = query_hover, 
         hoverLeaveFun = query_hover_leave)
     view <- qplotView(scene = scene)
+		
     title <- "Scatterplot of XXX and YYY"
     title <- gsub("XXX", .levelX, title)
     title <- gsub("YYY", .levelY, title)
@@ -380,7 +387,7 @@ qscatter <- function(data, x, y, main = NULL, labeled = TRUE) {
         
         add_listener(data, func)
     }
-    
+		view$resize(xWidth, yWidth)
     return(view)
     
 } 
