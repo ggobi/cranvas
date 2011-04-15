@@ -261,7 +261,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         bdata <- subset(.groupsdata, .brushed == TRUE)
         brushed <- group %in% bdata$ID
         
-        if (data$.brushed != brushed) 
+        if (any(data$.brushed != brushed))
             data$.brushed <- brushed
         
         #  if (!is.null(labeldata)) setSelectedLabel()
@@ -277,7 +277,7 @@ qtmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         
         brushed <- labeldata[, yid] %in% bdata[, xid]
         
-        if (labeldata$.brushed != brushed) 
+        if (any(labeldata$.brushed != brushed))
             labeldata$.brushed <- brushed
     }
     
