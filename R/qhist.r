@@ -7,36 +7,36 @@
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
 #' @examples # torture
-#'\t\trows <- 1000000
-#'\t\tbigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
-#'\t\tqhist(bigData)
+#'  rows <- 1000000
+#'  bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
+#'  qhist(bigData)
 #'
-#'\t\t# each column is split evenly
-#'\t\tqhist(bigData, splitByCol = 'y', title = 'Torture - stack')
-#'\t\tqhist(bigData, splitByCol = 'y', title = 'Torture - stack', horizontal = FALSE)
+#'  # each column is split evenly
+#'  qhist(bigData, splitByCol = 'y', title = 'Torture - stack')
+#'  qhist(bigData, splitByCol = 'y', title = 'Torture - stack', horizontal = FALSE)
 #'
-#'\t\t# each column has similar height colors
-#'\t\tqhist(bigData, splitByCol = 'y', title = 'Torture - dodge', position = 'dodge')
+#'  # each column has similar height colors
+#'  qhist(bigData, splitByCol = 'y', title = 'Torture - dodge', position = 'dodge')
 #'
-#'\t\t# range from 0 to 1
-#'\t\tqhist(bigData, splitByCol = 'y', title = 'Torture - relative', position = 'relative')
+#'  # range from 0 to 1
+#'  qhist(bigData, splitByCol = 'y', title = 'Torture - relative', position = 'relative')
 #'
 #'
 #'  # color tests
-#'\t\t# all color is defined
-#'\t\tqhist(mtcars, 'disp', horizontal = TRUE, fill = 'gold', stroke = 'red4')
+#'  # all color is defined
+#'  qhist(mtcars, 'disp', horizontal = TRUE, fill = 'gold', stroke = 'red4')
 #'
-#'\t\t# stacked items
-#'\t\tqhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'stack', title = 'mtcars - stack')
+#'  # stacked items
+#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'stack', title = 'mtcars - stack')
 #'
-#'\t\t# raw value items
-#'\t\tqhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'identity', title = 'mtcars - identity')
+#'  # raw value items
+#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'identity', title = 'mtcars - identity')
 #'
-#'\t\t# dodged items
-#'\t\tqhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'dodge', title = 'mtcars - dodge')
+#'  # dodged items
+#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'dodge', title = 'mtcars - dodge')
 #'
-#'\t\t# range from 0 to 1
-#'\t\tqhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'relative', title = 'mtcars - relative')
+#'  # range from 0 to 1
+#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'relative', title = 'mtcars - relative')
 qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE, 
     position = "none", color = NULL, fill = NULL, stroke = NULL, title = NULL, name = names(data), 
     ash = FALSE, start = min(data[[xCol]]), nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
@@ -444,7 +444,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         # rows <<- (.bars_info$data$left <= right) & (.bars_info$data$right >= left) &
-        # \t(.bars_info$data$bottom <= top) & (.bars_info$data$top >= bottom)
+        #  (.bars_info$data$bottom <= top) & (.bars_info$data$top >= bottom)
         # .bars_info$data$.brushed <<- rows
         
         valid_bar_row <<- function(original, left, right, top, bottom) {
@@ -588,9 +588,9 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
             x <- .bar_queryPos[1]
             y <- .bar_queryPos[2]
         }
-        cat("x: ", x, "\ty: ", y, "\n")
-        cat("top: ", .bar_hover_section$top, "\tbottom: ", .bar_hover_section$bottom, 
-            "\tleft: ", .bar_hover_section$left, "\tright: ", .bar_hover_section$right, 
+        cat("x: ", x, " y: ", y, "\n")
+        cat("top: ", .bar_hover_section$top, " bottom: ", .bar_hover_section$bottom, 
+            " left: ", .bar_hover_section$left, " right: ", .bar_hover_section$right, 
             "\n")
         
         if (!((y <= .bar_hover_section$top) & (y >= .bar_hover_section$bottom) & 
@@ -628,7 +628,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         limits = .lims, clip = FALSE)
     
     
-    #\t# update the brush layer in case of any modifications to the mutaframe
+    # # update the brush layer in case of any modifications to the mutaframe
 #    add_listener(mf_data, function(i, j) {
 #        if (j == ".brushed") {
 #            .updateinfo <<- TRUE
