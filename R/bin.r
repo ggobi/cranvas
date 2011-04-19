@@ -130,13 +130,13 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords internal
 #' @examples
-#' \ttemp_breaks <- hist(mtcars$disp, plot=FALSE)$breaks[1:2]
-#'\ttype <- list(type = 'hist', binwidth = diff(temp_breaks), start = temp_breaks[1])
-#' \tcontinuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, stroke = 'black')
-#' \tcontinuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'dodge', stroke = 'black')
-#' \tcontinuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'identity', stroke = 'black')
-#' \tcontinuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'relative', stroke = 'black')
-#' \tcontinuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'stack', stroke = 'black')
+#' temp_breaks <- hist(mtcars$disp, plot=FALSE)$breaks[1:2]
+#' type <- list(type = 'hist', binwidth = diff(temp_breaks), start = temp_breaks[1])
+#' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, stroke = 'black')
+#' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'dodge', stroke = 'black')
+#' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'identity', stroke = 'black')
+#' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'relative', stroke = 'black')
+#' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'stack', stroke = 'black')
 continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL, 
     typeInfo = "hist", position = "none", color = NULL, fill = NULL, stroke = NULL, 
     ...) {
