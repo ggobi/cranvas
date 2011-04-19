@@ -64,8 +64,8 @@ fill_and_stroke <- function(color = NULL, fill = NULL, stroke = NULL) {
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords internal
 #' @examples
-#'\tdivide_by_maximum(1:10)
-#' \tdivide_by_maximum(1:10, 1:20)
+#' divide_by_maximum(1:10)
+#' divide_by_maximum(1:10, 1:20)
 divide_by_maximum <- function(val, maxVal = val) {
     maxValue <- max(maxVal)
     if (maxValue != 0) 
