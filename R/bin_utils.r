@@ -51,14 +51,14 @@ calcBinPosition <- function(start, width, maxDataPos, maxDrawPos) {
     output
 }
 
-# find the range of the data
-dataRange <- function(d) {
-    range(d)
-}
+## find the range of the data
+#dataRange <- function(d) {
+#    range(d)
+#}
 
 # find the max binwidth of the data
 maxBinwidth <- function(d) {
-    diff(dataRange(d))/4
+    diff(range(d))/4
 }
 
 # execute a base histogram
@@ -70,27 +70,27 @@ baseHist <- function(d, ...) {
 
 # find the shifting unit when moving the start position
 unitShift <- function(d) {
-    diff(dataRange(d))/60
+    diff(range(d))/60
 }
 
 # find the largest deviation from the start position
 maxShift <- function(d) {
-    0.1 * diff(dataRange(d))
+    0.1 * diff(range(d))
 }
 
 # find the maximum starting position
 xMaxStartPos <- function(d) {
-    dataRange(d)[1]
+    range(d)[1]
 }
 
 # find the minimum starting position
 xMinStartPos <- function(d) {
-    dataRange(d)[1] - maxShift(d)
+    range(d)[1] - maxShift(d)
 }
 
 # find the maximum ending position
 xMaxEndPos <- function(d) {
-    dataRange(d)[2] + maxBinwidth(d)
+    range(d)[2] + maxBinwidth(d)
 }
 
 maxHeight <- function(d, ...) {
@@ -99,7 +99,7 @@ maxHeight <- function(d, ...) {
     maxStartPos <- xMaxStartPos(d)
     # print(xColRange())
     while (tmpStartPos <= maxStartPos) {
-        tB <- calcBinPosition(tmpStartPos, maxBinwidth(d), dataRange(d)[2], xMaxEndPos(d))
+        tB <- calcBinPosition(tmpStartPos, maxBinwidth(d), range(d)[2], xMaxEndPos(d))
         newMax <- max(baseHist(d, breaks = tB, ...)$counts)
         # print(newMax)
         if (newMax > yMax) 
