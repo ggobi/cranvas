@@ -90,7 +90,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         mf_data[, xCol]
     }
     xColRange <- function() {
-        dataRange(dataCol())
+        range(dataCol())
     }
     maxBinwidthP <- function() {
         maxBinwidth(dataCol())
@@ -123,8 +123,6 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     # cat('maxShift(): ', maxShiftP(), '\n')
     # cat('maxBinwidth(): ', maxBinwidthP(), '\n')
     
-    # Find the maximum height of the counts
-    .yMax <- maxHeightP()
     
     if (!is.null(bin_algo_str)) {
         temp_breaks <- baseHistP(breaks = bin_algo_str)$breaks
@@ -142,6 +140,11 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         temp_breaks <- baseHistP(breaks = nbins)$breaks
         .type <- list(type = "hist", binwidth = diff(xColRange())/nbins, start = start)
     }
+    # Find the maximum height of the counts
+#    .yMax <- maxHeightP()
+# max Height doesn't seem to work too well - use max count + 10 percent - see below
+
+
     .histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
     # cat('\nOriginal Hist Breaks!\n'); print(.histOriginalBreaksAndStart);
     # cat('start: ');print(start)
@@ -174,7 +177,8 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         .updateinfo <<- FALSE
     }
     updateBarsInfo()
-    
+		.yMax <- 1.5 * max(.bars_info$data$count)
+		
     updateRanges <- function() {
         # contains c(x_min, x_max, y_min, y_max)
         if (horizontal) {
@@ -301,6 +305,14 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
                 .type$binwidth <<- .histOriginalBreaksAndStart$binwidth
             }
             
+        } else if (key == Qt$Qt$Key_M) {
+ 
+           updateBarsInfo()
+					 .yMax <<- 1.1 * max(.bars_info$data$count)        
+ 					print(.yMax)
+						updateRanges()
+						updateLims()
+						qupdate(bglayer)
         }
         else if (key == 87) {
 #            cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
@@ -310,10 +322,10 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         
         
         if (key %in% c(Qt$Qt$Key_Up, Qt$Qt$Key_Down, Qt$Qt$Key_Left, Qt$Qt$Key_Right, 
-            82)) {
+            82, Qt$Qt$Key_M)) {
             message("updating everything")
-            updateBarsInfo()
-            qupdate(.scene)
+	           updateBarsInfo()
+             qupdate(.scene)
             # qupdate(datalayer)
             # qupdate(hoverlayer)
             # qupdate(brushing_layer)
