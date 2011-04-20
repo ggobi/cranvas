@@ -215,8 +215,8 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         # put labels, if appropriate
-        draw_x_axes_fun(painter, .ranges, .xlab)
-        draw_y_axes_fun(painter, .ranges, .ylab)
+#        draw_x_axes_fun(painter, .ranges, .xlab)
+#        draw_y_axes_fun(painter, .ranges, .ylab)
         
         # title
         if (!is.null(title)) 
@@ -344,22 +344,22 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         if (nrow(section) > 0) {
             #  .brush.attr = attr(odata, '.brush.attr')
             # brushcolor <- .brush.attr[,'.brushed.color']
-            brushColor <- brush_attr(mf_data, ".brushed.color")
+            brushColor <- brush(mf_data)$color
             
             b <- section$bottom
             t <- (section$top - b) * section$.brushed + b
             
-            cat("b: ")
-            print(b)
-            cat("t: ")
-            print(t)
-            cat("top: ")
-            print(section$top)
-            cat("perc: ")
-            print(section$.brushed)
-            cat("section:\n")
-            print(.bars_info$data[, c("label", "group", "count", "top", "bottom", 
-                ".brushed")])
+  #          cat("b: ")
+  #          print(b)
+  #          cat("t: ")
+  #          print(t)
+  #          cat("top: ")
+  #          print(section$top)
+  #          cat("perc: ")
+  #          print(section$.brushed)
+   #         cat("section:\n")
+    #        print(.bars_info$data[, c("label", "group", "count", "top", "bottom", 
+     #           ".brushed")])
             #cat('real data:\n'); print(mf_data[mf_data$disp < 200, c('disp', 'cyl',
             #   '.brushed')])
             
@@ -519,7 +519,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         
         
         # Highlight the rect
-        brushColor <- brush_attr(mf_data, ".brushed.color")
+        brushColor <- brush(mf_data)$color
         if (horizontal) {
             qdrawRect(painter, xleft = c(section$bottom), ybottom = c(section$right), 
                 xright = c(section$top), ytop = c(section$left), stroke = brushColor, 
