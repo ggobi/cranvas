@@ -38,7 +38,7 @@
 #'  # range from 0 to 1
 #'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'relative', title = 'mtcars - relative')
 qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE, 
-    position = "none", color = NULL, fill = NULL, stroke = NULL, title = NULL, name = names(data), 
+    position = "none", color = NULL, fill = NULL, stroke = NULL, title = NULL, name = NULL, 
     ash = FALSE, start = min(data[[xCol]]), nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
     bin_algo_str = NULL, ...) {
     
@@ -63,7 +63,10 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     .ylab <- ""
     .histOriginalBreaksAndStart <- list()
     .updateinfo <- FALSE
-    
+    if (is.null(name)) { 
+			if (is.character(xCol)) name <- xCol
+	    else	name <- names(data)[xCol]
+    }
     # mf_data <- qdata(data)
     if (!is.mutaframe(data)) 
         mf_data <- qdata(data)
@@ -205,28 +208,19 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         # grey background with grid lines
-        if (horizontal) {
-        		horiPos = make_pretty_axes(.ranges[1:2], 
-                .ranges[1], .ranges[2])
-            draw_grid_with_positions_fun(painter, .ranges, horiPos = horiPos)
-            draw_x_axes_with_labels_fun(painter, .ranges, horiPos, horiPos, .xlab)
-        }
-        else {
-            draw_grid_with_positions_fun(painter, .ranges, vertPos = make_pretty_axes(.ranges[3:4], 
-                .ranges[3], .ranges[4]))
-        }
-        
-        # put labels, if appropriate
-#        draw_x_axes_fun(painter, .ranges, .xlab)
-#        draw_y_axes_fun(painter, .ranges, .ylab)
-#         draw_x_axes_with_labels_fun(painter, .ranges, axisLabel = .xlab, 
-#                labelHoriPos = labels$pos, name = .xlab)
+        		horiPos = make_pretty_axes(.ranges[1:2], .ranges[1], .ranges[2])
+        		vertPos = make_pretty_axes(.ranges[3:4], .ranges[3], .ranges[4])
 
-    		
+            draw_grid_with_positions_fun(painter, .ranges, horiPos = horiPos, vertPos=vertPos)
+
+        # put labels, if appropriate
+            draw_x_axes_with_labels_fun(painter, .ranges, horiPos, horiPos, .xlab)
+            draw_y_axes_with_labels_fun(painter, .ranges, vertPos, vertPos, .ylab)            
+            		
         
         # title
-        if (!is.null(title)) 
-            add_title_fun(painter, .ranges, title)
+        if (is.null(title)) title <- paste("Histogram of", name)
+        add_title_fun(painter, .ranges, title)
     }
     
     
@@ -252,7 +246,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         if (.brush == TRUE) 
             return()
         
-        print(event$key())
+#        print(event$key())
         key <- event$key()
         
         if (key == Qt$Qt$Key_Up) {
@@ -301,7 +295,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         else if (key == 82) {
             if (identical(.type$type, "hist")) {
-                print(.histOriginalBreaksAndStart)
+#                print(.histOriginalBreaksAndStart)
                 .type$type <<- "hist"
                 .type$start <<- .histOriginalBreaksAndStart$start
                 .type$binwidth <<- .histOriginalBreaksAndStart$binwidth
