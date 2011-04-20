@@ -49,10 +49,12 @@ make_dodge_pos <- function(breaks, n) {
 #'   fill_and_stroke(color = 'red', stroke = 'black')
 #'   fill_and_stroke(color = 'red', fill = 'black')
 fill_and_stroke <- function(color = NULL, fill = NULL, stroke = NULL) {
-    if (is.null(stroke)) 
-        stroke = color
     if (is.null(fill)) 
         fill = color
+    if (is.null(stroke)) { # lighter outline, darker fill
+    		rgbfill = col2rgb(fill)
+        stroke = rgb(rgbfill["red",]*2, rgbfill["green",]*2, rgbfill["blue",]*2, maxColorValue=255)
+    }
     list(fill = fill, stroke = stroke)
 }
 
@@ -144,7 +146,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     }
     
 #    print(data[brushed == TRUE])
-    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, dataRange(data)[2], 
+    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, range(data)[2], 
         xMaxEndPos(data))
     break_len <- length(breaks)
     
