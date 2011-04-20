@@ -9,7 +9,6 @@ require(qtpaint)
 require(plumbr)
 require(cranvas)
 
-
 data(tennis)
 qtennis <- qdata(tennis)
 
@@ -17,9 +16,10 @@ qhist(qtennis, "First.Serve.Pct", horizontal = FALSE)
 
 # Barret's testing examples
 # torture
-rows <- 1e+06
+rows <- 1e+04
 bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
 qhist(bigData)
+qscatter(x,y, data= bigData)
 
 # each column is split evenly
 qhist(bigData, splitByCol = "y", title = "Torture - stack")
