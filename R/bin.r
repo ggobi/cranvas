@@ -94,24 +94,7 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
     lengthB <- sum(rows)
     
     perc <- sumB/lengthB
-    
-    cat("left")
-    print(left)
-    cat("right")
-    print(right)
-    cat("dataValue")
-    print(dataValue)
-    cat("brushVal")
-    print(brushVal)
-    cat("rows")
-    print(rows)
-    cat("sumB")
-    print(sumB)
-    cat("lengthB")
-    print(lengthB)
-    cat("perc")
-    print(perc)
-    
+        
     perc
 }
 
@@ -156,11 +139,11 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     else if (identical(typeInfo$type, "dot")) 
         stop("dot not defined yet")
     else {
-        print(typeInfo)
+#        print(typeInfo)
         stop("Please make typeInfo$type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\"")
     }
     
-    print(data[brushed == TRUE])
+#    print(data[brushed == TRUE])
     breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, dataRange(data)[2], 
         xMaxEndPos(data))
     break_len <- length(breaks)
