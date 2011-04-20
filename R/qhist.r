@@ -213,7 +213,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
 
             draw_grid_with_positions_fun(painter, .ranges, horiPos = horiPos, vertPos=vertPos)
 
-        # put labels, if appropriate
+        # put labels
             draw_x_axes_with_labels_fun(painter, .ranges, horiPos, horiPos, .xlab)
             draw_y_axes_with_labels_fun(painter, .ranges, vertPos, vertPos, .ylab)            
             		
