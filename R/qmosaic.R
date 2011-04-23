@@ -525,8 +525,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         hflag = windowRanges[2] - xpos > bgwidth
         vflag = ypos - windowRanges[3] > bgheight
         qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 
-            1, 1, 0.5))
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.9), fill = rgb(1, 
+            1, 1, 0.9))
         
         qstrokeColor(painter) = brush(data)$label.color
         qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
@@ -549,13 +549,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     
     
     scene = qscene()
-    bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
-    datalayer = qlayer(scene, mdraw, limits = lims, clip = FALSE)
+    bglayer = qlayer(scene, coords, limits = lims,  cache = T)
+    datalayer = qlayer(scene, mdraw, limits = lims, cache = T)
     brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
-        keyPressFun = keyPressFun, limits = lims, clip = FALSE)
-    querylayer = qlayer(scene, query_draw, limits = lims, clip = FALSE, hoverMoveFun = query_hover, 
-        hoverLeaveFun = query_hover_leave)
+        keyPressFun = keyPressFun, limits = lims,  cache = T)
+    querylayer = qlayer(scene, query_draw, limits = lims,  hoverMoveFun = query_hover, 
+        hoverLeaveFun = query_hover_leave, cache = T)
     
     
     ## update the brush layer in case of any modifications to the mutaframe
