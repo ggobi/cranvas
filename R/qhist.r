@@ -309,7 +309,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
  
            updateBarsInfo()
 					 .yMax <<- 1.1 * max(.bars_info$data$count)        
- 					print(.yMax)
+ 				#	print(.yMax)
 						updateRanges()
 						updateLims()
 						qupdate(bglayer)
@@ -550,10 +550,10 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         count <- section$top - section$bottom
-        infostring <- paste(infostring, "count:", section[1, "count"], sep = " ")
+        infostring <- paste(infostring, "\ncount:", section[1, "count"], sep = " ")
         if (splitByCol != "qhist_split_column") {
             # nrow(section[]
-            val <- section[1, "count"]/sum(.bars_info$data[.bars_info$data$label %in% 
+            val <- section[1, "\ncount"]/sum(.bars_info$data[.bars_info$data$label %in% 
                 section[1, "label"], "count"])
             if (val != 1) {
                 infostring <- paste(infostring, "\ncolumn proportion: ", pretty_percent(val), 
@@ -562,7 +562,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         infostring <- paste(infostring, "\ndata proportion:", pretty_percent(section[1, 
-            "count"]/nrow(mf_data)), sep = " ")
+            "\ncount"]/nrow(mf_data)), sep = " ")
         
         
         
@@ -575,10 +575,28 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         # count
         # column proportion
         # section proportion of column
+
         
-        qstrokeColor(painter) <- "white"
-        qdrawText(painter, infostring, .bar_queryPos[1], .bar_queryPos[2], valign = "top", 
-            halign = "left")
+#        qstrokeColor(painter) <- "black"
+#        qdrawText(painter, infostring, .bar_queryPos[1], .bar_queryPos[2], valign = "top", 
+#            halign = "left")
+				xpos = .bar_queryPos[1]
+				ypos = .bar_queryPos[2]
+
+        bgwidth = qstrWidth(painter, infostring)
+        bgheight = qstrHeight(painter, infostring)
+        hflag = .ranges[2] - xpos > bgwidth
+        vflag = ypos - .ranges[3] > bgheight
+
+        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 
+            1, 1, 0.9))
+        
+        qstrokeColor(painter) = brush(mf_data)$label.color
+        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
+            "right"), valign = ifelse(vflag, "top", "bottom"))
+
+
         
         .bar_hover_section <<- list(top = section$top, bottom = section$bottom, left = section$left, 
             right = section$right)
@@ -632,18 +650,18 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     
     datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE)
     
-    hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE, hoverMoveFun = bar_hover, 
-        hoverLeaveFun = bar_leave)
     
     brushing_layer <- qlayer(.scene, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
         limits = .lims, clip = FALSE)
     
+    hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE, hoverMoveFun = bar_hover, 
+        hoverLeaveFun = bar_leave)
     
     # # update the brush layer in case of any modifications to the mutaframe
     if (is.mutaframe(mf_data)) {
-        func <- function(i, j) {
-            if (j == ".brushed") {
+        func <- function(i, j=NULL) {
+           if (j == ".brushed") {
 		            updateBarsInfo()
                 qupdate(brushing_layer)
             }
@@ -651,6 +669,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         
         add_listener(mf_data, func)
     }
+
 
     brush_update = function() {
         qupdate(brushing_layer)
