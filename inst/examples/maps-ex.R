@@ -14,23 +14,32 @@ qstates <- qdata(states)
 
 #######################
 
-crimes <- read.csv("http://www.hofroe.net/stat579/crimes-09.csv")
+data(crimes)
 crimes$State <- tolower(crimes$State)
 
 ## color palette
 library(RColorBrewer)
-crimes$nines <- with(crimes, cut(Burglary/Population, 9))
+#crimes$nines <- with(crimes, cut(Burglary/Population, 9))
 #crimes$nines <- with(crimes, cut(Violent.crime/Population, 9))
-crimes$nines <- brewer.pal(9, "Greys")[crimes$nines]
+#crimes$nines <- brewer.pal(9, "Greys")[crimes$nines]
 qcrimes <- qdata(crimes)
-print(qparallel(qcrimes))
+print(qparallel(data=qcrimes))
 
-source("map.R")
+#source("map.R")
 #print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes,
 #   by.x='region', by.y='State', colour=Violent.crime))
-q <- qtmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
+q1 <- qtmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
     by.x = "region", by.y = "State", colour = log(Violent.crime/Population + 1))
-q
+q1
+q2 <- qtmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
+    by.x = "region", by.y = "State", colour = log(Motor.vehicle.theft/Population + 1))
+q2
+
+
+
+
+
+
 
 #qtmap(qstates, long, lat, group, label=region)
 #qtmap(qstates, long, lat, group)
