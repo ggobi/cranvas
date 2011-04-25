@@ -397,6 +397,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                         data_reorder(vars0)
                         qupdate(xaxis_layer)
                         qupdate(yaxis_layer)
+                        main_layer$invalidateIndex()
                         qupdate(main_layer)
                         qupdate(brush_layer)
                         if (boxplot) {
@@ -413,6 +414,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                     data_primitives()
                     qupdate(xaxis_layer)
                     qupdate(yaxis_layer)
+                    main_layer$invalidateIndex()
                     qupdate(main_layer)
                     qupdate(brush_layer)
                     if (boxplot) {
