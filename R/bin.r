@@ -130,9 +130,9 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     original = list(data = data, splitBy = splitBy, color = color, stroke = stroke, 
         fill = fill, position = position)
     
-    if (identical(typeInfo$type, "hist")) 
-        message("making a hist")
-    else if (identical(typeInfo$type, "ash")) 
+    if (identical(typeInfo$type, "hist")) {
+      #  message("making a hist")
+    } else if (identical(typeInfo$type, "ash")) 
         stop("ash not defined yet")
     else if (identical(typeInfo$type, "dot")) 
         stop("dot not defined yet")
@@ -144,9 +144,9 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
 #        print(typeInfo)
         stop("Please make typeInfo$type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\"")
     }
-    
+
 #    print(data[brushed == TRUE])
-    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, range(data)[2], 
+    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, range(data, na.rm=T)[2], 
         xMaxEndPos(data))
     break_len <- length(breaks)
     
