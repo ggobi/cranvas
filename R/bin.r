@@ -126,6 +126,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     typeInfo = "hist", position = "none", color = NULL, fill = NULL, stroke = NULL, 
     ...) {
     ignore <- substitute(...)
+    if (any(is.na(data))) data <- na.omit(data)
     
     original = list(data = data, splitBy = splitBy, color = color, stroke = stroke, 
         fill = fill, position = position)
