@@ -358,15 +358,15 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
 #    size <- qsize(as.integer(c(xWidth, yWidth)))
     limits <- qrect(c(0, 1), c(0, 1))
     scene <- qscene()
-    root <- qlayer(scene)
+    root <- qlayer(scene, cache=TRUE)
     root$setGeometry(qrect(0, 0, xWidth, yWidth))
-    bglayer <- qlayer(parent = root, paintFun = coords, limits = lims)
+    bglayer <- qlayer(parent = root, paintFun = coords, limits = lims, cache=TRUE)
     datalayer <- qlayer(parent = root, paintFun = scatter.all, keyPressFun = keyPressFun, 
         mouseMove = identify_mouse_move, mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move, 
-        limits = lims)
-    brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims)
-    querylayer = qlayer(parent = root, query_draw, limits = lims, clip = FALSE, hoverMoveFun = query_hover, 
-        hoverLeaveFun = query_hover_leave)
+        limits = lims, cache=TRUE)
+    brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims, cache=TRUE)
+    querylayer = qlayer(parent = root, query_draw, limits = lims, hoverMoveFun = query_hover, 
+        hoverLeaveFun = query_hover_leave, cache=TRUE)
     view <- qplotView(scene = scene)
 		
     title <- "Scatterplot of XXX and YYY"
