@@ -38,7 +38,7 @@
 #'  # range from 0 to 1
 #'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'relative', title = 'mtcars - relative')
 qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE, 
-    position = "none", color = NULL, fill = NULL, stroke = NULL, title = NULL, name = names(data), 
+    position = "none", color = NULL, fill = NULL, stroke = NULL, title = NULL, name = NULL, 
     ash = FALSE, start = min(data[[xCol]]), nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
     bin_algo_str = NULL, ...) {
     
@@ -63,7 +63,10 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     .ylab <- ""
     .histOriginalBreaksAndStart <- list()
     .updateinfo <- FALSE
-    
+    if (is.null(name)) { 
+			if (is.character(xCol)) name <- xCol
+	    else	name <- names(data)[xCol]
+    }
     # mf_data <- qdata(data)
     if (!is.mutaframe(data)) 
         mf_data <- qdata(data)
@@ -87,7 +90,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         mf_data[, xCol]
     }
     xColRange <- function() {
-        dataRange(dataCol())
+        range(dataCol())
     }
     maxBinwidthP <- function() {
         maxBinwidth(dataCol())
@@ -120,8 +123,6 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     # cat('maxShift(): ', maxShiftP(), '\n')
     # cat('maxBinwidth(): ', maxBinwidthP(), '\n')
     
-    # Find the maximum height of the counts
-    .yMax <- maxHeightP()
     
     if (!is.null(bin_algo_str)) {
         temp_breaks <- baseHistP(breaks = bin_algo_str)$breaks
@@ -139,6 +140,11 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         temp_breaks <- baseHistP(breaks = nbins)$breaks
         .type <- list(type = "hist", binwidth = diff(xColRange())/nbins, start = start)
     }
+    # Find the maximum height of the counts
+#    .yMax <- maxHeightP()
+# max Height doesn't seem to work too well - use max count + 10 percent - see below
+
+
     .histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
     # cat('\nOriginal Hist Breaks!\n'); print(.histOriginalBreaksAndStart);
     # cat('start: ');print(start)
@@ -161,17 +167,18 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
                 .mf_data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
             }
         }
-        cat("data: \n")
-        print(mf_data[1:8, ])
-        cat("condensed data: \n")
-        print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
-        cat("unique columns: ")
-        print(unique(.mf_data_col_names))
+#        cat("data: \n")
+#        print(mf_data[1:8, ])
+#        cat("condensed data: \n")
+#        print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
+#        cat("unique columns: ")
+#        print(unique(.mf_data_col_names))
         
         .updateinfo <<- FALSE
     }
     updateBarsInfo()
-    
+		.yMax <- 1.5 * max(.bars_info$data$count)
+		
     updateRanges <- function() {
         # contains c(x_min, x_max, y_min, y_max)
         if (horizontal) {
@@ -205,22 +212,19 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         # grey background with grid lines
-        if (horizontal) {
-            draw_grid_with_positions_fun(painter, .ranges, horiPos = make_pretty_axes(.ranges[1:2], 
-                .ranges[1], .ranges[2]))
-        }
-        else {
-            draw_grid_with_positions_fun(painter, .ranges, vertPos = make_pretty_axes(.ranges[3:4], 
-                .ranges[3], .ranges[4]))
-        }
-        
-        # put labels, if appropriate
-        draw_x_axes_fun(painter, .ranges, .xlab)
-        draw_y_axes_fun(painter, .ranges, .ylab)
+        		horiPos = make_pretty_axes(.ranges[1:2], .ranges[1], .ranges[2])
+        		vertPos = make_pretty_axes(.ranges[3:4], .ranges[3], .ranges[4])
+
+            draw_grid_with_positions_fun(painter, .ranges, horiPos = horiPos, vertPos=vertPos)
+
+        # put labels
+            draw_x_axes_with_labels_fun(painter, .ranges, horiPos, horiPos, .xlab)
+            draw_y_axes_with_labels_fun(painter, .ranges, vertPos, vertPos, .ylab)            
+            		
         
         # title
-        if (!is.null(title)) 
-            add_title_fun(painter, .ranges, title)
+        if (is.null(title)) title <- paste("Histogram of", name)
+        add_title_fun(painter, .ranges, title)
     }
     
     
@@ -246,7 +250,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         if (.brush == TRUE) 
             return()
         
-        print(event$key())
+#        print(event$key())
         key <- event$key()
         
         if (key == Qt$Qt$Key_Up) {
@@ -295,25 +299,33 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         else if (key == 82) {
             if (identical(.type$type, "hist")) {
-                print(.histOriginalBreaksAndStart)
+#                print(.histOriginalBreaksAndStart)
                 .type$type <<- "hist"
                 .type$start <<- .histOriginalBreaksAndStart$start
                 .type$binwidth <<- .histOriginalBreaksAndStart$binwidth
             }
             
+        } else if (key == Qt$Qt$Key_M) {
+ 
+           updateBarsInfo()
+					 .yMax <<- 1.1 * max(.bars_info$data$count)        
+ 				#	print(.yMax)
+						updateRanges()
+						updateLims()
+						qupdate(bglayer)
         }
         else if (key == 87) {
-            cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
+#            cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
         }
         
         
         
         
         if (key %in% c(Qt$Qt$Key_Up, Qt$Qt$Key_Down, Qt$Qt$Key_Left, Qt$Qt$Key_Right, 
-            82)) {
+            82, Qt$Qt$Key_M)) {
             message("updating everything")
-            updateBarsInfo()
-            qupdate(.scene)
+	           updateBarsInfo()
+             qupdate(.scene)
             # qupdate(datalayer)
             # qupdate(hoverlayer)
             # qupdate(brushing_layer)
@@ -324,7 +336,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     # Brushing
     
     draw_brush_rect <- function(item, painter, exposed) {
-        cat("draw brush rect\n")
+#        cat("draw brush rect\n")
         left = min(.startBrush[1], .endBrush[1])
         right = max(.startBrush[1], .endBrush[1])
         top = max(.startBrush[2], .endBrush[2])
@@ -332,11 +344,11 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         
         qdrawRect(painter, left, bottom, right, top, fill = rgb(0, 0, 0, alpha = 0.7), 
             stroke = "grey50")
-        cat("draw brush rect - done\n")
+#        cat("draw brush rect - done\n")
     }
     
     brushing_draw <- function(item, painter, exposed, ...) {
-        cat("brushing draw\n")
+#        cat("brushing draw\n")
         if (.updateinfo) 
             updateBarsInfo()
         section <- subset(.bars_info$data, (.brushed > 0))
@@ -344,22 +356,22 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         if (nrow(section) > 0) {
             #  .brush.attr = attr(odata, '.brush.attr')
             # brushcolor <- .brush.attr[,'.brushed.color']
-            brushColor <- brush_attr(mf_data, ".brushed.color")
+            brushColor <- brush(mf_data)$color
             
             b <- section$bottom
             t <- (section$top - b) * section$.brushed + b
             
-            cat("b: ")
-            print(b)
-            cat("t: ")
-            print(t)
-            cat("top: ")
-            print(section$top)
-            cat("perc: ")
-            print(section$.brushed)
-            cat("section:\n")
-            print(.bars_info$data[, c("label", "group", "count", "top", "bottom", 
-                ".brushed")])
+  #          cat("b: ")
+  #          print(b)
+  #          cat("t: ")
+  #          print(t)
+  #          cat("top: ")
+  #          print(section$top)
+  #          cat("perc: ")
+  #          print(section$.brushed)
+   #         cat("section:\n")
+    #        print(.bars_info$data[, c("label", "group", "count", "top", "bottom", 
+     #           ".brushed")])
             #cat('real data:\n'); print(mf_data[mf_data$disp < 200, c('disp', 'cyl',
             #   '.brushed')])
             
@@ -388,11 +400,11 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         if (!is.null(.endBrush)) {
             draw_brush_rect(item, painter, exposed)
         }
-        cat("brushing draw - done\n")
+#        cat("brushing draw - done\n")
     }
     
     brushing_mouse_press <- function(item, event, ...) {
-        cat("brushing mouse press\n")
+#        cat("brushing mouse press\n")
         .brush <<- TRUE
         if (is.null(.startBrush)) {
             .startBrush <<- as.numeric(event$pos())
@@ -401,20 +413,20 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         
         setHiliting()
         qupdate(brushing_layer)
-        cat("brushing mouse press - done\n")
+#        cat("brushing mouse press - done\n")
     }
     
     brushing_mouse_move <- function(item, event, ...) {
-        cat("brushing mouse move\n")
+#        cat("brushing mouse move\n")
         .endBrush <<- as.numeric(event$pos())
         
         setHiliting()
         qupdate(brushing_layer)
-        cat("brushing mouse move - done\n")
+#        cat("brushing mouse move - done\n")
     }
     
     brushing_mouse_release <- function(item, event, ...) {
-        cat("brushing mouse release\n")
+#        cat("brushing mouse release\n")
         .endBrush <<- as.numeric(event$pos())
         setHiliting()
         qupdate(brushing_layer)
@@ -425,11 +437,11 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         .endBrush <<- NULL
         
         setSelected()
-        cat("brushing mouse release - done\n")
+#        cat("brushing mouse release - done\n")
     }
     
     setHiliting <- function() {
-        cat("setHiliting\n")
+#        cat("setHiliting\n")
         
         leftMouse = min(.startBrush[1], .endBrush[1])
         rightMouse = max(.startBrush[1], .endBrush[1])
@@ -462,21 +474,21 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         .bars_info$data <<- ddply(.bars_info$data, .(label), transform, .brushed = valid_bar_row(.brushed, 
             left, right, top, bottom))
         
-        print(head(subset(.bars_info$data, .brushed > 0)))
-        cat("count of brushed sections: ", sum(.bars_info$data$.brushed), "\n")
-        cat("count of left(<=", rightMouse, "): ", sum(.bars_info$data$left <= rightMouse), 
-            "\n")
-        cat("count of right(>= ", leftMouse, "): ", sum(.bars_info$data$right >= 
-            leftMouse), "\n")
-        cat("count of bottom(<= ", topMouse, "): ", sum(.bars_info$data$bottom <= 
-            topMouse), "\n")
-        cat("count of top(>= ", bottomMouse, "): ", sum(.bars_info$data$top >= bottomMouse), 
-            "\n")
-        cat("setHiliting - done\n")
+       # print(head(subset(.bars_info$data, .brushed > 0)))
+      #  cat("count of brushed sections: ", sum(.bars_info$data$.brushed), "\n")
+     #   cat("count of left(<=", rightMouse, "): ", sum(.bars_info$data$left <= rightMouse), 
+ #           "\n")
+    #    cat("count of right(>= ", leftMouse, "): ", sum(.bars_info$data$right >= 
+  #          leftMouse), "\n")
+   #     cat("count of bottom(<= ", topMouse, "): ", sum(.bars_info$data$bottom <= 
+   #         topMouse), "\n")
+  #      cat("count of top(>= ", bottomMouse, "): ", sum(.bars_info$data$top >= bottomMouse), 
+    #        "\n")
+ #       cat("setHiliting - done\n")
     }
     
     setSelected <- function() {
-        cat("setSelected\n")
+#        cat("setSelected\n")
         section <- subset(.bars_info$data, .brushed == 1)
         
         rows <- rep(FALSE, nrow(mf_data))
@@ -486,14 +498,14 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         # update original data
         data$.brushed <- rows
         # print(mf_data[1:min(12, nrow(mf_data)), ])
-        cat("setSelected - done\n")
+#        cat("setSelected - done\n")
     }
     
     
     #######################################################
     # Hover
     bar_hover_draw <- function(item, painter, exposed, ...) {
-        cat("\nBar Hover Draw\n")
+#        cat("\nBar Hover Draw\n")
         # Don't draw when brushing
         if (is.null(.bar_queryPos)) 
             return()
@@ -519,7 +531,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         
         
         # Highlight the rect
-        brushColor <- brush_attr(mf_data, ".brushed.color")
+        brushColor <- brush(mf_data)$color
         if (horizontal) {
             qdrawRect(painter, xleft = c(section$bottom), ybottom = c(section$right), 
                 xright = c(section$top), ytop = c(section$left), stroke = brushColor, 
@@ -538,10 +550,10 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         count <- section$top - section$bottom
-        infostring <- paste(infostring, "count:", section[1, "count"], sep = " ")
+        infostring <- paste(infostring, "\ncount:", section[1, "count"], sep = " ")
         if (splitByCol != "qhist_split_column") {
             # nrow(section[]
-            val <- section[1, "count"]/sum(.bars_info$data[.bars_info$data$label %in% 
+            val <- section[1, "\ncount"]/sum(.bars_info$data[.bars_info$data$label %in% 
                 section[1, "label"], "count"])
             if (val != 1) {
                 infostring <- paste(infostring, "\ncolumn proportion: ", pretty_percent(val), 
@@ -550,7 +562,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         }
         
         infostring <- paste(infostring, "\ndata proportion:", pretty_percent(section[1, 
-            "count"]/nrow(mf_data)), sep = " ")
+            "\ncount"]/nrow(mf_data)), sep = " ")
         
         
         
@@ -563,10 +575,28 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         # count
         # column proportion
         # section proportion of column
+
         
-        qstrokeColor(painter) <- "white"
-        qdrawText(painter, infostring, .bar_queryPos[1], .bar_queryPos[2], valign = "top", 
-            halign = "left")
+#        qstrokeColor(painter) <- "black"
+#        qdrawText(painter, infostring, .bar_queryPos[1], .bar_queryPos[2], valign = "top", 
+#            halign = "left")
+				xpos = .bar_queryPos[1]
+				ypos = .bar_queryPos[2]
+
+        bgwidth = qstrWidth(painter, infostring)
+        bgheight = qstrHeight(painter, infostring)
+        hflag = .ranges[2] - xpos > bgwidth
+        vflag = ypos - .ranges[3] > bgheight
+
+        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 
+            1, 1, 0.9))
+        
+        qstrokeColor(painter) = brush(mf_data)$label.color
+        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
+            "right"), valign = ifelse(vflag, "top", "bottom"))
+
+
         
         .bar_hover_section <<- list(top = section$top, bottom = section$bottom, left = section$left, 
             right = section$right)
@@ -578,7 +608,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         .bar_queryPos <<- as.numeric(event$pos())
         # qupdate(querylayer)
         
-        cat("\nBar Hover\n")
+#        cat("\nBar Hover\n")
         
         if (horizontal) {
             x <- .bar_queryPos[2]
@@ -588,10 +618,10 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
             x <- .bar_queryPos[1]
             y <- .bar_queryPos[2]
         }
-        cat("x: ", x, " y: ", y, "\n")
-        cat("top: ", .bar_hover_section$top, " bottom: ", .bar_hover_section$bottom, 
-            " left: ", .bar_hover_section$left, " right: ", .bar_hover_section$right, 
-            "\n")
+#        cat("x: ", x, " y: ", y, "\n")
+#        cat("top: ", .bar_hover_section$top, " bottom: ", .bar_hover_section$bottom, 
+#            " left: ", .bar_hover_section$left, " right: ", .bar_hover_section$right, 
+#            "\n")
         
         if (!((y <= .bar_hover_section$top) & (y >= .bar_hover_section$bottom) & 
             (x <= .bar_hover_section$right) & (x >= .bar_hover_section$left))) {
@@ -620,26 +650,30 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     
     datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE)
     
-    hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE, hoverMoveFun = bar_hover, 
-        hoverLeaveFun = bar_leave)
     
     brushing_layer <- qlayer(.scene, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
         limits = .lims, clip = FALSE)
     
+    hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE, hoverMoveFun = bar_hover, 
+        hoverLeaveFun = bar_leave)
     
     # # update the brush layer in case of any modifications to the mutaframe
-#    add_listener(mf_data, function(i, j) {
-#        if (j == ".brushed") {
-#            .updateinfo <<- TRUE
-#            qupdate(brushing_layer)
-#        }
-#    })
+    if (is.mutaframe(mf_data)) {
+        func <- function(i, j=NULL) {
+           if (j == ".brushed") {
+		            updateBarsInfo()
+                qupdate(brushing_layer)
+            }
+        }
+        
+        add_listener(mf_data, func)
+    }
+
 
     brush_update = function() {
-        qupdate(brush_layer)
+        qupdate(brushing_layer)
     }
-        
     .view <- qplotView(scene = .scene)
     .view
 } 

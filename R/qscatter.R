@@ -15,7 +15,7 @@
 #' @param labeled whether axes should be labeled
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {
-qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRUE, ...) {
+qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRUE, size = 2, alpha = 1, ...) {
     #############################
     # internal helper functions #
     #############################
@@ -95,8 +95,8 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
     
     
     ## parameters for datalayer
-    .radius <- 2
-    .alpha <- 1
+    .radius <- size
+    .alpha <- alpha
     
     ## parameters event handling
     .startBrush <- NULL
@@ -323,8 +323,8 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
         hflag = windowRanges[2] - xpos > bgwidth
         vflag = ypos - windowRanges[3] > bgheight
         qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 
-            1, 1, 0.5))
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 
+            1, 1, 0.9))
         
         qstrokeColor(painter) = brush(data)$label.color
         qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
@@ -349,11 +349,11 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
     ###################
     # draw the canvas #
     ###################
-		xWidth <- 400
-		yWidth <- 400
+		xWidth <- 600
+		yWidth <- 600
 		if (!is.null(aspect.ratio)) yWidth <- round(1.0*yWidth*aspect.ratio,0)
 
-print(yWidth)
+#print(yWidth)
 
 #    size <- qsize(as.integer(c(xWidth, yWidth)))
     limits <- qrect(c(0, 1), c(0, 1))

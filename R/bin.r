@@ -49,10 +49,12 @@ make_dodge_pos <- function(breaks, n) {
 #'   fill_and_stroke(color = 'red', stroke = 'black')
 #'   fill_and_stroke(color = 'red', fill = 'black')
 fill_and_stroke <- function(color = NULL, fill = NULL, stroke = NULL) {
-    if (is.null(stroke)) 
-        stroke = color
     if (is.null(fill)) 
         fill = color
+    if (is.null(stroke)) { # lighter outline, darker fill
+    		rgbfill = col2rgb(fill)
+        stroke = rgb(rgbfill["red",]*2, rgbfill["green",]*2, rgbfill["blue",]*2, maxColorValue=255)
+    }
     list(fill = fill, stroke = stroke)
 }
 
@@ -94,24 +96,7 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
     lengthB <- sum(rows)
     
     perc <- sumB/lengthB
-    
-    cat("left")
-    print(left)
-    cat("right")
-    print(right)
-    cat("dataValue")
-    print(dataValue)
-    cat("brushVal")
-    print(brushVal)
-    cat("rows")
-    print(rows)
-    cat("sumB")
-    print(sumB)
-    cat("lengthB")
-    print(lengthB)
-    cat("perc")
-    print(perc)
-    
+        
     perc
 }
 
@@ -145,9 +130,9 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     original = list(data = data, splitBy = splitBy, color = color, stroke = stroke, 
         fill = fill, position = position)
     
-    if (identical(typeInfo$type, "hist")) 
-        message("making a hist")
-    else if (identical(typeInfo$type, "ash")) 
+    if (identical(typeInfo$type, "hist")) {
+      #  message("making a hist")
+    } else if (identical(typeInfo$type, "ash")) 
         stop("ash not defined yet")
     else if (identical(typeInfo$type, "dot")) 
         stop("dot not defined yet")
@@ -156,12 +141,12 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     else if (identical(typeInfo$type, "dot")) 
         stop("dot not defined yet")
     else {
-        print(typeInfo)
+#        print(typeInfo)
         stop("Please make typeInfo$type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\"")
     }
-    
-    print(data[brushed == TRUE])
-    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, dataRange(data)[2], 
+
+#    print(data[brushed == TRUE])
+    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, range(data, na.rm=T)[2], 
         xMaxEndPos(data))
     break_len <- length(breaks)
     

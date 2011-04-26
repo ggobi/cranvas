@@ -50,7 +50,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    main, lab.split = '[^[:alnum:]]') {
+    main, lab.split = '[^[:alnum:]]', alpha=1, ...) {
 
     b = brush(data)    # the brush attached to the data
 
@@ -61,6 +61,9 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     ## move brush?
     .bmove = TRUE
 
+		## layer opacity
+		.alpha = alpha
+		
     ## the title string
     dataname = deparse(substitute(data))
     if (missing(main)) {
@@ -272,6 +275,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         cranvas_debug()
         .color = data$.color
         .color[!visible(data)] = NA
+				layer$setOpacity(.alpha)
         if (glyph == 'line') {
             segcol = rep(.color, each = p - 1)
             qdrawSegment(painter, segx0, segy0, segx1, segy1, stroke = segcol)
@@ -344,6 +348,25 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         if (length(i))
             b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
 
+				## change opacity of layer
+				key = event$key()
+			  if (key == Qt$Qt$Key_Plus & .alpha < 1) {
+            # arrow right
+            # increase alpha blending
+            .alpha <<- 1.1 * .alpha
+            main_layer$setOpacity(.alpha)
+            qupdate(main_layer)
+        }
+        else if (key == Qt$Qt$Key_Minus & .alpha > 1/n) {
+            # arrow left
+            # decrease alpha blending
+            .alpha <<- 0.9 * .alpha
+            main_layer$setOpacity(.alpha)
+            #  brushlayer$setOpacity(.alpha)
+            qupdate(main_layer)
+        }
+
+
         ## make the brushed observations invisible when hitting Delete
         if (event$key() == Qt$Qt$Key_Delete)
             visible(data) = !selected(data)
@@ -374,6 +397,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                         data_reorder(vars0)
                         qupdate(xaxis_layer)
                         qupdate(yaxis_layer)
+                        main_layer$invalidateIndex()
                         qupdate(main_layer)
                         qupdate(brush_layer)
                         if (boxplot) {
@@ -390,6 +414,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                     data_primitives()
                     qupdate(xaxis_layer)
                     qupdate(yaxis_layer)
+                    main_layer$invalidateIndex()
                     qupdate(main_layer)
                     qupdate(brush_layer)
                     if (boxplot) {
