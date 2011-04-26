@@ -7,3 +7,4 @@ colnames(nrcstat)[26]<-"Neg.Median.Time.to.Degree"
 qnrc = qdata(nrcstat)
 
 qscatter(qnrc, R.Rankings.5th.Percentile, R.Rankings.95th.Percentile)
+qscatter(qnrc, S.Rankings.5th.Percentile, S.Rankings.95th.Percentile)

@@ -1,6 +1,5 @@
 ## examples of qhist()
 
-require(cranvas)
 require(ggplot2)
 require(stringr)
 
@@ -13,6 +12,7 @@ data(tennis)
 qtennis <- qdata(tennis)
 
 qhist(qtennis, "First.Serve.Pct", horizontal = FALSE)
+qhist(qtennis, "Serve.Speed", horizontal = FALSE)
 
 # Barret's testing examples
 # torture
