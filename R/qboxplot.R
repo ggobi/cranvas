@@ -63,8 +63,11 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     xaxis_layer = qaxis(at = xat, labels = xticklab, side = 1, limits = lims[1:2])
     yaxis_layer = qaxis(at = yat, labels = yticklab, side = 2, limits = lims[3:4])
     grid_layer = qgrid(xat = xat, yat = yat, xlim = lims[1:2], ylim = lims[3:4])
+    brush_layer = .bxp.layer(vars = vars, data = data, at = at, width = .8*width,
+                             subset = TRUE, horizontal = horizontal, limits = qrect(lims))
     root_layer[1, 1] = grid_layer
     root_layer[1, 1] = main_layer
+    root_layer[1, 1] = brush_layer
     root_layer[1, 0] = yaxis_layer
     root_layer[2, 1] = xaxis_layer
     root_layer[2, 1] = qlayer()  # place-holder
@@ -99,21 +102,25 @@ if (FALSE) {
     qboxplot(df, width = .1*sample(5))  # different widths
     qboxplot(rnorm(100))
     qboxplot(Sepal.Length~Species,data=iris)
-    df = mutaframe(x = rnorm(100), y = runif(100))
-    qboxplot(df)
+    df = qdata(data.frame(x = rnorm(100), y = runif(100)))
+    qboxplot(c('x', 'y'), df)
 }
 
 ## construct the boxplot layer
-.bxp.layer = function(parent = NULL, vars, data, subset = NULL, at, width, horizontal, ...) {
+.bxp.layer = function(parent = NULL, vars, data, subset = FALSE, at, width, horizontal, ...) {
     draw_boxplot = function(layer, painter) {
-        .subset = !is.null(subset)
-        if (.subset) data = data[subset, ]
+        .boxcol = 'black'
+        if (subset) {
+            if (all(!selected(data))) return()
+            data = data[selected(data), ]
+            .boxcol = 'red'
+        }
         if (is(vars, 'formula') && length(vars) == 3) {
             vars.a = all.vars(vars)
             data = tapply(data[, vars.a[1]], data[, vars.a[2]], I, simplify = FALSE)  # reshape
             vars = names(data)
         }
-        if (is.mutaframe(data)) data = as.data.frame(data)
+        if (is.mutaframe(data)) data = as.data.frame(data[, vars])
         ## boxplots statistics
         bxp.data = sapply(data, boxplot.stats, do.conf = FALSE, simplify = FALSE)
         bxp.stats = sapply(bxp.data, `[[`, 'stats')  # quantiles
@@ -129,7 +136,7 @@ if (FALSE) {
             x1 = x0
             y1 = as.vector(bxp.stats[c(2, 5), ])
         }
-        qdrawSegment(painter, x0, y0, x1, y1)  # whiskers
+        qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # whiskers
 
         if (horizontal) {
             y0 = at - width/2
@@ -142,7 +149,7 @@ if (FALSE) {
             y0 = bxp.stats[2, ]
             y1 = bxp.stats[4, ]
         }
-        qdrawRect(painter, x0, y0, x1, y1, fill = 'white')  # box
+        qdrawRect(painter, x0, y0, x1, y1, fill = 'white', stroke = .boxcol)  # box
 
         if (horizontal) {
             y = rep(at, sapply(bxp.out, length))
@@ -151,16 +158,17 @@ if (FALSE) {
             x = rep(at, sapply(bxp.out, length))
             y = unlist(bxp.out)
         }
-        circle = qglyphCircle()
-        qdrawGlyph(painter, circle, x, y, cex = .6, stroke = 'black', fill = 'black')
-
+        if (!subset) {
+            circle = qglyphCircle()
+            qdrawGlyph(painter, circle, x, y, cex = .6, stroke = 'black', fill = 'black')
+        }
         qlineWidth(painter) = 3
         if (horizontal) {
             x0 = x1 = bxp.stats[3, ]
         } else {
             y0 = y1 = bxp.stats[3, ]
         }
-        qdrawSegment(painter, x0, y0, x1, y1)  # median bar
+        qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # median bar
         qlineWidth(painter) = 1
     }
     qlayer(parent, paintFun = draw_boxplot, ...)
