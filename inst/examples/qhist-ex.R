@@ -10,8 +10,8 @@ require(plumbr)
 require(cranvas)
 
 data(tennis)
+tennis[sample(nrow(tennis),10),"First.Serve.Pct"] <- NA
 qtennis <- qdata(tennis)
-
 qhist(qtennis, "First.Serve.Pct", horizontal = FALSE)
 
 # Barret's testing examples
