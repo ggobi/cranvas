@@ -56,6 +56,17 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
     mf$.size = size
     mf$.visible = TRUE
 
+    ## shadow matrix for missing values
+    shadowmatrix = is.na(data)
+    colnames(shadowmatrix) = paste('NA', colnames(data), sep='.')
+
+    ## add shadow matrix at the end if there are missing values
+    if (sum(shadowmatrix)) {
+        idx = (apply(shadowmatrix,2,sum) > 0)
+        mf = data.frame(mf,shadowmatrix[,idx])
+        warning(paste('Missing values: there are',sum(shadowmatrix),'missing values in',sum(idx),'columns.'))
+    }
+
     ## prevent converting from characters to factors
     if (!is.mutaframe(mf)) {
         old_opts = options(stringsAsFactors = FALSE)
