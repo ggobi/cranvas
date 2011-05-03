@@ -162,14 +162,14 @@ if (FALSE) {
             circle = qglyphCircle()
             qdrawGlyph(painter, circle, x, y, cex = .6, stroke = 'black', fill = 'black')
         }
-        qlineWidth(painter) = 3
+        ## qlineWidth(painter) = 3
         if (horizontal) {
             x0 = x1 = bxp.stats[3, ]
         } else {
             y0 = y1 = bxp.stats[3, ]
         }
         qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # median bar
-        qlineWidth(painter) = 1
+        ## qlineWidth(painter) = 1
     }
     qlayer(parent, paintFun = draw_boxplot, ...)
 }
