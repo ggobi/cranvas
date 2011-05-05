@@ -1,16 +1,17 @@
+require(qtbase)
+require(qtpaint)
+require(plumbr)
+require(plyr)
 library(cranvas)
 
-source("mval.R")
-
-
-brfss <- read.csv("files/Heike/brfss09std.csv")
+# BRFSS data
+data(brfss)
 qbrfss <- qdata(brfss)
 qmval(qbrfss, vars = 1:50)
 qparallel(qbrfss, vars = 1:3)
 
-library(cranvas)
-source("mval.R")
-tao <- read.csv("../files/Heike/tao.csv")
+# TAO data
+data(tao)
 qtao <- qdata(tao)
-
 qmval(qtao) 
+qscatter(qtao, longitude, latitude)
