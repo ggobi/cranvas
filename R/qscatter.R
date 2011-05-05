@@ -15,7 +15,9 @@
 #' @param labeled whether axes should be labeled
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {
-qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRUE, size = 2, alpha = 1, ...) {
+qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
+                     labeled = TRUE, size = 2, alpha = 1, ...)
+{
     #############################
     # internal helper functions #
     #############################
@@ -76,8 +78,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
     if (labeled) {
         dataRanges <- c(make_data_ranges(range(x)), make_data_ranges(range(y)))
         
-        windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = ylabels, 
-            xtickmarks = xlabels, main = main)
+        windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
+                                           ytickmarks = ylabels, 
+                                           xtickmarks = xlabels, main = main)
     }
     else {
         dataRanges <- c(range(x), range(y))
@@ -104,15 +107,15 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
     ## whether in the brush mode
     .brush <- TRUE
     ## mouse position
-    .bpos = c(NA, NA)
+    .bpos <- c(NA, NA)
     ## drag start
-    .bstart = c(NA, NA)
+    .bstart <- c(NA, NA)
     ## move brush?
-    .bmove = TRUE
+    .bmove <- TRUE
     ## brush range: horizontal and vertical
-    .brange = c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
+    .brange <- c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
     
-    n = nrow(data)
+    n <- nrow(data)
     
     
     
@@ -132,23 +135,25 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
             labels <- get_axisPos(x)
             #    print('x axis labels')
             #    print(labels)
-            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = sy, labelHoriPos = sy, 
-                name = xlab)
+            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = sy,
+                                        labelHoriPos = sy, name = xlab)
         }
         else {
-            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = rep("", 
-                length(sy)), labelHoriPos = sy, name = xlab)
+            draw_x_axes_with_labels_fun(painter, dataRanges,
+                                        axisLabel = rep("", length(sy)),
+                                        labelHoriPos = sy, name = xlab)
         }
         
         if (!is.na(yid[1])) {
             #    labels <- get_axisPosY(data = df, colName = .levelY)
             labels <- get_axisPos(y)
-            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = sx, labelVertPos = sx, 
-                name = ylab)
+            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = sx,
+                                        labelVertPos = sx, name = ylab)
         }
         else {
-            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = rep("", 
-                length(sx)), labelVertPos = sx, name = ylab)
+            draw_y_axes_with_labels_fun(painter, dataRanges,
+                                        axisLabel = rep("", length(sx)),
+                                        labelVertPos = sx, name = ylab)
         }
         
     }
@@ -161,18 +166,20 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
         y <- eval(arguments$y, df)
         
         radius <- .radius
-        qdrawCircle(painter, x = x, y = y, r = radius, fill = fill, stroke = stroke)
+        qdrawCircle(painter, x = x, y = y, r = radius, fill = fill,
+                    stroke = stroke)
     }
     
     brush_draw <- function(item, painter, exposed) {
         df <- as.data.frame(data)
-        .brushed = data$.brushed
+        .brushed <- data$.brushed
         if (.brush) {
             if (!any(is.na(.bpos))) {
                 qlineWidth(painter) = brush(data)$size
                 ##qdash(painter)=c(1,3,1,3)
-                qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2], 
-                  .bpos[1] + .brange[1], .bpos[2] + .brange[2], stroke = brush(data)$color)
+                qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
+                          .bpos[1] + .brange[1], .bpos[2] + .brange[2],
+                          stroke = brush(data)$color)
             }
             
             hdata <- subset(df, .brushed)
@@ -182,18 +189,19 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
                 if (!any(is.na(.bpos))) {
                   qlineWidth(painter) = brush(data)$size
                   ##qdash(painter)=c(1,3,1,3)
-                  qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2], 
-                    .bpos[1] + .brange[1], .bpos[2] + .brange[2], stroke = brush(data)$color)
+                  qdrawRect(painter, .bpos[1] - .brange[1],
+                            .bpos[2] - .brange[2], .bpos[1] + .brange[1],
+                            .bpos[2] + .brange[2], stroke = brush(data)$color)
                 }
                 ## (re)draw brushed data points
                 brushx <- eval(arguments$x, hdata)
                 brushy <- eval(arguments$y, hdata)
-                fill = brush(data)$color
-                stroke = brush(data)$color
+                fill <- brush(data)$color
+                stroke <- brush(data)$color
                 radius <- .radius
                 
-                qdrawCircle(painter, x = brushx, y = brushy, r = radius, fill = fill, 
-                  stroke = stroke)
+                qdrawCircle(painter, x = brushx, y = brushy, r = radius,
+                            fill = fill, stroke = stroke)
             }
         }
     }
@@ -239,9 +247,10 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
     }
     
     ## record the coordinates of the mouse on click
-    brush_mouse_press = function(item, event) {
+    brush_mouse_press <- function(item, event) {
         .bstart <<- as.numeric(event$pos())
-        ## on right click, we can resize the brush; left click: only move the brush
+        ## on right click, we can resize the brush; left click: only move the
+        ## brush
         if (event$button() == Qt$Qt$RightButton) {
             .bmove <<- FALSE
         }
@@ -250,25 +259,28 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
         }
     }
     
-    identify_mouse_move = function(layer, event) {
-        pos = event$pos()
+    identify_mouse_move <- function(layer, event) {
+        pos <- event$pos()
         .bpos <<- as.numeric(pos)
         ## simple click: don't change .brange
         if (!all(.bpos == .bstart) && (!.bmove)) {
             .brange <<- .bpos - .bstart
         }
-        .new.brushed = rep(FALSE, n)
+        .new.brushed <- rep(FALSE, n)
         xrange <- .radius/root$size$width() * diff(windowRanges[c(1, 2)])
         yrange <- .radius/root$size$height() * diff(windowRanges[c(3, 4)])
         #
-        rect = qrect(matrix(c(.bpos - .brange - c(xrange, yrange), .bpos + .brange + 
-            c(xrange, yrange)), 2, byrow = TRUE))
-        #browser()
-        #   rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
-        hits = layer$locate(rect) + 1
+        rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
+                               .bpos + .brange + c(xrange, yrange)),
+                             2, byrow = TRUE))
+        ##browser()
+        ##rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2,
+        ##             byrow = TRUE))
+        hits <- layer$locate(rect) + 1
         
-        .new.brushed[hits] = TRUE
-        data$.brushed = mode_selection(data$.brushed, .new.brushed, mode = brush(data)$mode)
+        .new.brushed[hits] <- TRUE
+        data$.brushed <- mode_selection(data$.brushed, .new.brushed,
+                                        mode = brush(data)$mode)
     }
     
     # Display category information on hover (query) ----------------------------
@@ -285,9 +297,10 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
         yrange <- .radius/root$size$height() * diff(windowRanges[c(3, 4)])
         #  print(xrange)
         #  print(yrange)
-        rect = qrect(matrix(c(xpos - xrange, ypos - yrange, xpos + xrange, ypos + 
-            yrange), 2, byrow = TRUE))
-        hits = datalayer$locate(rect) + 1
+        rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
+                               xpos + xrange, ypos + yrange),
+                             2, byrow = TRUE))
+        hits <- datalayer$locate(rect) + 1
         #print(hits)
         #print(.queryPos)
         #browser()
@@ -309,26 +322,27 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
         }
         else {
             #browser()
-            xymin <- unlist(lapply(info[, idx], min, na.rm = T))
-            xymax <- unlist(lapply(info[, idx], max, na.rm = T))
-            infostring <- paste(idx, paste(xymin, xymax, sep = " - "), collapse = "\n", 
-                sep = ": ")
+            xymin <- unlist(lapply(info[, idx], min, na.rm = TRUE))
+            xymax <- unlist(lapply(info[, idx], max, na.rm = TRUE))
+            infostring <- paste(idx, paste(xymin, xymax, sep = " - "),
+                                collapse = "\n", sep = ": ")
             infostring <- paste(" xxhitsxx points\n", infostring)
             infostring <- gsub("xxhitsxx", length(hits), infostring)
         }
-        bgwidth = qstrWidth(painter, infostring)
-        bgheight = qstrHeight(painter, infostring)
+        bgwidth <- qstrWidth(painter, infostring)
+        bgheight <- qstrHeight(painter, infostring)
         
         ## adjust drawing directions when close to the boundary
-        hflag = windowRanges[2] - xpos > bgwidth
-        vflag = ypos - windowRanges[3] > bgheight
-        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 
-            1, 1, 0.9))
+        hflag <- windowRanges[2] - xpos > bgwidth
+        vflag <- ypos - windowRanges[3] > bgheight
+        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth,
+                  ypos + ifelse(vflag, -1, 1) * bgheight,
+                  stroke = rgb(1, 1, 1), fill = rgb(1, 1, 1, 0.9))
         
-        qstrokeColor(painter) = brush(data)$label.color
-        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
-            "right"), valign = ifelse(vflag, "top", "bottom"))
+        qstrokeColor(painter) <- brush(data)$label.color
+        qdrawText(painter, infostring, xpos, ypos,
+                  halign = ifelse(hflag, "left", "right"),
+                  valign = ifelse(vflag, "top", "bottom"))
         
     }
     
@@ -349,9 +363,10 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
     ###################
     # draw the canvas #
     ###################
-		xWidth <- 600
-		yWidth <- 600
-		if (!is.null(aspect.ratio)) yWidth <- round(1.0*yWidth*aspect.ratio,0)
+    xWidth <- 600
+    yWidth <- 600
+    if (!is.null(aspect.ratio))
+        yWidth <- round(1.0 * yWidth * aspect.ratio, 0)
 
 #print(yWidth)
 
@@ -360,15 +375,21 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
     scene <- qscene()
     root <- qlayer(scene, cache=TRUE)
     root$setGeometry(qrect(0, 0, xWidth, yWidth))
-    bglayer <- qlayer(parent = root, paintFun = coords, limits = lims, cache=TRUE)
-    datalayer <- qlayer(parent = root, paintFun = scatter.all, keyPressFun = keyPressFun, 
-        mouseMove = identify_mouse_move, mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move, 
-        limits = lims, cache=TRUE)
-    brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims, cache=TRUE)
-    querylayer = qlayer(parent = root, query_draw, limits = lims, hoverMoveFun = query_hover, 
-        hoverLeaveFun = query_hover_leave, cache=TRUE)
+    bglayer <- qlayer(parent = root, paintFun = coords, limits = lims,
+                      cache=TRUE)
+    datalayer <- qlayer(parent = root, paintFun = scatter.all,
+                        keyPressFun = keyPressFun,
+                        mouseMove = identify_mouse_move,
+                        mousePressFun = brush_mouse_press,
+                        mouseReleaseFun = identify_mouse_move, 
+                        limits = lims, cache=TRUE)
+    brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
+                         cache=TRUE)
+    querylayer <- qlayer(parent = root, query_draw, limits = lims,
+                         hoverMoveFun = query_hover,
+                         hoverLeaveFun = query_hover_leave, cache=TRUE)
     view <- qplotView(scene = scene)
-		
+    
     title <- "Scatterplot of XXX and YYY"
     title <- gsub("XXX", .levelX, title)
     title <- gsub("YYY", .levelY, title)
@@ -387,7 +408,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL, labeled = TRU
         
         add_listener(data, func)
     }
-		view$resize(xWidth, yWidth)
+    view$resize(xWidth, yWidth)
     return(view)
     
 } 
