@@ -1,7 +1,6 @@
-##' Data Imputation
+##' Data Imputation.
 ##'
 ##' Impute data by various methods.
-##' @title Data Imputation
 ##' @param x the numeric data matrix
 ##' @param method imputation method; one of the following:
 ##' \describe{
@@ -12,7 +11,7 @@
 na.impute = function(x, method = "below.min") {
     apply(x, 2, function(xx) {
         if (any(is.na(xx))) {
-            xx[is.na(xx)] = switch(method, below.min = min(xx, na.rm = TRUE) - 0.2 * 
+            xx[is.na(xx)] = switch(method, below.min = min(xx, na.rm = TRUE) - 0.2 *
                 diff(range(xx, na.rm = TRUE)))
         }
         xx
@@ -27,7 +26,6 @@ na.impute = function(x, method = "below.min") {
 ##' caculated (i.e. the categories that have the maximum frequencies) and the
 ##' returned value is a single string with the category labels separated by
 ##' \code{', '}.
-##' @title Give a Column-wise Scalar Summary of the Data Frame or Matrix
 ##' @param x the data frame or matrix to be summarized
 ##' @param fun the function to be applied to numeric columns
 ##' @param ... other arguments to be passed to \code{fun}
@@ -49,4 +47,4 @@ summary_one = function(x, fun = median, ...) {
     sapply(x, function(xx) {
         ifelse(is.numeric(xx), fun(xx, ...), mode_label(xx))
     })
-} 
+}

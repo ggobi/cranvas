@@ -107,7 +107,6 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
 ##'   \item{complement}{the complement of the current selection}
 ##' }
 ##' We can hold the key while brushing: A for 'and', O for 'or', X for 'xor', N for 'not' and C for 'complement'.
-##' @title Logical Operations Under Different Selection Mode
 ##' @param x logical: the previous selection status
 ##' @param y logical: the current selection status
 ##' @param mode the selection mode string; see Details
@@ -225,11 +224,10 @@ selected = function(data) {
 
 
 
-##' Truncate Strings
+##' Truncate character strings.
 ##'
 ##' Truncate a string if its length is greater than a specified
 ##' \code{length}, with an extra flag appended in the end.
-##' @title Truncate Strings to the Specified Length
 ##' @param x a character vector
 ##' @param length the desired length
 ##' @param extra the characters to be appended to the strings if their
