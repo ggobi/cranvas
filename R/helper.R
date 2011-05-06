@@ -16,21 +16,6 @@ make_data_ranges <- function(dataColumn) {
 }
 
 
-
-#' make a plot object
-#' make a plot object
-#'
-#' @param windowRanges Ranges of the plotting window
-#' @return Returns a Qt plot object
-#' @author Barret Schloerke \email{bigbear@@iastate.edu}
-#' @keywords hplot
-#' @examples
-#'  make_new_plot(make_window_ranges(c(0,1,2,3)))
-make_new_plot <- function(windowRanges, width = 600, height = 600) {
-    new_plot(width, height, xrange = windowRanges[1:2], yrange = windowRanges[3:4])
-}
-
-
 #' make the window ranges
 #' make the window ranges
 #'
