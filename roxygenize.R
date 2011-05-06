@@ -1,11 +1,7 @@
 #!/usr/bin/env Rscript
 
-## this script will automatically run roxygen on cranvas; it can be used as a
-#   shell script
-## e.g. 'Rscript roxygenize.R' or 'Rscript roxyenize.R update' to run 'git
-#   pull' before roxygenizing
-## or 'Rscript roxygenize.R keepdoc' to keep the roxygen-generated package
-#   cranvas.roxygen
+## this script will automatically run roxygen on cranvas; it can be used as a shell script
+## e.g. 'Rscript roxygenize.R' or 'Rscript roxyenize.R update' to run 'git pull' before roxygenizing
 
 ## extract the working directory from the file you provided
 ##  e.g. Rscript ~/pkg/cranvas/roxygenize.R
@@ -16,7 +12,7 @@ if (length(p) == 1) {
 }
 
 ## make sure the working directory is under cranvas
-if (!("cranvas" %in% list.files("../"))) stop("the cranvas package not found under ", 
+if (!("cranvas" %in% list.files("../"))) stop("the cranvas package not found under ",
     normalizePath(file.path(getwd(), "..")))
 
 ## update git as well; someone wants to be really lazy
@@ -38,8 +34,6 @@ library(Rd2roxygen)
 options(width = 75)
 
 ## run roxygen and several cleaning up steps
-try(rab("cranvas", install = TRUE))
+try(rab("cranvas", "cranvas", install = TRUE, copy.package = FALSE))
 
-if (!("keepdoc" %in% commandArgs(TRUE))) unlink("cranvas.roxygen", recursive = TRUE)
-
-setwd(owd) 
+setwd(owd)
