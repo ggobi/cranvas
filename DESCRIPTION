@@ -1,15 +1,20 @@
 Package: cranvas
-Type: Package
+Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.6.0),
+    stringr
+Maintainer: Yihui Xie <xie@yihui.name>
+License: GPL
 Title: Interactive plots on a layered canvas
-Version: 0.1-0
+Type: Package
+LazyLoad: yes
 Author: Hadley Wickham, Michael Lawrence, Heike Hofmann, Di Cook,
     Barret Schloerke, Marie Vendettuoli, Tengfei Yin, Yihui Xie
-Maintainer: Yihui Xie <xie@iastate.edu>
 Description: Experiments with interactive graphics based on the
     pipeline design pattern and a layered canvas. Features include
     coordinated multiple views, linked brushing, ...
-License: GPL
-LazyLoad: yes
-URL: http://www.github.com/ggobi/cranvas
-Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.6.0), stringr
+Version: 0.1-0
+URL: http://github.com/ggobi/cranvas
 Suggests: productplots, gWidgetsRGtk2
+Collate: 'axes.R' 'bin.R' 'brush.R' 'cranvas-package.R' 'data.R'
+    'GUI-selector.R' 'interaction.R' 'link.R' 'map.R' 'mval.R'
+    'options.R' 'qboxplot.R' 'qhist.R' 'qmosaic.R' 'qparallel.R'
+    'qscatter.R' 'qtime.R' 'utils.R' 'zzz.R'

@@ -1,0 +1,40 @@
+\name{continuous_to_bars}
+\alias{continuous_to_bars}
+\title{Continuous items to bins..}
+\usage{continuous_to_bars(data, splitBy, brushed, typeInfo = "hist", 
+    position = "none", color, fill, stroke, ...)
+
+}
+
+\description{Continuous items to bins}
+\author{Barret Schloerke \email{bigbear@iastate.edu}}
+\keyword{internal}
+\arguments{\item{data}{data to be used}
+\item{splitBy}{vect to split by}
+\item{brushed}{vect to brush by}
+\item{typeInfo}{typeInfo$type ENUM of 'hist', 'ash', 'dot', 'spine', 'density'}
+\item{position}{enum{'none', 'stack', 'dodge', 'relative', 'identity'}}
+\item{color}{vect to color by}
+\item{fill}{vect to fill by}
+\item{stroke}{vect to outline by}
+\item{...}{other params passed to \code{\link[graphics]{hist}}}
+}
+\examples{temp_breaks <- hist(mtcars$disp, plot = FALSE)$breaks[1:2]
+type <- list(type = "hist", binwidth = diff(temp_breaks), 
+    start = temp_breaks[1])
+continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, 
+    stroke = "black")
+continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, 
+    position = "dodge", stroke = "black")
+continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, 
+    position = "identity", stroke = "black")
+continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, 
+    position = "relative", stroke = "black")
+continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, 
+    position = "stack", stroke = "black")}
+
+
+
+
+
+
