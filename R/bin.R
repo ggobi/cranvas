@@ -65,16 +65,6 @@ divide_by_maximum <- function(val, maxVal = val) {
     else val
 }
 
-#' Collect 0 and ordered vector
-#'
-#' @author Barret Schloerke \email{bigbear@@iastate.edu}
-#' @keywords internal
-#' @param vect vector to be used
-#' @param vect_order order to be used (except for the last item)
-zero_then_top_by_order <- function(vec) {
-    vec_order <- order(vec)
-    c(0, vec[vec_order[-length(vec_order)]])
-}
 
 percent_of_brushed <- function(left, right, dataValue, brushVal) {
     # print(left)
@@ -184,7 +174,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
 
         #make the bar_bottom 'stack'
         data_pos <- data_pos[order(data_pos$top), ]
-        data_pos <- ddply(data_pos, "label", transform, bottom = zero_then_top_by_order(top))
+        data_pos <- ddply(data_pos, "label", transform, bottom = c(0, sort(top)[-length(top)]))
 
         # relative
         if (position == "relative") {
