@@ -1,7 +1,7 @@
 qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   
 #####################
-  ## data processing ##----------
+## data processing ##----------
 #####################
   
   arguments <- as.list(match.call()[-1])
@@ -9,7 +9,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   x <- eval(arguments$time, df)
   y <- eval(arguments$y, df)
   tdf <- mutaframe(x=x,zg=rep(1,nrow(df))) # tdf: tmp data frame; zg: zoom group.
-  .levelX <- deparse(arguments$x)
+  .levelX <- deparse(arguments$time)
   .levelY <- deparse(arguments$y)
 
   dataRanges <- c(range(tdf$x), range(y))
@@ -37,7 +37,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
 
   
 ####################
-  ## event handlers ##----------
+## event handlers ##----------
 ####################
   
   brush_mouse_press <- function(layer, event) {
@@ -60,7 +60,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
     if (length(idx)) qupdate(brush_layer)
   }
 
-  identify_mouse_move <- function(layer, event) {
+  brush_mouse_move <- function(layer, event) {
     pos <- event$pos()
     .bpos <<- as.numeric(pos)
     ## simple click: don't change .brange
@@ -71,12 +71,17 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
     xrange <- .radius/root_layer$size$width() * diff(windowRanges[c(1, 2)])
     yrange <- .radius/root_layer$size$height() * diff(windowRanges[c(3, 4)])
 
-    rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange), .bpos + .brange + c(xrange, yrange)), 2, byrow = TRUE))
+    rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
+                           .bpos + .brange + c(xrange, yrange)),
+                         2, byrow = TRUE))
 
-    hits <- layer$locate(rect) + 1
+    hits <- layer$locate(rect)[-1] + 1
+    if (length(hits)<=1)return()
+    print(hits)
         
     .new.brushed[hits] <- TRUE
-    data$.brushed <- mode_selection(data$.brushed, .new.brushed, mode = brush(data)$mode)
+    data$.brushed <- mode_selection(data$.brushed, .new.brushed,
+                                    mode = brush(data)$mode)
   }
 
   key_press <- function(layer, event){
@@ -147,7 +152,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
     ## qupdate(xaxis)
   }
 
-  ## Display category information on hover (query) ----------------------
+  ## Display time information on hover (query) ----------------------
   .queryPos <- NULL
     
   query_draw <- function(item, painter, exposed, ...) {
@@ -158,31 +163,30 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
         
     xrange <- .radius/root_layer$size$width() * diff(windowRanges[c(1, 2)])
     yrange <- .radius/root_layer$size$height() * diff(windowRanges[c(3, 4)])
-                                          print(xrange)
-                                          print(yrange)
-    rect <- qrect(matrix(c(xpos - xrange, ypos - yrange, xpos + xrange, ypos + yrange), 2, byrow = TRUE))
+    
+    rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
+                           xpos + xrange, ypos + yrange),
+                         2, byrow = TRUE))
     hits <- main_layer$locate(rect) + 1
-                                        #print(hits)
-                                        print(.queryPos)
-                                        #browser()
+
     ## Nothing under mouse?
-    if (length(hits) == 0) return()
-        
-    info <- as.data.frame(data[hits, c(.levelX, .levelY)])
-                                        #browser()
+    if (length(hits) <=1 ) return()
+    
+    info <- as.data.frame(data[as.integer(hits[2]), c(.levelX, .levelY)])
+    ## print(info)
+    ## browser()
         
     ## Work out label text
     idx <- names(info)
-    if (length(hits) == 1) {
+    if (length(hits) == 2) {
       infodata <- as.character(unlist(info[, idx]))
       infostring <- paste(idx, infodata, collapse = "\n", sep = ": ")
     }
     else {
-                                        #browser()
       xymin <- unlist(lapply(info[, idx], min, na.rm = T))
       xymax <- unlist(lapply(info[, idx], max, na.rm = T))
-      infostring <- paste(idx, paste(xymin, xymax, sep = " - "), collapse = "\n", 
-                          sep = ": ")
+      infostring <- paste(idx, paste(xymin, xymax, sep = " - "),
+                          collapse = "\n", sep = ": ")
       infostring <- paste(" xxhitsxx points\n", infostring)
       infostring <- gsub("xxhitsxx", length(hits), infostring)
     }
@@ -192,37 +196,47 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
     ## adjust drawing directions when close to the boundary
     hflag <- windowRanges[2] - xpos > bgwidth
     vflag <- ypos - windowRanges[3] > bgheight
-    qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 1, 1, 0.9))
+    qdrawRect(painter, xpos, ypos,
+              xpos + ifelse(hflag, 1, -1) * bgwidth,
+              ypos + ifelse(vflag, -1, 1) * bgheight,
+              stroke = rgb(1, 1, 1),
+              fill = rgb(1, 1, 1, 0.9))
         
     qstrokeColor(painter) <- brush(data)$label.color
-    qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", "right"), valign = ifelse(vflag, "top", "bottom"))
+    qdrawText(painter, infostring, xpos, ypos,
+              halign = ifelse(hflag, "left", "right"),
+              valign = ifelse(vflag, "top", "bottom"))
         
   }
     
   query_hover <- function(item, event, ...) {
     .queryPos <<- as.numeric(event$pos())
-    qupdate(querylayer)
+    qupdate(query_layer)
   }
     
   query_hover_leave <- function(item, event, ...) {
     .queryPos <<- NULL
-    qupdate(querylayer)
+    qupdate(query_layer)
   }
     
   
   
 ############
-  ## layers ##----------
+## layers ##----------
 ############
   
   bg_draw <- function(item, painter, exposed) {
     draw_grid_with_positions_fun(painter, dataRanges, sy, sx)
 
     labels <- get_axisPos(tdf$x)
-    draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = sy, labelHoriPos = sy, name = NULL)
+    draw_x_axes_with_labels_fun(painter, dataRanges,
+                                axisLabel = sy, labelHoriPos = sy,
+                                name = NULL)
 
     labels <- get_axisPos(y)
-    draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = sx, labelVertPos = sx, name = NULL)   
+    draw_y_axes_with_labels_fun(painter, dataRanges,
+                                axisLabel = sx, labelVertPos = sx,
+                                name = NULL)   
   }
     
   main_draw <- function(layer,painter){
@@ -253,7 +267,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
       }
             
       hdata <- subset(data.frame(tdf$x,y), .brushed)
-      print(hdata)
+      #print(hdata)
             
       if (nrow(hdata) > 0) {
         ## draw the brush rectangle
@@ -269,7 +283,8 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
         stroke = brush(data)$color
         radius <- .radius
                 
-        qdrawCircle(painter, x = brushx, y = brushy, r = radius, fill = fill, stroke = stroke)
+        qdrawCircle(painter, x = brushx, y = brushy,
+                    r = radius, fill = fill, stroke = stroke)
       }
     }
 
@@ -277,7 +292,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
 
   
 #####################
-  ## draw the canvas ##----------
+## draw the canvas ##----------
 #####################
 
   xWidth <- 800
@@ -287,25 +302,27 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   scene <- qscene()
   root_layer <- qlayer(scene)
   root_layer$setGeometry(qrect(0, 0, xWidth, yWidth))
-  bg_layer <- qlayer(parent = root_layer, paintFun = bg_draw, limits=lims, row = 1, col = 1)
   ## xaxis <- qaxis(root_layer, data = tdf$x, side = 1,
   ##                limits=range(tdf$x),
   ##                row = 2, col = 1)
   ## yaxis <- qaxis(root_layer, data = y, side = 2,
   ##                limits=range(y),
   ##                row = 1, col = 0)
+  bg_layer <- qlayer(parent = root_layer, paintFun = bg_draw,
+                     limits=lims, row = 1, col = 1)
   main_layer <- qlayer(root_layer,paintFun=main_draw,
                        mousePressFun=brush_mouse_press,
                        mouseReleaseFun=brush_mouse_release,
-                       mouseMove = identify_mouse_move, 
+                       mouseMove = brush_mouse_move, 
                        keyPressFun=key_press,
                        limits=lims, row = 1, col = 1)
   brush_layer <- qlayer(root_layer, brush_draw,
                         limits=qrect(range(tdf$x),
-                        range(y)), row = 1, col = 1)
+                          range(y)), row = 1, col = 1)
   query_layer <- qlayer(root_layer, query_draw,
-                       limits = lims, hoverMoveFun = query_hover,
-                       hoverLeaveFun = query_hover_leave)
+                        limits = lims, hoverMoveFun = query_hover,
+                        hoverLeaveFun = query_hover_leave,
+                        row = 1, col = 1)
 
   layout = root_layer$gridLayout()
   layout$setRowPreferredHeight(0, 10)
