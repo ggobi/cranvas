@@ -1,17 +1,3 @@
-#' Does the dataset contain the column
-has_column <- function(d, col) {
-    col %in% names(d)
-}
-
-#' Add a column if the dataset doesn't have it already
-column_coerce <- function(d, column, defaultVal) {
-    
-    if (!has_column(d, column)) {
-        d[[column]] <- defaultVal
-    }
-    d
-}
-
 # Make percents pretty
 pretty_percent <- function(smallVal) {
     paste(round(100 * smallVal), "%", sep = "")
