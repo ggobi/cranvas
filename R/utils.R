@@ -197,6 +197,7 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
 ##' @param f the amount to extend the range
 ##' @return a vector of length 2: the lower and upper bounds
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @nord
 ##' @examples .extend.ranges(c(0, 1))
 ##' .extend.ranges(1:10)
 ##' .extend.ranges(matrix(c(c(1,10), c(5, 8)), nrow = 2))
