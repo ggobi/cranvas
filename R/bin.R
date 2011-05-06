@@ -1,13 +1,3 @@
-# source('../utilities/api-sketch.r')
-# source('../utilities/axes.r')
-# source('../utilities/helper.r')
-# source('bprint.r')
-# library(reshape2)
-# library(plyr)
-# library(plumbr)
-
-
-
 #' Make dodge positions
 #'
 #' @param breaks break positions
@@ -19,18 +9,18 @@
 make_dodge_pos <- function(breaks, n) {
     gap <- diff(breaks[1:2])
     breaks <- breaks[-length(breaks)]
-    
+
     relPos <- seq(from = gap * 0.1, to = gap * 0.9, length.out = n + 1)
     startRel <- relPos[-(n + 1)]
     endRel <- relPos[-1]
-    
+
     starts <- c(sapply(startRel, function(x) {
         x + breaks
     }))
     ends <- c(sapply(endRel, function(x) {
         x + breaks
     }))
-    
+
     data.frame(start = starts, end = ends)
 }
 
@@ -49,7 +39,7 @@ make_dodge_pos <- function(breaks, n) {
 #'   fill_and_stroke(color = 'red', stroke = 'black')
 #'   fill_and_stroke(color = 'red', fill = 'black')
 fill_and_stroke <- function(color = NULL, fill = NULL, stroke = NULL) {
-    if (is.null(fill)) 
+    if (is.null(fill))
         fill = color
     if (is.null(stroke)) { # lighter outline, darker fill
     		rgbfill = col2rgb(fill)
@@ -70,7 +60,7 @@ fill_and_stroke <- function(color = NULL, fill = NULL, stroke = NULL) {
 #' divide_by_maximum(1:10, 1:20)
 divide_by_maximum <- function(val, maxVal = val) {
     maxValue <- max(maxVal)
-    if (maxValue != 0) 
+    if (maxValue != 0)
         val/maxValue
     else val
 }
@@ -94,9 +84,9 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
     rows <- dataValue > left & dataValue <= right
     sumB <- sum(brushVal[rows])
     lengthB <- sum(rows)
-    
+
     perc <- sumB/lengthB
-        
+
     perc
 }
 
@@ -122,24 +112,24 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 #' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'identity', stroke = 'black')
 #' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'relative', stroke = 'black')
 #' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'stack', stroke = 'black')
-continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL, 
-    typeInfo = "hist", position = "none", color = NULL, fill = NULL, stroke = NULL, 
+continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
+    typeInfo = "hist", position = "none", color = NULL, fill = NULL, stroke = NULL,
     ...) {
     ignore <- substitute(...)
     if (any(is.na(data))) data <- na.omit(data)
-    
-    original = list(data = data, splitBy = splitBy, color = color, stroke = stroke, 
+
+    original = list(data = data, splitBy = splitBy, color = color, stroke = stroke,
         fill = fill, position = position)
-    
+
     if (identical(typeInfo$type, "hist")) {
       #  message("making a hist")
-    } else if (identical(typeInfo$type, "ash")) 
+    } else if (identical(typeInfo$type, "ash"))
         stop("ash not defined yet")
-    else if (identical(typeInfo$type, "dot")) 
+    else if (identical(typeInfo$type, "dot"))
         stop("dot not defined yet")
-    else if (identical(typeInfo$type, "spine")) 
+    else if (identical(typeInfo$type, "spine"))
         stop("spine-o-gram not defined yet")
-    else if (identical(typeInfo$type, "dot")) 
+    else if (identical(typeInfo$type, "dot"))
         stop("dot not defined yet")
     else {
 #        print(typeInfo)
@@ -147,22 +137,22 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     }
 
 #    print(data[brushed == TRUE])
-    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, range(data, na.rm=T)[2], 
+    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, range(data, na.rm=T)[2],
         xMaxEndPos(data))
     break_len <- length(breaks)
-    
+
     bar_top <- table(cut(data, breaks = breaks), splitBy)
-    
+
     data_pos <- reshape::melt(bar_top)
     names(data_pos) <- c("label", "group", "top")
     data_pos$count <- data_pos$top
     data_pos <- data_pos[, c(1, 2, 4, 3)]
-    
+
     label_names <- unique(data_pos$label)
     group_names <- unique(data_pos$group)
-    
+
     data_pos$bottom <- rep(0, nrow(data_pos))
-    
+
     if (is.null(color)) {
         if (length(group_names) == 1) {
             data_pos$color <- rep("grey20", nrow(data_pos))
@@ -171,19 +161,19 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
             data_pos$color <- rep(rainbow(length(group_names)), each = length(label_names))
         }
     }
-    
+
     if (position == "dodge") {
-        
+
         pos <- make_dodge_pos(breaks, length(group_names))
         data_pos$left <- pos$start
         data_pos$right <- pos$end
     }
     else {
         # (position == 'stack' || position == 'relative')
-        
+
         data_pos$left <- rep(breaks[1:(break_len - 1)], length(group_names))
         data_pos$right <- rep(breaks[2:break_len], length(group_names))
-        
+
         if (position != "identity") {
             # make the bar_top be stacked (cumulative)
             for (i in 1:nrow(bar_top)) {
@@ -191,35 +181,131 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
             }
             data_pos <- ddply(data_pos, c("label"), transform, top = cumsum(top))
         }
-        
+
         #make the bar_bottom 'stack'
         data_pos <- data_pos[order(data_pos$top), ]
         data_pos <- ddply(data_pos, "label", transform, bottom = zero_then_top_by_order(top))
-        
+
         # relative
         if (position == "relative") {
-            data_pos <- ddply(data_pos, c("label"), transform, bottom = divide_by_maximum(bottom, 
+            data_pos <- ddply(data_pos, c("label"), transform, bottom = divide_by_maximum(bottom,
                 top))
             data_pos <- ddply(data_pos, c("label"), transform, top = divide_by_maximum(top))
         }
     }
-    
+
     # Color Management
     f_and_s <- fill_and_stroke(data_pos$color, fill = fill, stroke = stroke)
     data_pos$fill <- f_and_s$fill
     data_pos$stroke <- f_and_s$stroke
     data_pos$color <- NULL
-    
-    
+
+
     # Brushing
     data_pos$.brushed <- 0
     # data_pos <- ddply(data_pos, c('label', 'group'), transform, .brushed =
     #   percent_of_brushed(left, right, original$data, brushed))
     for (i in seq_len(NROW(data_pos))) {
-        data_pos$.brushed[i] <- percent_of_brushed(data_pos[i, "left"], data_pos[i, 
+        data_pos$.brushed[i] <- percent_of_brushed(data_pos[i, "left"], data_pos[i,
             "right"], data, brushed)
     }
-    
+
     list(data = data_pos, breaks = breaks, label_names = label_names, group_names = group_names)
-    
-} 
+
+}
+
+
+# Make percents pretty
+pretty_percent <- function(smallVal) {
+    paste(round(100 * smallVal), "%", sep = "")
+}
+
+
+# find a column name unique to the plot
+data_hist_column <- function(d) {
+    add_unique_column(d, "qhist")
+}
+data_bin_column <- function(d) {
+    add_unique_column(d, "qbin")
+}
+add_unique_column <- function(d, name) {
+    dnames <- names(d)
+    locations <- str_detect(dnames, str_c(name, "[1-9]*"))
+    if (!any(locations)) {
+        return(str_c(name, "1"))
+    }
+    histNames <- dnames[locations]
+
+    histNumbers <- str_replace_all(histNames, name, "")
+    histNumbers <- as.numeric(histNumbers)
+
+    str_c(name, max(histNumbers) + 1)
+}
+
+# calculate the break positions including start and end
+calcBinPosition <- function(start, width, maxDataPos, maxDrawPos) {
+    # cat('start: ', start, '\twidth: ', width, '\tmaxDataPos: ', maxDataPos,
+    #   '\tmaxDrawPos: ', maxDrawPos, '\n')
+    output <- seq(from = start, to = maxDrawPos, by = width)
+    if (max(output) < maxDataPos) {
+        output <- c(output, maxDrawPos)
+    }
+    # cat('calcBinPosition: ', str_c(output, collapse = ', '), '\n')
+    output
+}
+
+## find the range of the data
+#dataRange <- function(d) {
+#    range(d)
+#}
+
+# find the max binwidth of the data
+maxBinwidth <- function(d, na.rm=T) {
+    diff(range(d, na.rm=na.rm))/4
+}
+
+# execute a base histogram
+baseHist <- function(d, ...) {
+    output <- suppressWarnings(hist(d, plot = FALSE, ...))
+    # print(output)
+    output
+}
+
+# find the shifting unit when moving the start position
+unitShift <- function(d, na.rm=T) {
+    diff(range(d, na.rm=na.rm))/60
+}
+
+# find the largest deviation from the start position
+maxShift <- function(d, na.rm=T) {
+    0.1 * diff(range(d, na.rm=na.rm))
+}
+
+# find the maximum starting position
+xMaxStartPos <- function(d, na.rm=T) {
+    range(d, na.rm=na.rm)[1]
+}
+
+# find the minimum starting position
+xMinStartPos <- function(d, na.rm=T) {
+    range(d, na.rm=na.rm)[1] - maxShift(d)
+}
+
+# find the maximum ending position
+xMaxEndPos <- function(d, na.rm=T) {
+    range(d, na.rm=na.rm)[2] + maxBinwidth(d)
+}
+
+maxHeight <- function(d, na.rm=T, ...) {
+    yMax <- 0
+    tmpStartPos <- xMinStartPos(d, na.rm)
+    maxStartPos <- xMaxStartPos(d, na.rm)
+    while (tmpStartPos <= maxStartPos) {
+        tB <- calcBinPosition(tmpStartPos, maxBinwidth(d, na.rm), range(d, na.rm=na.rm)[2], xMaxEndPos(d, na.rm))
+        newMax <- max(baseHist(d, breaks = tB, ...)$counts)
+        if (newMax > yMax)
+            yMax <- newMax
+        tmpStartPos <- tmpStartPos + unitShift(d)
+    }
+    yMax
+}
