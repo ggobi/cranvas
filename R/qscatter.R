@@ -403,7 +403,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         func <- function(i, j) {
 	        switch(j, .brushed = qupdate(brushlayer),
                .color = qupdate(datalayer), {
+                   datalayer$invalidateIndex()
 									 qupdate(datalayer)
+									 qupdate(brushlayer)
                })
         }
         
