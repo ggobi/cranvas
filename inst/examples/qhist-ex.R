@@ -1,55 +1,53 @@
 ## examples of qhist()
 
 require(ggplot2)
-require(stringr)
+#require(stringr)
 
-require(qtbase)
-require(qtpaint)
-require(plumbr)
+#require(qtbase)
+#require(qtpaint)
+#require(plumbr)
 require(cranvas)
 
 data(tennis)
-tennis[sample(nrow(tennis),10),"First.Serve.Pct"] <- NA
 qtennis <- qdata(tennis)
-qhist(qtennis, "First.Serve.Pct", horizontal = FALSE)
-qhist(qtennis, "Serve.Speed", horizontal = FALSE)
+qhist("First.Serve.Pct", qtennis, horizontal = FALSE)
+qhist("Serve.Speed", qtennis, horizontal = FALSE)
 
 # Barret's testing examples
 # torture
 rows <- 1e+04
 bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
-qhist(bigData)
+qhist(x, bigData)
 qscatter(x,y, data= bigData)
 
 # each column is split evenly
-qhist(bigData, splitByCol = "y", title = "Torture - stack")
-qhist(bigData, splitByCol = "y", title = "Torture - stack", horizontal = FALSE)
+qhist(x, bigData, splitByCol = "y", title = "Torture - stack")
+qhist(x, bigData, splitByCol = "y", title = "Torture - stack", horizontal = FALSE)
 
 # each column has similar height colors
-qhist(bigData, splitByCol = "y", title = "Torture - dodge", position = "dodge")
+qhistx, (bigData, splitByCol = "y", title = "Torture - dodge", position = "dodge")
 
 # range from 0 to 1
-qhist(bigData, splitByCol = "y", title = "Torture - relative", position = "relative")
+qhist(x, bigData, splitByCol = "y", title = "Torture - relative", position = "relative")
 
 
 # color tests
 # all color is defined
-qhist(mtcars, "disp", horizontal = TRUE, fill = "gold", stroke = "red4")
+qhist("disp", mtcars, horizontal = TRUE, fill = "gold", stroke = "red4")
 
 # stacked items
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", position = "stack", 
-    title = "mtcars - stack")
+qhist("disp", mtcars, "cyl", horizontal = FALSE, stroke = "black", position = "stack",     title = "mtcars - stack")
 
 # raw value items
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", position = "identity", 
+qhist("disp", mtcars, "cyl", horizontal = FALSE, stroke = "black", position = "identity", 
     title = "mtcars - identity")
 
 # dodged items
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", position = "dodge", 
+qhist("disp", mtcars, "cyl", horizontal = FALSE, stroke = "black", position = "dodge", 
     title = "mtcars - dodge")
 
 # range from 0 to 1
-qhist(mtcars, "disp", "cyl", horizontal = FALSE, stroke = "black", position = "relative", 
+qhist("disp", mtcars, "cyl", horizontal = FALSE, stroke = "black", position = "relative", 
     title = "mtcars - relative")
 
 ####################
@@ -73,7 +71,7 @@ qtennis$.color = "grey30"
 brush_attr(qtennis, ".brushed.size") <- 2
 brush_attr(qtennis, ".brushed.color") <- "orange"
 
-print(qhist(qtennis, "First.Serve.Pct", horizontal = FALSE))
+print(qhist("First.Serve.Pct", qtennis, horizontal = FALSE))
 print(qparallel(qtennis))
 require(productplots)
 print(qmosaic(qtennis, ~Country, "hbar")) 
