@@ -6,11 +6,13 @@
 # How do I get beyond dataframes to mutaframes?
 qtour_xy <- function(qdata, tour_path = grand_tour(), ...) {
 
+  qdata$.proj1 <- c(1, rep(0, ncol(qdata)-1)
+  qdata$.proj2 <- c(0, 1, rep(0, ncol(qdata)-2)
   bases <- qanimate(qdata, tour_path, display_xy(...))
   cat("tour",dim(bases),"\n")
 }
 
-qanimate <- function(qdata, tour_path = grand_tour(), display = display_xy(), start = NULL, aps = 1, fps = 30, max_frames = Inf, rescale = TRUE, sphere = FALSE, ...) {
+qanimate <- function(qdata, tour_path = grand_tour(), display = qdisplay_xy(), start = NULL, aps = 1, fps = 30, max_frames = Inf, rescale = TRUE, sphere = FALSE, ...) {
   # Will need to do this at some point, but this doesn't work on mutaframes yet
   # if (rescale) data <- rescale(data)
   # if (sphere) data  <- sphere(data)
@@ -33,7 +35,7 @@ qanimate <- function(qdata, tour_path = grand_tour(), display = display_xy(), st
   # Initialise display
   #display$init(data)
   #display$render_frame()
-  #display$render_data(data, start$proj, start$target)
+  display$render_data(qdata, start$proj, start$target)
   os <- find_platform()$os
   
   b <- 0
@@ -80,3 +82,40 @@ to_stop <- function() {
   }
   message("Press ", key, " to stop tour running")
 }
+
+qdisplay_xy <- function(center = TRUE, axes = "center", half_range = NULL, col = "black", pch  = 20, ...) {
+  
+  labels <- NULL
+  init <- function(qdata) {
+    #half_range <<- compute_half_range(half_range, data, center)
+    #labels <<- abbreviate(colnames(data), 3)
+  }
+  
+  render_frame <- function() {
+    par(pty = "s", mar = rep(1,4))
+    blank_plot(xlim = c(-1, 1), ylim = c(-1, 1))
+  }
+  render_transition <- function() {
+    rect(-1, -1, 1, 1, col="#FFFFFFE6", border=NA)
+  }
+  render_data <- function(qdata, proj, geodesic) {
+    #draw_tour_axes(proj, labels, limit = 1, axes)
+
+    message("Proj ", proj[1,1], proj[1,2], "\n")
+    # Render projected points
+    qdata$.proj1 <- proj[,1]
+    qdata$.proj2 <- proj[,2]
+    #x <- qdata %*% proj
+    #if (center) x <- center(x)
+    #points(x / half_range, col = col, pch = pch)
+  }
+  
+  list(
+    #init = init,
+    #render_frame = render_frame,
+    #render_transition = render_transition,
+    render_data = render_data,
+    #render_target = nul
+  )
+}
+                    
