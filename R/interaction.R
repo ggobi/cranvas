@@ -212,7 +212,8 @@ visible = function(data) {
 ##' selected(df)
 ##'
 selected = function(data) {
-    data$.brushed
+    if ('.brushed' %in% names(data))
+        data$.brushed else logical(nrow(data))
 }
 ##' @rdname selected
 ##' @usage selected(data) <- value
