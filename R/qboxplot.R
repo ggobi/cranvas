@@ -21,7 +21,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     }
     if (!any(class(data) %in% c('data.frame', 'mutaframe', 'list')))
         data = as.data.frame(data)
-    if (missing(vars)) vars = names(data)
+    if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
     if (is(vars, 'formula')) {
         vars.n = length(vars)  # 2 means one-sided formula, 3 means two-sided
         vars.a = all.vars(vars)  # all variables in the formula
