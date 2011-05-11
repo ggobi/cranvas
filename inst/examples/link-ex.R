@@ -38,7 +38,7 @@ data1
 
 ### (2) linking two par-coords plots: one original data, one aggregated
 data(nrcstat)
-nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code), 
+nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code),
     function(x) round(mean(x), 1))
 qnrc = qdata(nrcstat)
 qnrc.agg = qdata(nrcstat.agg)
@@ -46,7 +46,7 @@ qnrc.agg = qdata(nrcstat.agg)
 link_var(qnrc) = link_var(qnrc.agg) = "Regional.Code"
 link(qnrc, qnrc.agg)
 
-qparallel(qnrc, vars = c(8, 10:19))
-qparallel(qnrc.agg)
+qparallel(vars = c(8, 10:19), data = qnrc)
+qparallel(data = qnrc.agg)
 
-brush_attr(qnrc.agg, ".label.show") = TRUE  # turn on labels 
+brush(qnrc.agg, ".label.show") = TRUE  # turn on labels
