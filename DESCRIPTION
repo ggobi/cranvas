@@ -17,4 +17,4 @@ Suggests: productplots, gWidgetsRGtk2
 Collate: 'axes.R' 'bin.R' 'brush.R' 'cranvas-package.R' 'data.R'
     'GUI-selector.R' 'interaction.R' 'link.R' 'map.R' 'mval.R'
     'options.R' 'qboxplot.R' 'qhist.R' 'qmosaic.R' 'qparallel.R'
-    'qscatter.R' 'qtime.R' 'utils.R' 'zzz.R'
+    'qscatter.R' 'qtime.R' 'qtourr.R' 'utils.R' 'zzz.R'
