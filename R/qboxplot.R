@@ -1,5 +1,8 @@
-##' Boxplots
+##' Boxplots for a data frame or a continuous variable vs a categorical variable.
 ##'
+##' This function can draw side-by-side boxplots for all the variables
+##' in a data frame or boxplots for a continous variable vs a
+##' categorical variable.
 ##'
 ##' @param vars a list of variables, or a formula
 ##' @param data a mutaframe
@@ -8,11 +11,8 @@
 ##' @param horizontal horizontal or vertical boxplots
 ##' @return NULL
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @examples
-##' df = matrix(rnorm(1000), 100)
-##' qboxplot(data = df)
-##' qboxplot(data = df, horizontal = TRUE)
-##'
+##' @example cranvas/inst/examples/qboxplot-ex.R
+##' @export
 qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     if (missing(data)) {
         ## if no data is provided, I assume vars is the data
@@ -94,17 +94,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     ## view$setWindowTitle(main)
     view
 }
-if (FALSE) {
-    df = matrix(rnorm(1000), 200)
-    qboxplot(df)
-    qboxplot(df, horizontal = TRUE)
-    qboxplot(df, at = (1:5)^2)  # at different locations
-    qboxplot(df, width = .1*sample(5))  # different widths
-    qboxplot(rnorm(100))
-    qboxplot(Sepal.Length~Species,data=iris)
-    df = qdata(data.frame(x = rnorm(100), y = runif(100)))
-    qboxplot(c('x', 'y'), df)
-}
+
 
 ## construct the boxplot layer
 .bxp.layer = function(parent = NULL, vars, data, subset = FALSE, at, width, horizontal, ...) {
