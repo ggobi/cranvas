@@ -37,9 +37,9 @@
 #'
 #'  # range from 0 to 1
 #'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'relative', title = 'mtcars - relative')
-qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE, 
+qhist <- function(x, data, splitByCol = -1, horizontal = FALSE, 
     position = "none", color = NULL, fill = NULL, stroke = NULL, title = NULL, name = NULL, 
-    ash = FALSE, start = min(data[[xCol]]), nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
+    ash = FALSE, start = min(data[[x]]), nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
     bin_algo_str = NULL, ...) {
     
     # 'Global' variables (start with a '.')
@@ -64,8 +64,8 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     .histOriginalBreaksAndStart <- list()
     .updateinfo <- FALSE
     if (is.null(name)) { 
-			if (is.character(xCol)) name <- xCol
-	    else	name <- names(data)[xCol]
+			if (is.character(x)) name <- x
+	    else	name <- names(data)[x]
     }
     # mf_data <- qdata(data)
     if (!is.mutaframe(data)) 
@@ -83,7 +83,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     
     # Set up wrapper functions.
     dataCol <- function() {
-        mf_data[, xCol]
+        mf_data[, x]
     }
     xColRange <- function() {
         range(dataCol())
@@ -150,7 +150,7 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
     
     
     updateBarsInfo <- function() {
-        .bars_info <<- continuous_to_bars(data = mf_data[, xCol], splitBy = mf_data[, 
+        .bars_info <<- continuous_to_bars(data = mf_data[, x], splitBy = mf_data[, 
             splitByCol], brushed = mf_data[, ".brushed"], typeInfo = .type, position = position, 
             color = color, fill = fill, stroke = stroke, ...)
         
