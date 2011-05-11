@@ -9,15 +9,15 @@ make_pretty_axes <- function(dataRange, minimum, maximum) {
     prettyness <- pretty(dataRange)
     prettyness <- prettyness[prettyness >= minimum]
     prettyness <- prettyness[prettyness <= maximum]
-    
+
 #    bprint(prettyness)
     prettyness
 }
 
 
-qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL, 
+qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
     limits, ...) {
-    lims = if (side%%2) 
+    lims = if (side%%2)
         qrect(limits, c(0, 1))
     else qrect(c(0, 1), limits)
     draw_axis = function(layer, painter) {
@@ -25,7 +25,7 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
             at = .axis.loc(data)
         }
         if (is.null(labels)) {
-            labels = if (!is.null(data) && is.factor(data)) 
+            labels = if (!is.null(data) && is.factor(data))
                 levels(data)
             else format(at)
         }
@@ -55,7 +55,7 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
             xshift2 = -0.1
         })
         qdrawText(painter, labels, x = xat, y = yat, halign = xalign, valign = yalign)
-        qdrawSegment(painter, xat + xshift1, yat + yshift1, xat + xshift2, yat + 
+        qdrawSegment(painter, xat + xshift1, yat + yshift1, xat + xshift2, yat +
             yshift2)
     }
     qlayer(parent, paintFun = draw_axis, limits = lims, ...)
@@ -74,9 +74,9 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
 qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
     ## background color
     .bgcolor = "grey80"
-    
+
     draw_grid = function(layer, painter) {
-        qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor, 
+        qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor,
             fill = .bgcolor)
         qlineWidth(painter) = 1
         qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
@@ -89,7 +89,7 @@ qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
         qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
     }
     qlayer(parent, paintFun = draw_grid, limits = qrect(xlim, ylim), ...)
-} 
+}
 
 
 #' draw grid with qt
@@ -100,52 +100,52 @@ qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
 #' @param dataRanges ranges of the data so a buffer of space may be added
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
-draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL, 
+draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
     vertPos = NULL, minor.horiPos = NULL, minor.vertPos = NULL) {
     #background
-    qdrawRect(plotObj, dataRanges[1], dataRanges[3], dataRanges[2], dataRanges[4], 
+    qdrawRect(plotObj, dataRanges[1], dataRanges[3], dataRanges[2], dataRanges[4],
         fill = "grey80", stroke = "grey80")
-    
+
     #horizontal
     if (!is.null(vertPos)) {
         qlineWidth(plotObj) <- 2
-        
-        qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), length(vertPos)), y = rep(vertPos, 
+
+        qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), length(vertPos)), y = rep(vertPos,
             each = 3), stroke = "white")
-        
+
         minor.vertPos <- vertPos[-length(vertPos)] + diff(vertPos)/2
     }
-    
+
     #vertical
     if (!is.null(horiPos)) {
         qlineWidth(plotObj) <- 2
-        
-        qdrawLine(plotObj, x = rep(horiPos, each = 3), y = rep(c(dataRanges[3:4], 
+
+        qdrawLine(plotObj, x = rep(horiPos, each = 3), y = rep(c(dataRanges[3:4],
             NA), length(horiPos)), stroke = "white")
-        
+
         minor.horiPos <- horiPos[-length(horiPos)] + diff(horiPos)/2
     }
-    
+
     #minor horizontal
     if (!is.null(minor.vertPos)) {
         # change linewidth to smaller width
         qlineWidth(plotObj) <- 0.1
-        qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), length(minor.vertPos)), 
+        qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), length(minor.vertPos)),
             y = rep(minor.vertPos, each = 3), stroke = "white")
-        
+
     }
-    
+
     #minor vertical
     if (!is.null(minor.horiPos)) {
-        
+
         # change linewidth to smaller width
         qlineWidth(plotObj) <- 0.1
-        qdrawLine(plotObj, x = rep(minor.horiPos, each = 3), y = rep(c(dataRanges[3:4], 
+        qdrawLine(plotObj, x = rep(minor.horiPos, each = 3), y = rep(c(dataRanges[3:4],
             NA), length(minor.horiPos)), stroke = "white")
     }
-    
-    
-    
+
+
+
 }
 
 #' draw x axes with qt
@@ -158,37 +158,37 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
 #' @param labelHoriPos horizontal position of the axisLabels
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
-draw_x_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels, 
+draw_x_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
     labelHoriPos, name = NULL) {
     #  X label
     x_left <- range(dataRanges[1:2])
     x_bottom <- c(dataRanges[3], dataRanges[3])
     x_bottom <- x_bottom - 0.03 * diff(dataRanges[3:4])
     x_labelpos <- dataRanges[3] - 0.03 * diff(dataRanges[3:4])
-    
+
     #  plotObj$add_layer(line(left=x_left,bottom=x_bottom,stroke='grey'))
     # draw tick marks
-    qdrawLine(plotObj, x = rep(labelHoriPos, each = 3), y = rep(c(dataRanges[3], 
-        dataRanges[3] - 0.02 * diff(dataRanges[3:4]), NA), length(labelHoriPos)), 
+    qdrawLine(plotObj, x = rep(labelHoriPos, each = 3), y = rep(c(dataRanges[3],
+        dataRanges[3] - 0.02 * diff(dataRanges[3:4]), NA), length(labelHoriPos)),
         stroke = "grey30")
-    
+
     qstrokeColor(plotObj) <- "grey30"
     qdrawText(plotObj, text = axisLabels, x = labelHoriPos, y = x_labelpos, valign = "top")
-    
+
     if (!is.null(name)) {
         qstrokeColor(plotObj) <- "black"
-        qdrawText(plotObj, text = name, x = x_left[1] + 0.5 * diff(x_left), y = dataRanges[3] - 
+        qdrawText(plotObj, text = name, x = x_left[1] + 0.5 * diff(x_left), y = dataRanges[3] -
             0.13 * diff(dataRanges[3:4]), valign = "center")
     }
-    
-    
+
+
     #  x_axisLabels <- axisLabels
     #  bprint(x_left)
     #  bprint(x_bottom)
     #  bprint(x_labelpos)
     #  bprint(x_axisLabels)
     #  bprint(labelHoriPos)
-    
+
 }
 
 #' draw y axes with qt
@@ -201,46 +201,46 @@ draw_x_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
 #' @param labelVertPos vertical position of the axisLabels
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
-draw_y_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels, 
+draw_y_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
     labelVertPos, name = NULL) {
     # Y label
     y_left <- dataRanges[1] - 0.03 * diff(dataRanges[1:2])
     y_bottom = dataRanges[3:4]
-    
+
     #  y_bottom <- range(y_bottom[y_bottom >= 0 && y_bottom < windowRanges[4]])
     y_labelpos = dataRanges[1] - 0.04 * diff(dataRanges[1:2])
     # use qstrWidth for label position?
-    
+
     #draw x and y axes!
-    qdrawLine(plotObj, x = rep(c(dataRanges[1] - 0.02 * diff(dataRanges[1:2]), dataRanges[1], 
+    qdrawLine(plotObj, x = rep(c(dataRanges[1] - 0.02 * diff(dataRanges[1:2]), dataRanges[1],
         NA), length(labelVertPos)), y = rep(labelVertPos, each = 3), stroke = "grey30")
-    
-    
+
+
     qstrokeColor(plotObj) <- "grey30"
     qdrawText(plotObj, text = axisLabels, x = y_labelpos, y = labelVertPos, halign = "right")
-    
+
     if (!is.null(name)) {
         qstrokeColor(plotObj) <- "black"
-        qdrawText(plotObj, text = name, x = dataRanges[1] - 0.18 * diff(dataRanges[1:2]), 
+        qdrawText(plotObj, text = name, x = dataRanges[1] - 0.18 * diff(dataRanges[1:2]),
             y = y_bottom[1] + 0.5 * diff(y_bottom), valign = "center", rot = 90)
     }
-    
+
     #  y_axisLabels <- axisLabels
     #  bprint(y_left)
     #  bprint(y_bottom)
     #  bprint(y_labelpos)
     #  bprint(y_axisLabels)
     #  bprint(labelVertPos)
-    
+
 }
 
 #' add a title using qt
 #'
 add_title_fun <- function(plotObj, dataRanges, title) {
-    
+
     if (!is.null(title)) {
         qstrokeColor(plotObj) <- "black"
-        qdrawText(plotObj, text = title, x = dataRanges[1] + 0.5 * diff(dataRanges[1:2]), 
+        qdrawText(plotObj, text = title, x = dataRanges[1] + 0.5 * diff(dataRanges[1:2]),
             y = dataRanges[4] + 0.05 * diff(dataRanges[3:4]), valign = "top")
     }
 }

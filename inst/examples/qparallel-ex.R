@@ -10,11 +10,13 @@ library(cranvas)
 
 data(nrcstat)
 qnrc = qdata(nrcstat)
-rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, 
+rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name,
     sep = " -> ")
 
+## brush(qnrc, 'size') = 1  # I cannot work with size > 1 at the moment
+
 ## Overview: type, rankings
-qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick", 
+qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
     horizontal = FALSE, boxplot = TRUE)
 qnrc$.color = "red"
 
@@ -29,10 +31,10 @@ brush(qnrc, "label.color") = "black"
 
 brush(qnrc, "identify") = FALSE  # turn off identification
 
-qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity", 
+qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity",
     center = median, horizontal = FALSE, glyph = "tick")
 
-qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", center = median, 
+qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", center = median,
     horizontal = FALSE, glyph = "tick", lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
 
 # Find ISU, and sort by best rank to least on ISU
@@ -42,7 +44,7 @@ median.centering <- function(x) {
 }
 nrc.medctr <- apply(nrcstat[, 20:68], 2, median.centering)
 var.ord <- order(nrc.medctr[13, ]) + 19
-qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", center = median, 
+qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", center = median,
     horizontal = FALSE, glyph = "tick", lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
 
 ## color palette
@@ -132,16 +134,16 @@ qparallel(data = qmtcars, order = "MDS")
 qparallel(data = qmtcars, order = "ANOVA")
 
 ## test speed
-test.mat1 = qdata(matrix(rnorm(1000 * 10), ncol = 10), color = rgb(1, 
+test.mat1 = qdata(matrix(rnorm(1000 * 10), ncol = 10), color = rgb(1,
     0, 0, 0.2))
 qparallel(data = test.mat1)
 
-test.mat2 = qdata(matrix(rnorm(1000 * 15), ncol = 15), color = rgb(1, 
+test.mat2 = qdata(matrix(rnorm(1000 * 15), ncol = 15), color = rgb(1,
     0, 0, 0.2))
 qparallel(data = test.mat2, boxplot = TRUE)
 
 ## slow for brushing in my laptop
-test.mat3 = qdata(matrix(rnorm(5000 * 10), ncol = 10), color = rgb(1, 
+test.mat3 = qdata(matrix(rnorm(5000 * 10), ncol = 10), color = rgb(1,
     0, 0, 0.05))
 
 options(cranvas_debug = TRUE)
@@ -168,7 +170,7 @@ qparallel(testdata, vars = sprintf("V%d", 4:10))
 
 library(ggplot2)
 qdiamonds = qdata(diamonds, color = rgb(1, 0, 0, 0.01))
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", jitter = ~cut + 
+qparallel(data = qdiamonds, vars = 1:7, glyph = "line", jitter = ~cut +
     color + clarity)
 qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
 qparallel(data = qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
@@ -211,4 +213,4 @@ qparallel(data = qnhr, jitter = c("bedrms", "zone"), amount = 0.2)
 library(animation)
 data(pollen)
 qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
-qparallel(data = qpollen) 
+qparallel(data = qpollen)
