@@ -1,13 +1,12 @@
 \name{qhist}
 \alias{qhist}
 \title{Create a hist plot..}
-\usage{qhist(data, xCol = 1, splitByCol = -1, horizontal = TRUE, 
+\usage{qhist(x, data, splitByCol = -1, horizontal = FALSE, 
     position = "none", color, fill, stroke, title, name, 
-    ash = FALSE, start = min(data[[xCol]]), nbins = round(sqrt(nrow(data)), 
+    ash = FALSE, start = min(data[[x]]), nbins = round(sqrt(nrow(data)), 
         0), binwidth, bin_algo_str, ...)
 
 }
-
 
 
 \description{Create a hist plot
