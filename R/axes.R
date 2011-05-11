@@ -78,7 +78,14 @@ qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
     draw_grid = function(layer, painter) {
         qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor, 
             fill = .bgcolor)
+        qlineWidth(painter) = 1
         qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
+        qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
+        ## minor grid
+        qlineWidth(painter) = 0.1
+        xat = (xat[-1] + xat[-length(xat)])/2
+        qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
+        yat = (yat[-1] + yat[-length(yat)])/2
         qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
     }
     qlayer(parent, paintFun = draw_grid, limits = qrect(xlim, ylim), ...)
