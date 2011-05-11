@@ -401,9 +401,10 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ######################
     if (is.mutaframe(data)) {
         func <- function(i, j) {
-            if (j == ".brushed") {
-                qupdate(brushlayer)
-            }
+	        switch(j, .brushed = qupdate(brushlayer),
+               .color = qupdate(datalayer), {
+									 qupdate(datalayer)
+               })
         }
         
         add_listener(data, func)
