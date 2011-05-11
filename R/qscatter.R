@@ -13,6 +13,7 @@
 #' @param form formula in format y ~x which designates the axis
 #' @param main main title for the plot
 #' @param labeled whether axes should be labeled
+#' @example cranvas/inst/examples/qscat-ex.R
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
