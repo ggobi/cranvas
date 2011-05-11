@@ -112,8 +112,8 @@ if (FALSE) {
         .boxcol = 'black'
         if (subset) {
             if (all(!selected(data))) return()
+            .boxcol = brush(data)$color
             data = data[selected(data), ]
-            .boxcol = 'red'
         }
         if (is(vars, 'formula') && length(vars) == 3) {
             vars.a = all.vars(vars)
