@@ -1,0 +1,12 @@
+library(cranvas)
+library(tourr)
+
+flea <- rescaler(flea)
+qflea <- qdata(flea)
+flea_tour <- Tourr$new(qflea, grand_tour(3), 1:6)
+flea_tour$step()
+qparallel(c("tour_1", "tour_2", "tour_3"), qflea)
+qscatter(qflea, tour_1, tour_2)
+# qhist(qflea, "tour_1")
+flea_tour$start()
+flea_tour$pause()
