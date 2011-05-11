@@ -9,7 +9,7 @@ library(productplots)
 # Oil Spill Data
 
 # floats data
-floats <- read.csv("html://http://streaming.stat.iastate.edu/dataexpo/2011/resources/data/floats.csv")
+floats <- read.csv("http://streaming.stat.iastate.edu/dataexpo/2011/resources/data/floats.csv")
 floats$call <- as.numeric(floats$callSign)
 floats <- na.omit(floats)
 floats <- subset(floats, (callSign != "Q4901044"))
@@ -18,6 +18,7 @@ floats$callSign <- factor(floats$callSign)
 # prep floats
 floats$date <- as.Date(floats$Date_Time, format="%Y-%m-%d")
 floats$day <- as.numeric(floats$date - as.Date("2010-04-20", format="%Y-%m-%d"))
+floats$week <- (floats$day %/% 7) + 1
 
 
 
@@ -36,5 +37,7 @@ qhist(data=qfl, xCol="day", binwidth=7, horizontal=FALSE)
 #
 qscatter(Temperature, Salinity, data=qfl)
 
-qparallel(data=qfl, vars=c(8,10,12))
+qparallel(data=qfl, vars=c(8,10,12), alpha=0.1)
+
+
 

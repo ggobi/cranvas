@@ -77,10 +77,6 @@ qhist <- function(data, xCol = 1, splitByCol = -1, horizontal = TRUE,
         splitByCol <- "qhist_split_column"
         mf_data[[splitByCol]] <- 1
     }
-    
-    # sets values to FALSE only if brush does not exist yet
-    mf_data <- column_coerce(mf_data, ".brushed", FALSE)
-    
     # .bin_col <- data_bin_column(mf_data)
     .mf_data_col_names <- rep("", nrow(mf_data))
     #print(head(mf_data))
