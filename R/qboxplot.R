@@ -1,5 +1,8 @@
-##' Boxplots
+##' Boxplots for a data frame or a continuous variable vs a categorical variable.
 ##'
+##' This function can draw side-by-side boxplots for all the variables
+##' in a data frame or boxplots for a continous variable vs a
+##' categorical variable.
 ##'
 ##' @param vars a list of variables, or a formula
 ##' @param data a mutaframe
@@ -8,11 +11,8 @@
 ##' @param horizontal horizontal or vertical boxplots
 ##' @return NULL
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @examples
-##' df = matrix(rnorm(1000), 100)
-##' qboxplot(data = df)
-##' qboxplot(data = df, horizontal = TRUE)
-##'
+##' @example cranvas/inst/examples/qboxplot-ex.R
+##' @export
 qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     if (missing(data)) {
         ## if no data is provided, I assume vars is the data
@@ -21,7 +21,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     }
     if (!any(class(data) %in% c('data.frame', 'mutaframe', 'list')))
         data = as.data.frame(data)
-    if (missing(vars)) vars = names(data)
+    if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
     if (is(vars, 'formula')) {
         vars.n = length(vars)  # 2 means one-sided formula, 3 means two-sided
         vars.a = all.vars(vars)  # all variables in the formula
@@ -94,17 +94,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     ## view$setWindowTitle(main)
     view
 }
-if (FALSE) {
-    df = matrix(rnorm(1000), 200)
-    qboxplot(df)
-    qboxplot(df, horizontal = TRUE)
-    qboxplot(df, at = (1:5)^2)  # at different locations
-    qboxplot(df, width = .1*sample(5))  # different widths
-    qboxplot(rnorm(100))
-    qboxplot(Sepal.Length~Species,data=iris)
-    df = qdata(data.frame(x = rnorm(100), y = runif(100)))
-    qboxplot(c('x', 'y'), df)
-}
+
 
 ## construct the boxplot layer
 .bxp.layer = function(parent = NULL, vars, data, subset = FALSE, at, width, horizontal, ...) {
@@ -112,8 +102,8 @@ if (FALSE) {
         .boxcol = 'black'
         if (subset) {
             if (all(!selected(data))) return()
+            .boxcol = brush(data)$color
             data = data[selected(data), ]
-            .boxcol = 'red'
         }
         if (is(vars, 'formula') && length(vars) == 3) {
             vars.a = all.vars(vars)
@@ -162,14 +152,14 @@ if (FALSE) {
             circle = qglyphCircle()
             qdrawGlyph(painter, circle, x, y, cex = .6, stroke = 'black', fill = 'black')
         }
-        qlineWidth(painter) = 3
+        ## qlineWidth(painter) = 3
         if (horizontal) {
             x0 = x1 = bxp.stats[3, ]
         } else {
             y0 = y1 = bxp.stats[3, ]
         }
         qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # median bar
-        qlineWidth(painter) = 1
+        ## qlineWidth(painter) = 1
     }
     qlayer(parent, paintFun = draw_boxplot, ...)
 }

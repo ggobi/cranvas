@@ -64,10 +64,10 @@ qnrc.agg = qdata(nrcstat.agg)
 link_var(qnrc) = link_var(qnrc.agg) = "Regional.Code"
 link(qnrc, qnrc.agg)
 
-qparallel(qnrc, vars = c(8, 10:19))
-qparallel(qnrc.agg)
+qparallel(vars = c(8, 10:19), data = qnrc)
+qparallel(data = qnrc.agg)
 
-brush_attr(qnrc.agg, ".label.show") = TRUE  # turn on labels}
+brush(qnrc.agg, ".label.show") = TRUE  # turn on labels}
 
 
 
