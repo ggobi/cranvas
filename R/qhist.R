@@ -1,54 +1,28 @@
 #' Create a hist plot
 #' Create a hist plot from 1-D numeric data
 #'
-#' @param data vector of numeric data to be made into a histogram
+#' @param data mutaframe to use
+#' @param x variable to plot
 #' @param horizontal boolean to decide if the bars are horizontal or vertical
 #' @param ... arguments supplied to hist() or the hist layer
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
-#' @examples # torture
-#'  rows <- 1000000
-#'  bigData <- qdata(data.frame(x = rnorm(rows), y = floor(rnorm(rows) * 7)))
-#'  qhist(bigData)
-#'
-#'  # each column is split evenly
-#'  qhist(bigData, splitByCol = 'y', title = 'Torture - stack')
-#'  qhist(bigData, splitByCol = 'y', title = 'Torture - stack', horizontal = FALSE)
-#'
-#'  # each column has similar height colors
-#'  qhist(bigData, splitByCol = 'y', title = 'Torture - dodge', position = 'dodge')
-#'
-#'  # range from 0 to 1
-#'  qhist(bigData, splitByCol = 'y', title = 'Torture - relative', position = 'relative')
-#'
-#'
-#'  # color tests
-#'  # all color is defined
-#'  qhist(mtcars, 'disp', horizontal = TRUE, fill = 'gold', stroke = 'red4')
-#'
-#'  # stacked items
-#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'stack', title = 'mtcars - stack')
-#'
-#'  # raw value items
-#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'identity', title = 'mtcars - identity')
-#'
-#'  # dodged items
-#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'dodge', title = 'mtcars - dodge')
-#'
-#'  # range from 0 to 1
-#'  qhist(mtcars, 'disp', 'cyl', horizontal = FALSE, stroke = 'black', position = 'relative', title = 'mtcars - relative')
+#' @example cranvas/inst/examples/qhist-ex.R
 qhist <- function(x, data, splitByCol = -1, horizontal = FALSE, 
-    position = "none", color = NULL, fill = NULL, stroke = NULL, title = NULL, name = NULL, 
-    ash = FALSE, start = min(data[[x]]), nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
+    position = "none", color = NULL, fill = NULL, stroke = NULL,
+    title = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
+    nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
     bin_algo_str = NULL, ...) {
-    
+
+    stopifnot(is.mutaframe(data))
+
     # 'Global' variables (start with a '.')
     .view <- c()
     .scene <- c()
     .type <- c()
     # .bin_col <- ''
     # .label_col <- ''
-    .mf_data_col_names <- c()
+    .data_col_names <- c()
     .startBrush <- NULL
     .endBrush <- NULL
     .brush <- FALSE
@@ -68,22 +42,23 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
 	    else	name <- names(data)[x]
     }
     # mf_data <- qdata(data)
-    if (!is.mutaframe(data)) 
-        mf_data <- qdata(data)
-    else mf_data <- data
+    #if (!is.mutaframe(data)) 
+    #    mf_data <- qdata(data)
+    #else
+    #mf_data <- data
     
     # Set up the data
     if (splitByCol == -1) {
         splitByCol <- "qhist_split_column"
-        mf_data[[splitByCol]] <- 1
+        data[[splitByCol]] <- 1
     }
     # .bin_col <- data_bin_column(mf_data)
-    .mf_data_col_names <- rep("", nrow(mf_data))
-    #print(head(mf_data))
+    .data_col_names <- rep("", nrow(data))
+    #print(head(data))
     
     # Set up wrapper functions.
     dataCol <- function() {
-        mf_data[, x]
+        data[, x]
     }
     xColRange <- function() {
         range(dataCol())
@@ -150,25 +125,25 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     
     
     updateBarsInfo <- function() {
-        .bars_info <<- continuous_to_bars(data = mf_data[, x], splitBy = mf_data[, 
-            splitByCol], brushed = mf_data[, ".brushed"], typeInfo = .type, position = position, 
+        .bars_info <<- continuous_to_bars(data = data[, x], splitBy = data[, 
+            splitByCol], brushed = data[, ".brushed"], typeInfo = .type, position = position, 
             color = color, fill = fill, stroke = stroke, ...)
         
-        .mf_data_col_names <<- rep("", length(.mf_data_col_names))
+        .data_col_names <<- rep("", length(.data_col_names))
         for (i in 1:nrow(.bars_info$data)) {
             rows <- (.bars_info$data$left[i] < dataCol()) & (.bars_info$data$right[i] >= 
                 dataCol())
             # cat(i, ' - '); print(rows)
             if (any(rows)) {
-                .mf_data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
+                .data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
             }
         }
 #        cat("data: \n")
-#        print(mf_data[1:8, ])
+#        print(data[1:8, ])
 #        cat("condensed data: \n")
 #        print(.bars_info$data[, c("label", "group", "count", "top", "bottom", ".brushed")])
 #        cat("unique columns: ")
-#        print(unique(.mf_data_col_names))
+#        print(unique(.data_col_names))
         
         .updateinfo <<- FALSE
     }
@@ -319,7 +294,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         
         if (key %in% c(Qt$Qt$Key_Up, Qt$Qt$Key_Down, Qt$Qt$Key_Left, Qt$Qt$Key_Right, 
             82, Qt$Qt$Key_M)) {
-            message("updating everything")
+            #message("updating everything")
 	           updateBarsInfo()
              qupdate(.scene)
             # qupdate(datalayer)
@@ -352,7 +327,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         if (nrow(section) > 0) {
             #  .brush.attr = attr(odata, '.brush.attr')
             # brushcolor <- .brush.attr[,'.brushed.color']
-            brushColor <- brush(mf_data)$color
+            brushColor <- brush(data)$color
             
             b <- section$bottom
             t <- (section$top - b) * section$.brushed + b
@@ -368,7 +343,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
    #         cat("section:\n")
     #        print(.bars_info$data[, c("label", "group", "count", "top", "bottom", 
      #           ".brushed")])
-            #cat('real data:\n'); print(mf_data[mf_data$disp < 200, c('disp', 'cyl',
+            #cat('real data:\n'); print(data[data$disp < 200, c('disp', 'cyl',
             #   '.brushed')])
             
             brushColor <- rep(brushColor, nrow(section))
@@ -487,13 +462,13 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
 #        cat("setSelected\n")
         section <- subset(.bars_info$data, .brushed == 1)
         
-        rows <- rep(FALSE, nrow(mf_data))
+        rows <- rep(FALSE, nrow(data))
         if (NROW(section) > 0) 
-            rows <- .mf_data_col_names %in% as.character(section$label)
+            rows <- .data_col_names %in% as.character(section$label)
         
         # update original data
         data$.brushed <- rows
-        # print(mf_data[1:min(12, nrow(mf_data)), ])
+        # print(data[1:min(12, nrow(data)), ])
 #        cat("setSelected - done\n")
     }
     
@@ -527,7 +502,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         
         
         # Highlight the rect
-        brushColor <- brush(mf_data)$color
+        brushColor <- brush(data)$color
         if (horizontal) {
             qdrawRect(painter, xleft = c(section$bottom), ybottom = c(section$right), 
                 xright = c(section$top), ytop = c(section$left), stroke = brushColor, 
@@ -558,7 +533,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         }
         
         infostring <- paste(infostring, "\ndata proportion:", pretty_percent(section[1, 
-            "\ncount"]/nrow(mf_data)), sep = " ")
+            "\ncount"]/nrow(data)), sep = " ")
         
         
         
@@ -588,7 +563,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 
             1, 1, 0.9))
         
-        qstrokeColor(painter) = brush(mf_data)$label.color
+        qstrokeColor(painter) = brush(data)$label.color
         qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
             "right"), valign = ifelse(vflag, "top", "bottom"))
 
@@ -645,8 +620,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     bglayer <- qlayer(.scene, coords, limits = .lims, clip = FALSE, keyPressFun = keyPressFun)
     
     datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE)
-    
-    
+        
     brushing_layer <- qlayer(.scene, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
         limits = .lims, clip = FALSE)
@@ -655,16 +629,18 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         hoverLeaveFun = bar_leave)
     
     # # update the brush layer in case of any modifications to the mutaframe
-    if (is.mutaframe(mf_data)) {
-        func <- function(i, j=NULL) {
-           if (j == ".brushed") {
-		            updateBarsInfo()
-                qupdate(brushing_layer)
-            }
-        }
-        
-        add_listener(mf_data, func)
+    #if (is.mutaframe(data)) {
+    func <- function(i, j=NULL) {
+       switch (j, .brushed = {
+           qupdate(brushing_layer)
+           updateBarsInfo()},  {updateBarsInfo()
+           qupdate(brushing_layer)
+           qupdate(datalayer)
+        })
     }
+        
+    add_listener(data, func)
+    #}
 
 
     brush_update = function() {
