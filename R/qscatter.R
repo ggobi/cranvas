@@ -1,7 +1,8 @@
 #' Draw a scatterplot
 #'
-#' @param data data.frame source
-#' @param form formula in format y ~x which designates the axis
+#' @param data mutaframe data to use
+#' @param x which designates variable displayed on the horizontal axis
+#' @param y which designates variable displayed on the vertical axis
 #' @param main main title for the plot
 #' @param labeled whether axes should be labeled
 #' @example cranvas/inst/examples/qscat-ex.R
@@ -10,6 +11,8 @@
 qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                      labeled = TRUE, size = 2, alpha = 1, ...)
 {
+    stopifnot(is.mutaframe(data))
+    
     #############################
     # internal helper functions #
     #############################
@@ -35,7 +38,6 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     #  }
     .levelX <- deparse(arguments$x)
     .levelY <- deparse(arguments$y)
-
 
     ## parameters for dataRanges
     xlab <- NULL
@@ -108,8 +110,6 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     .brange <- c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
 
     n <- nrow(data)
-
-
 
     ################################ end data processing & parameters
 
@@ -391,18 +391,18 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ######################
     # add some listeners #
     ######################
-    if (is.mutaframe(data)) {
-        func <- function(i, j) {
-	        switch(j, .brushed = qupdate(brushlayer),
-               .color = qupdate(datalayer), {
-                   datalayer$invalidateIndex()
-									 qupdate(datalayer)
-									 qupdate(brushlayer)
-               })
-        }
-
-        add_listener(data, func)
+    #if (is.mutaframe(data)) {
+    func <- function(i, j) {
+	switch(j, .brushed = qupdate(brushlayer),
+            .color = qupdate(datalayer), {
+                datalayer$invalidateIndex()
+                qupdate(datalayer)
+		qupdate(brushlayer)
+            })
     }
+
+    add_listener(data, func)
+    #}
     view$resize(xWidth, yWidth)
     return(view)
 
