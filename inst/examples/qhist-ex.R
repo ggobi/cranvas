@@ -1,10 +1,5 @@
 ## examples of qhist()
 require(ggplot2)
-#require(stringr)
-
-#require(qtbase)
-#require(qtpaint)
-#require(plumbr)
 require(cranvas)
 
 data(tennis)
