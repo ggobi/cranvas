@@ -5,11 +5,14 @@
 #' @param y which designates variable displayed on the vertical axis
 #' @param main main title for the plot
 #' @param labeled whether axes should be labeled
+#' @param size point size
+#' @param alpha transparency level, 1=completely opaque
+#' @param datalims user specifed data ranges xmin, xmax, ymin, ymax
 #' @example cranvas/inst/examples/qscat-ex.R
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
-                     labeled = TRUE, size = 2, alpha = 1, ...)
+                     labeled = TRUE, size = 2, alpha = 1, datalims=NULL, ...)
 {
     stopifnot(is.mutaframe(data))
     
@@ -70,14 +73,20 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 
     ## parameters for all layers
     if (labeled) {
-        dataRanges <- c(make_data_ranges(range(x)), make_data_ranges(range(y)))
-
+        if (is.null(datalims)) 
+           dataRanges <- c(make_data_ranges(range(x)), make_data_ranges(range(y)))
+        else
+            dataRanges <- c(make_data_ranges(range(datalims[1:2])), make_data_ranges(range(datalims[3:4])))
+        
         windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
                                            ytickmarks = ylabels,
                                            xtickmarks = xlabels, main = main)
     }
     else {
-        dataRanges <- c(range(x), range(y))
+        if (is.null(datalims)) 
+          dataRanges <- c(range(x), range(y))
+        else
+          dataRanges <- datalims
         windowRanges <- dataRanges
     }
 
@@ -87,8 +96,14 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     #  sy <- get_axisPosX(data = df, colName = .levelX)
     #  sx <- get_axisPosY(data = df, colName = .levelY)
 
-    sy <- get_axisPos(x)
-    sx <- get_axisPos(y)
+    if (is.null(datalims)) {
+        sy <- get_axisPos(x)
+        sx <- get_axisPos(y)
+    }
+    else {
+        sy <- get_axisPos(datalims[3:4])
+        sx <- get_axisPos(datalims[1:2])
+    }
 
 
     ## parameters for datalayer
