@@ -74,9 +74,11 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ## parameters for all layers
     if (labeled) {
         if (is.null(datalims)) 
-           dataRanges <- c(make_data_ranges(range(x)), make_data_ranges(range(y)))
+            dataRanges <- c(make_data_ranges(range(x)),
+                            make_data_ranges(range(y)))
         else
-            dataRanges <- c(make_data_ranges(range(datalims[1:2])), make_data_ranges(range(datalims[3:4])))
+            dataRanges <- c(make_data_ranges(range(datalims[1:2])),
+                            make_data_ranges(range(datalims[3:4])))
         
         windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
                                            ytickmarks = ylabels,

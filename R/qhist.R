@@ -12,7 +12,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     position = "none", color = NULL, fill = NULL, stroke = NULL,
     title = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
     nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
-    bin_algo_str = NULL, ...) {
+    bin_algo_str = NULL, xlims=NULL, ...) {
 
     stopifnot(is.mutaframe(data))
 
@@ -28,18 +28,24 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     .brush <- FALSE
     .bar_queryPos <- NULL
     .bar_hover_section <- list(top = -1, bottom = 1, right = -1, left = 1)
-    .lims <- c()
+    .lims <- c() # Window limits??
     .bars_info <- NULL
-    .ranges <- c()
     .yMin <- 0
     .yMax <- 0
+    if (is.null(xlims))
+        .dataranges <- c()  # Data limits?
+    else
+        .dataranges <- c(xlims, 0, 0)
+    # message("limits 1 ",.dataranges[1], " ", .dataranges[2]," ", .dataranges[3], " ",.dataranges[4], "\n")
     .xlab <- ""
     .ylab <- ""
     .histOriginalBreaksAndStart <- list()
     .updateinfo <- FALSE
     if (is.null(name)) { 
-			if (is.character(x)) name <- x
-	    else	name <- names(data)[x]
+        if (is.character(x))
+            name <- x
+        else
+          name <- names(data)[x]
     }
     # mf_data <- qdata(data)
     #if (!is.mutaframe(data)) 
@@ -97,24 +103,23 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     
     if (!is.null(bin_algo_str)) {
         temp_breaks <- baseHistP(breaks = bin_algo_str)$breaks
-        .type <- list(type = "hist", binwidth = diff(temp_breaks[1:2]), start = temp_breaks[1])
-        
+        .type <- list(type = "hist", binwidth = diff(temp_breaks[1:2]),
+                      start = temp_breaks[1])
     }
     else if (!is.null(binwidth)) {
         .type <- list(type = "hist", binwidth = binwidth, start = start)
-        
     }
     else {
         if (nbins < 1) {
             stop("please supply a correct bin count")
         }
         temp_breaks <- baseHistP(breaks = nbins)$breaks
-        .type <- list(type = "hist", binwidth = diff(xColRange())/nbins, start = start)
+        .type <- list(type = "hist", binwidth = diff(xColRange())/nbins,
+                      start = start)
     }
     # Find the maximum height of the counts
 #    .yMax <- maxHeightP()
 # max Height doesn't seem to work too well - use max count + 10 percent - see below
-
 
     .histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
     # cat('\nOriginal Hist Breaks!\n'); print(.histOriginalBreaksAndStart);
@@ -122,7 +127,6 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     # cat('bin_algo_str: ');print(bin_algo_str)
     # cat('binwidth: ');print(binwidth)
     # cat('nbins: ');print(nbins)
-    
     
     updateBarsInfo <- function() {
         .bars_info <<- continuous_to_bars(data = data[, x], splitBy = data[, 
@@ -148,18 +152,26 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         .updateinfo <<- FALSE
     }
     updateBarsInfo()
-		.yMax <- 1.5 * max(.bars_info$data$count)
+    .yMax <- 1.5 * max(.bars_info$data$count)
 		
     updateRanges <- function() {
         # contains c(x_min, x_max, y_min, y_max)
         if (horizontal) {
-            .ranges <<- c(make_data_ranges(c(.yMin, .yMax)), make_data_ranges(c(xMinStartPosP(), 
-                xMaxEndPosP())))
+            if (is.null(.dataranges))
+                .dataranges <<- c(make_data_ranges(c(.yMin, .yMax)),
+                          make_data_ranges(c(xMinStartPosP(), xMaxEndPosP())))
+            else
+                .dataranges <<- c(make_data_ranges(c(.yMin, .yMax)), xlims) 
         }
         else {
-            .ranges <<- c(make_data_ranges(c(xMinStartPosP(), xMaxEndPosP())), make_data_ranges(c(.yMin, 
-                .yMax)))
+            if (is.null(.dataranges))
+                .dataranges <<- c(make_data_ranges(c(xMinStartPosP(), xMaxEndPosP())),
+                          make_data_ranges(c(.yMin, .yMax)))
+            else
+                .dataranges <<- c(xlims, make_data_ranges(c(.yMin, .yMax))) 
         }
+        # message("limits 2 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], "\n")
+
     }
     updateRanges()
     
@@ -183,19 +195,19 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         }
         
         # grey background with grid lines
-        		horiPos = make_pretty_axes(.ranges[1:2], .ranges[1], .ranges[2])
-        		vertPos = make_pretty_axes(.ranges[3:4], .ranges[3], .ranges[4])
-
-            draw_grid_with_positions_fun(painter, .ranges, horiPos = horiPos, vertPos=vertPos)
+        horiPos <- make_pretty_axes(.dataranges[1:2], .dataranges[1], .dataranges[2])
+   	vertPos <- make_pretty_axes(.dataranges[3:4], .dataranges[3], .dataranges[4])
+        # message("limits 3 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], "\n")
+        
+        draw_grid_with_positions_fun(painter, .dataranges, horiPos = horiPos,
+                                     vertPos=vertPos)
 
         # put labels
-            draw_x_axes_with_labels_fun(painter, .ranges, horiPos, horiPos, .xlab)
-            draw_y_axes_with_labels_fun(painter, .ranges, vertPos, vertPos, .ylab)            
-            		
-        
+        draw_x_axes_with_labels_fun(painter, .dataranges, horiPos, horiPos, .xlab)
+        draw_y_axes_with_labels_fun(painter, .dataranges, vertPos, vertPos, .ylab)            
         # title
         if (is.null(title)) title <- paste("Histogram of", name)
-        add_title_fun(painter, .ranges, title)
+        add_title_fun(painter, .dataranges, title)
     }
     
     
@@ -228,11 +240,23 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             .type$binwidth <<- .type$binwidth * 1.1
             if (.type$binwidth > maxBinwidthP()) 
                 .type$binwidth <<- maxBinwidthP()
-            
+            updateBarsInfo()
+            .yMax <<- 1.1 * max(.bars_info$data$count)        
+            updateRanges()
+            updateLims()
+            qupdate(.scene)
+            qupdate(bglayer)
+            qupdate(datalayer)
         }
         else if (key == Qt$Qt$Key_Down) {
             .type$binwidth <<- .type$binwidth/1.1
-            
+            updateBarsInfo()
+            .yMax <<- 1.1 * max(.bars_info$data$count)        
+            updateRanges()
+            updateLims()
+            qupdate(.scene)
+            qupdate(bglayer)
+            qupdate(datalayer)
         }
         else if (key == Qt$Qt$Key_Left) {
             .type$start <<- .type$start - unitShiftP()
@@ -279,24 +303,24 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         } else if (key == Qt$Qt$Key_M) {
  
            updateBarsInfo()
-					 .yMax <<- 1.1 * max(.bars_info$data$count)        
- 				#	print(.yMax)
-						updateRanges()
-						updateLims()
-						qupdate(bglayer)
+           .yMax <<- 1.1 * max(.bars_info$data$count)        
+           # print(.yMax)
+           updateRanges()
+           updateLims()
+           qupdate(.scene)
+           qupdate(bglayer)
+           qupdate(datalayer)
         }
         else if (key == 87) {
 #            cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
         }
         
-        
-        
-        
         if (key %in% c(Qt$Qt$Key_Up, Qt$Qt$Key_Down, Qt$Qt$Key_Left, Qt$Qt$Key_Right, 
             82, Qt$Qt$Key_M)) {
             #message("updating everything")
-	           updateBarsInfo()
-             qupdate(.scene)
+	    # updateBarsInfo()
+            # qupdate(.scene)
+            # qupdate(bglayer)
             # qupdate(datalayer)
             # qupdate(hoverlayer)
             # qupdate(brushing_layer)
@@ -551,13 +575,13 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
 #        qstrokeColor(painter) <- "black"
 #        qdrawText(painter, infostring, .bar_queryPos[1], .bar_queryPos[2], valign = "top", 
 #            halign = "left")
-				xpos = .bar_queryPos[1]
-				ypos = .bar_queryPos[2]
+        xpos = .bar_queryPos[1]
+        ypos = .bar_queryPos[2]
 
         bgwidth = qstrWidth(painter, infostring)
         bgheight = qstrHeight(painter, infostring)
-        hflag = .ranges[2] - xpos > bgwidth
-        vflag = ypos - .ranges[3] > bgheight
+        hflag = .dataranges[2] - xpos > bgwidth
+        vflag = ypos - .dataranges[3] > bgheight
 
         qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
             ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 
@@ -610,7 +634,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     #######################################################
     # Layout
     updateLims <- function() {
-        windowRanges <- make_window_ranges(.ranges, .xlab, .ylab)
+        windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
         .lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
     }
     updateLims()
@@ -633,9 +657,14 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     func <- function(i, j=NULL) {
        switch (j, .brushed = {
            qupdate(brushing_layer)
-           updateBarsInfo()},  {updateBarsInfo()
-           qupdate(brushing_layer)
-           qupdate(datalayer)
+           updateBarsInfo()},
+           {updateBarsInfo()
+              .yMax <<- 1.1 * max(.bars_info$data$count)        
+              updateRanges()
+              updateLims()
+              qupdate(.scene)
+              qupdate(brushing_layer)
+              qupdate(datalayer)
         })
     }
         
