@@ -89,6 +89,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     x = y = n = nn = numcol = p = segx0 = segy0 = segx1 = segy1 = segcol =
         xr = yr = xspan = yspan = xticklab = yticklab = xtickloc = ytickloc =
             .brange = lims = x0 = y0 = plot_data = bxpstats = NULL
+    .drawrange = TRUE
 
     data_preprocess = function() {
 
@@ -290,6 +291,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     range_draw = function(layer, painter) {
         if (any(numcol)) {
             dat = as.data.frame(data)[, vars][, numcol]
+            if (!.drawrange) return()
             if (horizontal) {
                 qdrawText(painter, apply(dat, 2, min, na.rm=TRUE), which(numcol), yspan[1], valign = 'top', color = data$.color[1])
                 qdrawText(painter, apply(dat, 2, max, na.rm=TRUE), which(numcol), yspan[2], valign = 'bottom', color = data$.color[1])
@@ -355,6 +357,13 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
             .alpha <<- min(c(1.1, .9)[i] * .alpha, 1)
             main_layer$setOpacity(.alpha)
             qupdate(main_layer)
+        }
+
+        ## whether to draw min/max labels
+        if (key == Qt$Qt$Key_R) {
+            .drawrange <<- !.drawrange
+            qupdate(range_layer)
+            return()
         }
 
         ## make the brushed observations invisible when hitting Delete
