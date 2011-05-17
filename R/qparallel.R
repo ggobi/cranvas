@@ -293,7 +293,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         if (any(numcol)) {
             dat = as.data.frame(data)[, vars][, numcol]
             if (!.drawrange) return()
-            range.d = as.matrix(apply(dat, 2, range, na.rm=TRUE))
+            range.d = round(as.matrix(apply(dat, 2, range, na.rm=TRUE)), 2)
             qstrokeColor(painter) = data$.color[1]
             if (horizontal) {
                 qdrawText(painter, range.d[1, ], which(numcol), lims[3], valign = 'bottom')
