@@ -63,7 +63,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
 		## layer opacity
 		.alpha = alpha
-		
+
     ## the title string
     dataname = deparse(substitute(data))
     if (missing(main)) {
@@ -343,34 +343,24 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
     ## monitor keypress event
     identify_key_press = function(layer, event) {
+        key = event$key()
         ## Key X: XOR; O: OR; A: AND; N: NOT
-        i = which(event$key() == c(Qt$Qt$Key_A, Qt$Qt$Key_O, Qt$Qt$Key_X, Qt$Qt$Key_N, Qt$Qt$Key_C))
+        i = which(key == c(Qt$Qt$Key_A, Qt$Qt$Key_O, Qt$Qt$Key_X, Qt$Qt$Key_N, Qt$Qt$Key_C))
         if (length(i))
             b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
 
-				## change opacity of layer
-				key = event$key()
-			  if (key == Qt$Qt$Key_Plus & .alpha < 1) {
-            # arrow right
-            # increase alpha blending
-            .alpha <<- 1.1 * .alpha
+        ## change opacity of layer: + or -
+        i = which(key == c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus))
+        if (length(i)) {
+            .alpha <<- min(c(1.1, .9)[i] * .alpha, 1)
             main_layer$setOpacity(.alpha)
             qupdate(main_layer)
         }
-        else if (key == Qt$Qt$Key_Minus & .alpha > 1/n) {
-            # arrow left
-            # decrease alpha blending
-            .alpha <<- 0.9 * .alpha
-            main_layer$setOpacity(.alpha)
-            #  brushlayer$setOpacity(.alpha)
-            qupdate(main_layer)
-        }
-
 
         ## make the brushed observations invisible when hitting Delete
-        if (event$key() == Qt$Qt$Key_Delete)
+        if (key == Qt$Qt$Key_Delete)
             visible(data) = !selected(data)
-        i = which(event$key() == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
+        i = which(key == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
         if (length(i) && !any(is.na(.bpos))) {
             if (horizontal) {
                 j = 1
