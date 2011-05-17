@@ -2,6 +2,7 @@
 ##' Create a parallel coordinates plot from a data frame or matrix, with each
 ##' line representing a row.
 ##'
+##' Press R to toggle the min/max labels.
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
 ##' + x2'
@@ -276,7 +277,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         cranvas_debug()
         .color = data$.color
         .color[!visible(data)] = NA
-				layer$setOpacity(.alpha)
+        layer$setOpacity(.alpha)
         if (glyph == 'line') {
             segcol = rep(.color, each = p - 1)
             qdrawSegment(painter, segx0, segy0, segx1, segy1, stroke = segcol)
