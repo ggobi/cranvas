@@ -2,15 +2,19 @@
 \alias{qscatter}
 \title{Draw a scatterplot..}
 \usage{qscatter(data, x, y, aspect.ratio, main, labeled = TRUE, 
-    size = 2, alpha = 1, ...)
+    size = 2, alpha = 1, datalims, ...)
 
 }
+
 \description{Draw a scatterplot}
 \arguments{\item{data}{mutaframe data to use}
 \item{x}{which designates variable displayed on the horizontal axis}
 \item{y}{which designates variable displayed on the vertical axis}
 \item{main}{main title for the plot}
 \item{labeled}{whether axes should be labeled}
+\item{size}{point size}
+\item{alpha}{transparency level, 1=completely opaque}
+\item{datalims}{user specifed data ranges xmin, xmax, ymin, ymax}
 }
 \examples{require(cranvas)
 

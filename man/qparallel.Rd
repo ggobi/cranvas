@@ -15,6 +15,7 @@
 \description{
 Create a parallel coordinates plot from a data frame or matrix, with each
 line representing a row.}
+\details{Press R to toggle the min/max labels.}
 \value{NULL}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{vars}{variables to show; can be a character vector (column
