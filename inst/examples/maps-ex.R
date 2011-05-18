@@ -9,7 +9,7 @@ library(ggplot2)
 states <- map_data("state")
 qstates <- qdata(states)
 
-#qtmap(qstates, long, lat, group)
+qtmap(qstates, long, lat, group)
 
 
 #######################
@@ -17,15 +17,11 @@ qstates <- qdata(states)
 data(crimes)
 crimes$State <- tolower(crimes$State)
 
-## color palette
+## color palette   
 library(RColorBrewer)
-#crimes$nines <- with(crimes, cut(Burglary/Population, 9))
-#crimes$nines <- with(crimes, cut(Violent.crime/Population, 9))
-#crimes$nines <- brewer.pal(9, "Greys")[crimes$nines]
 qcrimes <- qdata(crimes)
 print(qparallel(data=qcrimes))
 
-#source("map.R")
 #print(qtmap(qstates, long, lat, group, label=region, labeldata=qcrimes,
 #   by.x='region', by.y='State', colour=Violent.crime))
 q1 <- qtmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
@@ -74,7 +70,7 @@ library(ggplot2)
 data(world)
 qworld <- qdata(world)
 
-source("map.R")
+
 qtmap(qworld, long, lat, group, label = id)
 
 
