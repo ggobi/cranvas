@@ -8,6 +8,7 @@
 #' @param size point size
 #' @param alpha transparency level, 1=completely opaque
 #' @param datalims user specifed data ranges xmin, xmax, ymin, ymax
+#' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qscat-ex.R
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {

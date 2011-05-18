@@ -54,6 +54,7 @@ addDivider <- function(divider, level = length(divider)) {
 ##' @param subset parameter for prodplot -
 ##' @param colour fill colour of rectangles - only used if colour is not used in the data
 ##' @param main parameter for prodplot
+##' @param cache boolean to turn cache on for layers, defaults to TRUE
 ##' @param ...
 ##' @return NULL
 ##' @author Heike Hofmann
