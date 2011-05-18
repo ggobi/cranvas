@@ -62,7 +62,7 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
 
     ## add shadow matrix at the end if there are missing values
     if (sum(shadowmatrix)) {
-        idx = (apply(shadowmatrix,2,sum) > 0)
+        idx = (colSums(shadowmatrix) > 0)
         mf = data.frame(mf,shadowmatrix[,idx])
         warning(paste('Missing values: there are',sum(shadowmatrix),'missing values in',sum(idx),'columns.'))
     }
