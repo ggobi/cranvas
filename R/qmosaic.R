@@ -54,13 +54,14 @@ addDivider <- function(divider, level = length(divider)) {
 ##' @param subset parameter for prodplot -
 ##' @param colour fill colour of rectangles - only used if colour is not used in the data
 ##' @param main parameter for prodplot
+##' @param cache boolean to turn cache on for layers, defaults to TRUE
 ##' @param ...
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
 ##' @example cranvas/inst/examples/mosaic-ex.R
 qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, 
-    na.rm = FALSE, subset = NULL, colour = "grey30", main = NULL, ...) {
+    na.rm = FALSE, subset = NULL, colour = "grey30", main = NULL, cache= T, ...) {
     ## check if an attribute exist
     has_attr = function(attr) {
         attr %in% names(data)
@@ -549,13 +550,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     
     
     scene = qscene()
-    bglayer = qlayer(scene, coords, limits = lims,  cache = T)
-    datalayer = qlayer(scene, mdraw, limits = lims, cache = T)
+    bglayer = qlayer(scene, coords, limits = lims,  cache = cache)
+    datalayer = qlayer(scene, mdraw, limits = lims, cache = cache)
     brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
-        keyPressFun = keyPressFun, limits = lims,  cache = T)
+        keyPressFun = keyPressFun, limits = lims,  cache = cache)
     querylayer = qlayer(scene, query_draw, limits = lims,  hoverMoveFun = query_hover, 
-        hoverLeaveFun = query_hover_leave, cache = T)
+        hoverLeaveFun = query_hover_leave, cache = cache)
     
     
     ## update the brush layer in case of any modifications to the mutaframe

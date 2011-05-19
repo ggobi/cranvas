@@ -8,11 +8,12 @@
 #' @param size point size
 #' @param alpha transparency level, 1=completely opaque
 #' @param datalims user specifed data ranges xmin, xmax, ymin, ymax
+#' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qscat-ex.R
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
-                     labeled = TRUE, size = 2, alpha = 1, datalims=NULL, ...)
+                     labeled = TRUE, size = 2, alpha = 1, datalims=NULL, cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
     
@@ -382,21 +383,21 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 #    size <- qsize(as.integer(c(xWidth, yWidth)))
     limits <- qrect(c(0, 1), c(0, 1))
     scene <- qscene()
-    root <- qlayer(scene, cache=TRUE)
+    root <- qlayer(scene, cache=cache)
     root$setGeometry(qrect(0, 0, xWidth, yWidth))
     bglayer <- qlayer(parent = root, paintFun = coords, limits = lims,
-                      cache=TRUE)
+                      cache=cache)
     datalayer <- qlayer(parent = root, paintFun = scatter.all,
                         keyPressFun = keyPressFun,
                         mouseMove = identify_mouse_move,
                         mousePressFun = brush_mouse_press,
                         mouseReleaseFun = identify_mouse_move,
-                        limits = lims, cache=TRUE)
+                        limits = lims, cache=cache)
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
-                         cache=TRUE)
+                         cache=cache)
     querylayer <- qlayer(parent = root, query_draw, limits = lims,
                          hoverMoveFun = query_hover,
-                         hoverLeaveFun = query_hover_leave, cache=TRUE)
+                         hoverLeaveFun = query_hover_leave, cache=cache)
     view <- qplotView(scene = scene)
 
     title <- "Scatterplot of XXX and YYY"
