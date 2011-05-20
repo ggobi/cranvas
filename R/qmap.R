@@ -340,8 +340,8 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         hflag = windowRanges[2] - xpos > bgwidth
         vflag = ypos - windowRanges[3] > bgheight
         qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 
-            1, 1, 0.5))
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1, 
+            1, 1, 0.95))
         
         qstrokeColor(painter) = brush(data)$label.color
         qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
