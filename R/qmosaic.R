@@ -194,11 +194,11 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     coords <- function(item, painter, exposed) {
         sx <- scale_x_product(xdata)
 				if (max(sx$breaks) <= 1) {
-					sx$breaks <- 100*sx$breaks
+					sx$breaks <- 100*sx$breaks 	# needed because of scaling in qprodcalc
 				}
         sy <- scale_y_product(xdata)
 				if (max(sy$breaks) <= 1) {
-					sy$breaks <- 100*sy$breaks
+					sy$breaks <- 100*sy$breaks	# needed because of scaling in qprodcalc
 				}
         
         # grey background with grid lines
@@ -521,10 +521,15 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         
         # Work out label text
         idx <- setdiff(names(xdata), c("l", "t", "r", "b", ".wt", "level", ".brushed", 
-            .inactivevars))
+        	".color", .inactivevars))
         infodata <- as.character(unlist(info[1, idx]))
-        infostring <- paste(idx, infodata, collapse = "\n", sep = ":")
-        
+        infostring <- paste(idx, infodata, collapse = "\n", sep = ":  ")
+#browser()        
+				if (info[1,".wt"] > 1) 
+					infostring <- paste(infostring, sprintf("\ncount:  %s", info[1,".wt"]))
+				else {
+					infostring <- paste(infostring, sprintf("\nPct:  %s%%", round(100*info[1,".wt"], 1)))
+				}
         #    qstrokeColor(painter) <- 'white'
         #    qdrawText(painter, infostring, x, y, valign='top', halign='left')
         bgwidth = qstrWidth(painter, infostring)
@@ -534,8 +539,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         hflag = windowRanges[2] - xpos > bgwidth
         vflag = ypos - windowRanges[3] > bgheight
         qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.9), fill = rgb(1, 
-            1, 1, 0.9))
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1, 
+            1, 1, 0.95))
         
         qstrokeColor(painter) = brush(data)$label.color
         qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
