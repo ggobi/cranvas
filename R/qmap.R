@@ -137,9 +137,9 @@ qmap <- function(data, longitude, latitude, group, label = group,
         
         .startBrush <<- NULL
         .endBrush <<- NULL
-	focused(data) <- TRUE
+				focused(data) <- TRUE
         setSelected()
-	focused(data) <- FALSE
+				focused(data) <- FALSE
     }
     
     setHiliting <- function() {
@@ -152,9 +152,11 @@ qmap <- function(data, longitude, latitude, group, label = group,
         hits <- datalayer$locate(rect) + 1
 
         groupdata$.brushed <<- FALSE
-				if (length(hits) > 0) 
-	        groupdata[hits,]$.brushed <<- TRUE
-
+				if (length(hits) > 0) {
+				# link by label variable
+					idx <- which(groupdata$label %in% groupdata[hits,]$label)					
+	        groupdata[idx,]$.brushed <<- TRUE
+				}
     }
     
     setSelected <- function() {
@@ -181,38 +183,40 @@ qmap <- function(data, longitude, latitude, group, label = group,
     .queryPos <- NULL
     
     query_draw <- function(item, painter, exposed, ...) {
-        # Don't draw when brushing
-        if (.brush) return()
-        if (is.null(.queryPos)) return()
+			# Don't draw when brushing
+			if (.brush) return()
+			if (is.null(.queryPos)) return()
 
-        xpos <- .queryPos[1]
-        ypos <- .queryPos[2]
-        rect = qrect(matrix(c(xpos, ypos, xpos + 1e-04, ypos + 1e-04), 2, byrow = TRUE))
-        hits <- datalayer$locate(rect) + 1
-        
-        infostring = paste(sprintf("\n %s: ", labelID),  groupdata[hits,]$label, collapse="\n")
-        
-        brushcolor <- brush(data)$color
+			xpos <- .queryPos[1]
+			ypos <- .queryPos[2]
+			rect = qrect(matrix(c(xpos, ypos, xpos + 1e-04, ypos + 1e-04), 2, byrow = TRUE))
+			hits <- datalayer$locate(rect) + 1
+
+			infostring = paste(sprintf("\n %s: ", labelID),  groupdata[hits,]$label, collapse="\n")
+			
+			if (length(hits) > 0) {
+				brushcolor <- brush(data)$color
 				for (j in hits) {
 					i <- groupdata$group[j]
 					xx <- x[group == j]
 					yy <- y[group == j]
 					qdrawPolygon(painter, xx, yy, stroke = brushcolor)
 				}        
+				
+				bgwidth = qstrWidth(painter, infostring)
+				bgheight = qstrHeight(painter, infostring)
 
-        bgwidth = qstrWidth(painter, infostring)
-        bgheight = qstrHeight(painter, infostring)
-
-        ## adjust drawing directions when close to the boundary
-        hflag = windowRanges[2] - xpos > bgwidth
-        vflag = ypos - windowRanges[3] > bgheight
-        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1, 
-            1, 1, 0.95))
-        
-        qstrokeColor(painter) = brush(data)$label.color
-        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
-            "right"), valign = ifelse(vflag, "top", "bottom"))
+				## adjust drawing directions when close to the boundary
+				hflag = windowRanges[2] - xpos > bgwidth
+				vflag = ypos - windowRanges[3] > bgheight
+				qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
+						ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1, 
+						1, 1, 0.95))
+				
+				qstrokeColor(painter) = brush(data)$label.color
+				qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
+						"right"), valign = ifelse(vflag, "top", "bottom"))
+			}
     }
     
     query_hover <- function(item, event, ...) {
@@ -273,14 +277,6 @@ qmap <- function(data, longitude, latitude, group, label = group,
     
     bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
     datalayer = qlayer(scene, draw, limits = lims, 
-				focusOutFun = function(layer, painter) {
-	print("focus off map")
-            focused(data) = FALSE
-        },
-				focusInFun = function(layer, painter) {
-	print("focus on map")
-            focused(data) = TRUE
-        },
         clip = FALSE)
     brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
