@@ -72,8 +72,8 @@ qmap <- function(data, longitude, latitude, group, label = group,
 			
         for (j in 1:nrow(groupdata)) {
         		i <- groupdata$group[j]
-            xx <- x[group == j]
-            yy <- y[group == j]
+            xx <- x[group == i]
+            yy <- y[group == i]
             qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = groupdata$color[j])
         }
         
@@ -108,9 +108,9 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
 			for (j in 1:nrow(groupdata)) {
 				i <- groupdata$group[j]
-				if (groupdata$.brushed[i]) {
-					xx <- x[group == j]
-					yy <- y[group == j]
+				if (groupdata$.brushed[j]) {
+					xx <- x[group == i]
+					yy <- y[group == i]
 					qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = brushcolor)
 				}
 			}        
