@@ -12,7 +12,7 @@
 #' @example cranvas/inst/examples/qscat-ex.R
 
 #qscatter <- function (data, form, main = NULL, labeled = TRUE) {
-qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
+qscatter <- function(data, x, y, aspect.ratio = 1.0, main = NULL,
                      labeled = TRUE, size = 2, alpha = 1, datalims=NULL, cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
@@ -374,9 +374,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     # draw the canvas #
     ###################
     xWidth <- 600
-    yWidth <- 600
-    if (!is.null(aspect.ratio))
-        yWidth <- round(1.0 * yWidth * aspect.ratio, 0)
+    yWidth <- round(1.0 * xWidth * aspect.ratio, 0)
 
 #print(yWidth)
 
