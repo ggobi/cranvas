@@ -137,7 +137,9 @@ qmap <- function(data, longitude, latitude, group, label = group,
         
         .startBrush <<- NULL
         .endBrush <<- NULL
+	focused(data) <- TRUE
         setSelected()
+	focused(data) <- FALSE
     }
     
     setHiliting <- function() {
