@@ -1,3 +1,18 @@
+scale_color <- 
+function (colour, value = colour, na.color = 0) 
+{
+    if (is.numeric(colour)) {
+        cmin <- min(colour, na.rm = T)
+        cmax <- max(colour, na.rm = T)
+        grey <- (value - cmin)/(cmax - cmin)
+        grey <- pmin(grey, 1)
+        grey <- pmax(grey, 0)
+        nas <- is.na(grey)
+        grey[nas] <- na.color
+        return(rgb(grey, grey, grey))
+    }
+    print(paste("colour not implemented for type", mode(colour)))
+}
 
 ##' Interactive Maps.
 ##' Create an interactive map from qdata
@@ -276,7 +291,15 @@ qmap <- function(data, longitude, latitude, group, label = group,
     scene = qscene()
     
     bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
-    datalayer = qlayer(scene, draw, limits = lims, 
+    datalayer = qlayer(parent=qlayer(scene), draw, limits = lims, 
+focusInFun = function(...) {
+	print("focus map on")
+	focused(data) <- TRUE
+},
+focusOutFun = function(...) {
+	print("focus map off")
+	focused(data) <- FALSE
+},
         clip = FALSE)
     brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
