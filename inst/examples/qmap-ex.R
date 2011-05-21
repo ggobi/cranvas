@@ -18,8 +18,6 @@ qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
 data(crimes)
 crimes$State <- tolower(crimes$State)
 
-## color palette   
-library(RColorBrewer)
 qcrimes <- qdata(crimes)
 print(qparallel(data=qcrimes))
 
@@ -31,33 +29,25 @@ link(qcrimes, qstates)
 qscatter(qcrimes, Population, Robbery)
 
 
-# the examples below don't work at the moment
-#print(qmap(qstates, long, lat, group, label=region, labeldata=qcrimes,
-#   by.x='region', by.y='State', colour=Violent.crime))
-q1 <- qmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
-    by.x = "region", by.y = "State", colour = log(Violent.crime/Population + 1))
-q1
-q2 <- qmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
-    by.x = "region", by.y = "State", colour = log(Motor.vehicle.theft/Population + 1))
-q2
 
 
+# Choropleth maps
+values <- with(crimes, Robbery/Population)
+colors <- scale_color(values)
+temp <- data.frame(State=crimes$State, colors)
+qstates$.color <- as.character(merge(states, temp, by.x="region", by.y="State", all.x=T)$colors)
 
+# change to different choropleth map:
+values <- with(crimes, log(100000*Robbery/Population + 1))
+colors <- scale_color(values)
+temp <- data.frame(State=crimes$State, colors)
+qstates$.color <- as.character(merge(states, temp, by.x="region", by.y="State", all.x=T)$colors)
 
-
-
-
-#qmap(qstates, long, lat, group, label=region)
-#qmap(qstates, long, lat, group)
 
 
 ##############
 
-library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
-
+source("load.R")
 
 library(maps)
 library(ggplot2)
@@ -74,9 +64,7 @@ qmap(qiowa, long, lat, group, label = subregion)
 source("load.R")
 library(ggplot2)
 
-#world <- map_data('world')
 data(world)
-world$group <- as.numeric(as.factor(world$group))
 qworld <- qdata(world)
 
 
