@@ -392,6 +392,12 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                         mouseMove = identify_mouse_move,
                         mousePressFun = brush_mouse_press,
                         mouseReleaseFun = identify_mouse_move,
+												focusInFun = function(...) {
+													focused(data) <- TRUE
+												},
+												focusOutFun = function(...) {
+													focused(data) <- FALSE
+												},
                         limits = lims, cache=cache)
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
                          cache=cache)
