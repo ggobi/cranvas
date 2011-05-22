@@ -1,17 +1,27 @@
-setMapColorByLabel <- function(map, ldata, label, scale, ...) {
-#	 browser()
+
+setMapColorByLabel <- function(qmap, qdata, label, scale) {
+	if (is.null(link_var(qmap)) | is.null(link_var(qdata))) 
+		error("data sets need to be linked")
+
    arguments <- as.list(match.call()[-1])
-   df.data <- data.frame(ldata)
-    
+   df.data <- data.frame(qdata)
+#	 
    label <- eval(arguments$label, df.data)
-	 colors <- scale(limits=range(label), ...)$map(label)
-	 link <- unique(ldata[,link_var(ldata)])
-	 lcolor <- rep(NA, nrow(map))
+	# defaults, should be overwritten, if specified
+	 if (is.null(scale$limits))
+		 scale$limits <- range(label)	
+	 if (is.null(scale$name))
+		 scale$name <- deparse(arguments$label)
+
+	 colors <- scale$map(label)
+	 link <- unique(qdata[,link_var(qdata)])
+	 lcolor <- rep(NA, nrow(qmap))
 	 for (i in 1:length(link)) {
-			j <- which(map[,link_var(map)] == link[i])
+			j <- which(qmap[,link_var(qmap)] == link[i])
 			lcolor[j] <- colors[i]
 	 }
-	 map$.color <- lcolor
+	 qmap$.color <- lcolor
+	 attr(qmap, "col.scale") <- scale
 }
 
 ##' Interactive Maps.
@@ -77,7 +87,10 @@ qmap <- function(data, longitude, latitude, group, label = group,
             qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = groupdata$color[j])
         }
  #print(table(groupdata$color))       
-        add_title_fun(painter, dataRanges, title = .df.title)
+#	print("draw legend")
+	
+ 				
+ 				add_title_fun(painter, dataRanges, title = .df.title)
     }
     
     # Brushing -----------------------------------------------------------------
@@ -254,38 +267,41 @@ qmap <- function(data, longitude, latitude, group, label = group,
     
     legend_draw <- function(item, painter, exposed, ...) {
         #print('legend_draw')
-        if (is.null(arguments$colour)) 
+        if (is.null(attr(qstates,"col.scale"))) 
             return()
         
+#				print("draw legend")        
+
+        scale <- attr(qstates,"col.scale")
         xpos = max(x)
         ypos = (max(y) + min(y))/2
         #browser()
         qstrokeColor(painter) <- "black"
-        qdrawText(painter, deparse(arguments$colour), xpos, ypos, valign = "top", 
+        qdrawText(painter, scale$name, xpos, ypos, valign = "top", 
             halign = "left")
-        fontHeight <- qstrHeight(painter, deparse(arguments$colour))
+        fontHeight <- qstrHeight(painter, scale$name)
         
         # create a set of rectangles
         r0 <- 0.05 * c(0, 0, diff(range(x)), diff(range(y)))
-        ypos <- ypos - 3 * qstrHeight(painter, deparse(arguments$colour))
+        ypos <- ypos - 3 * qstrHeight(painter, scale$name)
         r0 <- r0 + c(xpos, ypos)
         
-        col <- eval(arguments$colour, .groupsdata)
         d <- options()$str$digits.d
         #   browser()
-        qcol <- round(quantile(col, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = T, 
-            names = FALSE), d)
+        qval <- seq(scale$limits[1],scale$limits[2],length=5)
+        qcol <- scale$map(qval)
+
         
         for (i in 1:length(qcol)) {
-            qdrawRect(painter, r0[1], r0[2], r0[3], r0[4], fill = scale_color(col, 
-                qcol[i]), stroke = "black")
-            qdrawText(painter, as.character(qcol[i]), xpos + 1.5 * (r0[3] - r0[1]), 
+            qdrawRect(painter, r0[1], r0[2], r0[3], r0[4], fill = qcol[i],
+            	stroke = "black")
+            qdrawText(painter, as.character(round(qval[i],d)), xpos + 1.5 * (r0[3] - r0[1]), 
                 ypos + fontHeight, valign = "top", halign = "left")
             ypos <- ypos - 1.5 * fontHeight
             r0[2] <- r0[2] - 1.5 * fontHeight
             r0[4] <- r0[4] - 1.5 * fontHeight
         }
-        
+
     }
     
     scene = qscene()
