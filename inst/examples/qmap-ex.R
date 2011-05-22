@@ -32,10 +32,10 @@ qscatter(qcrimes, Population, Robbery)
 
 
 # Choropleth maps
-setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient)
+setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient())
 
 # change to different choropleth map:
-setMapColorByLabel(qstates, qcrimes, log(100000*Robbery/Population + 1), scale_colour_gradient2)
+setMapColorByLabel(qstates, qcrimes, log(100000*Robbery/Population + 1), scale_colour_gradient2())
 
 ##############
 
