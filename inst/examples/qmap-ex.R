@@ -32,18 +32,10 @@ qscatter(qcrimes, Population, Robbery)
 
 
 # Choropleth maps
-values <- with(crimes, Robbery/Population)
-cs <- scale_colour_gradient(limits=range(values))
-temp <- data.frame(State=crimes$State, colors=cs$map(values))
-qstates$.color <- as.character(merge(states, temp, by.x="region", by.y="State", all.x=T)$colors)
+setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient)
 
 # change to different choropleth map:
-values <- with(crimes, log(100000*Robbery/Population + 1))
-cs <- scale_colour_gradient2(limits=range(values))
-temp <- data.frame(State=crimes$State, colors=cs$map(values))
-qstates$.color <- as.character(merge(states, temp, by.x="region", by.y="State", all.x=T)$colors)
-
-
+setMapColorByLabel(qstates, qcrimes, log(100000*Robbery/Population + 1), scale_colour_gradient2)
 
 ##############
 
