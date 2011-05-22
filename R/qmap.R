@@ -1,17 +1,17 @@
-scale_color <- 
-function (colour, value = colour, na.color = 0) 
-{
-    if (is.numeric(colour)) {
-        cmin <- min(colour, na.rm = T)
-        cmax <- max(colour, na.rm = T)
-        grey <- (value - cmin)/(cmax - cmin)
-        grey <- pmin(grey, 1)
-        grey <- pmax(grey, 0)
-        nas <- is.na(grey)
-        grey[nas] <- na.color
-        return(rgb(grey, grey, grey))
-    }
-    print(paste("colour not implemented for type", mode(colour)))
+setMapColorByLabel <- function(map, ldata, label, scale, ...) {
+#	 browser()
+   arguments <- as.list(match.call()[-1])
+   df.data <- data.frame(ldata)
+    
+   label <- eval(arguments$label, df.data)
+	 colors <- scale(limits=range(label), ...)$map(label)
+	 link <- unique(ldata[,link_var(ldata)])
+	 lcolor <- rep(NA, nrow(map))
+	 for (i in 1:length(link)) {
+			j <- which(map[,link_var(map)] == link[i])
+			lcolor[j] <- colors[i]
+	 }
+	 map$.color <- lcolor
 }
 
 ##' Interactive Maps.
@@ -76,7 +76,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
             yy <- y[group == i]
             qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = groupdata$color[j])
         }
-        
+ #print(table(groupdata$color))       
         add_title_fun(painter, dataRanges, title = .df.title)
     }
     
