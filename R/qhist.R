@@ -158,10 +158,11 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         .updateinfo <<- FALSE
     }
     updateBarsInfo()
-    if (.yMax < 1.1 * max(.bars_info$data$count))
-      .yMax <- 1.1 * max(.bars_info$data$count)
+    #if (.yMax < 1.1 * max(.bars_info$data$count))
+    .yMax <- 1.1 * max(.bars_info$data$count)
     #message(.yMax, "\n")
-		
+    message("max count ", max(.bars_info$data$top), "\n")
+            
     updateRanges <- function() {
         # contains c(x_min, x_max, y_min, y_max)
         if (horizontal) {
@@ -205,7 +206,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         # grey background with grid lines
         horiPos <- make_pretty_axes(.dataranges[1:2], .dataranges[1], .dataranges[2])
    	vertPos <- make_pretty_axes(.dataranges[3:4], .dataranges[3], .dataranges[4])
-        #message("limits 3 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], "\n")
+        #message("limits 3 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], horiPos, vertPos, "\n")
         
         draw_grid_with_positions_fun(painter, .dataranges, horiPos, vertPos)
 
@@ -250,11 +251,14 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             if (.type$binwidth > maxBinwidthP()) 
                 .type$binwidth <<- maxBinwidthP()
             updateBarsInfo()
-            if (.yMax < 1.1 * max(.bars_info$data$count))
+            message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
+            if (.yMax < max(.bars_info$data$count))
               .yMax <<- 1.1 * max(.bars_info$data$count)
             #message("Up ", .yMax, "\n")
             updateRanges()
             updateLims()
+            message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
+            message("limits ", .dataranges[3]," ", .dataranges[4], "\n")
             qupdate(.scene)
             qupdate(bglayer)
             qupdate(datalayer)
@@ -262,7 +266,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         else if (key == Qt$Qt$Key_Down) {
             .type$binwidth <<- .type$binwidth/1.1
             updateBarsInfo()
-            if (.yMax < 1.1 * max(.bars_info$data$count))
+            if (.yMax < max(.bars_info$data$count))
               .yMax <<- 1.1 * max(.bars_info$data$count)        
             #message("Down ", .yMax, "\n")
             updateRanges()
@@ -276,14 +280,24 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             # Make sure the start stays close to home
             if (.type$start < xMinStartPosP()) 
                 .type$start <<- xMinStartPosP()
-            
+            updateBarsInfo()
+            updateRanges()
+            updateLims()
+            qupdate(.scene)
+            qupdate(bglayer)
+            qupdate(datalayer)           
         }
         else if (key == Qt$Qt$Key_Right) {
             .type$start <<- .type$start + unitShiftP()
             # Make sure the start stays close to home
             if (.type$start > xMaxStartPosP()) 
                 .type$start <<- xMaxStartPosP()
-            
+            updateBarsInfo()
+            updateRanges()
+            updateLims()
+            qupdate(.scene)
+            qupdate(bglayer)
+            qupdate(datalayer)                       
         }
         else if (key == Qt$Qt$Key_A) {
             .type$type <<- "ash"
@@ -301,8 +315,9 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             
         }
         else if (key == Qt$Qt$Key_H) {
-            .type <- list(type = "hist", binwidth = .histOriginalBreaksAndStart$binwidth, 
-                start = .histOriginalBreaksAndStart$start)
+            .type <- list(type = "hist",
+                 binwidth = .histOriginalBreaksAndStart$binwidth, 
+                 start = .histOriginalBreaksAndStart$start)
             
         }
         else if (key == 82) {
@@ -317,8 +332,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         else if (key == Qt$Qt$Key_M) {
  
           updateBarsInfo()
-          if (.yMax < 1.1 * max(.bars_info$data$count))
-            .yMax <<- 1.1 * max(.bars_info$data$count)        
+          if (.yMax < max(.bars_info$data$count))
+              .yMax <<- 1.1 * max(.bars_info$data$count)        
           #message("M ", .yMax, "\n")
           # print(.yMax)
           updateRanges()
@@ -424,7 +439,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         
         setHiliting()
         qupdate(brushing_layer)
-#        cat("brushing mouse press - done\n")
+        #cat("brushing mouse press - done\n")
     }
     
     brushing_mouse_move <- function(item, event, ...) {
@@ -651,41 +666,46 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     #######################################################
     # Layout
     updateLims <- function() {
+        message("update lims ", .dataranges[3]," ", .dataranges[4], "\n")
+       
         windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
         .lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        #message("update lims 2", windowRanges[3]," ", windowRanges[4], "\n")
     }
     updateLims()
     
     .scene <- qscene()
     
     bglayer <- qlayer(.scene, coords, limits = .lims, clip = FALSE,
-      keyPressFun = keyPressFun)
+        keyPressFun = keyPressFun)
     datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE)
-    brushing_layer <- qlayer(.scene, brushing_draw, mousePressFun = brushing_mouse_press, 
-      mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
-      limits = .lims, clip = FALSE)
+    brushing_layer <- qlayer(.scene, brushing_draw,
+        mousePressFun = brushing_mouse_press, 
+        mouseMoveFun = brushing_mouse_move,
+        mouseReleaseFun = brushing_mouse_release, 
+        limits = .lims, clip = FALSE)
     
     hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE,
-      hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave)
+        hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave)
     
     # # update the brush layer in case of any modifications to the mutaframe
     #if (is.mutaframe(data)) {
     func <- function(i, j=NULL) {
-      switch (j, .brushed = {
-        qupdate(brushing_layer)
-        updateBarsInfo()},
-        {updateBarsInfo()
-          if (.yMax < 1.1 * max(.bars_info$data$count)) {
-            .yMax <<- 1.1 * max(.bars_info$data$count)
-            #message("Data ",.yMax, "\n")
+        switch (j, .brushed = {
+            qupdate(brushing_layer)
+            updateBarsInfo()},
+            {updateBarsInfo()
+            if (.yMax < max(.bars_info$data$count)) {
+                .yMax <<- 1.1 * max(.bars_info$data$count)
+                #message("Data ",.yMax, "\n")
+            }
             updateRanges()
             updateLims()
             #message("Data ",.lims[1],.lims[2], .lims[3], lims[4], "\n")
             qupdate(.scene)
             qupdate(bglayer)
-          }
-          qupdate(brushing_layer)
-          qupdate(datalayer)
+            qupdate(brushing_layer)
+            qupdate(datalayer)
       })
     }
         
