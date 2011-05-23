@@ -165,14 +165,14 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     updateRanges <- function() {
         # contains c(x_min, x_max, y_min, y_max)
         if (horizontal) {
-            if (is.null(.dataranges))
+            if (is.null(xlims))
                 .dataranges <<- c(make_data_ranges(c(.yMin, .yMax)),
                           make_data_ranges(c(xMinStartPosP(), xMaxEndPosP())))
             else
                 .dataranges <<- c(make_data_ranges(c(.yMin, .yMax)), xlims) 
         }
         else {
-            if (is.null(.dataranges))
+            if (is.null(xlims))
                 .dataranges <<- c(make_data_ranges(c(xMinStartPosP(),
                           xMaxEndPosP())), make_data_ranges(c(.yMin, .yMax)))
             else
@@ -205,7 +205,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         # grey background with grid lines
         horiPos <- make_pretty_axes(.dataranges[1:2], .dataranges[1], .dataranges[2])
    	vertPos <- make_pretty_axes(.dataranges[3:4], .dataranges[3], .dataranges[4])
-        message("limits 3 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], "\n")
+        #message("limits 3 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], "\n")
         
         draw_grid_with_positions_fun(painter, .dataranges, horiPos, vertPos)
 
@@ -599,7 +599,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         hflag = .dataranges[2] - xpos > bgwidth
         vflag = ypos - .dataranges[3] > bgheight
 
-        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
+        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) *
+                  bgwidth, ypos + 
             ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1), fill = rgb(1, 
             1, 1, 0.9))
         
