@@ -267,13 +267,18 @@ qmap <- function(data, longitude, latitude, group, label = group,
     
     legend_draw <- function(item, painter, exposed, ...) {
         #print('legend_draw')
-        if (is.null(attr(qstates,"col.scale"))) 
-            return()
-        
+#browser()
+        if (is.null(attr(qstates,"col.scale"))) {
+					layout$setColumnPreferredWidth(1,0)
+					return()
+        }
+				layout$setColumnPreferredWidth(1,200)
+
 #				print("draw legend")        
 
         scale <- attr(qstates,"col.scale")
-        xpos = max(x)
+#        xpos = max(x)
+				xpos = min(x)
         ypos = (max(y) + min(y))/2
         #browser()
         qstrokeColor(painter) <- "black"
@@ -305,9 +310,10 @@ qmap <- function(data, longitude, latitude, group, label = group,
     }
     
     scene = qscene()
+    root_layer = qlayer(scene)
     
-    bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
-    datalayer = qlayer(parent=qlayer(scene), draw, limits = lims, 
+    bglayer = qlayer(root_layer, coords, limits = lims, clip = FALSE)
+    datalayer = qlayer(root_layer, draw, limits = lims, 
 focusInFun = function(...) {
 	print("focus map on")
 	focused(data) <- TRUE
@@ -317,14 +323,14 @@ focusOutFun = function(...) {
 	focused(data) <- FALSE
 },
         clip = FALSE)
-    brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press, 
+    legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
+    brushing_layer = qlayer(root_layer, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
         keyPressFun = keyPressFun, limits = lims, clip = FALSE)
-    querylayer = qlayer(scene, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave, 
+    querylayer = qlayer(root_layer, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave, 
         limits = lims, clip = FALSE)
-    legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
     
-    
+  root_layer[0,1] <- legendlayer  
     
     ## update the brush layer in case of any modifications to the mutaframe
     d.idx = add_listener(data, function(i, j) {
@@ -355,7 +361,17 @@ focusOutFun = function(...) {
         remove_listener(data, d.idx)
     })
 
-      
-    qplotView(scene = scene)
+
+
+   layout = root_layer$gridLayout()
+# map area
+    layout$setRowPreferredHeight(0, 400)
+    layout$setColumnPreferredWidth(0, 400)
+# legend area
+    layout$setColumnPreferredWidth(1,100)
+    layout$setColumnStretchFactor(1, 0)
+#		layout$setColumnMinimumWidth(1,1)
+#		layout$setColumnMaximumWidth(1,200)
+		qplotView(scene = scene)
 }
  
