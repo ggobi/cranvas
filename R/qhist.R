@@ -251,14 +251,14 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             if (.type$binwidth > maxBinwidthP()) 
                 .type$binwidth <<- maxBinwidthP()
             updateBarsInfo()
-            message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
+            #message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
             if (.yMax < max(.bars_info$data$count))
               .yMax <<- 1.1 * max(.bars_info$data$count)
             #message("Up ", .yMax, "\n")
             updateRanges()
             updateLims()
-            message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
-            message("limits ", .dataranges[3]," ", .dataranges[4], "\n")
+            #message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
+           # message("limits ", .dataranges[3]," ", .dataranges[4], "\n")
             qupdate(.scene)
             qupdate(bglayer)
             qupdate(datalayer)
@@ -666,7 +666,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     #######################################################
     # Layout
     updateLims <- function() {
-        message("update lims ", .dataranges[3]," ", .dataranges[4], "\n")
+        #message("update lims ", .dataranges[3]," ", .dataranges[4], "\n")
        
         windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
         .lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])

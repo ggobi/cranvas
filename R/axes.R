@@ -108,22 +108,31 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
 
     #horizontal
     if (!is.null(vertPos)) {
+        nvlines <- length(vertPos)
+        vdiff <- diff(vertPos)
         qlineWidth(plotObj) <- 2
 
-        qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), length(vertPos)), y = rep(vertPos,
+        qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), nvlines), y = rep(vertPos,
             each = 3), stroke = "white")
-
-        minor.vertPos <- vertPos[-length(vertPos)] + diff(vertPos)/2
+        if (dataRanges[4] > (vertPos[nvlines] + vdiff/2))
+            minor.vertPos <- vertPos + vdiff/2
+        else 
+            minor.vertPos <- vertPos[-nvlines] + vdiff/2
     }
 
     #vertical
     if (!is.null(horiPos)) {
+        nhlines <- length(horiPos)
+        hdiff <- diff(horiPos)
         qlineWidth(plotObj) <- 2
 
         qdrawLine(plotObj, x = rep(horiPos, each = 3), y = rep(c(dataRanges[3:4],
             NA), length(horiPos)), stroke = "white")
 
-        minor.horiPos <- horiPos[-length(horiPos)] + diff(horiPos)/2
+        if (dataRanges[2] > (horiPos[nhlines] + hdiff/2))
+            minor.horiPos <- horiPos + hdiff/2
+        else
+            minor.horiPos <- horiPos[-nhlines] + hdiff/2
     }
 
     #minor horizontal
