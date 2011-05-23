@@ -109,7 +109,7 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
     #horizontal
     if (!is.null(vertPos)) {
         nvlines <- length(vertPos)
-        vdiff <- diff(vertPos)
+        vdiff <- vertPos[nvlines] - vertPos[nvlines-1]
         qlineWidth(plotObj) <- 2
 
         qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), nvlines), y = rep(vertPos,
@@ -123,7 +123,7 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
     #vertical
     if (!is.null(horiPos)) {
         nhlines <- length(horiPos)
-        hdiff <- diff(horiPos)
+        hdiff <- horiPos[nhlines] - horiPos[nhlines-1]
         qlineWidth(plotObj) <- 2
 
         qdrawLine(plotObj, x = rep(horiPos, each = 3), y = rep(c(dataRanges[3:4],
