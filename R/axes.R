@@ -95,10 +95,15 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
 
         qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), nvlines), y = rep(vertPos,
             each = 3), stroke = "white")
-        if (dataRanges[4] > (vertPos[nvlines] + vdiff/2))
-            minor.vertPos <- vertPos + vdiff/2
-        else
-            minor.vertPos <- vertPos[-nvlines] + vdiff/2
+        
+        minor.vertPos <- c(vertPos[1]-vdiff/2, vertPos+vdiff/2)
+
+        n <- length(minor.vertPos)
+        if (dataRanges[4] < minor.vertPos[n]) 
+        	minor.vertPos <- minor.vertPos[-n]
+
+        if (dataRanges[3] > minor.vertPos[1]) 
+        	minor.vertPos <- minor.vertPos[-1]
     }
 
     #vertical
@@ -110,10 +115,11 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
         qdrawLine(plotObj, x = rep(horiPos, each = 3), y = rep(c(dataRanges[3:4],
             NA), length(horiPos)), stroke = "white")
 
-        if (dataRanges[2] > (horiPos[nhlines] + hdiff/2))
-            minor.horiPos <- horiPos + hdiff/2
-        else
-            minor.horiPos <- horiPos[-nhlines] + hdiff/2
+        minor.horiPos <- c(horiPos[1]-hdiff/2, horiPos+hdiff/2)
+
+        n <- length(minor.horiPos)
+        if (dataRanges[2] < minor.horiPos[n]) minor.horiPos <- minor.horiPos[-n]
+        if (dataRanges[1] > minor.horiPos[1]) minor.horiPos <- minor.horiPos[-1]
     }
 
     #minor horizontal
