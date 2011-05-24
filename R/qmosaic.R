@@ -40,6 +40,12 @@ addDivider <- function(divider, level = length(divider)) {
     return(dividerhil)
 }
 
+qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE) {
+	res <- prodcalc(data, formula, divider, cascade, scale_max, na.rm)
+# multiply by 100 to get out of the [0,1] range - that plays less havoc with the pretty axes
+	res[,c("l","t","b","r")] <- 100 * res[,c("l","t","b","r")]
+	return(res)
+}
 
 ##' Mosaic plot.
 ##' Create a mosaicplot using a formula (as described in prodplot)
@@ -71,9 +77,6 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     .recalc <- FALSE
     .recalchiliting <- FALSE
     
-    ## parameters for the brush
-    #  .brush.attr = attr(data, '.brush.attr')
-    #  if (!has_attr('.brushed')) data$.brushed <- FALSE
     
     .colored <- TRUE
     .formula <- formula
@@ -106,7 +109,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         df <- data.frame(data)
         df$.brushed <- data$.brushed
         df$.brushed <- factor(df$.brushed, levels = c("TRUE", "FALSE"))
-        helperdata <- prodcalc(df, hformula, hdivider, cascade, scale_max, na.rm = na.rm)
+        helperdata <- qprodcalc(df, hformula, hdivider, cascade, scale_max, na.rm = na.rm)
         hdata <<- subset(helperdata, (.brushed == TRUE), drop = FALSE)
         .recalchiliting <<- FALSE
         ##print(summary(helperdata))
@@ -134,7 +137,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         
         ## calculate all bin sizes & positions
         df <- data.frame(data)
-        all.data <<- prodcalc(df, .formula, .divider, cascade, scale_max, na.rm = na.rm)
+        all.data <<- qprodcalc(df, .formula, .divider, cascade, scale_max, na.rm = na.rm)
         ##print(summary(all.data))
         # keep only highest level
         if (is.null(all.data$.brushed)) 
@@ -142,6 +145,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         
         xdata <<- subset(all.data, level == max(all.data$level), drop = FALSE)
         bkdata <<- subset(all.data, level == max(all.data$level) - .colored, drop = FALSE)
+
         
         .recalc <<- FALSE
         recalchiliting()
@@ -166,10 +170,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         .df.title <- TRUE
     xlab <- find_x_label(xdata)
     ylab <- find_y_label(xdata)
-    
     dataRanges <- c(make_data_ranges(c(min(left, na.rm = T), max(right, na.rm = T))), 
         make_data_ranges(c(min(bottom, na.rm = T), max(top, na.rm = T))))
-    
     # space in window around plot (margins in base R)
     # this space depends on the labels needed on the left
     # find out about these first:
@@ -191,11 +193,17 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     
     coords <- function(item, painter, exposed) {
         sx <- scale_x_product(xdata)
+				if (max(sx$breaks) <= 1) {
+					sx$breaks <- 100*sx$breaks 	# needed because of scaling in qprodcalc
+				}
         sy <- scale_y_product(xdata)
+				if (max(sy$breaks) <= 1) {
+					sy$breaks <- 100*sy$breaks	# needed because of scaling in qprodcalc
+				}
         
         # grey background with grid lines
-        draw_grid_with_positions_fun(painter, dataRanges, sx$breaks, sy$breaks, sx$minor_breaks, 
-            sy$minor_breaks)
+        draw_grid_with_positions_fun(painter, dataRanges, sx$breaks, sy$breaks,  minor.horiPos=NULL, 
+            sy$minor_breaks) # no minor axes on x
         
         # put labels, if appropriate
         col <- find_col_level(xdata)
@@ -513,10 +521,15 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         
         # Work out label text
         idx <- setdiff(names(xdata), c("l", "t", "r", "b", ".wt", "level", ".brushed", 
-            .inactivevars))
+        	".color", .inactivevars))
         infodata <- as.character(unlist(info[1, idx]))
-        infostring <- paste(idx, infodata, collapse = "\n", sep = ":")
-        
+        infostring <- paste(idx, infodata, collapse = "\n", sep = ":  ")
+#browser()        
+				if (info[1,".wt"] > 1) 
+					infostring <- paste(infostring, sprintf("\ncount:  %s", info[1,".wt"]))
+				else {
+					infostring <- paste(infostring, sprintf("\nPct:  %s%%", round(100*info[1,".wt"], 1)))
+				}
         #    qstrokeColor(painter) <- 'white'
         #    qdrawText(painter, infostring, x, y, valign='top', halign='left')
         bgwidth = qstrWidth(painter, infostring)
@@ -526,8 +539,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         hflag = windowRanges[2] - xpos > bgwidth
         vflag = ypos - windowRanges[3] > bgheight
         qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.9), fill = rgb(1, 
-            1, 1, 0.9))
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1, 
+            1, 1, 0.95))
         
         qstrokeColor(painter) = brush(data)$label.color
         qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 

@@ -7,13 +7,14 @@
 #' @param labeled whether axes should be labeled
 #' @param size point size
 #' @param alpha transparency level, 1=completely opaque
-#' @param datalims user specifed data ranges xmin, xmax, ymin, ymax
+#' @param xlim = c(min, max) user specifed data range for the x axis, by default range(x)
+#' @param ylim = c(min, max) user specifed data range for the y axis, by default range(y)
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qscat-ex.R
 
-#qscatter <- function (data, form, main = NULL, labeled = TRUE) {
 qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
-                     labeled = TRUE, size = 2, alpha = 1, datalims=NULL, cache = T, ...)
+                     labeled = TRUE, size = 2, alpha = 1, xlim=NULL, 
+                     ylim=NULL, cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
     
@@ -34,14 +35,11 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     x <- eval(arguments$x, df)
     y <- eval(arguments$y, df)
 
-    #  if (length(form) != 3) {
-    #    stop('invalid formula, requires y ~ x format')
-    #  } else {
-    #    .levelX <- as.character( form[[3]] )
-    #    .levelY <- as.character(form[[2]])
-    #  }
     .levelX <- deparse(arguments$x)
     .levelY <- deparse(arguments$y)
+		if (is.null(xlim)) xlim <- range(x, na.rm=T)
+		if (is.null(ylim)) ylim <- range(y, na.rm=T)
+		
 
     ## parameters for dataRanges
     xlab <- NULL
@@ -49,65 +47,29 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 
     ## labels
     ylabels <- NULL
-    if (labeled) {
-        yid <- find_id(y)
-    }
-    else {
-        yid <- NA
-    }
+		yid <- NA
+    if (labeled) yid <- find_id(y)
 
     if (!is.na(yid[1])) {
-        ylabels <- get_axisPos(y)
+        ylabels <- TRUE
     }
 
     xlabels <- NULL
-    if (labeled) {
-        xid <- find_id(x)
-    }
-    else {
-        xid <- NA
-    }
+    xid <- NA
+    if (labeled) xid <- find_id(x)
 
     if (!is.na(xid[1])) {
-        xlabels <- get_axisPos(x)
+        xlabels <- TRUE
     }
 
     ## parameters for all layers
-    if (labeled) {
-        if (is.null(datalims)) 
-            dataRanges <- c(make_data_ranges(range(x)),
-                            make_data_ranges(range(y)))
-        else
-            dataRanges <- c(make_data_ranges(range(datalims[1:2])),
-                            make_data_ranges(range(datalims[3:4])))
-        
-        windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
+		dataRanges <- c(make_data_ranges(xlim), 
+									  make_data_ranges(ylim))
+    windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
                                            ytickmarks = ylabels,
                                            xtickmarks = xlabels, main = main)
-    }
-    else {
-        if (is.null(datalims)) 
-          dataRanges <- c(range(x), range(y))
-        else
-          dataRanges <- datalims
-        windowRanges <- dataRanges
-    }
 
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-
-    ## parameters for bglayer
-    #  sy <- get_axisPosX(data = df, colName = .levelX)
-    #  sx <- get_axisPosY(data = df, colName = .levelY)
-
-    if (is.null(datalims)) {
-        sy <- get_axisPos(x)
-        sx <- get_axisPos(y)
-    }
-    else {
-        sy <- get_axisPos(datalims[3:4])
-        sx <- get_axisPos(datalims[1:2])
-    }
-
 
     ## parameters for datalayer
     .radius <- size
@@ -135,35 +97,33 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     # layers #
     ##########
     coords <- function(item, painter, exposed) {
-
+				sx <- .axis.loc(dataRanges[1:2])
+				sy <- .axis.loc(dataRanges[3:4])
+				
         # grey background with grid lines
-        draw_grid_with_positions_fun(painter, dataRanges, sy, sx)
+        draw_grid_with_positions_fun(painter, dataRanges, sx, sy)
 
         # labels as appropriate
         if (!is.na(xid[1])) {
-            #    labels <- get_axisPosX(data = df, colName = .levelX)
-            labels <- get_axisPos(x)
             #    print('x axis labels')
             #    print(labels)
-            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = sy,
-                                        labelHoriPos = sy, name = xlab)
+            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = sx,
+                                        labelHoriPos = sx, name = xlab)
         }
         else {
             draw_x_axes_with_labels_fun(painter, dataRanges,
-                                        axisLabel = rep("", length(sy)),
-                                        labelHoriPos = sy, name = xlab)
+                                        axisLabel = rep("", length(sx)),
+                                        labelHoriPos = sx, name = xlab)
         }
-
+        
         if (!is.na(yid[1])) {
-            #    labels <- get_axisPosY(data = df, colName = .levelY)
-            labels <- get_axisPos(y)
-            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = sx,
-                                        labelVertPos = sx, name = ylab)
+            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = sy,
+                                        labelVertPos = sy, name = ylab)
         }
         else {
             draw_y_axes_with_labels_fun(painter, dataRanges,
-                                        axisLabel = rep("", length(sx)),
-                                        labelVertPos = sx, name = ylab)
+                                        axisLabel = rep("", length(sy)),
+                                        labelVertPos = sy, name = ylab)
         }
 
     }
@@ -376,7 +336,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     xWidth <- 600
     yWidth <- 600
     if (!is.null(aspect.ratio))
-        yWidth <- round(1.0 * yWidth * aspect.ratio, 0)
+        yWidth <- round(1.0 * xWidth * aspect.ratio, 0)
 
 #print(yWidth)
 
@@ -392,6 +352,12 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                         mouseMove = identify_mouse_move,
                         mousePressFun = brush_mouse_press,
                         mouseReleaseFun = identify_mouse_move,
+												focusInFun = function(...) {
+													focused(data) <- TRUE
+												},
+												focusOutFun = function(...) {
+													focused(data) <- FALSE
+												},
                         limits = lims, cache=cache)
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
                          cache=cache)

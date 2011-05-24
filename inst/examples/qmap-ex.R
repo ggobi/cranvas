@@ -1,7 +1,4 @@
-library(qtbase)
-library(qtpaint)
-library(cranvas)
-library(plumbr)
+source("load.R")
 
 library(maps)
 library(ggplot2)
@@ -9,7 +6,11 @@ library(ggplot2)
 states <- map_data("state")
 qstates <- qdata(states)
 
-qmap(qstates, long, lat, group)
+qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
+qmap(qstates, long, lat, group, region)
+
+# recolor
+qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
 
 
 #######################
@@ -17,37 +18,28 @@ qmap(qstates, long, lat, group)
 data(crimes)
 crimes$State <- tolower(crimes$State)
 
-## color palette   
-library(RColorBrewer)
 qcrimes <- qdata(crimes)
 print(qparallel(data=qcrimes))
 
-#print(qmap(qstates, long, lat, group, label=region, labeldata=qcrimes,
-#   by.x='region', by.y='State', colour=Violent.crime))
-q1 <- qmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
-    by.x = "region", by.y = "State", colour = log(Violent.crime/Population + 1))
-q1
-q2 <- qmap(qstates, long, lat, group, label = region, labeldata = qcrimes, 
-    by.x = "region", by.y = "State", colour = log(Motor.vehicle.theft/Population + 1))
-q2
+# now link map and crimes data set
+link_var(qcrimes) = "State"
+link_var(qstates) = "region"
+
+link(qcrimes, qstates)
+qscatter(qcrimes, Population, Robbery)
 
 
 
 
+# Choropleth maps
+setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient())
 
-
-
-#qmap(qstates, long, lat, group, label=region)
-#qmap(qstates, long, lat, group)
-
+# change to different choropleth map:
+setMapColorByLabel(qstates, qcrimes, log(100000*Robbery/Population + 1), scale_colour_gradient2())
 
 ##############
 
-library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
-
+source("load.R")
 
 library(maps)
 library(ggplot2)
@@ -60,13 +52,10 @@ qiowa <- qdata(iowa)
 qmap(qiowa, long, lat, group, label = subregion)
 
 
-library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
+
+source("load.R")
 library(ggplot2)
 
-#world <- map_data('world')
 data(world)
 qworld <- qdata(world)
 

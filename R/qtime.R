@@ -15,8 +15,10 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   dataRanges <- c(range(tdf$x), range(y))
   windowRanges <- dataRanges
   lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-  sy <- get_axisPos(tdf$x)
-  sx <- get_axisPos(y)
+#  sy <- get_axisPos(tdf$x)
+#  sx <- get_axisPos(y)
+  sy <- .axis.loc(tdf$x)
+  sx <- .axis.loc(y)
 
   ## parameters for datalayer
   .radius <- size
@@ -99,8 +101,8 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
       }
       dataRanges <<- c(range(tdf$x), range(y))
       windowRanges <<- dataRanges
-      sy <<- get_axisPos(tdf$x)
-      sx <<- get_axisPos(y)
+      sy <<- .axis.loc(tdf$x)
+      sx <<- .axis.loc(dataRanges[3:4])
       lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       qupdate(bg_layer)
       main_layer$setLimits(lims)
@@ -119,8 +121,8 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
       }
       dataRanges <<- c(range(tdf$x), range(y))
       windowRanges <<- dataRanges
-      sy <<- get_axisPos(tdf$x)
-      sx <<- get_axisPos(y)
+      sy <<- .axis.loc(tdf$x)
+      sx <<- .axis.loc(dataRanges[3:4])
       lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       qupdate(bg_layer)
       main_layer$setLimits(lims)
@@ -228,12 +230,10 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   bg_draw <- function(item, painter, exposed) {
     draw_grid_with_positions_fun(painter, dataRanges, sy, sx)
 
-    labels <- get_axisPos(tdf$x)
     draw_x_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sy, labelHoriPos = sy,
                                 name = NULL)
 
-    labels <- get_axisPos(y)
     draw_y_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sx, labelVertPos = sx,
                                 name = NULL)   

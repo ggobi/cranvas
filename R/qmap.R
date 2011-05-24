@@ -1,34 +1,28 @@
-library(plumbr)
 
-myvarsummary <- function(x) {
-    if (is.factor(x) || is.character(x)) 
-        return(names(which.max(table(x))))
-    if (is.logical(x)) 
-        return(any(x, na.rm = TRUE))
-    
-    return(mean(x, na.rm = TRUE))
+setMapColorByLabel <- function(qmap, qdata, label, scale) {
+	if (is.null(link_var(qmap)) | is.null(link_var(qdata))) 
+		error("data sets need to be linked")
+
+   arguments <- as.list(match.call()[-1])
+   df.data <- data.frame(qdata)
+#	 
+   label <- eval(arguments$label, df.data)
+	# defaults, should be overwritten, if specified
+	 if (is.null(scale$limits))
+		 scale$limits <- range(label)	
+	 if (is.null(scale$name))
+		 scale$name <- deparse(arguments$label)
+
+	 colors <- scale$map(label)
+	 link <- unique(qdata[,link_var(qdata)])
+	 lcolor <- rep(NA, nrow(qmap))
+	 for (i in 1:length(link)) {
+			j <- which(qmap[,link_var(qmap)] == link[i])
+			lcolor[j] <- colors[i]
+	 }
+	 qmap$.color <- lcolor
+	 attr(qmap, "col.scale") <- scale
 }
-
-mysummary <- function(x) {
-    ldply(x, myvarsummary)
-}
-
-scale_color <- function(colour, value = colour, na.color = 0) {
-    if (is.numeric(colour)) {
-        # assume grey colour scheme
-        cmin <- min(colour, na.rm = T)
-        cmax <- max(colour, na.rm = T)
-        grey <- (value - cmin)/(cmax - cmin)
-        grey <- pmin(grey, 1)
-        grey <- pmax(grey, 0)
-        nas <- is.na(grey)
-        grey[nas] <- na.color
-        return(rgb(grey, grey, grey))
-    }
-    
-    print(paste("colour not implemented for type", mode(colour)))
-}
-
 
 ##' Interactive Maps.
 ##' Create an interactive map from qdata
@@ -38,14 +32,15 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 ##' @param latitude spatial x variable
 ##' @param longitude spatial y variable
 ##' @param group grouping variable for polygons
-##' @param colour fill colour of the polygons
+##' @param main window title, by default 'Map of <data set>'
 ##' @param ...
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
 ##' @example cranvas/inst/examples/maps-ex.R
-qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group, 
-    labeldata = NULL, by.y = by.x, colour = NULL, main = NULL, ...) {
+qmap <- function(data, longitude, latitude, group, label = group, 
+    main = NULL, ...) {
+
     ## check if an attribute exist
     #  browser()
     arguments <- as.list(match.call()[-1])
@@ -53,64 +48,25 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
     
     x <- eval(arguments$longitude, df.data)
     y <- eval(arguments$latitude, df.data)
-    group <- eval(arguments$group, df.data)
-    if (is.null(labeldata)) 
-        label <- unique(eval(arguments$label, df.data))
-    
-    #browser()
-    if (!is.null(by.x)) 
-        link_var(data) = by.x
-    if (!is.null(by.y)) 
-        link_var(labeldata) = by.y
-    
-    .groupsdata <- ddply(df.data, .(group), mysummary)
-    .groupsdata <- cast(.groupsdata, group ~ .id, value = "V1")
-    # .groupsdata$ID <- 1:nrow(.groupsdata)
-    names(.groupsdata)[1] <- "ID"
-    .groupsdata$.color <- "grey30"
-    if (!(".brushed" %in% names(.groupsdata))) 
-        .groupsdata$.brushed <- FALSE
-    .recalcbrushed <- FALSE
-    .recalclbrushed <- FALSE
-    # extended infostring - shift turns this to TRUE
-    .extended <- FALSE
-    .legendspace <- 0
-    
+
+    group <- df.data$group <- eval(arguments$group, df.data)
+    df.data$label <- eval(arguments$label, df.data)
+
+		## aggregate data on group level
+		groupdata <- ddply(df.data, .(group), summarize,
+			color = as.character(.color)[1],
+			label = as.character(label)[1],
+			.brushed = FALSE
+		)
+		labelID <- deparse(arguments$label)
+
     ## parameters for the brush
     .brush.attr = attr(data, ".brush.attr")
-    
-    
-    # by.x and by.y connect datasets data and labeldata
-    # check that connection works
-    if (!is.null(by.x)) {
-        # assume they are the same, if only one is specified
-        # labeldata is a subset of the groups - i.e. only one value for each group on
-        #   each variable
-        if (!is.mutaframe(labeldata)) 
-            labeldata <- qdata(labeldata)
-        
-        
-        xid <- as.character(substitute(by.x))
-        yid <- as.character(substitute(by.y))
-        idx <- setdiff(names(labeldata), c(".color", ".brushed"))
-        df.labeldata <- data.frame(labeldata)
-        .groupsdata <- merge(.groupsdata, df.labeldata[, idx], by.x = xid, by.y = yid, 
-            all.x = TRUE)
-        label <- eval(arguments$label, .groupsdata)
-        
-        #  browser()
-        if (!is.null(arguments$colour)) {
-            .groupsdata$.color <- scale_color(eval(arguments$colour, .groupsdata))
-            .legendspace <- nchar(deparse(arguments$colour)) * 0.015 * diff(range(x))
-        }
-    }
-    
+            
     if (is.null(main)) 
         .df.title <- paste("Map of", deparse(substitute(data)))
-    #  xlab <- find_x_label(xdata)
-    #  ylab <- find_y_label(xdata)
     
-    dataRanges <- c(make_data_ranges(c(min(x), max(x) + .legendspace)), make_data_ranges(range(y)))
+    dataRanges <- c(make_data_ranges(c(min(x), max(x))), make_data_ranges(range(y)))
     
     # space in window around plot (margins in base R)
     # this space depends on the labels needed on the left
@@ -122,21 +78,19 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
     
     
-    draw <- function(item, painter, exposed) {
-        # extract data at level .level and draw
-        #print('mdraw: full mosaic drawn')
-        ##print(summary(xdata))
-        #  if (.recalc) recalc()
-        
-        
-        for (j in 1:length(.groupsdata$ID)) {
-            i <- .groupsdata$ID[j]
+    draw <- function(item, painter, exposed) {        
+			
+        for (j in 1:nrow(groupdata)) {
+        		i <- groupdata$group[j]
             xx <- x[group == i]
             yy <- y[group == i]
-            qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = .groupsdata$.color[j])
+            qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = groupdata$color[j])
         }
-        
-        add_title_fun(painter, dataRanges, title = .df.title)
+ #print(table(groupdata$color))       
+#	print("draw legend")
+	
+ 				
+ 				add_title_fun(painter, dataRanges, title = .df.title)
     }
     
     # Brushing -----------------------------------------------------------------
@@ -155,52 +109,28 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
     }
     
     recalcbrushed <- function() {
-        #browser()
-        for (i in 1:length(.groupsdata$ID)) {
-            brushed <- data$.brushed[group == .groupsdata$ID[i]]
-            .groupsdata$.brushed[i] <<- any(brushed)
-            
-        }
-        .recalcbrushed <<- FALSE
-        
-        #  if (!is.null(labeldata)) setSelectedLabel()
+			for (i in 1:nrow(groupdata)) {
+					brushed <- data$.brushed[group == groupdata$group[i]]
+					groupdata$.brushed[i] <<- any(brushed)				
+			}        
     }
     
-    recalclbrushed <- function() {
-        for (i in unique(.groupsdata[, xid])) {
-            brushed <- labeldata[labeldata[, yid] == i, ".brushed"]
-            .groupsdata$.brushed[.groupsdata[, xid] == i] <<- any(brushed)
-        }
-        .recalclbrushed <<- FALSE
-        
-        #  setSelected()
-    }
     
     brushing_draw <- function(item, painter, exposed, ...) {
-        if (.recalcbrushed) 
-            recalcbrushed()
-        if (!is.null(labeldata) && (.recalclbrushed)) 
-            recalclbrushed()
-        
-        bgroups <- subset(.groupsdata, .brushed == TRUE)
-        if (nrow(bgroups) == 0) 
-            return()
-        #print(bgroups)
-        #browser()
-        brushcolor <- brush(data)$color
-        
-        
-        for (i in bgroups$ID) {
-            xx <- x[group == i]
-            yy <- y[group == i]
-            qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = brushcolor)
-        }
-        
-        #print('brushing_draw')
-        if (!is.null(.endBrush)) {
-            drawBrush(item, painter, exposed)
-        }
-        
+			brushcolor <- brush(data)$color
+
+			for (j in 1:nrow(groupdata)) {
+				i <- groupdata$group[j]
+				if (groupdata$.brushed[j]) {
+					xx <- x[group == i]
+					yy <- y[group == i]
+					qdrawPolygon(painter, xx, yy, stroke = "grey80", fill = brushcolor)
+				}
+			}        
+
+			if (!is.null(.endBrush)) {
+					drawBrush(item, painter, exposed)
+			}
     }
     
     brushing_mouse_press <- function(item, event, ...) {
@@ -235,7 +165,9 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         
         .startBrush <<- NULL
         .endBrush <<- NULL
+				focused(data) <- TRUE
         setSelected()
+				focused(data) <- FALSE
     }
     
     setHiliting <- function() {
@@ -246,40 +178,24 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
         
         rect = qrect(matrix(c(left, bottom, right, top), 2, byrow = TRUE))
         hits <- datalayer$locate(rect) + 1
-        
-        .groupsdata$.brushed <<- FALSE
-        .groupsdata$.brushed[hits] <<- TRUE
+
+        groupdata$.brushed <<- FALSE
+				if (length(hits) > 0) {
+				# link by label variable
+					idx <- which(groupdata$label %in% groupdata[hits,]$label)					
+	        groupdata[idx,]$.brushed <<- TRUE
+				}
     }
     
     setSelected <- function() {
-        #print('set selected')
-        # propagate highlighting to the data set and other plots
-        #browser()
-        #  brushed <- data$.brushed
-        #  brushed <- FALSE
-        
-        bdata <- subset(.groupsdata, .brushed == TRUE)
-        brushed <- group %in% bdata$ID
-        
-        if (any(data$.brushed != brushed))
-            data$.brushed <- brushed
-        
-        #  if (!is.null(labeldata)) setSelectedLabel()
-    }
+			bdata <- subset(groupdata, .brushed == TRUE)
+			brushed <- group %in% bdata$group
+
+#			.new.brushed[hits] = TRUE
+#			focused(data) <- TRUE
+			selected(data) = mode_selection(selected(data), brushed, mode = brush(data)$mode)			
+	  }
     
-    setSelectedLabel <- function() {
-        #print('set selected labeldata')
-        bdata <- subset(.groupsdata, .brushed == TRUE)
-        if (is.null(yid)) 
-            return()
-        if (is.null(xid)) 
-            return()
-        
-        brushed <- labeldata[, yid] %in% bdata[, xid]
-        
-        if (any(labeldata$.brushed != brushed))
-            labeldata$.brushed <- brushed
-    }
     
     # Key board events ---------------------------------------------------------
     
@@ -295,57 +211,40 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
     .queryPos <- NULL
     
     query_draw <- function(item, painter, exposed, ...) {
-        # Don't draw when brushing
-        if (.brush) 
-            return()
-        if (is.null(.queryPos)) 
-            return()
-        xpos <- .queryPos[1]
-        ypos <- .queryPos[2]
-        rect = qrect(matrix(c(xpos, ypos, xpos + 1e-04, ypos + 1e-04), 2, byrow = TRUE))
-        hits <- datalayer$locate(rect) + 1
-        
-        info <- .groupsdata[hits, ]
-        
-        # Nothing under mouse
-        if (is.null(info)) 
-            return()
-        if (nrow(info) == 0) 
-            return()
-        
-        lid <- deparse(arguments$label)
-        infostring = paste(lid, .groupsdata[hits, lid], collapse = "\n", sep = ": ")
-        if (.extended) {
-            idx <- setdiff(names(.groupsdata), c("order", ".color", ".brushed", as.character(arguments$longitude), 
-                as.character(arguments$latitude), as.character(arguments$group)))
-            infodata <- as.character(unlist(info[1, idx]))
-            infostring <- paste(idx, infodata, collapse = "\n", sep = ":")
-        }
-        
-        
-        brushcolor <- brush(data)$color
-        for (i in info$ID) {
-            xx <- x[group == i]
-            yy <- y[group == i]
-            qdrawPolygon(painter, xx, yy, stroke = brushcolor, fill = NULL)
-        }
-        
-        bgwidth = qstrWidth(painter, infostring)
-        bgheight = qstrHeight(painter, infostring)
-        
-        #    qdrawText(painter, infostring, xpos, ypos, valign='top', halign='left')
-        
-        
-        ## adjust drawing directions when close to the boundary
-        hflag = windowRanges[2] - xpos > bgwidth
-        vflag = ypos - windowRanges[3] > bgheight
-        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 
-            1, 1, 0.5))
-        
-        qstrokeColor(painter) = brush(data)$label.color
-        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
-            "right"), valign = ifelse(vflag, "top", "bottom"))
+			# Don't draw when brushing
+			if (.brush) return()
+			if (is.null(.queryPos)) return()
+
+			xpos <- .queryPos[1]
+			ypos <- .queryPos[2]
+			rect = qrect(matrix(c(xpos, ypos, xpos + 1e-04, ypos + 1e-04), 2, byrow = TRUE))
+			hits <- datalayer$locate(rect) + 1
+
+			infostring = paste(sprintf("\n %s: ", labelID),  groupdata[hits,]$label, collapse="\n")
+			
+			if (length(hits) > 0) {
+				brushcolor <- brush(data)$color
+				for (j in hits) {
+					i <- groupdata$group[j]
+					xx <- x[group == j]
+					yy <- y[group == j]
+					qdrawPolygon(painter, xx, yy, stroke = brushcolor)
+				}        
+				
+				bgwidth = qstrWidth(painter, infostring)
+				bgheight = qstrHeight(painter, infostring)
+
+				## adjust drawing directions when close to the boundary
+				hflag = windowRanges[2] - xpos > bgwidth
+				vflag = ypos - windowRanges[3] > bgheight
+				qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
+						ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1, 
+						1, 1, 0.95))
+				
+				qstrokeColor(painter) = brush(data)$label.color
+				qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
+						"right"), valign = ifelse(vflag, "top", "bottom"))
+			}
     }
     
     query_hover <- function(item, event, ...) {
@@ -368,82 +267,111 @@ qmap <- function(data, longitude, latitude, group, by.x = NULL, label = group,
     
     legend_draw <- function(item, painter, exposed, ...) {
         #print('legend_draw')
-        if (is.null(arguments$colour)) 
-            return()
-        
-        xpos = max(x)
+#browser()
+        if (is.null(attr(qstates,"col.scale"))) {
+					layout$setColumnPreferredWidth(1,0)
+					return()
+        }
+				layout$setColumnPreferredWidth(1,200)
+
+#				print("draw legend")        
+
+        scale <- attr(qstates,"col.scale")
+#        xpos = max(x)
+				xpos = min(x)
         ypos = (max(y) + min(y))/2
         #browser()
         qstrokeColor(painter) <- "black"
-        qdrawText(painter, deparse(arguments$colour), xpos, ypos, valign = "top", 
+        qdrawText(painter, scale$name, xpos, ypos, valign = "top", 
             halign = "left")
-        fontHeight <- qstrHeight(painter, deparse(arguments$colour))
+        fontHeight <- qstrHeight(painter, scale$name)
         
         # create a set of rectangles
         r0 <- 0.05 * c(0, 0, diff(range(x)), diff(range(y)))
-        ypos <- ypos - 3 * qstrHeight(painter, deparse(arguments$colour))
+        ypos <- ypos - 3 * qstrHeight(painter, scale$name)
         r0 <- r0 + c(xpos, ypos)
         
-        col <- eval(arguments$colour, .groupsdata)
         d <- options()$str$digits.d
         #   browser()
-        qcol <- round(quantile(col, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = T, 
-            names = FALSE), d)
+        qval <- seq(scale$limits[1],scale$limits[2],length=5)
+        qcol <- scale$map(qval)
+
         
         for (i in 1:length(qcol)) {
-            qdrawRect(painter, r0[1], r0[2], r0[3], r0[4], fill = scale_color(col, 
-                qcol[i]), stroke = "black")
-            qdrawText(painter, as.character(qcol[i]), xpos + 1.5 * (r0[3] - r0[1]), 
+            qdrawRect(painter, r0[1], r0[2], r0[3], r0[4], fill = qcol[i],
+            	stroke = "black")
+            qdrawText(painter, as.character(round(qval[i],d)), xpos + 1.5 * (r0[3] - r0[1]), 
                 ypos + fontHeight, valign = "top", halign = "left")
             ypos <- ypos - 1.5 * fontHeight
             r0[2] <- r0[2] - 1.5 * fontHeight
             r0[4] <- r0[4] - 1.5 * fontHeight
         }
-        
+
     }
     
     scene = qscene()
-    bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
-    datalayer = qlayer(scene, draw, limits = lims, clip = FALSE)
-    brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press, 
+    root_layer = qlayer(scene)
+    
+    bglayer = qlayer(root_layer, coords, limits = lims, clip = FALSE)
+    datalayer = qlayer(root_layer, draw, limits = lims, 
+focusInFun = function(...) {
+	print("focus map on")
+	focused(data) <- TRUE
+},
+focusOutFun = function(...) {
+	print("focus map off")
+	focused(data) <- FALSE
+},
+        clip = FALSE)
+    legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
+    brushing_layer = qlayer(root_layer, brushing_draw, mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
         keyPressFun = keyPressFun, limits = lims, clip = FALSE)
-    querylayer = qlayer(scene, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave, 
+    querylayer = qlayer(root_layer, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave, 
         limits = lims, clip = FALSE)
-    legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
     
-    
+  root_layer[0,1] <- legendlayer  
     
     ## update the brush layer in case of any modifications to the mutaframe
-    add_listener(data, function(i, j) {
-        switch(j, .brushed = {
-            print("addlistener: brushed")
-            .recalcbrushed <<- TRUE
-            qupdate(brushing_layer)
-        }, .color = {
-            qupdate(datalayer)
-            qupdate(brushing_layer)
-        })
+    d.idx = add_listener(data, function(i, j) {
+			switch(j, .brushed = {
+				recalcbrushed()
+				qupdate(brushing_layer)
+			}, .color = {
+				for (i in 1:nrow(groupdata)) {
+					cc <- data$.color[group == groupdata$group[i]]
+					groupdata$color[i] <<- cc[1]
+				}
+				# change legend accordingly
+				
+				qupdate(datalayer)
+				qupdate(brushing_layer)
+			}, {
+			print(sprintf("uncovered event in map: %s", j))
+			})
     })
-    if (!is.null(labeldata)) {
-        add_listener(labeldata, function(i, j) {
-            switch(j, .brushed = {
-                print("addlistener: labeldata brushed")
-                .recalclbrushed <<- TRUE
-                qupdate(brushing_layer)
-            }, .color = {
-                qupdate(datalayer)
-                qupdate(brushing_layer)
-            })
-        })
-    }
-    
+
     ## update the brush layer if brush attributes change
-    # commented out for now to get the code to run, but we do need the capability
-    # add_listener(.brush.attr, function(i, j) {
-    #   qupdate(brushing_layer)
-    # })
-    
-    qplotView(scene = scene)
+    brush_update = function() {
+        qupdate(brushing_layer)
+    }
+    b.idx = brush(data)$colorChanged$connect(brush_update)
+    qconnect(datalayer, 'destroyed', function(x) {
+        brush(data)$colorChanged$disconnect(b.idx)
+        remove_listener(data, d.idx)
+    })
+
+
+
+   layout = root_layer$gridLayout()
+# map area
+    layout$setRowPreferredHeight(0, 400)
+    layout$setColumnPreferredWidth(0, 400)
+# legend area
+    layout$setColumnPreferredWidth(1,100)
+    layout$setColumnStretchFactor(1, 0)
+#		layout$setColumnMinimumWidth(1,1)
+#		layout$setColumnMaximumWidth(1,200)
+		qplotView(scene = scene)
 }
  
