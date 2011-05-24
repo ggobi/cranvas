@@ -73,7 +73,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
     # find out about these first:
     
     
-    windowRanges <- make_window_ranges(dataRanges, "", "", ytickmarks = "", main = .df.title)
+    windowRanges <- make_window_ranges(dataRanges, "", "", ytickmarks = FALSE, main = .df.title)
     
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
     
