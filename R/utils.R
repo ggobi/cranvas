@@ -44,53 +44,6 @@ find_yid <- function(data, colName) {
     return(yid)
 }
 
-#get_axisPos <- function(var) {
-#    if (!(length(levels(var[1])) == 0)) {
-#        by <- 1/(length(levels(var[1])) + 1)
-#        majorPos <- seq.int(c(0:1), by = by)
-#    }
-#    else {
-#        if (is.numeric(var) || is.integer(var)) {
-#            majorPos <- pretty(var)
-#						browser()
-#        } else stop("data type not supported")
-#    }
-#
-#    return(majorPos)
-#}
-
-
-#get_axisPosX <- function(data, colName) {
-#    cols <- subset(data, select = colName)[, 1]
-#    if (!(length(levels(cols[1])) == 0)) {
-#        by <- 1/(length(levels(cols[1])) + 1)
-#        majorPos <- seq.int(c(0:1), by = by)
-#    }
-#    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer") {
-#        majorPos <- pretty(cols)
-#    }
-#    else {
-#        stop("data type not supported")
-#    }
-#
-#    return(majorPos)
-#}
-
-#get_axisPosY <- function(data, colName) {
-#    cols <- subset(data, select = colName)[, 1]
-#    if (!(length(levels(cols[1])) == 0)) {
-#        by <- 1/(length(levels(cols[1])) + 1)
-#        majorPos <- seq.int(c(0:1), by = by)
-#    }
-#    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer") {
-#        majorPos <- pretty(cols)
-#    }
-#    else {
-#        stop("data type not supported")
-#    }
-#
-#    return(majorPos)
-#}
 
 find_x_label <- function(df) {
     vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
