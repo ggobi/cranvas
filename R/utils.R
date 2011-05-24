@@ -9,42 +9,6 @@ extract.formula <- function(form) {
 
 }
 
-find_id <- function(var) {
-    if (!(length(levels(var)) == 0)) {
-        xid <- levels(var)
-    }
-    else {
-        if (is.numeric(var) || is.integer(var))
-            xid <- pretty(var)
-    }
-    return(xid)
-}
-
-find_xid <- function(data, colName) {
-    cols <- subset(data, select = colName)[, 1]
-    if (!(length(levels(cols[1])) == 0)) {
-        xid <- levels(cols[1])
-    }
-    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer") {
-        xid <- pretty(cols)
-    }
-    return(xid)
-}
-
-find_yid <- function(data, colName) {
-    cols <- subset(data, select = colName)[, 1]
-    if (!(length(levels(cols[1])) == 0)) {
-        yid <- levels(cols[1])
-    }
-    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer")
-        yid <- pretty(cols)
-    else stop("data type not supported")
-
-
-    return(yid)
-}
-
-
 find_x_label <- function(df) {
     vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
 
@@ -93,8 +57,8 @@ make_data_ranges <- function(dataColumn) {
 #' @keywords hplot
 #' @examples
 #'  make_window_ranges(c(0,1,2,3))
-make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks = NULL,
-    ytickmarks = NULL, main = NULL) {
+make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks = FALSE,
+    ytickmarks = FALSE, main = NULL) {
 
     # add more space for the Y label
     if (!is.null(ylab)) {
@@ -116,13 +80,13 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
     ymax = dataRanges[4] + 0.05 * diff(dataRanges[3:4])
 
     # little extra space necessary for xtickmarks
-    if (!is.null(xtickmarks)) {
+    if (xtickmarks) {
         #    ymin = dataRanges[3]-0.05*diff(dataRanges[3:4])
         ymin = ymin - 0.05 * diff(dataRanges[3:4])
     }
 
     # based on length of y tickmarks extra space
-    if (!is.null(ytickmarks)) {
+    if (ytickmarks) {
         #xwidth = max(str_length(as.character(ytickmarks)))
         # each character gives 0.75% extra space
         #    xmin = dataRanges[1] - 0.0075*xwidth*diff(dataRanges[1:2])
