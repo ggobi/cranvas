@@ -17,11 +17,16 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
   arguments <- as.list(match.call()[-1])
   df <- data.frame(data)
   x <- eval(arguments$time, df)
-  y <- eval(arguments$y, df)
+  y <- as.data.frame(matrix(eval(arguments$y, df),nrow=nrow(df)))
   tdf <- mutaframe(x=x,zg=rep(1,nrow(df)))
   ## tdf: tmp data frame; zg: zoom group.
   .levelX <- deparse(arguments$time)
   .levelY <- deparse(arguments$y)
+  if (ncol(y)>1) {
+    .levelY <- unlist(strsplit(substr(.levelY,3,nchar(.levelY)-1),','))
+    .levelY <- gsub(" ","", .levelY)
+    hitscol <- 1
+  }
 
   dataRanges <- c(make_data_ranges(range(tdf$x)),
                   make_data_ranges(range(y)))
@@ -30,7 +35,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
   ##  sy <- get_axisPos(tdf$x)
   ##  sx <- get_axisPos(y)
   sy <- .axis.loc(tdf$x)
-  sx <- .axis.loc(y)
+  sx <- .axis.loc(unlist(y))
 
   ## parameters for datalayer
   .radius <- size
@@ -63,15 +68,15 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
     }
   }
 
-#  brush_mouse_release <- function(layer, event){
-#    .bend <- as.numeric(event$pos())
-#    idx <- tdf$x>min(.bstart[1],.bend[1]) &
-#    y>min(.bstart[2],.bend[2]) &
-#    tdf$x<max(.bstart[1],.bend[1]) &
-#    y<max(.bstart[2],.bend[2])
-#    selected(data) <- idx
-#    if (length(idx)) qupdate(brush_layer)
-#  }
+  ##  brush_mouse_release <- function(layer, event){
+  ##    .bend <- as.numeric(event$pos())
+  ##    idx <- tdf$x>min(.bstart[1],.bend[1]) &
+  ##    y>min(.bstart[2],.bend[2]) &
+  ##    tdf$x<max(.bstart[1],.bend[1]) &
+  ##    y<max(.bstart[2],.bend[2])
+  ##    selected(data) <- idx
+  ##    if (length(idx)) qupdate(brush_layer)
+  ##  }
 
   brush_mouse_move <- function(layer, event) {
     pos <- event$pos()
@@ -89,10 +94,12 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
                          2, byrow = TRUE))
 
     hits <- layer$locate(rect) + 1
-    ## if (length(hits)<1)return()
-    ## print(hits)
+    if (length(hits)<1) return()
+    hitsrow <- round(hits %% nrow(data))
+    hitsrow[hitsrow==0] <- nrow(data)
+    hitscol <<- unique((hits-0.0000001)%/%nrow(data)+1)
 
-    .new.brushed[hits] <- TRUE
+    .new.brushed[hitsrow] <- TRUE
     data$.brushed <- mode_selection(data$.brushed, .new.brushed,
                                     mode = brush(data)$mode)
   }
@@ -193,12 +200,13 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
                          2, byrow = TRUE))
     main_circle_layer$invalidateIndex()
     hits <- main_circle_layer$locate(rect) + 1
-    ## print(hits)
 
     ## Nothing under mouse?
     if (length(hits) <1 ) return()
-    
-    info <- as.data.frame(data[as.integer(hits), c(.levelX, .levelY)])
+    hitsrow <- round(hits %% nrow(data))
+    hitsrow[hitsrow==0] <- nrow(data)
+    hitscol <- (hits-0.0000001)%/%nrow(data)+1
+    info <- as.data.frame(data[hitsrow, c(.levelX, .levelY[hitscol])])
     ## print(info)
     ## browser()
         
@@ -248,7 +256,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
   
   
 ############
-## layers ##----------
+  ## layers ##----------
 ############
   
   bg_draw <- function(item, painter, exposed) {
@@ -264,19 +272,23 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
   }
     
   main_circle_draw <- function(layer,painter){
-    color=gray(seq(0,0.6,length=max(tdf$zg)))
-    for (i in 1:max(tdf$zg)) {
-      qdrawCircle(painter,tdf[tdf$zg==i,1],
-                  y[tdf$zg==i],r=.radius,
-                  fill=color[i],stroke=color[i])
+    for (j in 1:ncol(y)) {
+      color=gray(seq(0,0.6,length=max(tdf$zg)))
+      for (i in 1:max(tdf$zg)) {
+        qdrawCircle(painter,tdf[tdf$zg==i,1],
+                    y[tdf$zg==i,j],r=.radius,
+                    fill=color[i],stroke=color[i])
+      }
     }
   }
 
   main_line_draw <- function(layer,painter){
-    color=gray(seq(0,0.6,length=max(tdf$zg)))
-    for (i in 1:max(tdf$zg)) {
-      qdrawLine(painter,tdf[tdf$zg==i,1],
-                y[tdf$zg==i],stroke=color[i])
+    for (j in 1:ncol(y)) {
+      color=gray(seq(0,0.6,length=max(tdf$zg)))
+      for (i in 1:max(tdf$zg)) {
+        qdrawLine(painter,tdf[tdf$zg==i,1],
+                  y[tdf$zg==i,j],stroke=color[i])
+      }
     }
   }
   
@@ -289,7 +301,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
                   .bpos[1], .bpos[2], stroke = brush(data)$color)
       }
             
-      hdata <- subset(data.frame(tdf$x,y), .brushed)
+      hdata <- subset(data.frame(tdf$x,y=data[,.levelY[hitscol]]), .brushed)
             
       if (nrow(hdata) > 0) {
         ## draw the brush rectangle
@@ -300,13 +312,20 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
         }
         ## (re)draw brushed data points
         brushx <- hdata$tdf.x
-        brushy <- hdata$y
+        brushy <- hdata[,-1]
         fill = brush(data)$color
         stroke = brush(data)$color
         radius <- .radius
-                
-        qdrawCircle(painter, x = brushx, y = brushy,
-                    r = radius, fill = fill, stroke = stroke)
+
+        if (is.vector(brushy)){
+          qdrawCircle(painter, x = brushx, y = brushy,
+                      r = radius, fill = fill, stroke = stroke)
+        } else {
+          for (i in 1:ncol(brushy)){
+            qdrawCircle(painter, x = brushx, y = brushy[,i],
+                        r = radius, fill = fill, stroke = stroke)
+          }
+        }
       }
     }
 
@@ -314,7 +333,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
 
   
 #####################
-## draw the canvas ##----------
+  ## draw the canvas ##----------
 #####################
 
   xWidth <- 800
