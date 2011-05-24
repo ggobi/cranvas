@@ -9,12 +9,14 @@
 #' @param alpha transparency level, 1=completely opaque
 #' @param xlim = c(min, max) user specifed data range for the x axis, by default range(x)
 #' @param ylim = c(min, max) user specifed data range for the y axis, by default range(y)
+#' @param xlab label on horizontal axis, default is name of x variable
+#' @param ylab label on vertical axis, default is name of y variable
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qscat-ex.R
 
 qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                      labeled = TRUE, size = 2, alpha = 1, xlim=NULL, 
-                     ylim=NULL, cache = T, ...)
+                     ylim=NULL, xlab=NULL, ylab=NULL, cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
     
@@ -35,39 +37,21 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     x <- eval(arguments$x, df)
     y <- eval(arguments$y, df)
 
-    .levelX <- deparse(arguments$x)
-    .levelY <- deparse(arguments$y)
 		if (is.null(xlim)) xlim <- range(x, na.rm=T)
 		if (is.null(ylim)) ylim <- range(y, na.rm=T)
 		
 
     ## parameters for dataRanges
-    xlab <- NULL
-    ylab <- NULL
+    if(is.null(xlab)) xlab <- deparse(arguments$x)
+    if(is.null(ylab)) ylab <- deparse(arguments$y)
 
-    ## labels
-    ylabels <- NULL
-		yid <- NA
-    if (labeled) yid <- find_id(y)
-
-    if (!is.na(yid[1])) {
-        ylabels <- TRUE
-    }
-
-    xlabels <- NULL
-    xid <- NA
-    if (labeled) xid <- find_id(x)
-
-    if (!is.na(xid[1])) {
-        xlabels <- TRUE
-    }
 
     ## parameters for all layers
 		dataRanges <- c(make_data_ranges(xlim), 
 									  make_data_ranges(ylim))
     windowRanges <- make_window_ranges(dataRanges, xlab, ylab,
-                                           ytickmarks = ylabels,
-                                           xtickmarks = xlabels, main = main)
+                                           ytickmarks = labeled,
+                                           xtickmarks = labeled, main = main)
 
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
 
@@ -99,34 +83,25 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     coords <- function(item, painter, exposed) {
 				sx <- .axis.loc(dataRanges[1:2])
 				sy <- .axis.loc(dataRanges[3:4])
+				ylabels <- rep("", length(sy))
+				xlabels <- rep("", length(sx))
 				
+				if (labeled) {
+					ylabels <- sy 
+					xlabels <- sx 
+				}
         # grey background with grid lines
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)
 
         # labels as appropriate
-        if (!is.na(xid[1])) {
-            #    print('x axis labels')
-            #    print(labels)
-            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = sx,
-                                        labelHoriPos = sx, name = xlab)
-        }
-        else {
-            draw_x_axes_with_labels_fun(painter, dataRanges,
-                                        axisLabel = rep("", length(sx)),
-                                        labelHoriPos = sx, name = xlab)
-        }
-        
-        if (!is.na(yid[1])) {
-            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = sy,
-                                        labelVertPos = sy, name = ylab)
-        }
-        else {
-            draw_y_axes_with_labels_fun(painter, dataRanges,
-                                        axisLabel = rep("", length(sy)),
-                                        labelVertPos = sy, name = ylab)
-        }
+				draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = xlabels,
+																		labelHoriPos = sx, name = xlab)
 
+        
+				draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = ylabels,
+																		labelVertPos = sy, name = ylab)
     }
+
 
     scatter.all <- function(item, painter, exposed) {
         fill <- data$.color
@@ -265,8 +240,6 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 
         xrange <- .radius/root$size$width() * diff(windowRanges[c(1, 2)])
         yrange <- .radius/root$size$height() * diff(windowRanges[c(3, 4)])
-        #  print(xrange)
-        #  print(yrange)
         rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
                                xpos + xrange, ypos + yrange),
                              2, byrow = TRUE))
@@ -278,7 +251,8 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         if (length(hits) == 0)
             return()
 
-        info <- as.data.frame(data[hits, c(.levelX, .levelY)])
+        info <- data.frame(x[hits], y[hits])
+        names(info) <- c(xlab, ylab)
         #browser()
 
         # Nothing under mouse
@@ -296,9 +270,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
             xymax <- unlist(lapply(info[, idx], max, na.rm = TRUE))
             infostring <- paste(idx, paste(xymin, xymax, sep = " - "),
                                 collapse = "\n", sep = ": ")
-            infostring <- paste(" xxhitsxx points\n", infostring)
-            infostring <- gsub("xxhitsxx", length(hits), infostring)
+            infostring <- paste(sprintf("%s points\n", length(hits)), infostring)
         }
+				infostring <- paste("\n", infostring)
         bgwidth <- qstrWidth(painter, infostring)
         bgheight <- qstrHeight(painter, infostring)
 
@@ -366,9 +340,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                          hoverLeaveFun = query_hover_leave, cache=cache)
     view <- qplotView(scene = scene)
 
-    title <- "Scatterplot of XXX and YYY"
-    title <- gsub("XXX", .levelX, title)
-    title <- gsub("YYY", .levelY, title)
+    title <- sprintf("Scatterplot of %s and %s", xlab, ylab)
     view$setWindowTitle(title)
     # view$setMaximumSize(plot1$size)
 
@@ -377,11 +349,12 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ######################
     #if (is.mutaframe(data)) {
     func <- function(i, j) {
-	switch(j, .brushed = qupdate(brushlayer),
-            .color = qupdate(datalayer), {
+    	switch(j, .brushed = qupdate(brushlayer),
+            .color = qupdate(datalayer), 
+            {	# any other event
                 datalayer$invalidateIndex()
                 qupdate(datalayer)
-		qupdate(brushlayer)
+								qupdate(brushlayer)
             })
     }
 
