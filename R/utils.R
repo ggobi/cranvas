@@ -212,3 +212,69 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
     x = range(x)
     x + c(-1, 1) * f * (x[2] - x[1])
 }
+
+##' Re-order the columns of a data frame based on MDS or ANOVA.
+##'
+##' For the MDS method, we use (1 - correlation matrix) as the
+##' distance matrix and re-order the columns according their distances
+##' between each other (i.e. 1-dimension representation of
+##' p-dimension); as a result, columns in a neighborhood indicate they
+##' are more similar to each other. For the ANOVA method, if there is
+##' a column named \code{.color}, it will be used as the x variable
+##' and we perform ANOVA on each numeric column vs this variable, then
+##' the columns are re-ordered by the P-values, so the colors can
+##' discriminate the first few columns most apart. Of course, when
+##' there is only a single color in the \code{.color} variable, the
+##' ANOVA method will not work and the original order will be
+##' returned. For the randomForest method, the variables will be
+##' ordered by the importance scores (mean descrease in accuracy) and
+##' the argument \code{x} will be used as the response variable.
+##' @param data a data frame (or similar data structures like mutaframes)
+##' @param type the method to re-order the variables (columns)
+##' @param vars the column names of the \code{data}
+##' @param numcol a logical vector indicating which columns are numeric
+##' @param x the x variable to be used in ANOVA and randomForest
+##' @return the column names (i.e. the argument \code{vars}) after
+##' being re-ordered; note non-numeric variables will always be put in
+##' the end and they will not go into the computation
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @examples
+##' data(tennis)
+##' reorder_var(tennis, type = 'MDS')
+##'
+##' reorder_var(iris, type = 'ANOVA', x = iris$Species)
+##' names(iris)  # original column names
+##' reorder_var(iris, type = 'randomForest', x = iris$Species)
+##'
+reorder_var = function(data, type = c('none', 'MDS', 'ANOVA', 'randomForest'),
+                       vars = names(data), numcol = sapply(data, is.numeric),
+                       x = data$.color) {
+    type = match.arg(type)
+    if (any(numcol)) {
+        num_data = data[, numcol, drop = FALSE]
+        switch(type, none = NULL, MDS = {
+            idx = order(cmdscale(1 - cor(num_data), k = 1))
+        }, ANOVA = {
+            if (!is.null(x) && length(unique(x)) > 1) {
+                xfactor = factor(x)
+                idx = order(apply(num_data, 2, function(y) {
+                    summary(aov(y ~ xfactor))[[1]][1, 5]
+                }))
+            } else {
+                idx = 1:ncol(num_data)
+            }
+        }, randomForest = {
+            if (!is.null(x) && length(unique(x)) > 1 && require('randomForest')) {
+                xfactor = factor(x)
+                imp = randomForest(num_data, xfactor, importance = TRUE)$importance
+                idx = order(-imp[, ncol(imp) - 1])
+            } else {
+                idx = 1:ncol(num_data)
+            }
+        })
+        if (type != 'none') {
+            return(c(vars[numcol][idx], vars[!numcol]))
+        }
+    }
+    vars
+}
