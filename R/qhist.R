@@ -204,8 +204,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         }
         
         # grey background with grid lines
-        horiPos <- make_pretty_axes(.dataranges[1:2], .dataranges[1], .dataranges[2])
-   	vertPos <- make_pretty_axes(.dataranges[3:4], .dataranges[3], .dataranges[4])
+        horiPos <- .axis.loc(.dataranges[1:2])
+        vertPos <- .axis.loc(.dataranges[3:4])
         #message("limits 3 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], horiPos, vertPos, "\n")
         
         draw_grid_with_positions_fun(painter, .dataranges, horiPos, vertPos)

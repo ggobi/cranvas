@@ -1,20 +1,3 @@
-#' pretty axes
-#' make 'pretty' axes and make sure that they are within the minimum and maximum
-#'
-#' @param dataRange data range that should be 'pretty'
-#' @param minimum minimum value of the 'pretty' range
-#' @param maximum maximum value of the 'pretty' range
-
-make_pretty_axes <- function(dataRange, minimum, maximum) {
-    prettyness <- pretty(dataRange)
-    prettyness <- prettyness[prettyness >= minimum]
-    prettyness <- prettyness[prettyness <= maximum]
-
-#    bprint(prettyness)
-    prettyness
-}
-
-
 qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
     limits, ...) {
     lims = if (side%%2)
