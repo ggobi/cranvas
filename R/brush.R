@@ -1,19 +1,18 @@
 ## template to generate a brush
-brushGen = setRefClass('BRUSH', fields = c(
-                                signalingField('style', 'list'), # style: color, size, linetype
-                                signalingField('color', 'character'), # color of brushed elements
-                                signalingField('color.gen', 'function'), # fun to generate color
-                                signalingField('size', 'numeric'), # size of brushed elements
-                                signalingField('size.gen', 'function'), # fun to generate size
-                                signalingField('mode', 'character'), # brush mode
-                                signalingField('identify', 'logical'), # whether to identify
-                                signalingField('label.gen', 'function'), # fun to return texts
-                                signalingField('label.color', 'character'), # col of texts
-                                signalingField('history.size', 'numeric'), # history to store
-                                signalingField('history.index', 'numeric'), # current index
-                                signalingField('history.list', 'list') # brush history
-                                ))
-
+brushGen = setRefClass('BRUSH',
+              fields = c(signalingField('style', 'list'), # style: color, size, linetype
+              signalingField('color', 'character'), # color of brushed elements
+              signalingField('color.gen', 'function'), # fun to generate color
+              signalingField('size', 'numeric'), # size of brushed elements
+              signalingField('size.gen', 'function'), # fun to generate size
+              signalingField('mode', 'character'), # brush mode
+              signalingField('identify', 'logical'), # whether to identify
+              signalingField('label.gen', 'function'), # fun to return texts
+              signalingField('label.color', 'character'), # col of texts
+              signalingField('history.size', 'numeric'), # history to store
+              signalingField('history.index', 'numeric'), # current index
+              signalingField('history.list', 'list') # brush history
+              ))
 
 
 ##' Set or query the brush attributes.
