@@ -15,15 +15,7 @@
 ##' @param center the function to calculate where to center all the
 ##' axes (e.g. center at the medians), or a numeric value, or
 ##' \code{NULL} (do not center)
-##' @param order for \code{order = 'MDS'}, reorder the variables by
-##' classical multidimensional scaling so that similar variables will
-##' be arranged nearer to each other (categorical variables will be
-##' put to the last); for \code{order = 'ANOVA'}, reorder the
-##' variables by the p-values associated with the ANOVA based on each
-##' variable versus the \code{data$.color} variable, so that the
-##' variable with largest between-group difference will be put in the
-##' first place, and so on; \code{order = 'none'} means keep the
-##' original order.
+##' @param order methods to reorder the variables; see \code{\link{reorder_var}}
 ##' @param horizontal logical: arrange variables in horizontal or
 ##' vertical direction
 ##' @param glyph draw complete segments for all observations or other
@@ -48,7 +40,7 @@
 ##' @export
 ##' @example cranvas/inst/examples/qparallel-ex.R
 qparallel = function(vars, data, scale = "range", na.action = na.impute,
-    center = NULL, order = c('none', 'MDS', 'ANOVA'), horizontal = TRUE,
+    center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
     main, lab.split = '[^[:alnum:]]', alpha=1, ...) {
@@ -149,29 +141,6 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         }
     }
 
-    data_calc_order = function() {
-        ## ordering variables by MDS or ANOVA
-        if (any(numcol)) {
-            num_data = plot_data[, numcol, drop = FALSE]
-            switch(order, none = NULL, MDS = {
-                idx = order(cmdscale(1 - cor(num_data), k = 1))
-            }, ANOVA = {
-                if (length(unique(data$.color)) > 1) {
-                    xfactor = factor(data$.color)
-                    idx = order(apply(num_data, 2, function(y) {
-                        summary(aov(y ~ xfactor))[[1]][1, 5]
-                    }))
-                } else {
-                    idx=1:ncol(num_data)
-                }
-            })
-            if (order != 'none') {
-                return(c(vars[numcol][idx], vars[!numcol]))
-            }
-        }
-        vars
-    }
-
     ## flip the variables
 
     ## final calculations for graphical primitives, e.g. segments, axis labels
@@ -257,7 +226,9 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     data_preprocess()
 
     ## order by MDS or ANOVA
-    data_reorder(data_calc_order())
+    if (order != 'none')
+        data_reorder(reorder_var(data = plot_data, type = order, vars = vars,
+                                 numcol = numcol, x = data$.color))
 
     ## brush range: horizontal and vertical
     .brange = c(xr, yr)/30

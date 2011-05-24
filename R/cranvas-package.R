@@ -4,7 +4,7 @@
 ##' @importFrom qtbase qrect qfont qsize qconnect
 ##' @import qtpaint
 ##' @import plumbr
-##' @exportPattern "^[^\\.]"
+##' @exportPattern ".*"
 ##' @name cranvas-package
 ##' @docType package
 NULL
@@ -27,10 +27,10 @@ NULL
 
 cranvas_debug = function(msg) {
     if (isTRUE(getOption("cranvas_debug"))) {
-        if (missing(msg)) 
+        if (missing(msg))
             msg = paste("calling", as.character(sys.call(1)[1]))
         message(msg)
         cat("##------ ", date(), " ------##", "\n\n")
         flush.console()
     }
-} 
+}

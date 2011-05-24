@@ -9,89 +9,6 @@ extract.formula <- function(form) {
 
 }
 
-find_id <- function(var) {
-    if (!(length(levels(var)) == 0)) {
-        xid <- levels(var)
-    }
-    else {
-        if (is.numeric(var) || is.integer(var))
-            xid <- pretty(var)
-    }
-    return(xid)
-}
-
-find_xid <- function(data, colName) {
-    cols <- subset(data, select = colName)[, 1]
-    if (!(length(levels(cols[1])) == 0)) {
-        xid <- levels(cols[1])
-    }
-    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer") {
-        xid <- pretty(cols)
-    }
-    return(xid)
-}
-
-find_yid <- function(data, colName) {
-    cols <- subset(data, select = colName)[, 1]
-    if (!(length(levels(cols[1])) == 0)) {
-        yid <- levels(cols[1])
-    }
-    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer")
-        yid <- pretty(cols)
-    else stop("data type not supported")
-
-
-    return(yid)
-}
-
-#get_axisPos <- function(var) {
-#    if (!(length(levels(var[1])) == 0)) {
-#        by <- 1/(length(levels(var[1])) + 1)
-#        majorPos <- seq.int(c(0:1), by = by)
-#    }
-#    else {
-#        if (is.numeric(var) || is.integer(var)) {
-#            majorPos <- pretty(var)
-#						browser()
-#        } else stop("data type not supported")
-#    }
-#
-#    return(majorPos)
-#}
-
-
-#get_axisPosX <- function(data, colName) {
-#    cols <- subset(data, select = colName)[, 1]
-#    if (!(length(levels(cols[1])) == 0)) {
-#        by <- 1/(length(levels(cols[1])) + 1)
-#        majorPos <- seq.int(c(0:1), by = by)
-#    }
-#    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer") {
-#        majorPos <- pretty(cols)
-#    }
-#    else {
-#        stop("data type not supported")
-#    }
-#
-#    return(majorPos)
-#}
-
-#get_axisPosY <- function(data, colName) {
-#    cols <- subset(data, select = colName)[, 1]
-#    if (!(length(levels(cols[1])) == 0)) {
-#        by <- 1/(length(levels(cols[1])) + 1)
-#        majorPos <- seq.int(c(0:1), by = by)
-#    }
-#    else if (class(cols[1]) == "numeric" || class(cols[1]) == "integer") {
-#        majorPos <- pretty(cols)
-#    }
-#    else {
-#        stop("data type not supported")
-#    }
-#
-#    return(majorPos)
-#}
-
 find_x_label <- function(df) {
     vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
 
@@ -140,8 +57,8 @@ make_data_ranges <- function(dataColumn) {
 #' @keywords hplot
 #' @examples
 #'  make_window_ranges(c(0,1,2,3))
-make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks = NULL,
-    ytickmarks = NULL, main = NULL) {
+make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks = FALSE,
+    ytickmarks = FALSE, main = NULL) {
 
     # add more space for the Y label
     if (!is.null(ylab)) {
@@ -163,13 +80,13 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
     ymax = dataRanges[4] + 0.05 * diff(dataRanges[3:4])
 
     # little extra space necessary for xtickmarks
-    if (!is.null(xtickmarks)) {
+    if (xtickmarks) {
         #    ymin = dataRanges[3]-0.05*diff(dataRanges[3:4])
         ymin = ymin - 0.05 * diff(dataRanges[3:4])
     }
 
     # based on length of y tickmarks extra space
-    if (!is.null(ytickmarks)) {
+    if (ytickmarks) {
         #xwidth = max(str_length(as.character(ytickmarks)))
         # each character gives 0.75% extra space
         #    xmin = dataRanges[1] - 0.0075*xwidth*diff(dataRanges[1:2])
@@ -212,4 +129,70 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
     }
     x = range(x)
     x + c(-1, 1) * f * (x[2] - x[1])
+}
+
+##' Re-order the columns of a data frame based on MDS or ANOVA.
+##'
+##' For the MDS method, we use (1 - correlation matrix) as the
+##' distance matrix and re-order the columns according their distances
+##' between each other (i.e. 1-dimension representation of
+##' p-dimension); as a result, columns in a neighborhood indicate they
+##' are more similar to each other. For the ANOVA method, if there is
+##' a column named \code{.color}, it will be used as the x variable
+##' and we perform ANOVA on each numeric column vs this variable, then
+##' the columns are re-ordered by the P-values, so the colors can
+##' discriminate the first few columns most apart. Of course, when
+##' there is only a single color in the \code{.color} variable, the
+##' ANOVA method will not work and the original order will be
+##' returned. For the randomForest method, the variables will be
+##' ordered by the importance scores (mean descrease in accuracy) and
+##' the argument \code{x} will be used as the response variable.
+##' @param data a data frame (or similar data structures like mutaframes)
+##' @param type the method to re-order the variables (columns)
+##' @param vars the column names of the \code{data}
+##' @param numcol a logical vector indicating which columns are numeric
+##' @param x the x variable to be used in ANOVA and randomForest
+##' @return the column names (i.e. the argument \code{vars}) after
+##' being re-ordered; note non-numeric variables will always be put in
+##' the end and they will not go into the computation
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @examples
+##' data(tennis)
+##' reorder_var(tennis, type = 'MDS')
+##'
+##' reorder_var(iris, type = 'ANOVA', x = iris$Species)
+##' names(iris)  # original column names
+##' reorder_var(iris, type = 'randomForest', x = iris$Species)
+##'
+reorder_var = function(data, type = c('none', 'MDS', 'ANOVA', 'randomForest'),
+                       vars = names(data), numcol = sapply(data, is.numeric),
+                       x = data$.color) {
+    type = match.arg(type)
+    if (any(numcol)) {
+        num_data = data[, numcol, drop = FALSE]
+        switch(type, none = NULL, MDS = {
+            idx = order(cmdscale(1 - cor(num_data), k = 1))
+        }, ANOVA = {
+            if (!is.null(x) && length(unique(x)) > 1) {
+                xfactor = factor(x)
+                idx = order(apply(num_data, 2, function(y) {
+                    summary(aov(y ~ xfactor))[[1]][1, 5]
+                }))
+            } else {
+                idx = 1:ncol(num_data)
+            }
+        }, randomForest = {
+            if (!is.null(x) && length(unique(x)) > 1 && require('randomForest')) {
+                xfactor = factor(x)
+                imp = randomForest(num_data, xfactor, importance = TRUE)$importance
+                idx = order(-imp[, ncol(imp) - 1])
+            } else {
+                idx = 1:ncol(num_data)
+            }
+        })
+        if (type != 'none') {
+            return(c(vars[numcol][idx], vars[!numcol]))
+        }
+    }
+    vars
 }

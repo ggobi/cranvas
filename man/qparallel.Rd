@@ -2,10 +2,11 @@
 \alias{qparallel}
 \title{Parallel coordinates plot}
 \usage{qparallel(vars, data, scale = "range", na.action = na.impute, 
-    center, order = c("none", "MDS", "ANOVA"), horizontal = TRUE, 
-    glyph = c("auto", "line", "tick", "circle", "square", 
-        "triangle"), boxplot = FALSE, boxwex, jitter, amount, 
-    main, lab.split = "[^[:alnum:]]", alpha = 1, ...)
+    center, order = c("none", "MDS", "ANOVA", "randomForest"), 
+    horizontal = TRUE, glyph = c("auto", "line", "tick", 
+        "circle", "square", "triangle"), boxplot = FALSE, 
+    boxwex, jitter, amount, main, lab.split = "[^[:alnum:]]", 
+    alpha = 1, ...)
 
 }
 
@@ -30,15 +31,7 @@ your own function (see examples.R)}
 \item{center}{the function to calculate where to center all the
 axes (e.g. center at the medians), or a numeric value, or
 \code{NULL} (do not center)}
-\item{order}{for \code{order = 'MDS'}, reorder the variables by
-classical multidimensional scaling so that similar variables will
-be arranged nearer to each other (categorical variables will be
-put to the last); for \code{order = 'ANOVA'}, reorder the
-variables by the p-values associated with the ANOVA based on each
-variable versus the \code{data$.color} variable, so that the
-variable with largest between-group difference will be put in the
-first place, and so on; \code{order = 'none'} means keep the
-original order.}
+\item{order}{methods to reorder the variables; see \code{\link{reorder_var}}}
 \item{horizontal}{logical: arrange variables in horizontal or
 vertical direction}
 \item{glyph}{draw complete segments for all observations or other
