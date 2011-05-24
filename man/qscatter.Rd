@@ -2,7 +2,8 @@
 \alias{qscatter}
 \title{Draw a scatterplot..}
 \usage{qscatter(data, x, y, aspect.ratio, main, labeled = TRUE, 
-    size = 2, alpha = 1, xlim, ylim, cache = T, ...)
+    size = 2, alpha = 1, xlim, ylim, xlab, ylab, cache = T, 
+    ...)
 
 }
 
@@ -16,6 +17,8 @@
 \item{alpha}{transparency level, 1=completely opaque}
 \item{xlim}{= c(min, max) user specifed data range for the x axis, by default range(x)}
 \item{ylim}{= c(min, max) user specifed data range for the y axis, by default range(y)}
+\item{xlab}{label on horizontal axis, default is name of x variable}
+\item{ylab}{label on vertical axis, default is name of y variable}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 }
 \examples{require(cranvas)

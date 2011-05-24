@@ -1,24 +1,41 @@
-qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
-  
+#' Draw a time plot
+#'
+#' @param time The variable indicating time, which is displayed on the horizontal axis
+#' @param y The variable displayed on the vertical axis
+#' @param data Mutaframe data to use
+#' @param size Point size, default to be 2
+#' @param alpha Transparency level, 1=completely opaque, default to be 1
+#' @param aspect.ratio Ratio between width and height of the plot
+#' @example cranvas/inst/examples/qtime-ex.R
+
+qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){  
+
 #####################
-## data processing ##----------
+  ## data processing ##----------
 #####################
   
   arguments <- as.list(match.call()[-1])
   df <- data.frame(data)
   x <- eval(arguments$time, df)
-  y <- eval(arguments$y, df)
-  tdf <- mutaframe(x=x,zg=rep(1,nrow(df))) # tdf: tmp data frame; zg: zoom group.
+  y <- as.data.frame(matrix(eval(arguments$y, df),nrow=nrow(df)))
+  tdf <- mutaframe(x=x,zg=rep(1,nrow(df)))
+  ## tdf: tmp data frame; zg: zoom group.
   .levelX <- deparse(arguments$time)
   .levelY <- deparse(arguments$y)
+  if (ncol(y)>1) {
+    .levelY <- unlist(strsplit(substr(.levelY,3,nchar(.levelY)-1),','))
+    .levelY <- gsub(" ","", .levelY)
+    hitscol <- 1
+  }
 
-  dataRanges <- c(range(tdf$x), range(y))
+  dataRanges <- c(make_data_ranges(range(tdf$x)),
+                  make_data_ranges(range(y)))
   windowRanges <- dataRanges
   lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-#  sy <- get_axisPos(tdf$x)
-#  sx <- get_axisPos(y)
+  ##  sy <- get_axisPos(tdf$x)
+  ##  sx <- get_axisPos(y)
   sy <- .axis.loc(tdf$x)
-  sx <- .axis.loc(y)
+  sx <- .axis.loc(unlist(y))
 
   ## parameters for datalayer
   .radius <- size
@@ -36,10 +53,9 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   .bmove <- TRUE
   ## brush range: horizontal and vertical
   .brange <- c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
-
   
 ####################
-## event handlers ##----------
+  ## event handlers ##----------
 ####################
   
   brush_mouse_press <- function(layer, event) {
@@ -52,15 +68,15 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
     }
   }
 
-  brush_mouse_release <- function(layer, event){
-    .bend <- as.numeric(event$pos())
-    idx <- tdf$x>min(.bstart[1],.bend[1]) &
-    y>min(.bstart[2],.bend[2]) &
-    tdf$x<max(.bstart[1],.bend[1]) &
-    y<max(.bstart[2],.bend[2])
-    selected(data) <- idx
-    if (length(idx)) qupdate(brush_layer)
-  }
+  ##  brush_mouse_release <- function(layer, event){
+  ##    .bend <- as.numeric(event$pos())
+  ##    idx <- tdf$x>min(.bstart[1],.bend[1]) &
+  ##    y>min(.bstart[2],.bend[2]) &
+  ##    tdf$x<max(.bstart[1],.bend[1]) &
+  ##    y<max(.bstart[2],.bend[2])
+  ##    selected(data) <- idx
+  ##    if (length(idx)) qupdate(brush_layer)
+  ##  }
 
   brush_mouse_move <- function(layer, event) {
     pos <- event$pos()
@@ -74,14 +90,16 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
     yrange <- .radius/root_layer$size$height() * diff(windowRanges[c(3, 4)])
 
     rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
-                           .bpos + .brange + c(xrange, yrange)),
+                           .bpos + c(xrange, yrange)),
                          2, byrow = TRUE))
 
-    hits <- layer$locate(rect)[-1] + 1
-    if (length(hits)<=1)return()
-    print(hits)
-        
-    .new.brushed[hits] <- TRUE
+    hits <- layer$locate(rect) + 1
+    if (length(hits)<1) return()
+    hitsrow <- round(hits %% nrow(data))
+    hitsrow[hitsrow==0] <- nrow(data)
+    hitscol <<- unique((hits-0.0000001)%/%nrow(data)+1)
+
+    .new.brushed[hitsrow] <- TRUE
     data$.brushed <- mode_selection(data$.brushed, .new.brushed,
                                     mode = brush(data)$mode)
   }
@@ -89,8 +107,8 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   key_press <- function(layer, event){
     crt_range <- max(tdf$x)-min(tdf$x)+1
 
-    if (event$key()==Qt$Qt$Key_Plus){
-      ## plus
+    if (event$key()==Qt$Qt$Key_Right){
+      ## arrow right
       zoombound=min(round(0.96*crt_range),crt_range-1)
       if (zoombound<3)zoombound <- 3
       tdf$x <- x%%zoombound
@@ -99,18 +117,22 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
         tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
         tdf$x[tdf$x==0] <- zoombound
       }
-      dataRanges <<- c(range(tdf$x), range(y))
+      dataRanges <<- c(make_data_ranges(range(tdf$x)),
+                       make_data_ranges(range(y)))
       windowRanges <<- dataRanges
       sy <<- .axis.loc(tdf$x)
       sx <<- .axis.loc(dataRanges[3:4])
       lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       qupdate(bg_layer)
-      main_layer$setLimits(lims)
+      bg_layer$setLimits(lims)
+      main_circle_layer$setLimits(lims)
+      main_line_layer$setLimits(lims)
       brush_layer$setLimits(lims)
+      query_layer$setLimits(lims)
     }
 
-    if (event$key()==Qt$Qt$Key_Minus){
-      ## minus
+    if (event$key()==Qt$Qt$Key_Left){
+      ## arrow left
       zoombound=max(round(crt_range*25/24),crt_range+1)
       if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
       tdf$x <- x%%zoombound
@@ -119,14 +141,18 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
         tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
         tdf$x[tdf$x==0] <- zoombound
       }
-      dataRanges <<- c(range(tdf$x), range(y))
+      dataRanges <<- c(make_data_ranges(range(tdf$x)),
+                       make_data_ranges(range(y)))
       windowRanges <<- dataRanges
       sy <<- .axis.loc(tdf$x)
       sx <<- .axis.loc(dataRanges[3:4])
       lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       qupdate(bg_layer)
-      main_layer$setLimits(lims)
+      bg_layer$setLimits(lims)
+      main_circle_layer$setLimits(lims)
+      main_line_layer$setLimits(lims)
       brush_layer$setLimits(lims)
+      query_layer$setLimits(lims)
     }
 
     if (event$key() == Qt$Qt$Key_Up) {
@@ -139,18 +165,21 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
       .radius <<- .radius - 1
     }
 
-    if (event$key() == Qt$Qt$Key_Right & .alpha < 1) {
-      ## arrow right
+    if (event$key() == Qt$Qt$Key_Plus & .alpha < 1) {
+      ## plus
       .alpha <<- 1.1 * .alpha
-      main_layer$setOpacity(.alpha)
+      main_circle_layer$setOpacity(.alpha)
+      main_line_layer$setOpacity(.alpha)
     }
 
-    if (event$key() == Qt$Qt$Key_Left & .alpha > 1/nrow(data)) {
-      ## arrow left
+    if (event$key() == Qt$Qt$Key_Minus & .alpha > 1/nrow(data)) {
+      ## minus
       .alpha <<- 0.9 * .alpha
-      main_layer$setOpacity(.alpha)
+      main_circle_layer$setOpacity(.alpha)
+      main_line_layer$setOpacity(.alpha)
     }
-    qupdate(main_layer)
+    qupdate(main_circle_layer)
+    qupdate(main_line_layer)
     ## qupdate(xaxis)
   }
 
@@ -165,22 +194,25 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
         
     xrange <- .radius/root_layer$size$width() * diff(windowRanges[c(1, 2)])
     yrange <- .radius/root_layer$size$height() * diff(windowRanges[c(3, 4)])
-    
+
     rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
                            xpos + xrange, ypos + yrange),
                          2, byrow = TRUE))
-    hits <- main_layer$locate(rect) + 1
+    main_circle_layer$invalidateIndex()
+    hits <- main_circle_layer$locate(rect) + 1
 
     ## Nothing under mouse?
-    if (length(hits) <=1 ) return()
-    
-    info <- as.data.frame(data[as.integer(hits[2]), c(.levelX, .levelY)])
+    if (length(hits) <1 ) return()
+    hitsrow <- round(hits %% nrow(data))
+    hitsrow[hitsrow==0] <- nrow(data)
+    hitscol <- (hits-0.0000001)%/%nrow(data)+1
+    info <- as.data.frame(data[hitsrow, c(.levelX, .levelY[hitscol])])
     ## print(info)
     ## browser()
         
     ## Work out label text
     idx <- names(info)
-    if (length(hits) == 2) {
+    if (length(hits) == 1) {
       infodata <- as.character(unlist(info[, idx]))
       infostring <- paste(idx, infodata, collapse = "\n", sep = ": ")
     }
@@ -224,7 +256,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   
   
 ############
-## layers ##----------
+  ## layers ##----------
 ############
   
   bg_draw <- function(item, painter, exposed) {
@@ -232,32 +264,35 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
 
     draw_x_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sy, labelHoriPos = sy,
-                                name = NULL)
+                                name = .levelX)
 
     draw_y_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sx, labelVertPos = sx,
-                                name = NULL)   
+                                name = .levelY)   
   }
     
-  main_draw <- function(layer,painter){
-    color=gray(seq(0,0.6,length=max(tdf$zg)))
-    for (i in 1:max(tdf$zg)) {
-      qdrawCircle(painter,tdf[tdf$zg==i,1],
-                  y[tdf$zg==i],r=.radius,
-                  fill=color[i],stroke=color[i])
-      qdrawLine(painter,tdf[tdf$zg==i,1],
-                y[tdf$zg==i],stroke=color[i])
+  main_circle_draw <- function(layer,painter){
+    for (j in 1:ncol(y)) {
+      color=gray(seq(0,0.6,length=max(tdf$zg)))
+      for (i in 1:max(tdf$zg)) {
+        qdrawCircle(painter,tdf[tdf$zg==i,1],
+                    y[tdf$zg==i,j],r=.radius,
+                    fill=color[i],stroke=color[i])
+      }
+    }
+  }
+
+  main_line_draw <- function(layer,painter){
+    for (j in 1:ncol(y)) {
+      color=gray(seq(0,0.6,length=max(tdf$zg)))
+      for (i in 1:max(tdf$zg)) {
+        qdrawLine(painter,tdf[tdf$zg==i,1],
+                  y[tdf$zg==i,j],stroke=color[i])
+      }
     }
   }
   
   brush_draw <- function(layer, painter) {
-    ## idx <- selected(data)
-    ## if (any(idx)){
-    ##   txt <- paste("Point ",rownames(df)[idx],"\nx: ",
-    ##                x[idx],"\nValue: ",y[idx],
-    ##                sep="")
-    ##   qdrawText(painter,txt,tdf[idx,1],y[idx])
-    ## }
     .brushed = data$.brushed
     if (.brush) {
       if (!any(is.na(.bpos))) {
@@ -266,8 +301,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
                   .bpos[1], .bpos[2], stroke = brush(data)$color)
       }
             
-      hdata <- subset(data.frame(tdf$x,y), .brushed)
-      #print(hdata)
+      hdata <- subset(data.frame(tdf$x,y=data[,.levelY[hitscol]]), .brushed)
             
       if (nrow(hdata) > 0) {
         ## draw the brush rectangle
@@ -277,14 +311,21 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
                     .bpos[1], .bpos[2], stroke = brush(data)$color)
         }
         ## (re)draw brushed data points
-        brushx <- hdata$x
-        brushy <- hdata$y
+        brushx <- hdata$tdf.x
+        brushy <- hdata[,-1]
         fill = brush(data)$color
         stroke = brush(data)$color
         radius <- .radius
-                
-        qdrawCircle(painter, x = brushx, y = brushy,
-                    r = radius, fill = fill, stroke = stroke)
+
+        if (is.vector(brushy)){
+          qdrawCircle(painter, x = brushx, y = brushy,
+                      r = radius, fill = fill, stroke = stroke)
+        } else {
+          for (i in 1:ncol(brushy)){
+            qdrawCircle(painter, x = brushx, y = brushy[,i],
+                        r = radius, fill = fill, stroke = stroke)
+          }
+        }
       }
     }
 
@@ -292,7 +333,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
 
   
 #####################
-## draw the canvas ##----------
+  ## draw the canvas ##----------
 #####################
 
   xWidth <- 800
@@ -302,23 +343,18 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   scene <- qscene()
   root_layer <- qlayer(scene)
   root_layer$setGeometry(qrect(0, 0, xWidth, yWidth))
-  ## xaxis <- qaxis(root_layer, data = tdf$x, side = 1,
-  ##                limits=range(tdf$x),
-  ##                row = 2, col = 1)
-  ## yaxis <- qaxis(root_layer, data = y, side = 2,
-  ##                limits=range(y),
-  ##                row = 1, col = 0)
   bg_layer <- qlayer(parent = root_layer, paintFun = bg_draw,
                      limits=lims, row = 1, col = 1)
-  main_layer <- qlayer(root_layer,paintFun=main_draw,
-                       mousePressFun=brush_mouse_press,
-                       mouseReleaseFun=brush_mouse_release,
-                       mouseMove = brush_mouse_move, 
-                       keyPressFun=key_press,
-                       limits=lims, row = 1, col = 1)
+  main_circle_layer <- qlayer(root_layer,paintFun=main_circle_draw,
+                              mousePressFun=brush_mouse_press,
+                              mouseReleaseFun=brush_mouse_move,
+                              mouseMove = brush_mouse_move, 
+                              keyPressFun=key_press,
+                              limits=lims, row = 1, col = 1)
+  main_line_layer <- qlayer(root_layer,paintFun=main_line_draw,
+                            limits=lims, row = 1, col = 1)
   brush_layer <- qlayer(root_layer, brush_draw,
-                        limits=qrect(range(tdf$x),
-                          range(y)), row = 1, col = 1)
+                        limits=lims, row = 1, col = 1)
   query_layer <- qlayer(root_layer, query_draw,
                         limits = lims, hoverMoveFun = query_hover,
                         hoverLeaveFun = query_hover_leave,
@@ -326,8 +362,8 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
 
   layout = root_layer$gridLayout()
   layout$setRowPreferredHeight(0, 10)
-  layout$setColumnPreferredWidth(0, 70)
-  layout$setRowPreferredHeight(2, 30)
+  layout$setColumnPreferredWidth(0, 130)
+  layout$setRowPreferredHeight(2, 70)
   layout$setColumnPreferredWidth(2, 10)
   layout$setColumnMaximumWidth(2, 15)
   layout$setRowStretchFactor(0, 0)
@@ -337,3 +373,4 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL){
   view <- qplotView(scene=scene)
   view
 }
+
