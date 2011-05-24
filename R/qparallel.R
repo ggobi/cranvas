@@ -438,6 +438,18 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                 b$history.list[1:(csize - hsize)] = NULL
             }
             b$history.index = length(b$history.list)
+            ## permanent brushing: store brushed objects
+            if (b$permanent) {
+                csize = length(b$permanent.list) + 1
+                if (length(.cur.sel) > 0) {
+                    b$permanent.list[[csize]] = .cur.sel
+                    b$permanent.color[csize] = b$color
+                }
+                if (csize > hsize) {
+                    b$permanent.list[1:(csize - hsize)] = NULL
+                    b$permanent.color = b$permanent.color[-(1:(csize - hsize))]
+                }
+            }
         }
         cranvas_debug()
     }
@@ -457,6 +469,17 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
             qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                       .bpos[1] + .brange[1], .bpos[2] + .brange[2],
                       stroke = b$style$color)
+        }
+        if (b$permanent && length(b$permanent.list)) {
+            qlineWidth(painter) = b$size
+            for (i in seq_along(b$permanent.list)) {
+                idx = b$permanent.list[[i]]
+                qstrokeColor(painter) = b$permanent.color[i]
+                tmpx = mat2seg(x, idx)
+                tmpy = mat2seg(y, idx)
+                nn = length(tmpx)
+                qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
+            }
         }
         .brushed = selected(data)
         if (sum(.brushed, na.rm = TRUE) >= 1) {

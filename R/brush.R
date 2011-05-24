@@ -11,7 +11,10 @@ brushGen = setRefClass('BRUSH',
               signalingField('label.color', 'character'), # col of texts
               signalingField('history.size', 'numeric'), # history to store
               signalingField('history.index', 'numeric'), # current index
-              signalingField('history.list', 'list') # brush history
+              signalingField('history.list', 'list'), # brush history
+              signalingField('permanent', 'logical'), # permanent or transient brushing
+              signalingField('permanent.color', 'character'), # permanent colors
+              signalingField('permanent.list', 'list') # permanent brushing history
               ))
 
 
