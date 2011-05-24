@@ -63,10 +63,9 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
 
 .axis.loc = function(data) {
     if (is.factor(data)) {
-        at = as.integer(data)
-    } else {
-        at = pretty(data)
+        return(as.integer(data))
     }
+    at = pretty(data)
     at[at <= max(data) & at >= min(data)]
 }
 
