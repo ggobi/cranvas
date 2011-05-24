@@ -443,6 +443,12 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         cranvas_debug()
     }
 
+    ## convert a matrix to coordinates of segments
+    mat2seg = function(x, idx = 1:nrow(x)) {
+        x = x[idx, , drop = FALSE]
+        as.vector(t.default(cbind(x, NA)))
+    }
+
     ## draw the segments under the brush with another appearance
     brush_draw = function(layer, painter) {
         cranvas_debug()
@@ -457,10 +463,8 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         if (sum(.brushed, na.rm = TRUE) >= 1) {
             qlineWidth(painter) = b$size
             qstrokeColor(painter) = b$color
-            x = x[.brushed, , drop = FALSE]
-            y = y[.brushed, , drop = FALSE]
-            tmpx = as.vector(t.default(cbind(x, NA)))
-            tmpy = as.vector(t.default(cbind(y, NA)))
+            tmpx = mat2seg(x, .brushed)
+            tmpy = mat2seg(y, .brushed)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
 
