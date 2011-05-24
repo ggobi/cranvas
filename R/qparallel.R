@@ -434,7 +434,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
             .cur.sel = which(selected(data))
             if (length(.cur.sel) > 0)
                 b$history.list[[csize]] = .cur.sel
-            ## remove the first few columns due to the hisotory size limit
+            ## remove the first few columns due to the history size limit
             if (csize > (hsize <- b$history.size)) {
                 b$history.list[1:(csize - hsize)] = NULL
             }
