@@ -57,7 +57,7 @@ break them, they will be squeezed together along the axes); set
 ## hints for interaction:
 ## drag with the right button to resize the brush; left
 #   button to move the
-#   brush
+# brush
 
 ## options(cranvas_debug = TRUE)
 
@@ -80,7 +80,7 @@ record_selector(qnrc, vars = "Institution.Name")
 
 ## How to find out ISU by intersection and negation?
 #   public, midwest, large
-#   program
+# program
 
 ## show data labels (identifying)
 brush(qnrc, "identify") = TRUE
@@ -116,7 +116,7 @@ qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings",
 
 
 ## old iris...
-##  create a mutaframe containing row attributes first
+## create a mutaframe containing row attributes first
 iris.col = brewer.pal(3, "Set1")[as.integer(iris$Species)]
 qiris = qdata(iris, brushed = FALSE, color = iris.col)
 
@@ -254,7 +254,7 @@ qparallel(data = qdiamonds, vars = 1:7, glyph = "line",
 
 ## for large data, glyphs (short ticks) are
 #   automatically used instead of
-#   segments
+# segments
 
 ## residential data: 18221x8
 if (!require("YaleToolkit")) install.packages("YaleToolkit")
