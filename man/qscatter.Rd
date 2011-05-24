@@ -2,7 +2,7 @@
 \alias{qscatter}
 \title{Draw a scatterplot..}
 \usage{qscatter(data, x, y, aspect.ratio, main, labeled = TRUE, 
-    size = 2, alpha = 1, datalims, cache = T, ...)
+    size = 2, alpha = 1, xlim, ylim, cache = T, ...)
 
 }
 
@@ -14,7 +14,8 @@
 \item{labeled}{whether axes should be labeled}
 \item{size}{point size}
 \item{alpha}{transparency level, 1=completely opaque}
-\item{datalims}{user specifed data ranges xmin, xmax, ymin, ymax}
+\item{xlim}{= c(min, max) user specifed data range for the x axis, by default range(x)}
+\item{ylim}{= c(min, max) user specifed data range for the y axis, by default range(y)}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 }
 \examples{require(cranvas)
