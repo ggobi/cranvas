@@ -41,7 +41,7 @@ idx = b$colorChanged$connect(function() {
 b$color = "brown"
 b$color = "gold"
 
-# disconnect the event
+#  disconnect the event
 b$colorChanged$disconnect(idx)}
 
 
