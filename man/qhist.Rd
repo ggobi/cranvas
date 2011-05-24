@@ -4,7 +4,7 @@
 \usage{qhist(x, data, splitByCol = -1, horizontal = FALSE, 
     position = "none", color, fill, stroke, title, name, 
     ash = FALSE, start = min(data[[x]]), nbins = round(sqrt(nrow(data)), 
-        0), binwidth, bin_algo_str, xlims, ...)
+        0), binwidth, bin_algo_str, xlims, ylims, ...)
 
 }
 
@@ -26,7 +26,23 @@ require(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 print(qhist("First.Serve.Pct", qtennis, horizontal = FALSE))
-print(qhist("Serve.Speed", qtennis, horizontal = FALSE))}
+print(qhist("Serve.Speed", qtennis, horizontal = FALSE))
+
+print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+    horizontal = FALSE))
+# Position argument doesn't seem to work.
+print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+    horizontal = FALSE, postion = "dodge"))
+print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+    horizontal = FALSE, postion = "relative"))
+print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+    horizontal = FALSE, postion = "identity"))}
+
+
+
+
+
+
 
 
 
