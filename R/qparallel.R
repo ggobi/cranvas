@@ -226,9 +226,8 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     data_preprocess()
 
     ## order by MDS or ANOVA
-    if (order != 'none')
-        data_reorder(reorder_var(data = plot_data, type = order, vars = vars,
-                                 numcol = numcol, x = data$.color))
+    data_reorder(reorder_var(data = plot_data, type = order, vars = vars,
+                             numcol = numcol, x = data$.color))
 
     ## brush range: horizontal and vertical
     .brange = c(xr, yr)/30
