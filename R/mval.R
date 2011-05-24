@@ -97,7 +97,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     if (missing(main)) {
         main <- paste("Missing Value Plot of", dataname)
     }
-    windowRanges <- make_window_ranges(dataRanges, "", "", ytickmarks = "", main = main)
+    windowRanges <- make_window_ranges(dataRanges, "", "", ytickmarks = FALSE, main = main)
     
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
     
