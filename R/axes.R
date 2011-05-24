@@ -64,8 +64,7 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
 .axis.loc = function(data) {
     if (is.factor(data)) {
         at = as.integer(data)
-    }
-    else {
+    } else {
         at = pretty(data)
     }
     at[at <= max(data) & at >= min(data)]
@@ -116,7 +115,7 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
             each = 3), stroke = "white")
         if (dataRanges[4] > (vertPos[nvlines] + vdiff/2))
             minor.vertPos <- vertPos + vdiff/2
-        else 
+        else
             minor.vertPos <- vertPos[-nvlines] + vdiff/2
     }
 
