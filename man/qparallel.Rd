@@ -52,12 +52,8 @@ this can be useful when the axis labels are too long (if we do not
 break them, they will be squeezed together along the axes); set
 \code{lab.split = NULL} to keep the labels untouched}
 }
-\examples{## examples of qparallel()
-
-## hints for interaction:
-## drag with the right button to resize the brush; left
-#   button to move the
-#   brush
+\examples{## interaction: drag with the right button to resize
+#   the brush; left button to move it
 
 ## options(cranvas_debug = TRUE)
 
@@ -72,15 +68,23 @@ rownames(qnrc) = paste(nrcstat$Institution.Name,
 #   1 at the moment
 
 ## Overview: type, rankings
-qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
-    glyph = "tick", horizontal = FALSE, boxplot = TRUE)
+print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
+    glyph = "tick", horizontal = FALSE, boxplot = TRUE))
+
 qnrc$.color = "red"
+
+brush(qnrc, "permanent") = TRUE  # begin permanent brushing
+brush(qnrc, "color") = "brown"
+## select other objects now
+brush(qnrc, "color") = "green"
+## again, select other objects
+brush(qnrc, "color") = "yellow"
+brush(qnrc, "permanent") = FALSE  # transient brushing
 
 record_selector(qnrc, vars = "Institution.Name")
 
 ## How to find out ISU by intersection and negation?
-#   public, midwest, large
-#   program
+#   public, midwest, large program
 
 ## show data labels (identifying)
 brush(qnrc, "identify") = TRUE
@@ -292,6 +296,9 @@ library(animation)
 data(pollen)
 qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
 qparallel(data = qpollen)}
+
+
+
 
 
 

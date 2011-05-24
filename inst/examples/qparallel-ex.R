@@ -1,8 +1,4 @@
-## examples of qparallel()
-
-## hints for interaction:
-## drag with the right button to resize the brush; left button to move the
-#   brush
+## interaction: drag with the right button to resize the brush; left button to move it
 
 ## options(cranvas_debug = TRUE)
 
@@ -10,20 +6,27 @@ library(cranvas)
 
 data(nrcstat)
 qnrc = qdata(nrcstat)
-rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name,
-    sep = " -> ")
+rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = " -> ")
 
 ## brush(qnrc, 'size') = 1  # I cannot work with size > 1 at the moment
 
 ## Overview: type, rankings
-qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
-    horizontal = FALSE, boxplot = TRUE)
+print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
+    horizontal = FALSE, boxplot = TRUE))
+
 qnrc$.color = "red"
+
+brush(qnrc, 'permanent') = TRUE  # begin permanent brushing
+brush(qnrc, 'color') = 'brown'
+## select other objects now
+brush(qnrc, 'color') = 'green'
+## again, select other objects
+brush(qnrc, 'color') = 'yellow'
+brush(qnrc, 'permanent') = FALSE  # transient brushing
 
 record_selector(qnrc, vars = "Institution.Name")
 
-## How to find out ISU by intersection and negation? public, midwest, large
-#   program
+## How to find out ISU by intersection and negation? public, midwest, large program
 
 ## show data labels (identifying)
 brush(qnrc, "identify") = TRUE
