@@ -414,8 +414,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     ## identify segments being brushed when the mouse is moving
     brush_mouse_move = function(layer, event) {
         cranvas_debug()
-        pos = event$pos()
-        .bpos <<- as.numeric(pos)
+        .bpos <<- as.numeric(event$pos())
         ## simple click: don't change .brange
         if (!all(.bpos == .bstart) && (!.bmove)) {
             .brange <<- .bpos - .bstart
@@ -559,8 +558,6 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
     range_layer = qlayer(root_layer, range_draw, limits = qrect(lims), row = 1, col = 1)
     brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims), row = 1, col = 1)
-    brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims),
-        row = 1, col = 1)
     ## legend layer (currently only acts as place holder)
     legend_layer = qlayer(root_layer, row = 1, col = 2)
 
