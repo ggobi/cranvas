@@ -317,7 +317,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## monitor keypress event
-    identify_key_press = function(layer, event) {
+    brush_key_press = function(layer, event) {
         key = event$key()
         ## Key X: XOR; O: OR; A: AND; N: NOT
         i = which(key == c(Qt$Qt$Key_A, Qt$Qt$Key_O, Qt$Qt$Key_X, Qt$Qt$Key_N, Qt$Qt$Key_C))
@@ -398,7 +398,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         }
         ## data range labels
     }
-    identify_key_release = function(layer, event) {
+    brush_key_release = function(layer, event) {
         b$mode = 'none'  # set brush mode to 'none' when release the key
         direction = which(event$key() == c(Qt$Qt$Key_PageUp, Qt$Qt$Key_PageDown))
         if (length(direction)) {
@@ -412,7 +412,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## identify segments being brushed when the mouse is moving
-    identify_mouse_move = function(layer, event) {
+    brush_mouse_move = function(layer, event) {
         cranvas_debug()
         pos = event$pos()
         .bpos <<- as.numeric(pos)
@@ -547,9 +547,9 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     main_layer = qlayer(root_layer, main_draw,
-        mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move,
-        mouseMove = identify_mouse_move, keyPressFun = identify_key_press,
-        keyReleaseFun = identify_key_release,
+        mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
+        mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
+        keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
         focusInFun = function(layer, painter) {
             focused(data) = TRUE
         }, focusOutFun = function(layer, painter) {
@@ -558,6 +558,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         limits = qrect(lims), row = 1, col = 1)
 
     range_layer = qlayer(root_layer, range_draw, limits = qrect(lims), row = 1, col = 1)
+    brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims), row = 1, col = 1)
     brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims),
         row = 1, col = 1)
     ## legend layer (currently only acts as place holder)
