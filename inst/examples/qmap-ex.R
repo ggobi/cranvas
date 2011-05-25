@@ -1,5 +1,7 @@
-source("load.R")
-
+library(qtbase)
+library(qtpaint)
+library(cranvas)
+library(plumbr) 
 library(maps)
 library(ggplot2)
 
