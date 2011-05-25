@@ -12,6 +12,9 @@
 
 \description{Create a hist plot
 Create a hist plot from 1-D numeric data}
+\details{Interactions:
+right/left arrow shift anchors
+up/down arrow increase/decrease bin size}
 \author{Barret Schloerke \email{bigbear@iastate.edu}}
 \keyword{hplot}
 \arguments{\item{data}{mutaframe to use}
