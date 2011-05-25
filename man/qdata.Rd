@@ -1,10 +1,11 @@
 \name{qdata}
 \alias{qdata}
 \title{Create a mutaframe from data with several attributes for interaction}
-\usage{qdata(data, color = "darkgray", size = 1, brushed = FALSE, 
-    visible = TRUE)
+\usage{qdata(data, color = "black", fill = "grey30", 
+    size = 1, brushed = FALSE, visible = TRUE)
 
 }
+
 \description{Create a mutaframe from data with several attributes for interaction.}
 \details{First check if the names of some predefined row attributes
 (e.g. .color, .brushed) exist in the data (will issue an error if

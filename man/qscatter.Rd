@@ -24,7 +24,7 @@ Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a z
 \item{ylab}{label on vertical axis, default is name of y variable}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 }
-\examples{source("load.R")
+\examples{require(cranvas)
 
 data(nrcstat)
 nrcstat[, 26] <- -nrcstat[, 26]
