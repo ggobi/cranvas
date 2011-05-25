@@ -50,6 +50,11 @@ qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max 
 ##' Mosaic plot.
 ##' Create a mosaicplot using a formula (as described in prodplot)
 ##'
+##' up arrow - takes out top var, 
+##' down arrow - adds next variable (if available)
+##' r toggles top variable between horizontal and vertical direction
+##' b/s changes top variable between (b)archarts and (s)pine plots
+##' u/c (un)conditions on the bottom variable
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
 ##' @param formula a formula to describe order in which variables go into the mosaicplot. The first variables are the ones visually most important, i.e. Y ~ X1 + X2 + X3 first splits according to X3, then according to X2, then according to X1
@@ -186,7 +191,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         main <- extract_formula(.formula)
         #  print(main)
     }
-    windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = ylabels, 
+    windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = !is.null(ylabels), 
         main = main)
     
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
@@ -525,6 +530,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         infodata <- as.character(unlist(info[1, idx]))
         infostring <- paste(idx, infodata, collapse = "\n", sep = ":  ")
 #browser()        
+        infostring <- paste("\n", infostring)
 				if (info[1,".wt"] > 1) 
 					infostring <- paste(infostring, sprintf("\ncount:  %s", info[1,".wt"]))
 				else {
