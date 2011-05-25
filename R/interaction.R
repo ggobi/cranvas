@@ -82,7 +82,7 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
         color = "yellow", color.gen = function(...) NULL, size = 2, size.gen = function(...) NULL,
         mode = "none", identify = FALSE, label.gen = function(...) "label", label.color = "darkgray",
         history.size = 30, history.index = 0, history.list = list(),
-        permanent = FALSE, permanent.color = character(0), permanent.list = list())
+        persistent = FALSE, persistent.color = character(0), persistent.list = list())
 
     ## here 'mode' is explained in the documentation of mode_selection()
 

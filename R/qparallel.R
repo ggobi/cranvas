@@ -438,16 +438,16 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                 b$history.list[1:(csize - hsize)] = NULL
             }
             b$history.index = length(b$history.list)
-            ## permanent brushing: store brushed objects
-            if (b$permanent) {
-                csize = length(b$permanent.list) + 1
+            ## persistent brushing: store brushed objects
+            if (b$persistent) {
+                csize = length(b$persistent.list) + 1
                 if (length(.cur.sel) > 0) {
-                    b$permanent.list[[csize]] = .cur.sel
-                    b$permanent.color[csize] = b$color
+                    b$persistent.list[[csize]] = .cur.sel
+                    b$persistent.color[csize] = b$color
                 }
                 if (csize > hsize) {
-                    b$permanent.list[1:(csize - hsize)] = NULL
-                    b$permanent.color = b$permanent.color[-(1:(csize - hsize))]
+                    b$persistent.list[1:(csize - hsize)] = NULL
+                    b$persistent.color = b$persistent.color[-(1:(csize - hsize))]
                 }
             }
         }
@@ -470,11 +470,11 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                       .bpos[1] + .brange[1], .bpos[2] + .brange[2],
                       stroke = b$style$color)
         }
-        if (b$permanent && length(b$permanent.list)) {
+        if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size
-            for (i in seq_along(b$permanent.list)) {
-                idx = b$permanent.list[[i]]
-                qstrokeColor(painter) = b$permanent.color[i]
+            for (i in seq_along(b$persistent.list)) {
+                idx = b$persistent.list[[i]]
+                qstrokeColor(painter) = b$persistent.color[i]
                 tmpx = mat2seg(x, idx)
                 tmpy = mat2seg(y, idx)
                 nn = length(tmpx)
