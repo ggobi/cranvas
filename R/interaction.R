@@ -37,7 +37,7 @@
 ##' brush(iris0, 'color') = 'green'
 ##' ## change brushed lines to black
 ##' brush(iris0, 'color') = 'black'
-qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRUE) {
+qdata = function(data, color = "darkgray", size = 1, brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
