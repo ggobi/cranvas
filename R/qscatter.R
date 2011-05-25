@@ -1,5 +1,8 @@
 #' Draw a scatterplot
 #'
+#' arrow up/down: in-/de-crease size of points
+#' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
+#' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
 #' @param data mutaframe data to use
 #' @param x which designates variable displayed on the horizontal axis
 #' @param y which designates variable displayed on the vertical axis
@@ -20,12 +23,6 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 {
     stopifnot(is.mutaframe(data))
     
-    #############################
-    # internal helper functions #
-    #############################
-
-    ############################# end internal helper functions
-
     ################################
     # data processing & parameters #
     ################################
@@ -72,6 +69,10 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 
     n <- nrow(data)
 
+		## zooming on?
+		zoom <- FALSE
+		.zstart <- NULL
+		.zstop <- NULL
     ################################ end data processing & parameters
 
     ##########
@@ -83,10 +84,8 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 				sx <- .axis.loc(dataRanges[1:2])
 				xlabels <- rep("", length(sx))
 				
-				if (labeled) {
-					xlabels <- sx 
-				}
-        # labels as appropriate
+				if (labeled) xlabels <- sx 
+
 				draw_x_axes_with_labels_fun(painter, c(dataRanges[1:2],1,5), axisLabel = xlabels,
 																		labelHoriPos = sx, name = xlab)
 
@@ -96,9 +95,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 				sy <- .axis.loc(dataRanges[3:4])
 				ylabels <- rep("", length(sy))
 				
-				if (labeled) {
-					ylabels <- sy 
-				}
+				if (labeled) ylabels <- sy 
         
 				draw_y_axes_with_labels_fun(painter, c(1,5, dataRanges[3:4]), axisLabel = ylabels,
 																		labelVertPos = sy, name = ylab)
@@ -107,23 +104,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     grid <- function(item, painter, exposed) {
 				sx <- .axis.loc(dataRanges[1:2])
 				sy <- .axis.loc(dataRanges[3:4])
-#				ylabels <- rep("", length(sy))
-#				xlabels <- rep("", length(sx))
-				
-#				if (labeled) {
-#					ylabels <- sy 
-#					xlabels <- sx 
-#				}
+
         # grey background with grid lines
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)
-
-        # labels as appropriate
-#				draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = xlabels,
-#																		labelHoriPos = sx, name = xlab)
-
-        
-#				draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = ylabels,
-#																		labelVertPos = sy, name = ylab)
     }
 
 
@@ -181,6 +164,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ####################
 
     keyPressFun <- function(item, event, ...) {
+		# arrow up/down: in/de-crease point size
+		# arrow left/right: de/in-crease alpha level
+		# z toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
         key <- event$key()
 
         if (key == Qt$Qt$Key_Up) {
@@ -200,7 +186,6 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
             # increase alpha blending
             .alpha <<- 1.1 * .alpha
             datalayer$setOpacity(.alpha)
-            #  brushlayer$setOpacity(.alpha)
             qupdate(datalayer)
         }
         else if (key == Qt$Qt$Key_Left & .alpha > 1/n) {
@@ -208,27 +193,71 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
             # decrease alpha blending
             .alpha <<- 0.9 * .alpha
             datalayer$setOpacity(.alpha)
-            #  brushlayer$setOpacity(.alpha)
             qupdate(datalayer)
-        }
+        } else if (key == Qt$Qt$Key_Z) {
+					zoom <<- !zoom
+  				print(sprintf("zoom: %s", zoom))
+  		}
 
 
     }
+		handle_zoom <- function() {
+		print("zoom action")
+		print(.zstart)
+		print(.zstop)		
+			if (!all(.zstart == .zstop))
+				dataRanges <<- c(min(.zstart[1],.zstop[1]), max(.zstart[1],.zstop[1]), 
+								 min(.zstart[2],.zstop[2]), max(.zstart[2],.zstop[2])) 
+			else # reset zoom to default
+				dataRanges <<- c(make_data_ranges(xlim), make_data_ranges(ylim)) 
+	
+			.zstart <<- .zstop <<- NULL
+			
+			xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
+			yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
+
+			lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
+
+			bglayer$setLimits(lims)
+			datalayer$setLimits(lims)
+			brushlayer$setLimits(lims)
+			querylayer$setLimits(lims)
+
+			qupdate(root)
+		}
 
     ## record the coordinates of the mouse on click
     brush_mouse_press <- function(item, event) {
-        .bstart <<- as.numeric(event$pos())
-        ## on right click, we can resize the brush; left click: only move the
-        ## brush
-        if (event$button() == Qt$Qt$RightButton) {
-            .bmove <<- FALSE
-        }
-        if (event$button() == Qt$Qt$LeftButton) {
-            .bmove <<- TRUE
-        }
+				if (zoom) {
+					.zstart <<- as.numeric(event$pos())
+				} else {
+					.bstart <<- as.numeric(event$pos())
+					## on right click, we can resize the brush; left click: only move the
+					## brush
+					if (event$button() == Qt$Qt$RightButton) {
+							.bmove <<- FALSE
+					}
+					if (event$button() == Qt$Qt$LeftButton) {
+							.bmove <<- TRUE
+					}
+				}
     }
 
+    mouse_release <- function(item, event) {
+#print(zoom)
+				if (zoom) {
+					.zstop <<- as.numeric(event$pos())
+					handle_zoom()
+				} 
+		}
+
     identify_mouse_move <- function(layer, event) {
+			if (zoom) {
+#print("identify_mouse_move")
+				.zstop <<- as.numeric(event$pos())
+				qupdate(querylayer)
+				return()
+			}
         pos <- event$pos()
         .bpos <<- as.numeric(pos)
         ## simple click: don't change .brange
@@ -256,6 +285,20 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     .queryPos <- NULL
 
     query_draw <- function(item, painter, exposed, ...) {
+				if (zoom) {
+					if (!is.null(.zstart)) {
+						if (!all(.zstart == .zstop)) {
+							# draw zoom rectangle
+				rect <- qrect(min(.zstart[1],.zstop[1]), max(.zstart[1],.zstop[1]), 
+								 min(.zstart[2],.zstop[2]), max(.zstart[2],.zstop[2]))
+				qdrawRect(painter, min(.zstart[1],.zstop[1]),  
+								 min(.zstart[2],.zstop[2]), max(.zstart[1],.zstop[1]), max(.zstart[2],.zstop[2]),
+								 stroke="black", fill=rgb(.1,.1,.1, alpha=0.5))
+				return()
+						}
+					}
+				}
+
         if (is.null(.queryPos))
             return()
 
@@ -358,9 +401,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     
     datalayer <- qlayer(parent = root, paintFun = scatter.all,
                         keyPressFun = keyPressFun,
-                        mouseMove = identify_mouse_move,
+                        mouseMoveFun = identify_mouse_move,
                         mousePressFun = brush_mouse_press,
-                        mouseReleaseFun = identify_mouse_move,
+                        mouseReleaseFun = mouse_release,
 												focusInFun = function(...) {
 													focused(data) <- TRUE
 												},

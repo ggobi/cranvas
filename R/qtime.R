@@ -277,7 +277,8 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
       for (i in 1:max(tdf$zg)) {
         qdrawCircle(painter,tdf[tdf$zg==i,1],
                     y[tdf$zg==i,j],r=.radius,
-                    fill=color[i],stroke=color[i])
+                    fill=color[max(tdf$zg)+1-i],
+                    stroke=color[max(tdf$zg)+1-i])
       }
     }
   }
@@ -287,7 +288,7 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
       color=gray(seq(0,0.6,length=max(tdf$zg)))
       for (i in 1:max(tdf$zg)) {
         qdrawLine(painter,tdf[tdf$zg==i,1],
-                  y[tdf$zg==i,j],stroke=color[i])
+                  y[tdf$zg==i,j],stroke=color[max(tdf$zg)+1-i])
       }
     }
   }
