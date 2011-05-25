@@ -57,6 +57,8 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   .bmove <- TRUE
   ## brush range: horizontal and vertical
   .brange <- c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
+  ## size for zoom in/out without wrapping
+  zoomsize <- max(x,na.rm=TRUE)-min(x,na.rm=TRUE)
   
 ####################
   ## event handlers ##----------
@@ -113,10 +115,10 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
     if (event$key()==Qt$Qt$Key_Right){
       ## arrow right
-      zoombound=min(round(0.96*crt_range),crt_range-1)
-      if (zoombound<3)zoombound <- 3
       
       if (wrap) {
+        zoombound=min(round(0.96*crt_range),crt_range-1)
+        if (zoombound<3)zoombound <- 3
         tdf$x <- x%%zoombound
         tdf$zg <- ceiling(x/zoombound)
         if (sum(tdf$x==0)){
@@ -130,7 +132,9 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])     
       } else {
-          tmpXzoom <- .bstart + c(-0.5,0.5) * zoombound
+          zoomsize <- min(0.96*zoomsize,zoomsize-2)
+          if (zoomsize < 2) zoomsize <- 2
+          tmpXzoom <- .bstart + c(-0.5,0.5) * zoomsize
           tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
           tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
           print(tmpXzoom)
@@ -151,9 +155,10 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
     if (event$key()==Qt$Qt$Key_Left){
       ## arrow left
-      zoombound <- max(round(crt_range*25/24),crt_range+1)
-      if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
+      
       if (wrap) {
+        zoombound <- max(round(crt_range*25/24),crt_range+1)
+        if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
         tdf$x <- x%%zoombound
         tdf$zg <- ceiling(x/zoombound)
         if (sum(tdf$x==0)){
@@ -167,7 +172,9 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       } else {
-          tmpXzoom <- .bstart + c(-0.5,0.5) * zoombound
+          zoomsize <- max(zoomsize*25/24,zoomsize+2)
+          if (zoomsize > (max(x)-min(x))) zoomsize <- max(x)-min(x)
+          tmpXzoom <- .bstart + c(-0.5,0.5) * zoomsize
           tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
           tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
           print(tmpXzoom)
