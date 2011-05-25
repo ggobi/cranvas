@@ -1,6 +1,36 @@
+setHistColorByLabel <- function(qdata, label, scale) {
+
+    arguments <- as.list(match.call()[-1])
+    df.data <- data.frame(qdata)
+#	 
+    label <- eval(arguments$label, df.data)
+	# defaults, should be overwritten, if specified
+    # Need to use discrete scale
+    if (is.null(scale$limits))
+        scale$limits <- range(label)	
+    if (is.null(scale$name))
+      scale$name <- deparse(arguments$label)
+
+    colors <- scale$map(label)
+
+    # Don't need to worry about linking here, column
+    # will be in the same data set
+#    link <- unique(qdata[,link_var(qdata)])
+#    lcolor <- rep(NA, nrow(qmap))
+#    for (i in 1:length(link)) {
+#        j <- which(qhist[,link_var(qhist)] == link[i])
+#          lcolor[j] <- colors[i]
+#    }
+#    qhist$.color <- lcolor
+    attr(qdata, "col.scale") <- scale
+}
+
 #' Create a hist plot
 #' Create a hist plot from 1-D numeric data
 #'
+#' Interactions:
+#' right/left arrow shift anchors
+#' up/down arrow increase/decrease bin size
 #' @param data mutaframe to use
 #' @param x variable to plot
 #' @param horizontal boolean to decide if the bars are horizontal or vertical
