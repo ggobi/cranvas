@@ -62,7 +62,7 @@ Tourr$methods(step = function() {
   colnames(data_proj) <- paste("tour", 1:ncol(data_proj), sep = "_")
 
   for(col in colnames(data_proj)) {
-    dest[[col]] <- data_proj[, col]
+    dest[[col]] <<- data_proj[, col]
   }
 
   invisible(tour_step)
