@@ -80,7 +80,9 @@ qdata = function(data, color = "darkgray", size = 1, brushed = FALSE, visible = 
     ## use brush(data) to access this brush
     attr(mf, "Brush") = brushGen$new(style = list(color = "yellow", size = 1, linetype = NULL),
         color = "yellow", color.gen = function(...) NULL, size = 2, size.gen = function(...) NULL,
-        mode = "none", identify = FALSE, label.gen = function(...) "label", label.color = "darkgray",
+        mode = "none", identify = FALSE, label.gen = function(...) {
+            paste(capture.output(print(...)), collapse = '\n')
+        }, label.color = "darkgray",
         history.size = 30, history.index = 0, history.list = list(),
         persistent = FALSE, persistent.color = character(0), persistent.list = list())
 
