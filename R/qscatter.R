@@ -1,5 +1,8 @@
 #' Draw a scatterplot
 #'
+#' arrow up/down: in-/de-crease size of points
+#' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
+#' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
 #' @param data mutaframe data to use
 #' @param x which designates variable displayed on the horizontal axis
 #' @param y which designates variable displayed on the vertical axis
@@ -163,7 +166,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     keyPressFun <- function(item, event, ...) {
 		# arrow up/down: in/de-crease point size
 		# arrow left/right: de/in-crease alpha level
-
+		# z toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
         key <- event$key()
 
         if (key == Qt$Qt$Key_Up) {

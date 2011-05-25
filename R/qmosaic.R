@@ -19,7 +19,7 @@ paste_formula <- function(form) {
 
 extract_formula <- function(formula) {
     form <- parse_product_formula(formula)
-    form$marg <- setdiff(form$marg, c(".brushed", ".color"))
+    form$marg <- setdiff(form$marg, c(".brushed", ".fill"))
     
     return(paste_formula(form))
 }
@@ -50,6 +50,11 @@ qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max 
 ##' Mosaic plot.
 ##' Create a mosaicplot using a formula (as described in prodplot)
 ##'
+##' up arrow - takes out top var, 
+##' down arrow - adds next variable (if available)
+##' r toggles top variable between horizontal and vertical direction
+##' b/s changes top variable between (b)archarts and (s)pine plots
+##' u/c (un)conditions on the bottom variable
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
 ##' @param formula a formula to describe order in which variables go into the mosaicplot. The first variables are the ones visually most important, i.e. Y ~ X1 + X2 + X3 first splits according to X3, then according to X2, then according to X1
@@ -78,7 +83,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     .recalchiliting <- FALSE
     
     
-    .colored <- TRUE
+    .filled <- TRUE
     .formula <- formula
     form <- parse_product_formula(.formula)
     .activevars <- c(form$marg, form$cond)
@@ -96,7 +101,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         #print('recalchiliting')
         
         form <- parse_product_formula(.formula)
-        form$marg <- c(".brushed", setdiff(form$marg, ".color"))
+        form$marg <- c(".brushed", setdiff(form$marg, ".fill"))
         hformula <- as.formula(paste_formula(form))
         
         hdivider <- addDivider(tail(divider, length(.activevars)))
@@ -125,11 +130,11 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         
         .divider <- tail(divider, length(.activevars))
         ## color setup
-        if (.colored) {
+        if (.filled) {
             form <- parse_product_formula(.formula)
-            # move .color variable to the front, whereever it was before
+            # move .fill variable to the front, whereever it was before
             # it probably should not be part of .formula - that's the plan at least
-            form$marg <- c(".color", setdiff(form$marg, ".color"))
+            form$marg <- c(".fill", setdiff(form$marg, ".fill"))
             
             .formula <- as.formula(paste_formula(form))
             .divider <- addDivider(divider)
@@ -144,7 +149,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
             all.data$.brushed <<- FALSE
         
         xdata <<- subset(all.data, level == max(all.data$level), drop = FALSE)
-        bkdata <<- subset(all.data, level == max(all.data$level) - .colored, drop = FALSE)
+        bkdata <<- subset(all.data, level == max(all.data$level) - .filled, drop = FALSE)
 
         
         .recalc <<- FALSE
@@ -186,7 +191,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         main <- extract_formula(.formula)
         #  print(main)
     }
-    windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = ylabels, 
+    windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = !is.null(ylabels), 
         main = main)
     
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
@@ -241,8 +246,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         bottom <- xdata$b
         left <- xdata$l
         right <- xdata$r
-        if (.colored) 
-            color <- as.character(xdata$.color)
+        if (.filled) 
+            color <- as.character(xdata$.fill)
         else color <- colour
         
         qdrawRect(painter, left, bottom, right, top, fill = color)
@@ -337,7 +342,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         top = max(.startBrush[2], .endBrush[2])
         bottom = min(.startBrush[2], .endBrush[2])
         
-        # use .level - .colored to select all bins, independently of color
+        # use .level - .filled to select all bins, independently of color
         # if colored bins should be available for highlighting separately use level ==
         #   .level
         
@@ -389,7 +394,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         datachanged <- FALSE
         formulachanged <- FALSE
         form <- parse_product_formula(.formula)
-        form$marg <- setdiff(form$marg, c(".color", ".brushed"))
+        form$marg <- setdiff(form$marg, c(".fill", ".brushed"))
         
         if (key == Qt$Qt$Key_Up) {
             # arrow up
@@ -487,7 +492,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
             
             divider[lindx] <<- gsub("spine", "bar", divider[lindx])
         }
-        #    if (.colored) {
+        #    if (.filled) {
         .formula <<- as.formula(paste_formula(form))
         recalc()
         #     recalchiliting()
@@ -521,10 +526,11 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         
         # Work out label text
         idx <- setdiff(names(xdata), c("l", "t", "r", "b", ".wt", "level", ".brushed", 
-        	".color", .inactivevars))
+        	".fill", .inactivevars))
         infodata <- as.character(unlist(info[1, idx]))
         infostring <- paste(idx, infodata, collapse = "\n", sep = ":  ")
 #browser()        
+        infostring <- paste("\n", infostring)
 				if (info[1,".wt"] > 1) 
 					infostring <- paste(infostring, sprintf("\ncount:  %s", info[1,".wt"]))
 				else {
@@ -580,7 +586,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
             #   it will be updated before it's called by the qupdate function, though
             #     recalchiliting()
             qupdate(brushing_layer)
-        }, .color = {
+        }, .fill = {
             .recalc <<- TRUE
             #     recalc()
             #           recalchiliting()

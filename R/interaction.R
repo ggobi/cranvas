@@ -37,12 +37,12 @@
 ##' brush(iris0, 'color') = 'green'
 ##' ## change brushed lines to black
 ##' brush(iris0, 'color') = 'black'
-qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRUE) {
+qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
     ## row attributes needed by all plotting functions
-    row_attrs = c(".color", ".size", ".brushed")
+    row_attrs = c(".color", ".fill", ".size", ".brushed")
     ## once in a blue moon...
     conflict_attrs = row_attrs %in% colnames(data)
     if (any(conflict_attrs)) {
@@ -53,6 +53,7 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
     ## initialize here; TODO: get rid of this in qparallel, qmosaic...
     mf$.brushed = brushed
     mf$.color = color
+    mf$.fill = fill
     mf$.size = size
     mf$.visible = TRUE
 
