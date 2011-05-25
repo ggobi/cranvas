@@ -54,7 +54,7 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
 
 qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
     ## background color
-    .bgcolor = "grey80"
+    .bgcolor = "grey90"
 
     draw_grid = function(layer, painter) {
         qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor,

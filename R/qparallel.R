@@ -317,7 +317,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## monitor keypress event
-    identify_key_press = function(layer, event) {
+    brush_key_press = function(layer, event) {
         key = event$key()
         ## Key X: XOR; O: OR; A: AND; N: NOT
         i = which(key == c(Qt$Qt$Key_A, Qt$Qt$Key_O, Qt$Qt$Key_X, Qt$Qt$Key_N, Qt$Qt$Key_C))
@@ -398,7 +398,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         }
         ## data range labels
     }
-    identify_key_release = function(layer, event) {
+    brush_key_release = function(layer, event) {
         b$mode = 'none'  # set brush mode to 'none' when release the key
         direction = which(event$key() == c(Qt$Qt$Key_PageUp, Qt$Qt$Key_PageDown))
         if (length(direction)) {
@@ -412,10 +412,10 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     ## identify segments being brushed when the mouse is moving
-    identify_mouse_move = function(layer, event) {
+    brush_mouse_move = function(layer, event) {
         cranvas_debug()
-        pos = event$pos()
-        .bpos <<- as.numeric(pos)
+        if (b$identify) return()
+        .bpos <<- as.numeric(event$pos())
         ## simple click: don't change .brange
         if (!all(.bpos == .bstart) && (!.bmove)) {
             .brange <<- .bpos - .bstart
@@ -438,16 +438,17 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                 b$history.list[1:(csize - hsize)] = NULL
             }
             b$history.index = length(b$history.list)
-            ## permanent brushing: store brushed objects
-            if (b$permanent) {
-                csize = length(b$permanent.list) + 1
+            ## persistent brushing: store brushed objects
+            if (b$persistent) {
+                csize = length(b$persistent.list) + 1
                 if (length(.cur.sel) > 0) {
-                    b$permanent.list[[csize]] = .cur.sel
-                    b$permanent.color[csize] = b$color
+                    b$persistent.list[[csize]] = .cur.sel
+                    b$persistent.color[csize] = b$color
+                    b$.color[.cur.sel] = b$color
                 }
                 if (csize > hsize) {
-                    b$permanent.list[1:(csize - hsize)] = NULL
-                    b$permanent.color = b$permanent.color[-(1:(csize - hsize))]
+                    b$persistent.list[1:(csize - hsize)] = NULL
+                    b$persistent.color = b$persistent.color[-(1:(csize - hsize))]
                 }
             }
         }
@@ -463,6 +464,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     ## draw the segments under the brush with another appearance
     brush_draw = function(layer, painter) {
         cranvas_debug()
+        if (b$identify) return()
         if (!any(is.na(.bpos))) {
             qlineWidth(painter) = b$style$size
             ##qdash(painter)=c(1,3,1,3)
@@ -470,11 +472,11 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                       .bpos[1] + .brange[1], .bpos[2] + .brange[2],
                       stroke = b$style$color)
         }
-        if (b$permanent && length(b$permanent.list)) {
+        if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size
-            for (i in seq_along(b$permanent.list)) {
-                idx = b$permanent.list[[i]]
-                qstrokeColor(painter) = b$permanent.color[i]
+            for (i in seq_along(b$persistent.list)) {
+                idx = b$persistent.list[[i]]
+                qstrokeColor(painter) = b$persistent.color[i]
                 tmpx = mat2seg(x, idx)
                 tmpy = mat2seg(y, idx)
                 nn = length(tmpx)
@@ -490,33 +492,44 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
 
-            ## show data labels and row ids
-            if (b$identify && !any(is.na(.bpos))) {
-                ## retrieve labels from the original data (possibly w/ transformation)
-                .brush.labels = b$label.gen(data[.brushed, vars])
-                .vars = c('case id', vars)
-                ## truncate the id strings if too long
-                .caseid = ifelse(sum(.brushed) == 1, rownames(data)[.brushed],
-                    truncate_str(paste(rownames(data)[.brushed], collapse = ', '),
-                                 max(nchar(c(.brush.labels, .vars)))))
-                .brush.labels = c(.caseid, .brush.labels)
-                .brush.labels = paste(.vars, .brush.labels, sep = ': ', collapse = '\n')
-                bgwidth = qstrWidth(painter, .brush.labels)
-                bgheight = qstrHeight(painter, .brush.labels)
-                ## adjust drawing directions when close to the boundary
-                hflag = lims[2] - .bpos[1] > bgwidth
-                vflag = .bpos[2] - lims[3] > bgheight
-                qdrawRect(painter, .bpos[1], .bpos[2],
-                          .bpos[1] + ifelse(hflag, 1, -1) * bgwidth,
-                          .bpos[2] + ifelse(vflag, -1, 1) * bgheight,
-                          stroke = rgb(1, 1, 1, 0.5), fill = rgb(1, 1, 1, 0.5))
-                qstrokeColor(painter) = b$label.color
-                qdrawText(painter, .brush.labels, .bpos[1], .bpos[2],
-                          halign = ifelse(hflag, "left", "right"),
-                          valign = ifelse(vflag, "top", "bottom"))
-            }
-        }
+       }
         cranvas_debug()
+    }
+
+    .identified = NULL
+    identify_hover = function(layer, event) {
+        if (!b$identify) return()
+        .bpos <<- as.numeric(event$pos())
+        rect = qrect(matrix(c(.bpos - c(xr, yr)/100, .bpos + c(xr, yr)/100), 2, byrow = TRUE))
+        hits = layer$locate(rect) + 1
+        .identified <<- ceiling(hits/ifelse(glyph == 'line', p - 1, p))
+        qupdate(identify_layer)
+    }
+
+    identify_draw = function(layer, painter) {
+        if (b$identify && length(.identified)) {
+            qlineWidth(painter) = b$size
+            qstrokeColor(painter) = b$color
+            tmpx = mat2seg(x, .identified)
+            tmpy = mat2seg(y, .identified)
+            nn = length(tmpx)
+            qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
+
+            .labels = b$label.gen(data[.identified, vars])
+            bgwidth = qstrWidth(painter, .labels)
+            bgheight = qstrHeight(painter, .labels)
+            ## adjust drawing directions when close to the boundary
+            hflag = lims[2] - .bpos[1] > bgwidth
+            vflag = .bpos[2] - lims[3] > bgheight
+            qdrawRect(painter, .bpos[1], .bpos[2],
+                      .bpos[1] + ifelse(hflag, 1, -1) * bgwidth,
+                      .bpos[2] + ifelse(vflag, -1, 1) * bgheight,
+                      stroke = rgb(1, 1, 1, 0.8), fill = rgb(1, 1, 1, 0.8))
+            qstrokeColor(painter) = b$label.color
+            qdrawText(painter, .labels, .bpos[1], .bpos[2],
+                      halign = ifelse(hflag, "left", "right"),
+                      valign = ifelse(vflag, "top", "bottom"))
+        }
     }
 
     scene = qscene()
@@ -547,9 +560,9 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     }
 
     main_layer = qlayer(root_layer, main_draw,
-        mousePressFun = brush_mouse_press, mouseReleaseFun = identify_mouse_move,
-        mouseMove = identify_mouse_move, keyPressFun = identify_key_press,
-        keyReleaseFun = identify_key_release,
+        mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
+        mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
+        keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
         focusInFun = function(layer, painter) {
             focused(data) = TRUE
         }, focusOutFun = function(layer, painter) {
@@ -558,8 +571,8 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         limits = qrect(lims), row = 1, col = 1)
 
     range_layer = qlayer(root_layer, range_draw, limits = qrect(lims), row = 1, col = 1)
-    brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims),
-        row = 1, col = 1)
+    brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims), row = 1, col = 1)
+    identify_layer = qlayer(root_layer, identify_draw, limits = qrect(lims), row = 1, col = 1)
     ## legend layer (currently only acts as place holder)
     legend_layer = qlayer(root_layer, row = 1, col = 2)
 

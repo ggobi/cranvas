@@ -8,6 +8,9 @@
 }
 
 \description{Draw a scatterplot}
+\details{arrow up/down: in-/de-crease size of points
+arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
+Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window}
 \arguments{\item{data}{mutaframe data to use}
 \item{x}{which designates variable displayed on the horizontal axis}
 \item{y}{which designates variable displayed on the vertical axis}

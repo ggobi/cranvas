@@ -16,13 +16,13 @@ print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph 
 
 qnrc$.color = "red"
 
-brush(qnrc, 'permanent') = TRUE  # begin permanent brushing
+brush(qnrc, 'persistent') = TRUE  # begin persistent brushing
 brush(qnrc, 'color') = 'brown'
 ## select other objects now
 brush(qnrc, 'color') = 'green'
 ## again, select other objects
 brush(qnrc, 'color') = 'yellow'
-brush(qnrc, 'permanent') = FALSE  # transient brushing
+brush(qnrc, 'persistent') = FALSE  # transient brushing
 
 record_selector(qnrc, vars = "Institution.Name")
 

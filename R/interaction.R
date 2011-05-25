@@ -37,12 +37,12 @@
 ##' brush(iris0, 'color') = 'green'
 ##' ## change brushed lines to black
 ##' brush(iris0, 'color') = 'black'
-qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRUE) {
+qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
     ## row attributes needed by all plotting functions
-    row_attrs = c(".color", ".size", ".brushed")
+    row_attrs = c(".color", ".fill", ".size", ".brushed")
     ## once in a blue moon...
     conflict_attrs = row_attrs %in% colnames(data)
     if (any(conflict_attrs)) {
@@ -53,6 +53,7 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
     ## initialize here; TODO: get rid of this in qparallel, qmosaic...
     mf$.brushed = brushed
     mf$.color = color
+    mf$.fill = fill
     mf$.size = size
     mf$.visible = TRUE
 
@@ -80,9 +81,11 @@ qdata = function(data, color = "black", size = 1, brushed = FALSE, visible = TRU
     ## use brush(data) to access this brush
     attr(mf, "Brush") = brushGen$new(style = list(color = "yellow", size = 1, linetype = NULL),
         color = "yellow", color.gen = function(...) NULL, size = 2, size.gen = function(...) NULL,
-        mode = "none", identify = FALSE, label.gen = function(...) "label", label.color = "darkgray",
+        mode = "none", identify = FALSE, label.gen = function(...) {
+            paste(capture.output(print(...)), collapse = '\n')
+        }, label.color = "darkgray",
         history.size = 30, history.index = 0, history.list = list(),
-        permanent = FALSE, permanent.color = character(0), permanent.list = list())
+        persistent = FALSE, persistent.color = character(0), persistent.list = list())
 
     ## here 'mode' is explained in the documentation of mode_selection()
 
@@ -224,23 +227,3 @@ selected = function(data) {
     data
 }
 
-
-
-##' Truncate character strings.
-##'
-##' Truncate a string if its length is greater than a specified
-##' \code{length}, with an extra flag appended in the end.
-##' @param x a character vector
-##' @param length the desired length
-##' @param extra the characters to be appended to the strings if their
-##' lengths are greater than the specified \code{length}
-##' @return the truncated strings
-##' @author Yihui Xie <\url{http://yihui.name}>
-##' @examples
-##' truncate_str('asdfasdf', 5)
-##' truncate_str(c('asdf', 'qwer'), 2)
-##' truncate_str(c('asdf', 'qwer'), c(1, 4))
-##' truncate_str(c('asdf', 'qwer'), 3, '??')
-truncate_str = function(x, length, extra = "...") {
-    paste(substr(x, 1, length), ifelse(nchar(x) > length, extra, ""), sep = "")
-}
