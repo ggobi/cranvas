@@ -1,7 +1,7 @@
 \name{qdata}
 \alias{qdata}
 \title{Create a mutaframe from data with several attributes for interaction}
-\usage{qdata(data, color = "black", size = 1, brushed = FALSE, 
+\usage{qdata(data, color = "darkgray", size = 1, brushed = FALSE, 
     visible = TRUE)
 
 }
