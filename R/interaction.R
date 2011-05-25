@@ -227,23 +227,3 @@ selected = function(data) {
     data
 }
 
-
-
-##' Truncate character strings.
-##'
-##' Truncate a string if its length is greater than a specified
-##' \code{length}, with an extra flag appended in the end.
-##' @param x a character vector
-##' @param length the desired length
-##' @param extra the characters to be appended to the strings if their
-##' lengths are greater than the specified \code{length}
-##' @return the truncated strings
-##' @author Yihui Xie <\url{http://yihui.name}>
-##' @examples
-##' truncate_str('asdfasdf', 5)
-##' truncate_str(c('asdf', 'qwer'), 2)
-##' truncate_str(c('asdf', 'qwer'), c(1, 4))
-##' truncate_str(c('asdf', 'qwer'), 3, '??')
-truncate_str = function(x, length, extra = "...") {
-    paste(substr(x, 1, length), ifelse(nchar(x) > length, extra, ""), sep = "")
-}
