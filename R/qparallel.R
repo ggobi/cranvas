@@ -5,7 +5,9 @@
 ##' Press R to toggle the min/max labels.
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
-##' + x2'
+##' + x2'; if missing or it is a formula that contains a dot
+##' (e.g. \code{ ~ .}), all variables in the data except those whose
+##' names start with a dot will be used
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
 ##' @param scale standardizing method - 'range' --> [0, 1], 'I' --> do
@@ -13,7 +15,7 @@
 ##' your own function (see examples.R)
 ##' @param na.action the function to deal with missing values
 ##' @param center the function to calculate where to center all the
-##' axes (e.g. center at the medians), or a numeric value, or
+##' variables (e.g. center at the medians), or a numeric value, or
 ##' \code{NULL} (do not center)
 ##' @param order methods to reorder the variables; see \code{\link{reorder_var}}
 ##' @param horizontal logical: arrange variables in horizontal or
@@ -35,6 +37,9 @@
 ##' this can be useful when the axis labels are too long (if we do not
 ##' break them, they will be squeezed together along the axes); set
 ##' \code{lab.split = NULL} to keep the labels untouched
+##' @param alpha the opacity value
+##' @param draw.range whether to draw the range values (min and max
+##' for each variable)
 ##' @return NULL
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
@@ -43,125 +48,93 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    main, lab.split = '[^[:alnum:]]', alpha=1, ...) {
+    main, lab.split = '[^[:alnum:]]', alpha = 1, draw.range = TRUE) {
 
     b = brush(data)    # the brush attached to the data
 
-    ## mouse position
-    .bpos = c(NA, NA)
-    ## drag start
-    .bstart = c(NA, NA)
-    ## move brush?
-    .bmove = TRUE
-
-		## layer opacity
-		.alpha = alpha
-
-    ## the title string
-    dataname = deparse(substitute(data))
     if (missing(main)) {
-        main = paste("Parallel Coordinates Plot of", dataname)
+        main = paste("Parallel Coordinates Plot of", deparse(substitute(data))) # title
     }
 
-    ## variable selection: select all variables not with '.' prefix by default;
-    ##   or parse the formula to get var names; or just use the usual way to
-    ##   select vars, e.g. by colnames, or integers
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
-    if (class(vars) == "formula")
-        vars = attr(terms(vars, data = as.data.frame(data)), "term.labels")
-    if (is.numeric(vars)) vars = names(data)[as.integer(vars)]
-
+    if (class(vars) == "formula") {
+        vars = all.vars(vars)
+        if ('.' %in% vars) vars = grep('^[^.]', names(data), value = TRUE)
+    }
+    if (is.numeric(vars)) vars = names(data)[vars]
     if (length(vars) <= 1L)
         stop("parallel coordinate plots need at least 2 variables!")
 
-    glyph = match.arg(glyph)
-    order = match.arg(order)
+    ## meta data used to store useful information
+    meta = mutalist(pos = c(NA, NA), start = c(NA, NA), brush.move = TRUE, alpha = alpha,
+                    main = main, vars = vars, glyph = match.arg(glyph),
+                    order = match.arg(order), draw.range = draw.range,
+                    plot.data = NULL, numeric.col = NULL, p = NULL, n = NULL,
+                    jitter = jitter, amount = amount
+    )
 
     ## a long way of transformation
     ## creat some 'global' variables first
-    x = y = n = nn = numcol = p = segx0 = segy0 = segx1 = segy1 = segcol =
+    x = y = segx0 = segy0 = segx1 = segy1 = segcol =
         xr = yr = xspan = yspan = xticklab = yticklab = xtickloc = ytickloc =
-            .brange = lims = x0 = y0 = plot_data = bxpstats = NULL
-    .drawrange = TRUE
+            .brange = lims = x0 = y0 = bxpstats = NULL
 
     data_preprocess = function() {
-
-        ## get the plotting data: we don't want to change the original mutaframe
-        ##   so get an independent copy here
-        plot_data <<- as.data.frame(data[, vars], stringsAsFactors = TRUE)
-
-        ## constant columns (or nearly constants -- for safety with floating numbers)
-        const.col = sapply(plot_data, function(x) {
-            x = na.omit(x)
-            x = as.numeric(x)
-            length(x) == 0 || diff(range(x)) < 1e-6
-        })
-        ## remove constant columns and give a warning message
-        if (any(const.col)) {
-            plot_data <<- plot_data[, !const.col]
-            warning("removed constant column(s) ",
-                    paste(vars[const.col], collapse = ","))
-            vars <<- vars[!const.col]
-        }
-
+        meta$plot.data = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
+        meta$plot.data = .rm.cons.col(meta$plot.data)  # remove constant columns
+        if (length(meta$vars <- names(meta$plot.data)) <= 1)
+            stop('there are less than 2 variables in the data')
         ## which columns are numeric? we don't want boxplots for non-numeric vars
-        numcol <<- sapply(plot_data, class) %in% c("numeric", "integer")
+        meta$numeric.col = sapply(meta$plot.data, is.numeric)
 
-        plot_data <<- sapply(plot_data, as.numeric)
-        ## must make them global; I wish there could be 'mutavectors'
-        p <<- ncol(plot_data)
-        n <<- nrow(plot_data)
+        meta$plot.data = sapply(meta$plot.data, as.numeric)
+        meta$p = ncol(meta$plot.data)
+        meta$n = nrow(meta$plot.data)
 
-        ## handle missing values
-        plot_data <<- na.action(plot_data)
+        meta$plot.data = na.action(meta$plot.data) # handle missing values
 
-        ## jittering
-        if (!is.null(jitter)) {
-            if (class(jitter) == "formula")
-                jitter = attr(terms(jitter, data = plot_data), "term.labels")
-            if (is.numeric(jitter)) jitter = names(data)[as.integer(jitter)]
-            if (is.character(jitter)) {
-                plot_data[, jitter] <<- apply(plot_data[, jitter, drop = FALSE],
-                                              2, base::jitter, amount = amount)
+        if (!is.null(meta$jitter)) {
+            if (class(meta$jitter) == "formula")
+                meta$jitter = attr(terms(meta$jitter, data = meta$plot.data), "term.labels")
+            if (is.numeric(meta$jitter)) meta$jitter = names(data)[meta$jitter]
+            if (is.character(meta$jitter)) {
+                meta$plot.data[, meta$jitter] =
+                    apply(meta$plot.data[, meta$jitter, drop = FALSE],
+                          2, base::jitter, amount = meta$amount)  # jittering
             }
         }
 
-        ## standardizing
         scale = switch(scale, range = function(x) {
             xna = x[!is.na(x)]
             (x - min(xna))/(max(xna) - min(xna))
-        }, var = base:::scale, I = identity, get(scale))
-        plot_data <<- apply(plot_data, 2, scale)
+        }, var = base::scale, I = identity, get(scale))
+        meta$plot.data = apply(meta$plot.data, 2, scale)  # standardizing
 
-        ## centering
         if (!is.null(center)){
-            plot_data <<- apply(plot_data, 2, function(xx) {
-                xx - ifelse(is.function(center), center(xx), as.numeric(center))
+            meta$plot.data = apply(meta$plot.data, 2, function(x) {
+                x - ifelse(is.function(center), center(x), as.numeric(center))  # centering
             })
         }
     }
 
-    ## flip the variables
-
     ## final calculations for graphical primitives, e.g. segments, axis labels
     data_primitives = function() {
-
         ## switch x and y according to the direction
         if (horizontal) {
-            x <<- col(plot_data)
-            y <<- plot_data
-            xtickloc <<- 1:p
-            xticklab <<- vars
+            x <<- col(meta$plot.data)
+            y <<- meta$plot.data
+            xtickloc <<- 1:meta$p
+            xticklab <<- meta$vars
             ytickloc <<- pretty(y)
             yticklab <<- format(ytickloc)
         }
         else {
-            x <<- plot_data
-            y <<- col(plot_data)
+            x <<- meta$plot.data
+            y <<- col(meta$plot.data)
             xtickloc <<- pretty(x)
             xticklab <<- format(xtickloc)
-            ytickloc <<- 1:p
-            yticklab <<- vars
+            ytickloc <<- 1:meta$p
+            yticklab <<- meta$vars
         }
         xspan <<- range(x)
         yspan <<- range(y)
@@ -188,14 +161,13 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         }
 
         ## 'auto' means 'line's when n*p<=5000*10, and 'tick's otherwise
-        if (glyph == 'auto') glyph <<- ifelse(n * p <= 50000, 'line', 'tick')
-        if (glyph == 'line') {
+        if (meta$glyph == 'auto') meta$glyph <<- ifelse(meta$n * meta$p <= 50000, 'line', 'tick')
+        if (meta$glyph == 'line') {
             ## creating starting and ending vectors, because indexing in real-time can be slow
-            segx0 <<- as.vector(t.default(x[, 1:(p - 1)]))
-            segx1 <<- as.vector(t.default(x[, 2:p]))
-            segy0 <<- as.vector(t.default(y[, 1:(p - 1)]))
-            segy1 <<- as.vector(t.default(y[, 2:p]))
-            nn <<- n * (p - 1)
+            segx0 <<- as.vector(t.default(x[, 1:(meta$p - 1)]))
+            segx1 <<- as.vector(t.default(x[, 2:meta$p]))
+            segy0 <<- as.vector(t.default(y[, 1:(meta$p - 1)]))
+            segy1 <<- as.vector(t.default(y[, 2:meta$p]))
         } else {
             x0 <<- as.vector(t.default(x))
             y0 <<- as.vector(t.default(y))
@@ -206,18 +178,18 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     data_boxplot = function() {
         ## for boxplots
         if (boxplot)
-            bxpstats <<- apply(plot_data, 2,
+            bxpstats <<- apply(meta$plot.data, 2,
                                function(x) boxplot.stats(x, do.conf = FALSE)$stats)
     }
 
     ## given orders, rearrange the data
     ## need to update: numcol, plot_data, vars, boxplot data, primitives data
     data_reorder = function(vars) {
-        numcol = numcol
-        names(numcol) = colnames(plot_data)
-        numcol <<- numcol[vars]
-        plot_data <<- plot_data[, vars]
-        vars <<- colnames(plot_data)
+        numcol = meta$numeric.col
+        names(numcol) = colnames(meta$plot.data)
+        meta$numeric.col = numcol[vars]
+        meta$plot.data = meta$plot.data[, vars]
+        meta$vars = colnames(meta$plot.data)
         data_boxplot()
         data_primitives()
     }
@@ -226,20 +198,20 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     data_preprocess()
 
     ## order by MDS or ANOVA
-    data_reorder(reorder_var(data = plot_data, type = order, vars = vars,
-                             numcol = numcol, x = data$.color))
+    data_reorder(reorder_var(data = meta$plot.data, type = meta$order, vars = meta$vars,
+                             numcol = meta$numeric.col, x = data$.color))
 
     ## brush range: horizontal and vertical
     .brange = c(xr, yr)/30
 
     ## automatic box width
     if (missing(boxwex))
-        boxwex = max(1/p, 0.2)
+        boxwex = max(1/meta$p, 0.2)
 
     ## convention of notation:
     ## *_draw means a drawing function for a layer; *_event is an even callback; *_layer is a layer object
 
-    draw.glyph = switch(glyph, tick = qglyphSegment(b = ifelse(horizontal, 0, Inf)), circle = qglyphCircle(),
+    draw.glyph = switch(meta$glyph, tick = qglyphSegment(b = ifelse(horizontal, 0, Inf)), circle = qglyphCircle(),
         square = qglyphSquare(), triangle = qglyphTriangle())
 
     ## par-coords segments
@@ -247,12 +219,12 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         cranvas_debug()
         .color = data$.color
         .color[!visible(data)] = NA
-        layer$setOpacity(.alpha)
-        if (glyph == 'line') {
-            segcol = rep(.color, each = p - 1)
+        layer$setOpacity(meta$alpha)
+        if (meta$glyph == 'line') {
+            segcol = rep(.color, each = meta$p - 1)
             qdrawSegment(painter, segx0, segy0, segx1, segy1, stroke = segcol)
         } else {
-            col.glyph = rep(.color, each = p)
+            col.glyph = rep(.color, each = meta$p)
             qdrawGlyph(painter, draw.glyph, x0, y0, stroke = col.glyph)
         }
         cranvas_debug()
@@ -260,17 +232,18 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
     ## annotate maximum and minimum values for each axis
     range_draw = function(layer, painter) {
-        if (any(numcol)) {
-            dat = as.data.frame(data)[, vars][, numcol]
-            if (!.drawrange) return()
+        if (any(meta$numeric.col)) {
+            dat = as.data.frame(data)[, meta$vars][, meta$numeric.col]
+            if (!meta$draw.range) return()
             range.d = round(as.matrix(apply(dat, 2, range, na.rm=TRUE)), 2)
+            numcol = which(meta$numeric.col)
             qstrokeColor(painter) = data$.color[1]
             if (horizontal) {
-                qdrawText(painter, range.d[1, ], which(numcol), lims[3], valign = 'bottom')
-                qdrawText(painter, range.d[2, ], which(numcol), lims[4], valign = 'top')
+                qdrawText(painter, range.d[1, ], numcol, lims[3], valign = 'bottom')
+                qdrawText(painter, range.d[2, ], numcol, lims[4], valign = 'top')
             } else {
-                qdrawText(painter, range.d[1, ], lims[1], which(numcol), halign = 'left')
-                qdrawText(painter, range.d[2, ], lims[2], which(numcol), halign = 'right')
+                qdrawText(painter, range.d[1, ], lims[1], numcol, halign = 'left')
+                qdrawText(painter, range.d[2, ], lims[2], numcol, halign = 'right')
             }
         }
     }
@@ -279,7 +252,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     boxplot_draw = function(layer, painter) {
         cranvas_debug()
         qstrokeColor(painter) = "black"
-        for (i in (1:p)[numcol]) {
+        for (i in (1:meta$p)[meta$numeric.col]) {
             x0 = c(rep(i - boxwex/2, 3), rep(i, 2))
             y0 = bxpstats[c(1, 3, 5, 1, 4), i]
             x1 = c(rep(i + boxwex/2, 3), rep(i, 2))
@@ -306,13 +279,12 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
     ## record the coordinates of the mouse on click
     brush_mouse_press = function(layer, event) {
-        .bstart <<- as.numeric(event$pos())
+        meta$start = as.numeric(event$pos())
         ## on right click, we can resize the brush; left click: only move the brush
         if (event$button() == Qt$Qt$RightButton) {
-            .bmove <<- FALSE
-        }
-        if (event$button() == Qt$Qt$LeftButton) {
-            .bmove <<- TRUE
+            meta$brush.move = FALSE
+        } else if (event$button() == Qt$Qt$LeftButton) {
+            meta$brush.move = TRUE
         }
     }
 
@@ -327,14 +299,14 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         ## change opacity of layer: + or -
         i = which(key == c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus))
         if (length(i)) {
-            .alpha <<- min(c(1.1, .9)[i] * .alpha, 1)
-            main_layer$setOpacity(.alpha)
+            meta$alpha = max(0, min(1, c(0.01, -0.01)[i] + meta$alpha))
+            main_layer$setOpacity(meta$alpha)
             qupdate(main_layer)
         }
 
         ## whether to draw min/max labels
         if (key == Qt$Qt$Key_R) {
-            .drawrange <<- !.drawrange
+            meta$draw.range = !meta$draw.range
             qupdate(range_layer)
             return()
         }
@@ -343,7 +315,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         if (key == Qt$Qt$Key_Delete)
             visible(data) = !selected(data)
         i = which(key == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
-        if (length(i) && !any(is.na(.bpos))) {
+        if (length(i) && !any(is.na(meta$pos))) {
             if (horizontal) {
                 j = 1
                 movedir = switch(i, -1, 1, NULL, NULL)
@@ -353,19 +325,19 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                 movedir = switch(i, NULL, NULL, -1, 1)
                 flipdir = switch(i, -1, 1, NULL, NULL)
             }
-            xs = which((1:p) > .bpos[j] - .brange[j] & (1:p) < .bpos[j] + .brange[j])
+            xs = which((1:meta$p) > meta$pos[j] - .brange[j] & (1:meta$p) < meta$pos[j] + .brange[j])
             if ((nxs <- length(xs))) {
                 if (!is.null(movedir)) {
-                    vars0 = vars
+                    vars0 = meta$vars
                     if (xs[1] > 1 & movedir == -1){
                         vars0[c(xs[1] - 1, xs)] = vars0[c(xs, xs[1] - 1)]
-                        .bpos[j] <<- .bpos[j] - 1
+                        meta$pos[j] <<- meta$pos[j] - 1
                     }
-                    if (xs[nxs] < p & movedir == 1){
+                    if (xs[nxs] < meta$p & movedir == 1){
                         vars0[c(xs, xs[nxs] + 1)] = vars0[c(xs[nxs] + 1, xs)]
-                        .bpos[j] <<- .bpos[j] + 1
+                        meta$pos[j] <<- meta$pos[j] + 1
                     }
-                    if (any(vars0 != vars)) {
+                    if (any(vars0 != meta$vars)) {
                         data_reorder(vars0)
                         qupdate(xaxis_layer)
                         qupdate(yaxis_layer)
@@ -379,7 +351,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
                     }
                 }
                 if (!is.null(flipdir)) {
-                    plot_data[, xs] <<- apply(plot_data[, xs, drop = FALSE], 2,
+                    meta$plot.data[, xs] <<- apply(meta$plot.data[, xs, drop = FALSE], 2,
                                               function(xx) {
                                                   lims[c(3,1)[j]] + lims[c(4,2)[j]] - xx
                                               })
@@ -405,7 +377,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
             idx = b$history.index + c(-1, 1)[direction]
             idx = max(1, min(length(b$history.list), idx))
             b$history.index = idx
-            .brushed = logical(n)
+            .brushed = logical(meta$n)
             .brushed[b$history.list[[idx]]] = TRUE
             selected(data) = .brushed
         }
@@ -415,16 +387,16 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     brush_mouse_move = function(layer, event) {
         cranvas_debug()
         if (b$identify) return()
-        .bpos <<- as.numeric(event$pos())
+        meta$pos = as.numeric(event$pos())
         ## simple click: don't change .brange
-        if (!all(.bpos == .bstart) && (!.bmove)) {
-            .brange <<- .bpos - .bstart
+        if (!all(meta$pos == meta$start) && (!meta$brush.move)) {
+            .brange <<- meta$pos - meta$start
         }
-        .new.brushed = rep(FALSE, n)
-        rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2, byrow = TRUE))
+        .new.brushed = rep(FALSE, meta$n)
+        rect = qrect(matrix(c(meta$pos - .brange, meta$pos + .brange), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
-        hits = ceiling(hits/ifelse(glyph == 'line', p - 1, p))
+        hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         .new.brushed[hits] = TRUE
         selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
         ## on mouse release
@@ -465,11 +437,11 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     brush_draw = function(layer, painter) {
         cranvas_debug()
         if (b$identify) return()
-        if (!any(is.na(.bpos))) {
+        if (!any(is.na(meta$pos))) {
             qlineWidth(painter) = b$style$size
             ##qdash(painter)=c(1,3,1,3)
-            qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
-                      .bpos[1] + .brange[1], .bpos[2] + .brange[2],
+            qdrawRect(painter, meta$pos[1] - .brange[1], meta$pos[2] - .brange[2],
+                      meta$pos[1] + .brange[1], meta$pos[2] + .brange[2],
                       stroke = b$style$color)
         }
         if (b$persistent && length(b$persistent.list)) {
@@ -499,10 +471,10 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     .identified = NULL
     identify_hover = function(layer, event) {
         if (!b$identify) return()
-        .bpos <<- as.numeric(event$pos())
-        rect = qrect(matrix(c(.bpos - c(xr, yr)/100, .bpos + c(xr, yr)/100), 2, byrow = TRUE))
+        meta$pos = as.numeric(event$pos())
+        rect = qrect(matrix(c(meta$pos - c(xr, yr)/100, meta$pos + c(xr, yr)/100), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
-        .identified <<- ceiling(hits/ifelse(glyph == 'line', p - 1, p))
+        .identified <<- ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         qupdate(identify_layer)
     }
 
@@ -515,18 +487,18 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
 
-            .labels = b$label.gen(data[.identified, vars])
+            .labels = b$label.gen(data[.identified, meta$vars])
             bgwidth = qstrWidth(painter, .labels)
             bgheight = qstrHeight(painter, .labels)
             ## adjust drawing directions when close to the boundary
-            hflag = lims[2] - .bpos[1] > bgwidth
-            vflag = .bpos[2] - lims[3] > bgheight
-            qdrawRect(painter, .bpos[1], .bpos[2],
-                      .bpos[1] + ifelse(hflag, 1, -1) * bgwidth,
-                      .bpos[2] + ifelse(vflag, -1, 1) * bgheight,
+            hflag = lims[2] - meta$pos[1] > bgwidth
+            vflag = meta$pos[2] - lims[3] > bgheight
+            qdrawRect(painter, meta$pos[1], meta$pos[2],
+                      meta$pos[1] + ifelse(hflag, 1, -1) * bgwidth,
+                      meta$pos[2] + ifelse(vflag, -1, 1) * bgheight,
                       stroke = rgb(1, 1, 1, 0.8), fill = rgb(1, 1, 1, 0.8))
             qstrokeColor(painter) = b$label.color
-            qdrawText(painter, .labels, .bpos[1], .bpos[2],
+            qdrawText(painter, .labels, meta$pos[1], meta$pos[2],
                       halign = ifelse(hflag, "left", "right"),
                       valign = ifelse(vflag, "top", "bottom"))
         }
@@ -537,15 +509,15 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
 
     ## title
     title_layer = qlayer(root_layer, function(layer, painter) {
-        qdrawText(painter, main, (lims[1] + lims[2])/2, 0, "center", "bottom")
+        qdrawText(painter, meta$main, (lims[1] + lims[2])/2, 0, "center", "bottom")
     }, limits = qrect(c(lims[1], lims[2]), c(0, 1)), row = 0, col = 1)
     ## x and y-axis
     if (horizontal) {
-        xat = 1:p
+        xat = 1:meta$p
         yat = .axis.loc(y)
     } else {
         xat = .axis.loc(x)
-        yat = 1:p
+        yat = 1:meta$p
     }
     xaxis_layer = qaxis(at = xat, labels = xticklab, side = 1, limits = lims[1:2])
     yaxis_layer = qaxis(at = yat, labels = yticklab, side = 2, limits = lims[3:4])
@@ -617,6 +589,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     layout$setRowStretchFactor(2, 0)
 
     view = qplotView(scene = scene)
-    view$setWindowTitle(main)
+    view$setWindowTitle(meta$main)
+    attr(view, 'meta') = meta
     view
 }

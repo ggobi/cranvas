@@ -48,3 +48,19 @@ summary_one = function(x, fun = median, ...) {
         ifelse(is.numeric(xx), fun(xx, ...), mode_label(xx))
     })
 }
+
+
+## remove (nearly) constant columns
+.rm.cons.col = function(data) {
+    const.col = sapply(data, function(x) {
+        x = na.omit(x)
+        x = as.numeric(x)
+        length(x) == 0 || diff(range(x)) < 1e-6
+    })
+    if (any(const.col)) {
+        data = data[, !const.col, drop = FALSE]
+        warning("removed constant column(s) ",
+                paste(names(data)[const.col], collapse = ","))
+    }
+    data
+}

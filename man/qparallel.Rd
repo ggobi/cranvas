@@ -6,7 +6,7 @@
     horizontal = TRUE, glyph = c("auto", "line", "tick", 
         "circle", "square", "triangle"), boxplot = FALSE, 
     boxwex, jitter, amount, main, lab.split = "[^[:alnum:]]", 
-    alpha = 1, ...)
+    alpha = 1, draw.range = TRUE)
 
 }
 
@@ -21,7 +21,9 @@ line representing a row.}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{vars}{variables to show; can be a character vector (column
 names), an integer vector (column indices) or a formula like '~ x1
-+ x2'}
++ x2'; if missing or it is a formula that contains a dot
+(e.g. \code{ ~ .}), all variables in the data except those whose
+names start with a dot will be used}
 \item{data}{a mutaframe which is typically built upon a data frame
 along with several row attributes}
 \item{scale}{standardizing method - 'range' --> [0, 1], 'I' --> do
@@ -29,7 +31,7 @@ nothing, 'var' --> mean 0 var 1, 'custom_function_name' --> use
 your own function (see examples.R)}
 \item{na.action}{the function to deal with missing values}
 \item{center}{the function to calculate where to center all the
-axes (e.g. center at the medians), or a numeric value, or
+variables (e.g. center at the medians), or a numeric value, or
 \code{NULL} (do not center)}
 \item{order}{methods to reorder the variables; see \code{\link{reorder_var}}}
 \item{horizontal}{logical: arrange variables in horizontal or
@@ -51,6 +53,9 @@ characters which are not alphanumeric will be replaced by
 this can be useful when the axis labels are too long (if we do not
 break them, they will be squeezed together along the axes); set
 \code{lab.split = NULL} to keep the labels untouched}
+\item{alpha}{the opacity value}
+\item{draw.range}{whether to draw the range values (min and max
+for each variable)}
 }
 \examples{## interaction: drag with the right button to resize
 #   the brush; left button to move it
