@@ -2,7 +2,8 @@
 #'
 #' arrow up/down: in-/de-crease size of points
 #' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
-#' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
+#' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
+#' Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
 #' @param data mutaframe data to use
 #' @param x which designates variable displayed on the horizontal axis
 #' @param y which designates variable displayed on the vertical axis
@@ -233,14 +234,15 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 			qupdate(root)
 		}
 
-		handle_focal_zoom <- function(focus) {
+		handle_focal_zoom <- function(focus, modifier) {
 	
 			xscale <- (dataRanges[2]-focus[1])/(focus[1] - dataRanges[1])
 			yscale <- (dataRanges[4]-focus[2])/(focus[2] - dataRanges[3])
-		#browser()
-			dataRanges[1] <<- dataRanges[1] + 0.02*diff(dataRanges[1:2])
+			sgn <- if (modifier == Qt$Qt$ShiftModifier) -1 else 1
+		
+			dataRanges[1] <<- dataRanges[1] + sgn* 0.02*diff(dataRanges[1:2])
 			dataRanges[2] <<- focus[1] + (focus[1]-dataRanges[1]) * xscale
-			dataRanges[3] <<- dataRanges[3] + 0.02*diff(dataRanges[3:4])
+			dataRanges[3] <<- dataRanges[3] + sgn*0.02*diff(dataRanges[3:4])
 			dataRanges[4] <<- focus[2] + (focus[2]-dataRanges[3]) * yscale
 
 
@@ -261,7 +263,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ## record the coordinates of the mouse on click
     brush_mouse_press <- function(item, event) {
 				if (zoom_focal) {
-					handle_focal_zoom(as.numeric(event$pos()))
+					handle_focal_zoom(as.numeric(event$pos()), event$modifiers())
 				} else { 
 					if (zoom) {
 					.zstart <<- as.numeric(event$pos())
