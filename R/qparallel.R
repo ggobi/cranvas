@@ -15,7 +15,7 @@
 ##' your own function (see examples.R)
 ##' @param na.action the function to deal with missing values
 ##' @param center the function to calculate where to center all the
-##' axes (e.g. center at the medians), or a numeric value, or
+##' variables (e.g. center at the medians), or a numeric value, or
 ##' \code{NULL} (do not center)
 ##' @param order methods to reorder the variables; see \code{\link{reorder_var}}
 ##' @param horizontal logical: arrange variables in horizontal or
@@ -37,6 +37,9 @@
 ##' this can be useful when the axis labels are too long (if we do not
 ##' break them, they will be squeezed together along the axes); set
 ##' \code{lab.split = NULL} to keep the labels untouched
+##' @param alpha the opacity value
+##' @param draw.range whether to draw the range values (min and max
+##' for each variable)
 ##' @return NULL
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
@@ -45,7 +48,7 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    main, lab.split = '[^[:alnum:]]', alpha=1, ...) {
+    main, lab.split = '[^[:alnum:]]', alpha = 1, draw.range = TRUE) {
 
     b = brush(data)    # the brush attached to the data
 
