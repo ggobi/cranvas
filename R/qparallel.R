@@ -5,7 +5,9 @@
 ##' Press R to toggle the min/max labels.
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
-##' + x2'
+##' + x2'; if missing or it is a formula that contains a dot
+##' (e.g. \code{ ~ .}), all variables in the data except those whose
+##' names start with a dot will be used
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
 ##' @param scale standardizing method - 'range' --> [0, 1], 'I' --> do
@@ -63,14 +65,12 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         main = paste("Parallel Coordinates Plot of", dataname)
     }
 
-    ## variable selection: select all variables not with '.' prefix by default;
-    ##   or parse the formula to get var names; or just use the usual way to
-    ##   select vars, e.g. by colnames, or integers
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
-    if (class(vars) == "formula")
-        vars = attr(terms(vars, data = as.data.frame(data)), "term.labels")
-    if (is.numeric(vars)) vars = names(data)[as.integer(vars)]
-
+    if (class(vars) == "formula") {
+        vars = all.vars(vars)
+        if ('.' %in% vars) vars = grep('^[^.]', names(data), value = TRUE)
+    }
+    if (is.numeric(vars)) vars = names(data)[vars]
     if (length(vars) <= 1L)
         stop("parallel coordinate plots need at least 2 variables!")
 
