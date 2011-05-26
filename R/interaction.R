@@ -227,3 +227,50 @@ selected = function(data) {
     data
 }
 
+.QtCursor = structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
+    9L, 10L, 11L, 12L, 13L, 14L, 17L, 18L, 15L, 16L, 20L,
+    19L, 21L, 24L), .Names = c("ArrowCursor", "UpArrowCursor",
+    "CrossCursor", "WaitCursor", "IBeamCursor", "SizeVerCursor",
+    "SizeHorCursor", "SizeBDiagCursor", "SizeFDiagCursor",
+    "SizeAllCursor", "BlankCursor", "SplitVCursor", "SplitHCursor",
+    "PointingHandCursor", "ForbiddenCursor", "OpenHandCursor",
+    "ClosedHandCursor", "WhatsThisCursor", "BusyCursor",
+    "DragMoveCursor", "DragCopyCursor", "DragLinkCursor",
+    "BitmapCursor"))
+
+##' Set the cursor of a view.
+##'
+##' All possible cursor types with the corresponding integer code are:
+##'
+##' 0: ArrowCursor; 1: UpArrowCursor; 2: CrossCursor; 3: WaitCursor;
+##' 4: IBeamCursor; 5: SizeVerCursor; 6: SizeHorCursor; 7:
+##' SizeBDiagCursor; 8: SizeFDiagCursor; 9: SizeAllCursor; 10:
+##' BlankCursor; 11: SplitVCursor; 12: SplitHCursor; 13:
+##' PointingHandCursor; 14: ForbiddenCursor; 17: OpenHandCursor; 18:
+##' ClosedHandCursor; 15: WhatsThisCursor; 16: BusyCursor; 20:
+##' DragMoveCursor; 19: DragCopyCursor; 21: DragLinkCursor; 24:
+##' BitmapCursor
+##' @param view the view for which to change the cursor
+##' @param cursor an integer or a character string (see Details)
+##' @return NULL; the cursor of the view is set as a side effect
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @references \url{http://doc.qt.nokia.com/4.7/qt.html#CursorShape-enum}
+##' @export
+##' @examples
+##' library(cranvas)
+##' library(qtpaint)
+##' scene = qscene()
+##' qlayer(scene)
+##' v = qplotView(scene = scene)
+##' print(v)
+##'
+##' set_cursor(v, 'WaitCursor')
+##'
+##' set_cursor(v, 2L)  # CrossCursor
+##'
+set_cursor = function(view, cursor = 'ArrowCursor') {
+    cu = view$cursor
+    if (is.character(cursor)) cursor = .QtCursor[cursor]
+    cu$setShape(cursor)
+    view$cursor = cu
+}
