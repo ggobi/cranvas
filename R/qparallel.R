@@ -93,20 +93,6 @@ qparallel = function(vars, data, scale = "range", na.action = na.impute,
         ##   so get an independent copy here
         plot_data <<- as.data.frame(data[, vars], stringsAsFactors = TRUE)
 
-        ## constant columns (or nearly constants -- for safety with floating numbers)
-        const.col = sapply(plot_data, function(x) {
-            x = na.omit(x)
-            x = as.numeric(x)
-            length(x) == 0 || diff(range(x)) < 1e-6
-        })
-        ## remove constant columns and give a warning message
-        if (any(const.col)) {
-            plot_data <<- plot_data[, !const.col]
-            warning("removed constant column(s) ",
-                    paste(vars[const.col], collapse = ","))
-            vars <<- vars[!const.col]
-        }
-
         ## which columns are numeric? we don't want boxplots for non-numeric vars
         numcol <<- sapply(plot_data, class) %in% c("numeric", "integer")
 
