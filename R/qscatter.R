@@ -73,6 +73,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 		zoom <- FALSE
 		.zstart <- NULL
 		.zstop <- NULL
+
+		zoom_focal <- FALSE
+
     ################################ end data processing & parameters
 
     ##########
@@ -197,6 +200,10 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         } else if (key == Qt$Qt$Key_Z) {
 					zoom <<- !zoom
   				print(sprintf("zoom: %s", zoom))
+  		  } else if (key == Qt$Qt$Key_X) {
+					zoom_focal <<- !zoom_focal
+					#browser()
+  		#		print(sprintf("focal zoom <%s>", event$pos()))
   		}
 
 
@@ -226,9 +233,37 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 			qupdate(root)
 		}
 
+		handle_focal_zoom <- function(focus) {
+	
+			xscale <- (dataRanges[2]-focus[1])/(focus[1] - dataRanges[1])
+			yscale <- (dataRanges[4]-focus[2])/(focus[2] - dataRanges[3])
+		#browser()
+			dataRanges[1] <<- dataRanges[1] + 0.02*diff(dataRanges[1:2])
+			dataRanges[2] <<- focus[1] + (focus[1]-dataRanges[1]) * xscale
+			dataRanges[3] <<- dataRanges[3] + 0.02*diff(dataRanges[3:4])
+			dataRanges[4] <<- focus[2] + (focus[2]-dataRanges[3]) * yscale
+
+
+			
+			xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
+			yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
+
+			lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
+
+			bglayer$setLimits(lims)
+			datalayer$setLimits(lims)
+			brushlayer$setLimits(lims)
+			querylayer$setLimits(lims)
+
+			qupdate(root)
+		}
+
     ## record the coordinates of the mouse on click
     brush_mouse_press <- function(item, event) {
-				if (zoom) {
+				if (zoom_focal) {
+					handle_focal_zoom(as.numeric(event$pos()))
+				} else { 
+					if (zoom) {
 					.zstart <<- as.numeric(event$pos())
 				} else {
 					.bstart <<- as.numeric(event$pos())
@@ -241,6 +276,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 							.bmove <<- TRUE
 					}
 				}
+			}
     }
 
     mouse_release <- function(item, event) {
