@@ -1,14 +1,18 @@
 #' Draw a time plot
 #'
+#' @param data Mutaframe data to use
 #' @param time The variable indicating time, which is displayed on the horizontal axis
 #' @param y The variable displayed on the vertical axis
-#' @param data Mutaframe data to use
+#' @param tgroup The variable to group the time series. Better to be 'year','month',
+#' or other time resolutions. Default to be null.
+#' @param wrap The switch for wrapping or not when zooming in/out by hitting right 
+#' arrow or left arrow. Default to be TRUE.
 #' @param size Point size, default to be 2
 #' @param alpha Transparency level, 1=completely opaque, default to be 1
 #' @param aspect.ratio Ratio between width and height of the plot
 #' @example cranvas/inst/examples/qtime-ex.R
 
-qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){  
+qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=NULL,...){  
 
 #####################
   ## data processing ##----------
@@ -53,6 +57,8 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
   .bmove <- TRUE
   ## brush range: horizontal and vertical
   .brange <- c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
+  ## size for zoom in/out without wrapping
+  zoomsize <- max(x,na.rm=TRUE)-min(x,na.rm=TRUE)
   
 ####################
   ## event handlers ##----------
@@ -109,20 +115,36 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
 
     if (event$key()==Qt$Qt$Key_Right){
       ## arrow right
-      zoombound=min(round(0.96*crt_range),crt_range-1)
-      if (zoombound<3)zoombound <- 3
-      tdf$x <- x%%zoombound
-      tdf$zg <- ceiling(x/zoombound)
-      if (sum(tdf$x==0)){
-        tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
-        tdf$x[tdf$x==0] <- zoombound
-      }
-      dataRanges <<- c(make_data_ranges(range(tdf$x)),
-                       make_data_ranges(range(y)))
-      windowRanges <<- dataRanges
-      sy <<- .axis.loc(tdf$x)
-      sx <<- .axis.loc(dataRanges[3:4])
-      lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+      
+      if (wrap) {
+        zoombound=min(round(0.96*crt_range),crt_range-1)
+        if (zoombound<3)zoombound <- 3
+        tdf$x <- x%%zoombound
+        tdf$zg <- ceiling(x/zoombound)
+        if (sum(tdf$x==0)){
+          tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
+          tdf$x[tdf$x==0] <- zoombound
+        }
+        dataRanges <<- c(make_data_ranges(range(tdf$x)),
+                         make_data_ranges(range(y)))
+        windowRanges <<- dataRanges
+        sy <<- .axis.loc(tdf$x)
+        sx <<- .axis.loc(dataRanges[3:4])
+        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])     
+      } else {
+          zoomsize <- min(0.96*zoomsize,zoomsize-2)
+          if (zoomsize < 2) zoomsize <- 2
+          tmpXzoom <- .bstart + c(-0.5,0.5) * zoomsize
+          tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
+          tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
+          print(tmpXzoom)
+          dataRanges <<- c(make_data_ranges(tmpXzoom),
+                           make_data_ranges(range(y)))
+          windowRanges <<- dataRanges
+          sy <<- .axis.loc(dataRanges[1:2])
+          sx <<- .axis.loc(dataRanges[3:4])
+          lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        }
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
       main_circle_layer$setLimits(lims)
@@ -133,20 +155,36 @@ qtime <- function(time,y,data,size=2,alpha=1,aspect.ratio=NULL,...){
 
     if (event$key()==Qt$Qt$Key_Left){
       ## arrow left
-      zoombound=max(round(crt_range*25/24),crt_range+1)
-      if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
-      tdf$x <- x%%zoombound
-      tdf$zg <- ceiling(x/zoombound)
-      if (sum(tdf$x==0)){
-        tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
-        tdf$x[tdf$x==0] <- zoombound
-      }
-      dataRanges <<- c(make_data_ranges(range(tdf$x)),
-                       make_data_ranges(range(y)))
-      windowRanges <<- dataRanges
-      sy <<- .axis.loc(tdf$x)
-      sx <<- .axis.loc(dataRanges[3:4])
-      lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+      
+      if (wrap) {
+        zoombound <- max(round(crt_range*25/24),crt_range+1)
+        if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
+        tdf$x <- x%%zoombound
+        tdf$zg <- ceiling(x/zoombound)
+        if (sum(tdf$x==0)){
+          tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
+          tdf$x[tdf$x==0] <- zoombound
+        }
+        dataRanges <<- c(make_data_ranges(range(tdf$x)),
+                         make_data_ranges(range(y)))
+        windowRanges <<- dataRanges
+        sy <<- .axis.loc(tdf$x)
+        sx <<- .axis.loc(dataRanges[3:4])
+        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+      } else {
+          zoomsize <- max(zoomsize*25/24,zoomsize+2)
+          if (zoomsize > (max(x)-min(x))) zoomsize <- max(x)-min(x)
+          tmpXzoom <- .bstart + c(-0.5,0.5) * zoomsize
+          tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
+          tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
+          print(tmpXzoom)
+          dataRanges <<- c(make_data_ranges(tmpXzoom),
+                           make_data_ranges(range(y)))
+          windowRanges <<- dataRanges
+          sy <<- .axis.loc(dataRanges[1:2])
+          sx <<- .axis.loc(dataRanges[3:4])
+          lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        }
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
       main_circle_layer$setLimits(lims)
