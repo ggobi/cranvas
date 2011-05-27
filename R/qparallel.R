@@ -191,8 +191,9 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     ## convention of notation:
     ## *_draw means a drawing function for a layer; *_event is an even callback; *_layer is a layer object
 
-    draw.glyph = switch(meta$glyph, tick = qglyphSegment(b = ifelse(horizontal, 0, Inf)), circle = qglyphCircle(),
-        square = qglyphSquare(), triangle = qglyphTriangle())
+    draw.glyph = switch(meta$glyph, tick = qglyphSegment(d = ifelse(horizontal, 0, pi/2)),
+                        circle = qglyphCircle(), square = qglyphSquare(),
+                        triangle = qglyphTriangle())
 
     ## par-coords segments
     main_draw = function(layer, painter) {
