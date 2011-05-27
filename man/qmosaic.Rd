@@ -2,8 +2,8 @@
 \alias{qmosaic}
 \title{Mosaic plot}
 \usage{qmosaic(data, formula, divider = mosaic(), cascade = 0, 
-    scale_max = TRUE, na.rm = FALSE, subset, colour = "grey30", 
-    main, cache = T, ...)
+    scale_max = TRUE, na.rm = FALSE, subset, main, cache = T, 
+    ...)
 
 }
 
@@ -24,7 +24,6 @@ along with several row attributes}
 \item{scale_max}{parameter for prodplot in package productplots}
 \item{na.rm}{handling of missing values, defaults to FALSE}
 \item{subset}{parameter for prodplot -}
-\item{colour}{fill colour of rectangles - only used if colour is not used in the data}
 \item{main}{parameter for prodplot}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 \item{...}{}

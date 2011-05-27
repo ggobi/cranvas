@@ -1,3 +1,5 @@
+export(qaxis)
+export(qgrid)
 export(brush)
 export("brush<-")
 importFrom(qtbase, Qt)
