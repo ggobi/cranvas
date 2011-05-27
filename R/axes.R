@@ -1,16 +1,63 @@
+##' Create an axis layer.
+##' This function creates an axis layer which contains tick marks and
+##' labels at given locations.
+##' @param parent the parent layer (default to be \code{NULL}, which
+##' means creating an independent layer with no parents, but it can be
+##' added to a parent layer using the approach \code{parent[i, j] <-
+##' child_layer})
+##' @param data \code{NULL} means to use \code{at} and \code{labels},
+##' otherwise it should be a list containing child elements
+##' \code{xat}, \code{yat}, \code{xlabels} and \code{ylabels}, and it
+##' will override the arguments \code{at} and \code{labels}
+##' @param side which side to draw the axis (following the convention
+##' of R base graphics, i.e., 1: bottom, 2: left, 3: top, 4: right);
+##' the location of tick marks and labels will automatically adjusted
+##' according \code{side}
+##' @param at the locations of tick marks
+##' @param labels the labels of the tick marks
+##' @param sister a sister layer beside which to draw the axis layer;
+##' the limits of this layer will be used for the axis layer, e.g.,
+##' the x-axis is in the bottom of a main plot layer, so the width of
+##' the axis layer should be the same with the main layer
+##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
+##' @return a layer object
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @note The vertical range of the x-axis is [0, 1], and the
+##' horizontal limit of y-axis is [0, 1].
+##' @examples
+##' library(cranvas)
+##' library(qtbase)
+##' library(qtpaint)
+##'
+##' s = qscene()
+##' r = qlayer(s)
+##' r[1, 1] = qlayer(paintFun = function(layer, painter) {
+##' qdrawCircle(painter, runif(1000), runif(1000), r = 2)
+##' qdrawRect(painter, 0, 0, 1, 1)
+##' }, limits = qrect(matrix(c(0, 1, 0, 1), 2))) # main layer
+##'
+##' r[2, 1] = qaxis(side = 1, at = c(0, .1, .3, .7, .8), sister = r[1, 1]) # x-axis
+##' r[1, 0] = qaxis(side = 2, at = c(0.2, .5, .6, .7, .9), sister = r[1, 1]) # y-axis
+##' r[0, 1] = qaxis(side = 3, data = list(xat = c(.1, .3, .7), xlabels = c('a', 'b', 'c')),
+##' sister = r[1, 1]) # top x-axis
+##' print(qplotView(scene = s)) # default layout is ugly; tune in r$gridLayout()
+##'
 qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
-    limits, ...) {
-    lims = if (side%%2)
-        qrect(limits, c(0, 1))
-    else qrect(c(0, 1), limits)
+                 sister = NULL, ...) {
+    if (!is.null(sister)) {
+        lims = as.matrix(sister$limits())
+        lims = qrect(if (side%%2) cbind(lims[, 1], 0:1) else cbind(0:1, lims[, 2]))
+    }
     draw_axis = function(layer, painter) {
         if (is.null(at)) {
-            at = .axis.loc(data)
+            at = if (side%%2) data$xat else data$yat
         }
         if (is.null(labels)) {
-            labels = if (!is.null(data) && is.factor(data))
-                levels(data)
-            else format(at)
+            labels = if (!is.null(data)) {
+                if (side%%2) data$xlabels else data$ylabels
+            }
+            if (is.null(labels)) labels = format(at)
         }
         xat = yat = at
         xalign = yalign = "center"
@@ -38,10 +85,11 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
             xshift2 = -0.1
         })
         qdrawText(painter, labels, x = xat, y = yat, halign = xalign, valign = yalign)
-        qdrawSegment(painter, xat + xshift1, yat + yshift1, xat + xshift2, yat +
-            yshift2)
+        qdrawSegment(painter, xat + xshift1, yat + yshift1, xat + xshift2, yat + yshift2)
     }
-    qlayer(parent, paintFun = draw_axis, limits = lims, ...)
+    if (!('limits' %in% names(list(...))) && !is.null(sister))
+        qlayer(parent, paintFun = draw_axis, limits = lims, ...) else
+    qlayer(parent, paintFun = draw_axis, ...)
 }
 
 ## calculate the 'pretty' locations of axis tick marks
