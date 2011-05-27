@@ -53,12 +53,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         main = paste("Parallel Coordinates Plot of", deparse(substitute(data))) # title
     }
 
-    if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
+    if (missing(vars)) vars = grep('^[^.]', colnames(data), value = TRUE)
     if (class(vars) == "formula") {
         vars = all.vars(vars)
-        if ('.' %in% vars) vars = grep('^[^.]', names(data), value = TRUE)
+        if ('.' %in% vars) vars = grep('^[^.]', colnames(data), value = TRUE)
     }
-    if (is.numeric(vars)) vars = names(data)[vars]
+    if (is.numeric(vars)) vars = colnames(data)[vars]
     if (length(vars) <= 1L)
         stop("parallel coordinate plots need at least 2 variables!")
 
