@@ -468,7 +468,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             tmpy = mat2seg(meta$y, .identified)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
-
+            qfont(painter) = Qt$QFont('Monospace')
             .labels = b$label.gen(data[.identified, meta$vars])
             bgwidth = qstrWidth(painter, .labels)
             bgheight = qstrHeight(painter, .labels)
