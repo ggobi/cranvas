@@ -282,14 +282,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         i = which(key == c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus))
         if (length(i)) {
             meta$alpha = max(0, min(1, c(0.01, -0.01)[i] + meta$alpha))
-            main_layer$setOpacity(meta$alpha)
-            qupdate(main_layer)
+            layer.main$setOpacity(meta$alpha)
+            qupdate(layer.main)
         }
 
         ## whether to draw min/max labels
         if (key == Qt$Qt$Key_R) {
             meta$draw.range = !meta$draw.range
-            qupdate(range_layer)
+            qupdate(layer.range)
             return()
         }
 
@@ -321,14 +321,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     }
                     if (any(vars0 != meta$vars)) {
                         data_reorder(vars0)
-                        qupdate(xaxis_layer)
-                        qupdate(yaxis_layer)
-                        main_layer$invalidateIndex()
-                        qupdate(main_layer)
-                        qupdate(brush_layer)
+                        qupdate(layer.xaxis)
+                        qupdate(layer.yaxis)
+                        layer.main$invalidateIndex()
+                        qupdate(layer.main)
+                        qupdate(layer.brush)
                         if (boxplot) {
                             data_boxplot()
-                            qupdate(boxplot_layer)
+                            qupdate(layer.boxplot)
                         }
                     }
                 }
@@ -338,14 +338,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                                                   meta$limits[c(3,1)[j]] + meta$limits[c(4,2)[j]] - xx
                                               })
                     data_primitives()
-                    qupdate(xaxis_layer)
-                    qupdate(yaxis_layer)
-                    main_layer$invalidateIndex()
-                    qupdate(main_layer)
-                    qupdate(brush_layer)
+                    qupdate(layer.xaxis)
+                    qupdate(layer.yaxis)
+                    layer.main$invalidateIndex()
+                    qupdate(layer.main)
+                    qupdate(layer.brush)
                     if (boxplot) {
                         data_boxplot()
-                        qupdate(boxplot_layer)
+                        qupdate(layer.boxplot)
                     }
                 }
             }
@@ -457,7 +457,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         rect = qrect(matrix(c(meta$pos - c(meta$xr, meta$yr)/100, meta$pos + c(meta$xr, meta$yr)/100), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         .identified <<- ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
-        qupdate(identify_layer)
+        qupdate(layer.identify)
     }
 
     identify_draw = function(layer, painter) {
@@ -487,12 +487,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     }
 
     scene = qscene()
-    root_layer = qlayer(scene)
+    layer.root = qlayer(scene)
 
     ## title
-    title_layer = qlayer(root_layer, function(layer, painter) {
-        qdrawText(painter, meta$main, (lims[1] + lims[2])/2, 0, "center", "bottom")
-    }, limits = qrect(c(lims[1], lims[2]), c(0, 1)), row = 0, col = 1)
+    title_layer = qlayer(layer.root, function(layer, painter) {
+        qdrawText(painter, meta$main, (meta$limits[1] + meta$limits[2])/2, 0, "center", "bottom")
+    }, limits = qrect(c(meta$limits[1], meta$limits[2]), c(0, 1)), row = 0, col = 1)
     ## x and y-axis
     if (horizontal) {
         xat = 1:meta$p
@@ -532,33 +532,33 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
     ## update the brush layer in case of any modifications to the mutaframe
     d.idx = add_listener(data, function(i, j) {
-        switch(j, .brushed = qupdate(brush_layer),
-               .color = qupdate(main_layer), {
+        switch(j, .brushed = qupdate(layer.brush),
+               .color = qupdate(layer.main), {
                    data_preprocess()
                    data_primitives()
-                   qupdate(grid_layer)
-                   qupdate(xaxis_layer)
-                   qupdate(yaxis_layer)
-                   qupdate(main_layer)
+                   qupdate(layer.grid)
+                   qupdate(layer.xaxis)
+                   qupdate(layer.yaxis)
+                   qupdate(layer.main)
                    if (boxplot) {
                        data_boxplot()
-                       qupdate(boxplot_layer)
+                       qupdate(layer.boxplot)
                    }
                })
     })
 
     ## update the brush layer if brush attributes change
     brush_update = function() {
-        qupdate(brush_layer)
+        qupdate(layer.brush)
     }
     b.idx = b$colorChanged$connect(brush_update)
-    qconnect(main_layer, 'destroyed', function(x) {
+    qconnect(layer.main, 'destroyed', function(x) {
         b$colorChanged$disconnect(b.idx)
         remove_listener(data, d.idx)
     })
     ## more attributes to come
 
-    layout = root_layer$gridLayout()
+    layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, 30)
     ## the y-axis layer needs 'dynamic' width determined by #{characters}
     ## here is a formula by my rule of thumb: 9 * nchar + 5
