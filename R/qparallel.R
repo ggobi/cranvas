@@ -147,7 +147,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             ## creating starting and ending vectors, because indexing in real-time is slow
             meta$segx0 = as.vector(t.default(meta$x))
             meta$segx1 = as.vector(t.default(cbind(meta$x[, -1], NA)))
-            meta$segy0 = as.vector(t.default(meta))
+            meta$segy0 = as.vector(t.default(meta$y))
             meta$segy1 = as.vector(t.default(cbind(meta$y[, -1], NA)))
         } else {
             meta$x0 = as.vector(t.default(meta$x))
