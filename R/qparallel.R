@@ -493,27 +493,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     title_layer = qlayer(layer.root, function(layer, painter) {
         qdrawText(painter, meta$main, (meta$limits[1] + meta$limits[2])/2, 0, "center", "bottom")
     }, limits = qrect(c(meta$limits[1], meta$limits[2]), c(0, 1)), row = 0, col = 1)
-    ## x and y-axis
-    if (horizontal) {
-        xat = 1:meta$p
-        yat = .axis.loc(y)
-    } else {
-        xat = .axis.loc(x)
-        yat = 1:meta$p
-    }
-    xaxis_layer = qaxis(at = xat, labels = xticklab, side = 1, limits = lims[1:2])
-    yaxis_layer = qaxis(at = yat, labels = yticklab, side = 2, limits = lims[3:4])
-    grid_layer = qgrid(xat = xat, yat = yat, xlim = lims[1:2], ylim = lims[3:4])
-    root_layer[2, 1] = xaxis_layer
-    root_layer[1, 0] = yaxis_layer
-    root_layer[1, 1] = grid_layer
 
-    if (boxplot) {
-        boxplot_layer = qlayer(root_layer, boxplot_draw, limits = qrect(lims),
-        row = 1, col = 1)
-    }
-
-    main_layer = qlayer(root_layer, main_draw,
+    layer.main = qlayer(paintFun = main_draw,
         mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
         mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
         keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
@@ -522,13 +503,29 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         }, focusOutFun = function(layer, painter) {
             focused(data) = FALSE
         },
-        limits = qrect(lims), row = 1, col = 1)
+        limits = qrect(meta$limits))
 
-    range_layer = qlayer(root_layer, range_draw, limits = qrect(lims), row = 1, col = 1)
-    brush_layer = qlayer(root_layer, brush_draw, limits = qrect(lims), row = 1, col = 1)
-    identify_layer = qlayer(root_layer, identify_draw, limits = qrect(lims), row = 1, col = 1)
-    ## legend layer (currently only acts as place holder)
-    legend_layer = qlayer(root_layer, row = 1, col = 2)
+    layer.range = qlayer(paintFun = range_draw, limits = qrect(meta$limits))
+    layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
+    layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
+    layer.xaxis = qaxis(data = meta, side = 1, sister = layer.main)
+    layer.yaxis = qaxis(data = meta, side = 2, sister = layer.main)
+    layer.grid = qgrid(data = meta, sister = layer.main,
+                       minor = ifelse(horizontal, 'y', 'x'))
+    layer.legend = qlayer()  # legend layer (currently only acts as place holder)
+
+    layer.root[2, 1] = layer.xaxis
+    layer.root[1, 0] = layer.yaxis
+    layer.root[1, 1] = layer.grid
+    if (boxplot) {
+        layer.boxplot = qlayer(paintFun = boxplot_draw, limits = qrect(meta$limits))
+        layer.root[1, 1] = layer.boxplot
+    }
+    layer.root[1, 1] = layer.main
+    layer.root[1, 1] = layer.range
+    layer.root[1, 1] = layer.brush
+    layer.root[1, 1] = layer.identify
+    layer.root[1, 2] = layer.legend
 
     ## update the brush layer in case of any modifications to the mutaframe
     d.idx = add_listener(data, function(i, j) {
