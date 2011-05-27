@@ -378,7 +378,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         rect = qrect(matrix(c(meta$pos - meta$brush.range, meta$pos + meta$brush.range), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
-        hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
+        hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p + 1, meta$p))
         .new.brushed[hits] = TRUE
         selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
         ## on mouse release
