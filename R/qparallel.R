@@ -145,10 +145,10 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             meta$glyph = ifelse(meta$n * meta$p <= 50000, 'line', 'tick')
         if (meta$glyph == 'line') {
             ## creating starting and ending vectors, because indexing in real-time is slow
-            meta$segx0 = as.vector(t.default(meta$x))
-            meta$segx1 = as.vector(t.default(cbind(meta$x[, -1], NA)))
-            meta$segy0 = as.vector(t.default(meta$y))
-            meta$segy1 = as.vector(t.default(cbind(meta$y[, -1], NA)))
+            meta$segx0 = as.vector(t.default(meta$x[, -meta$p]))
+            meta$segx1 = as.vector(t.default(meta$x[, -1]))
+            meta$segy0 = as.vector(t.default(meta$y[, -meta$p]))
+            meta$segy1 = as.vector(t.default(meta$y[, -1]))
         } else {
             meta$x0 = as.vector(t.default(meta$x))
             meta$y0 = as.vector(t.default(meta$y))
@@ -201,12 +201,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         .color = data$.color
         .color[!visible(data)] = NA
         layer$setOpacity(meta$alpha)
-        main.col = rep(.color, each = meta$p)
         if (meta$glyph == 'line') {
             segcol = rep(.color, each = meta$p - 1)
             qdrawSegment(painter, meta$segx0, meta$segy0, meta$segx1, meta$segy1,
-                         stroke = main.col)
+                         stroke = segcol)
         } else {
+            main.col = rep(.color, each = meta$p)
             qdrawGlyph(painter, draw.glyph, meta$x0, meta$y0, stroke = main.col)
         }
         cranvas_debug()
@@ -378,7 +378,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         rect = qrect(matrix(c(meta$pos - meta$brush.range, meta$pos + meta$brush.range), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
-        hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p + 1, meta$p))
+        hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         .new.brushed[hits] = TRUE
         selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
         ## on mouse release
@@ -456,7 +456,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         meta$pos = as.numeric(event$pos())
         rect = qrect(matrix(c(meta$pos - c(meta$xr, meta$yr)/100, meta$pos + c(meta$xr, meta$yr)/100), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
-        .identified <<- ceiling(hits/ifelse(meta$glyph == 'line', meta$p + 1, meta$p))
+        .identified <<- ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         qupdate(layer.identify)
     }
 
