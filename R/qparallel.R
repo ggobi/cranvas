@@ -13,6 +13,9 @@
 ##' @param scale standardizing method - 'range' --> [0, 1], 'I' --> do
 ##' nothing, 'var' --> mean 0 var 1, 'custom_function_name' --> use
 ##' your own function (see examples.R)
+##' @param names the variable labels to use in the plot (by default,
+##' they are the variable names with non-alphanumeric characters
+##' replaced by line breaks \code{'\n'})
 ##' @param na.action the function to deal with missing values
 ##' @param center the function to calculate where to center all the
 ##' variables (e.g. center at the medians), or a numeric value, or
@@ -30,13 +33,6 @@
 ##' variables (usually those categorical vars)
 ##' @param amount jitter amount
 ##' @param main the title
-##' @param lab.split the pattern to ``break'' the axis labels by
-##' \code{'\n'}; the default \code{'[^[:alnum:]]'} means any
-##' characters which are not alphanumeric will be replaced by
-##' \code{'\n'}, i.e. the labels will be broken into several lines;
-##' this can be useful when the axis labels are too long (if we do not
-##' break them, they will be squeezed together along the axes); set
-##' \code{lab.split = NULL} to keep the labels untouched
 ##' @param alpha the opacity value
 ##' @param draw.range whether to draw the range values (min and max
 ##' for each variable)
@@ -44,11 +40,12 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example cranvas/inst/examples/qparallel-ex.R
-qparallel = function(vars, data, scale = "range", na.action = na.impute,
+qparallel = function(vars, data, scale = "range", names = break_str(vars),
+    na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    main, lab.split = '[^[:alnum:]]', alpha = 1, draw.range = TRUE) {
+    main, alpha = 1, draw.range = TRUE) {
 
     b = brush(data)    # the brush attached to the data
 
