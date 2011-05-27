@@ -121,7 +121,7 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
 ##' and y minor grid lines; \code{''}: no minor grid lines
 ##' @param sister the layer beneath which to draw the background grid;
 ##' if not \code{NULL}, its limits will be passed to this grid layer
-##' so that their limits can match
+##' so that their limits can match up with each other
 ##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
 ##' @return a layer object
 ##' @author Yihui Xie <\url{http://yihui.name}>
