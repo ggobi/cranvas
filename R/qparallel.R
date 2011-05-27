@@ -67,14 +67,17 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     main = main, vars = vars, glyph = match.arg(glyph),
                     order = match.arg(order), draw.range = draw.range,
                     plot.data = NULL, numeric.col = NULL, p = NULL, n = NULL,
-                    jitter = jitter, amount = amount
+                    jitter = jitter, amount = amount,
+                    x = NULL, y = NULL, xr = NULL, yr = NULL, names = names,
+                    xat = NULL, yat = NULL, xlabels = NULL, ylabels = NULL,
+                    limits = NULL,
+                    segx0 = NULL, segx1 = NULL, segy0 = NULL, segy1 = NULL,
+                    x0 = NULL, y0 = NULL, brush.range = c(NA, NA)
     )
 
     ## a long way of transformation
     ## creat some 'global' variables first
-    x = y = segx0 = segy0 = segx1 = segy1 = segcol =
-        xr = yr = xspan = yspan = xticklab = yticklab = xtickloc = ytickloc =
-            .brange = lims = x0 = y0 = bxpstats = NULL
+    bxpstats = NULL
 
     data_preprocess = function() {
         meta$plot.data = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
@@ -118,58 +121,38 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     data_primitives = function() {
         ## switch x and y according to the direction
         if (horizontal) {
-            x <<- col(meta$plot.data)
-            y <<- meta$plot.data
-            xtickloc <<- 1:meta$p
-            xticklab <<- meta$vars
-            ytickloc <<- pretty(y)
-            yticklab <<- format(ytickloc)
+            meta$x = col(meta$plot.data)
+            meta$y = meta$plot.data
+            meta$xat = 1:meta$p
+            meta$xlabels = meta$names
+            meta$yat = .axis.loc(meta$y)
+            meta$ylabels = format(meta$yat)
+        } else {
+            meta$y = col(meta$plot.data)
+            meta$x = meta$plot.data
+            meta$yat = 1:meta$p
+            meta$ylabels = meta$names
+            meta$xat = .axis.loc(meta$x)
+            meta$xlabels = format(meta$xat)
         }
-        else {
-            x <<- meta$plot.data
-            y <<- col(meta$plot.data)
-            xtickloc <<- pretty(x)
-            xticklab <<- format(xtickloc)
-            ytickloc <<- 1:meta$p
-            yticklab <<- meta$vars
-        }
-        xspan <<- range(x)
-        yspan <<- range(y)
-        xr <<- diff(xspan)
-        yr <<- diff(yspan)
-
-        ## margins for the plot region
-        mar = qpar('mar')
-        lims <<- matrix(c(xspan + c(-1, 1) * xr * mar,
-                          yspan + c(-1, 1) * yr * mar), 2)
-        ## adjust axis ticks locations (some may exceed the range of 'lims')
-        idx = (xtickloc > lims[1, 1]) & (xtickloc < lims[2, 1])
-        xtickloc <<- xtickloc[idx]
-        xticklab <<- xticklab[idx]
-        idx = (ytickloc > lims[1, 2]) & (ytickloc < lims[2, 2])
-        ytickloc <<- ytickloc[idx]
-        yticklab <<- yticklab[idx]
-        if (!is.null(lab.split)) {
-            if (horizontal) {
-                xticklab <<- gsub(lab.split, '\n', xticklab)
-            } else {
-                yticklab <<- gsub(lab.split, '\n', yticklab)
-            }
-        }
+        meta$xr = diff(range(meta$x))
+        meta$yr = diff(range(meta$y))
+        ## extend margins
+        meta$limits = .extend.ranges(matrix(c(range(meta$x), range(meta$y)), 2))
 
         ## 'auto' means 'line's when n*p<=5000*10, and 'tick's otherwise
-        if (meta$glyph == 'auto') meta$glyph <<- ifelse(meta$n * meta$p <= 50000, 'line', 'tick')
+        if (meta$glyph == 'auto')
+            meta$glyph = ifelse(meta$n * meta$p <= 50000, 'line', 'tick')
         if (meta$glyph == 'line') {
-            ## creating starting and ending vectors, because indexing in real-time can be slow
-            segx0 <<- as.vector(t.default(x[, 1:(meta$p - 1)]))
-            segx1 <<- as.vector(t.default(x[, 2:meta$p]))
-            segy0 <<- as.vector(t.default(y[, 1:(meta$p - 1)]))
-            segy1 <<- as.vector(t.default(y[, 2:meta$p]))
+            ## creating starting and ending vectors, because indexing in real-time is slow
+            meta$segx0 = as.vector(t.default(meta$x))
+            meta$segx1 = as.vector(t.default(cbind(meta$x[, -1], NA)))
+            meta$segy0 = as.vector(t.default(meta))
+            meta$segy1 = as.vector(t.default(cbind(meta$y[, -1], NA)))
         } else {
-            x0 <<- as.vector(t.default(x))
-            y0 <<- as.vector(t.default(y))
+            meta$x0 = as.vector(t.default(meta$x))
+            meta$y0 = as.vector(t.default(meta$y))
         }
-
     }
 
     data_boxplot = function() {
@@ -199,7 +182,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                              numcol = meta$numeric.col, x = data$.color))
 
     ## brush range: horizontal and vertical
-    .brange = c(xr, yr)/30
+    meta$brush.range = c(meta$xr, meta$yr)/30
 
     ## automatic box width
     if (missing(boxwex))
@@ -217,12 +200,13 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         .color = data$.color
         .color[!visible(data)] = NA
         layer$setOpacity(meta$alpha)
+        main.col = rep(.color, each = meta$p)
         if (meta$glyph == 'line') {
             segcol = rep(.color, each = meta$p - 1)
-            qdrawSegment(painter, segx0, segy0, segx1, segy1, stroke = segcol)
+            qdrawSegment(painter, meta$segx0, meta$segy0, meta$segx1, meta$segy1,
+                         stroke = main.col)
         } else {
-            col.glyph = rep(.color, each = meta$p)
-            qdrawGlyph(painter, draw.glyph, x0, y0, stroke = col.glyph)
+            qdrawGlyph(painter, draw.glyph, meta$x0, meta$y0, stroke = main.col)
         }
         cranvas_debug()
     }
@@ -236,11 +220,11 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             numcol = which(meta$numeric.col)
             qstrokeColor(painter) = data$.color[1]
             if (horizontal) {
-                qdrawText(painter, range.d[1, ], numcol, lims[3], valign = 'bottom')
-                qdrawText(painter, range.d[2, ], numcol, lims[4], valign = 'top')
+                qdrawText(painter, range.d[1, ], numcol, meta$limits[3], valign = 'bottom')
+                qdrawText(painter, range.d[2, ], numcol, meta$limits[4], valign = 'top')
             } else {
-                qdrawText(painter, range.d[1, ], lims[1], numcol, halign = 'left')
-                qdrawText(painter, range.d[2, ], lims[2], numcol, halign = 'right')
+                qdrawText(painter, range.d[1, ], meta$limits[1], numcol, halign = 'left')
+                qdrawText(painter, range.d[2, ], meta$limits[2], numcol, halign = 'right')
             }
         }
     }
@@ -322,17 +306,17 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                 movedir = switch(i, NULL, NULL, -1, 1)
                 flipdir = switch(i, -1, 1, NULL, NULL)
             }
-            xs = which((1:meta$p) > meta$pos[j] - .brange[j] & (1:meta$p) < meta$pos[j] + .brange[j])
+            xs = which((1:meta$p) > meta$pos[j] - meta$brush.range[j] & (1:meta$p) < meta$pos[j] + meta$brush.range[j])
             if ((nxs <- length(xs))) {
                 if (!is.null(movedir)) {
                     vars0 = meta$vars
                     if (xs[1] > 1 & movedir == -1){
                         vars0[c(xs[1] - 1, xs)] = vars0[c(xs, xs[1] - 1)]
-                        meta$pos[j] <<- meta$pos[j] - 1
+                        meta$pos[j] = meta$pos[j] - 1
                     }
                     if (xs[nxs] < meta$p & movedir == 1){
                         vars0[c(xs, xs[nxs] + 1)] = vars0[c(xs[nxs] + 1, xs)]
-                        meta$pos[j] <<- meta$pos[j] + 1
+                        meta$pos[j] = meta$pos[j] + 1
                     }
                     if (any(vars0 != meta$vars)) {
                         data_reorder(vars0)
@@ -348,9 +332,9 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     }
                 }
                 if (!is.null(flipdir)) {
-                    meta$plot.data[, xs] <<- apply(meta$plot.data[, xs, drop = FALSE], 2,
+                    meta$plot.data[, xs] = apply(meta$plot.data[, xs, drop = FALSE], 2,
                                               function(xx) {
-                                                  lims[c(3,1)[j]] + lims[c(4,2)[j]] - xx
+                                                  meta$limits[c(3,1)[j]] + meta$limits[c(4,2)[j]] - xx
                                               })
                     data_primitives()
                     qupdate(xaxis_layer)
@@ -385,12 +369,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         cranvas_debug()
         if (b$identify) return()
         meta$pos = as.numeric(event$pos())
-        ## simple click: don't change .brange
+        ## simple click: don't change meta$brush.range
         if (!all(meta$pos == meta$start) && (!meta$brush.move)) {
-            .brange <<- meta$pos - meta$start
+            meta$brush.range = meta$pos - meta$start
         }
         .new.brushed = rep(FALSE, meta$n)
-        rect = qrect(matrix(c(meta$pos - .brange, meta$pos + .brange), 2, byrow = TRUE))
+        rect = qrect(matrix(c(meta$pos - meta$brush.range, meta$pos + meta$brush.range), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
@@ -437,8 +421,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (!any(is.na(meta$pos))) {
             qlineWidth(painter) = b$style$size
             ##qdash(painter)=c(1,3,1,3)
-            qdrawRect(painter, meta$pos[1] - .brange[1], meta$pos[2] - .brange[2],
-                      meta$pos[1] + .brange[1], meta$pos[2] + .brange[2],
+            qdrawRect(painter, meta$pos[1] - meta$brush.range[1], meta$pos[2] - meta$brush.range[2],
+                      meta$pos[1] + meta$brush.range[1], meta$pos[2] + meta$brush.range[2],
                       stroke = b$style$color)
         }
         if (b$persistent && length(b$persistent.list)) {
@@ -446,8 +430,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             for (i in seq_along(b$persistent.list)) {
                 idx = b$persistent.list[[i]]
                 qstrokeColor(painter) = b$persistent.color[i]
-                tmpx = mat2seg(x, idx)
-                tmpy = mat2seg(y, idx)
+                tmpx = mat2seg(meta$x, idx)
+                tmpy = mat2seg(meta$y, idx)
                 nn = length(tmpx)
                 qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
             }
@@ -456,8 +440,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (sum(.brushed, na.rm = TRUE) >= 1) {
             qlineWidth(painter) = b$size
             qstrokeColor(painter) = b$color
-            tmpx = mat2seg(x, .brushed)
-            tmpy = mat2seg(y, .brushed)
+            tmpx = mat2seg(meta$x, .brushed)
+            tmpy = mat2seg(meta$y, .brushed)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
 
@@ -469,7 +453,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     identify_hover = function(layer, event) {
         if (!b$identify) return()
         meta$pos = as.numeric(event$pos())
-        rect = qrect(matrix(c(meta$pos - c(xr, yr)/100, meta$pos + c(xr, yr)/100), 2, byrow = TRUE))
+        rect = qrect(matrix(c(meta$pos - c(meta$xr, meta$yr)/100, meta$pos + c(meta$xr, meta$yr)/100), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         .identified <<- ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         qupdate(identify_layer)
@@ -479,8 +463,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (b$identify && length(.identified)) {
             qlineWidth(painter) = b$size
             qstrokeColor(painter) = b$color
-            tmpx = mat2seg(x, .identified)
-            tmpy = mat2seg(y, .identified)
+            tmpx = mat2seg(meta$x, .identified)
+            tmpy = mat2seg(meta$y, .identified)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
 
@@ -488,8 +472,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             bgwidth = qstrWidth(painter, .labels)
             bgheight = qstrHeight(painter, .labels)
             ## adjust drawing directions when close to the boundary
-            hflag = lims[2] - meta$pos[1] > bgwidth
-            vflag = meta$pos[2] - lims[3] > bgheight
+            hflag = meta$limits[2] - meta$pos[1] > bgwidth
+            vflag = meta$pos[2] - meta$limits[3] > bgheight
             qdrawRect(painter, meta$pos[1], meta$pos[2],
                       meta$pos[1] + ifelse(hflag, 1, -1) * bgwidth,
                       meta$pos[2] + ifelse(vflag, -1, 1) * bgheight,
