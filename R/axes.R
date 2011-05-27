@@ -199,14 +199,14 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
 
         qdrawLine(plotObj, x = rep(c(dataRanges[1:2], NA), nvlines), y = rep(vertPos,
             each = 3), stroke = "white")
-        
+
         minor.vertPos <- c(vertPos[1]-vdiff/2, vertPos+vdiff/2)
 
         n <- length(minor.vertPos)
-        if (dataRanges[4] < minor.vertPos[n]) 
+        if (dataRanges[4] < minor.vertPos[n])
         	minor.vertPos <- minor.vertPos[-n]
 
-        if (dataRanges[3] > minor.vertPos[1]) 
+        if (dataRanges[3] > minor.vertPos[1])
         	minor.vertPos <- minor.vertPos[-1]
     }
 
