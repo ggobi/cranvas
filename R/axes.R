@@ -53,24 +53,79 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
     at[at <= max(x) & at >= min(x)]
 }
 
-qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
-    ## background color
-    .bgcolor = "grey90"
-
+##' Create a background grid layer.
+##' A layer with gray background and white grid lines corresponding to
+##' axis tick marks. Minor grid lines are optional and thinner.
+##'
+##' @param parent the parent layer (default to be \code{NULL}, which
+##' means creating an independent layer with no parents, but it can be
+##' added to a parent layer using the approach \code{parent[i, j] <-
+##' child_layer})
+##' @param data \code{NULL} means to use \code{xat}, \code{yat},
+##' otherwise it should be a list containing child elements \code{xat}
+##' and \code{yat}, and it will override the next two arguments
+##' @param xat locations to draw vertical grid lines
+##' @param yat locations to draw horizontal grid lines
+##' @param xlim the x-axis limits (\code{c(x0, x1)})
+##' @param ylim the y-axis limits (\code{c(y0, y1)})
+##' @param minor defines which minor lines to draw: \code{'x'}: only
+##' on the x-axis; \code{'y'}: only on the y-axis; \code{'xy'}: both x
+##' and y minor grid lines; \code{''}: no minor grid lines
+##' @param sister the layer beneath which to draw the background grid;
+##' if not \code{NULL}, its limits will be passed to this grid layer
+##' so that their limits can match
+##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
+##' @return a layer object
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples
+##' library(cranvas)
+##' library(qtbase)
+##' library(qtpaint)
+##'
+##' s = qscene()
+##' r = qlayer(s)
+##' m = qlayer(paintFun = function(layer, painter) {
+##'     qdrawCircle(painter, runif(1000), runif(1000), r = 2)
+##'     qdrawRect(painter, 0, 0, 1, 1)
+##' }, limits = qrect(matrix(c(0, 1, 0, 1), 2))) # main layer
+##' g = qgrid(xat = seq(0, 1, .2), yat = seq(0, 1, .5), sister = m)
+##' r[1, 1] = g  # must add the grid layer FIRST, then the plot layer
+##' r[1, 1] = m
+##' print(qplotView(scene = s))
+##'
+qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
+                 sister = NULL, ...) {
+    .bgcolor = "grey90"  # background color
     draw_grid = function(layer, painter) {
+        if (!is.null(sister)) {
+            lims = as.matrix(sister$limits())
+            xlim = lims[, 1]
+            ylim = lims[, 2]
+        }
         qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor,
             fill = .bgcolor)
-        qlineWidth(painter) = 1
+        qlineWidth(painter) = 2
+        if (!is.null(data)) {
+            xat = data$xat
+            yat = data$yat
+        }
         qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
         qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
         ## minor grid
-        qlineWidth(painter) = 0.1
-        xat = (xat[-1] + xat[-length(xat)])/2
-        qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
-        yat = (yat[-1] + yat[-length(yat)])/2
-        qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
+        qlineWidth(painter) = 1
+        if (minor %in% c('x', 'xy')) {
+            xat = (xat[-1] + xat[-length(xat)])/2
+            qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
+        }
+        if (minor %in% c('y', 'xy')) {
+            yat = (yat[-1] + yat[-length(yat)])/2
+            qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
+        }
     }
-    qlayer(parent, paintFun = draw_grid, limits = qrect(xlim, ylim), ...)
+    if (!('limits' %in% names(list(...))) && !is.null(sister))
+        qlayer(parent, paintFun = draw_grid, limits = sister$limits(), ...) else
+    qlayer(parent, paintFun = draw_grid, ...)
 }
 
 
