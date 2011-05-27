@@ -207,6 +207,7 @@ reorder_var = function(data, type = c('none', 'MDS', 'ANOVA', 'randomForest'),
 ##' @param ... other arguments passed to \code{\link[base]{gsub}}
 ##' @return a character vector with certain characters replaced by \code{'\n'}
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
 ##' @examples
 ##' break_str(c('long label1.1', 'long label1.2', 'long label1.3'), split = ' ')
 ##' break_str(names(iris))
