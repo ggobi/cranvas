@@ -98,7 +98,7 @@ qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversit
 
 qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", 
     center = median, horizontal = FALSE, glyph = "tick", 
-    lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
+    boxplot = TRUE, boxwex = 0.8)
 
 # Find ISU, and sort by best rank to least on ISU
 median.centering <- function(x) {
@@ -110,7 +110,7 @@ nrc.medctr <- apply(nrcstat[, 20:68], 2, median.centering)
 var.ord <- order(nrc.medctr[13, ]) + 19
 qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", 
     center = median, horizontal = FALSE, glyph = "tick", 
-    lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
+    boxplot = TRUE, boxwex = 0.8)
 
 ## color palette
 library(RColorBrewer)
@@ -165,9 +165,8 @@ qparallel(data = qiris, scale = "I", order = "MDS")
 qparallel(data = qiris, order = "ANOVA")
 qparallel(data = qiris, scale = "I", order = "ANOVA")
 
-## set color and print verbose timing
+## set color
 qiris$.color = rgb(1, 0, 0, 0.5)
-qparallel(data = qiris, verbose = TRUE)
 
 ## the plot will be updated if we modify the mutaframe
 qparallel(data = qiris)
@@ -297,7 +296,6 @@ library(animation)
 data(pollen)
 qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
 qparallel(data = qpollen)}
-
 
 
 
