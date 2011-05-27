@@ -44,12 +44,13 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
     qlayer(parent, paintFun = draw_axis, limits = lims, ...)
 }
 
-.axis.loc = function(data) {
-    if (is.factor(data)) {
-        return(as.integer(data))
+## calculate the 'pretty' locations of axis tick marks
+.axis.loc = function(x) {
+    if (is.factor(x)) {
+        return(seq_along(levels(x)))
     }
-    at = pretty(data)
-    at[at <= max(data) & at >= min(data)]
+    at = pretty(x)
+    at[at <= max(x) & at >= min(x)]
 }
 
 qgrid = function(parent = NULL, xat, yat, xlim, ylim, ...) {
