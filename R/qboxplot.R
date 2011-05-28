@@ -34,7 +34,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     if (!any(class(data) %in% c('data.frame', 'mutaframe', 'list')))
         data = as.data.frame(data)
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
-    if (is(vars, 'formula')) {
+    if (inherits(vars, 'formula')) {
         vars.n = length(vars)  # 2 means one-sided formula, 3 means two-sided
         vars.a = all.vars(vars)  # all variables in the formula
         if (vars.n == 2) {
@@ -169,7 +169,7 @@ qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
             .boxcol = brush(data)$color
             data2 = data[selected(data), , drop = FALSE]
         }
-        if (!is.null(vars) && is(vars, 'formula') && length(vars) == 3) {
+        if (!is.null(vars) && inherits(vars, 'formula') && length(vars) == 3) {
             vars.a = all.vars(vars)
             data2 = tapply(data[, vars.a[1]], data[, vars.a[2]], I, simplify = FALSE)  # reshape
             vars = names(data2)
