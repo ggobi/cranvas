@@ -96,23 +96,75 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
 }
 
 
-## construct the boxplot layer
-.bxp.layer = function(parent = NULL, vars, data, subset = FALSE, at, width, horizontal, ...) {
+##' Create a boxplot layer.
+##' A ``low-level'' plotting function to create a boxplot layer.
+##'
+##' @param parent the parent layer in which to embed this boxplot
+##' layer
+##' @param vars see \code{\link{qboxplot}}
+##' @param data the data (a data frame or mutaframe or a list
+##' containing child elements \code{plot.data} and \code{numeric.col})
+##' @param subset whether to draw boxplots based on selected rows
+##' @param at the locations at which to draw the boxplots
+##' @param width width(s) of boxes
+##' @param horizontal direction of boxplots (\code{TRUE} means
+##' horizontal)
+##' @param sister a sister layer on top of which to put the boxplot
+##' layer
+##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
+##' @return a layer object
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples
+##' library(cranvas)
+##' library(qtbase)
+##' library(qtpaint)
+##' library(plumbr)
+##'
+##' s = qscene()
+##' r = qlayer(s)
+##' x = as.data.frame(matrix(rnorm(100), 20))
+##' m = qlayer(paintFun = function(layer, painter) {
+##'     qdrawCircle(painter, as.vector(col(x)), as.vector(as.matrix(x)), r = 2, stroke = 'gray')
+##' }, limits = qrect(matrix(c(0, 6, range(x)), 2)))  # main layer
+##' b = qbxp(vars = c('V1', 'V3', 'V5'), data = x, at = c(1, 3, 5), width = 1, sister = m)
+##' r[1, 1] = b
+##' r[1, 1] = m
+##' print(qplotView(scene = s))
+##'
+##' ## when the data argument is a list
+##' s = qscene()
+##' r = qlayer(s)
+##' m = qlayer(paintFun = function(layer, painter) {
+##'     qdrawCircle(painter, as.vector(col(x)), as.vector(as.matrix(x)), r = 2, stroke = 'gray')
+##' }, limits = qrect(matrix(c(0, 6, range(x)), 2)))  # main layer
+##' b = qbxp(data = list(plot.data = x, numeric.col = rep(TRUE, 5)), width = 0.6, sister = m)
+##' r[1, 1] = b
+##' r[1, 1] = m
+##' print(qplotView(scene = s))
+##'
+qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
+                horizontal = FALSE, sister = NULL, ...) {
     draw_boxplot = function(layer, painter) {
         .boxcol = 'black'
         if (subset) {
             if (all(!selected(data))) return()
             .boxcol = brush(data)$color
-            data = data[selected(data), ]
+            data2 = data[selected(data), ]
         }
-        if (is(vars, 'formula') && length(vars) == 3) {
+        if (!is.null(vars) && is(vars, 'formula') && length(vars) == 3) {
             vars.a = all.vars(vars)
-            data = tapply(data[, vars.a[1]], data[, vars.a[2]], I, simplify = FALSE)  # reshape
-            vars = names(data)
+            data2 = tapply(data[, vars.a[1]], data[, vars.a[2]], I, simplify = FALSE)  # reshape
+            vars = names(data2)
         }
-        if (is.mutaframe(data)) data = as.data.frame(data[, vars])
+        if (is.mutaframe(data) || is.data.frame(data)) data2 = as.data.frame(data[, vars])
+        ## if meta data is passed here, use it
+        if (!is.null(data$plot.data) && !is.null(data$numeric.col)) {
+            data2 = as.data.frame(data$plot.data)[, data$numeric.col, drop = FALSE]
+            at = which(data$numeric.col)
+        }
         ## boxplots statistics
-        bxp.data = sapply(data, boxplot.stats, do.conf = FALSE, simplify = FALSE)
+        bxp.data = sapply(data2, boxplot.stats, do.conf = FALSE, simplify = FALSE)
         bxp.stats = sapply(bxp.data, `[[`, 'stats')  # quantiles
         bxp.out = sapply(bxp.data, `[[`, 'out')  # outliers
         if (horizontal) {
@@ -127,7 +179,6 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
             y1 = as.vector(bxp.stats[c(2, 5), ])
         }
         qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # whiskers
-
         if (horizontal) {
             y0 = at - width/2
             y1 = at + width/2
@@ -140,7 +191,6 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
             y1 = bxp.stats[4, ]
         }
         qdrawRect(painter, x0, y0, x1, y1, fill = 'white', stroke = .boxcol)  # box
-
         if (horizontal) {
             y = rep(at, sapply(bxp.out, length))
             x = unlist(bxp.out)
@@ -152,14 +202,16 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
             circle = qglyphCircle()
             qdrawGlyph(painter, circle, x, y, cex = .6, stroke = 'black', fill = 'black')
         }
-        ## qlineWidth(painter) = 3
+        qlineWidth(painter) = 3
         if (horizontal) {
             x0 = x1 = bxp.stats[3, ]
         } else {
             y0 = y1 = bxp.stats[3, ]
         }
         qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # median bar
-        ## qlineWidth(painter) = 1
+        qlineWidth(painter) = 1
     }
+    if (!('limits' %in% names(list(...))) && !is.null(sister))
+        qlayer(parent, paintFun = draw_boxplot, limits = sister$limits(), ...) else
     qlayer(parent, paintFun = draw_boxplot, ...)
 }
