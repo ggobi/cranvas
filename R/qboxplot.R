@@ -58,8 +58,12 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     if (is.null(at)) at = 1:p
     if (is.null(width)) width = max(0.1 * diff(range(at)), 0.2)
     lims = matrix(c(range(at) + c(-1, 1) * max(width)/2, r), 2)
-    if (horizontal) lims = lims[, 2:1]
-    lims = .extend.ranges(lims)  # extend the limits here
+    ext = matrix(c(0.1, 0.1, 0.05, 0.05), 2)
+    if (horizontal) {
+        lims = lims[, 2:1]
+        ext = ext[, 2:1]
+    }
+    lims = .extend.ranges(lims, ext)  # extend the limits here
     layer.main = qbxp(vars = vars, data = data, at = at, width = width,
                             horizontal = horizontal, limits = qrect(lims))
     xat = at
