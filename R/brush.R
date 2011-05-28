@@ -14,7 +14,8 @@ brushGen = setRefClass('BRUSH',
               signalingField('history.list', 'list'), # brush history
               signalingField('persistent', 'logical'), # persistent or transient brushing
               signalingField('persistent.color', 'character'), # persistent colors
-              signalingField('persistent.list', 'list') # persistent brushing history
+              signalingField('persistent.list', 'list'), # persistent brushing history
+              signalingField('cursor', 'numeric') # the cursor type
               ))
 
 
