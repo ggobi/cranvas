@@ -214,9 +214,9 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
     ## annotate maximum and minimum values for each axis
     range_draw = function(layer, painter) {
+        if (!meta$draw.range) return()
         if (any(meta$numeric.col)) {
             dat = as.data.frame(data)[, meta$vars][, meta$numeric.col]
-            if (!meta$draw.range) return()
             range.d = round(as.matrix(apply(dat, 2, range, na.rm=TRUE)), 2)
             numcol = which(meta$numeric.col)
             qstrokeColor(painter) = data$.color[1]
