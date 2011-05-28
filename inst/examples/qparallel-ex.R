@@ -6,9 +6,7 @@ library(cranvas)
 
 data(nrcstat)
 qnrc = qdata(nrcstat)
-rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = " -> ")
-
-## brush(qnrc, 'size') = 1  # I cannot work with size > 1 at the moment
+rownames(qnrc) = abbreviate(paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = " -> "))
 
 ## Overview: type, rankings
 print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
@@ -38,7 +36,7 @@ qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversit
     center = median, horizontal = FALSE, glyph = "tick")
 
 qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", center = median,
-    horizontal = FALSE, glyph = "tick", lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
+    horizontal = FALSE, glyph = "tick", boxplot = TRUE, boxwex = 0.8)
 
 # Find ISU, and sort by best rank to least on ISU
 median.centering <- function(x) {
@@ -48,7 +46,7 @@ median.centering <- function(x) {
 nrc.medctr <- apply(nrcstat[, 20:68], 2, median.centering)
 var.ord <- order(nrc.medctr[13, ]) + 19
 qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", center = median,
-    horizontal = FALSE, glyph = "tick", lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
+    horizontal = FALSE, glyph = "tick", boxplot = TRUE, boxwex = 0.8)
 
 ## color palette
 library(RColorBrewer)
@@ -100,9 +98,8 @@ qparallel(data = qiris, scale = "I", order = "MDS")
 qparallel(data = qiris, order = "ANOVA")
 qparallel(data = qiris, scale = "I", order = "ANOVA")
 
-## set color and print verbose timing
+## set color
 qiris$.color = rgb(1, 0, 0, 0.5)
-qparallel(data = qiris, verbose = TRUE)
 
 ## the plot will be updated if we modify the mutaframe
 qparallel(data = qiris)

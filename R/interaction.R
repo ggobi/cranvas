@@ -85,7 +85,8 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
             paste(capture.output(print(...)), collapse = '\n')
         }, label.color = "darkgray",
         history.size = 30, history.index = 0, history.list = list(),
-        persistent = FALSE, persistent.color = character(0), persistent.list = list())
+        persistent = FALSE, persistent.color = character(0), persistent.list = list(),
+        cursor = 0L)
 
     ## here 'mode' is explained in the documentation of mode_selection()
 

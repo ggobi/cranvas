@@ -1,12 +1,12 @@
 \name{qparallel}
 \alias{qparallel}
 \title{Parallel coordinates plot}
-\usage{qparallel(vars, data, scale = "range", na.action = na.impute, 
-    center, order = c("none", "MDS", "ANOVA", "randomForest"), 
-    horizontal = TRUE, glyph = c("auto", "line", "tick", 
-        "circle", "square", "triangle"), boxplot = FALSE, 
-    boxwex, jitter, amount, main, lab.split = "[^[:alnum:]]", 
-    alpha = 1, draw.range = TRUE)
+\usage{qparallel(vars, data, scale = "range", names = break_str(vars), 
+    na.action = na.impute, center, order = c("none", "MDS", 
+        "ANOVA", "randomForest"), horizontal = TRUE, glyph = c("auto", 
+        "line", "tick", "circle", "square", "triangle"), 
+    boxplot = FALSE, boxwex, jitter, amount, main, alpha = 1, 
+    draw.range = TRUE)
 
 }
 
@@ -16,7 +16,25 @@
 \description{
 Create a parallel coordinates plot from a data frame or matrix, with each
 line representing a row.}
-\details{Press R to toggle the min/max labels.}
+\details{We can turn on/off identify by setting \code{brush(data,
+'identify')} to be \code{TRUE}/\code{FALSE}. In the identify mode,
+the rows of data in a small neighborhood of the mouse will be
+shown on the screen. In the brush mode, we can use the left button
+of the mouse to drag a brush over the plot, and the brushed
+elements will be highlighted; the right button is used to resize
+the brush.
+
+Several key stroke interactions are available as well: in the
+brush mode, we can hold the key A for \code{AND} operations,
+i.e. only the elements which were brushed in the last time
+\emph{and} are also brushed this time will be finally
+brushed. Similarly, O is for \code{OR}; X for \code{XOR}; N for
+\code{NOT} and C for \code{COMPLEMENT}. We can press R to toggle
+the min/max labels. Plus and minus can adjust the opacity of the
+plot linearly. Delete can make the brushed elements invisible. The
+arrow keys are used to adjust the order of the variables and flip
+the values of variables (like a mirror reflection). PageUp and
+PageDown can be used to go back and forth in the brush history.}
 \value{NULL}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{vars}{variables to show; can be a character vector (column
@@ -29,6 +47,9 @@ along with several row attributes}
 \item{scale}{standardizing method - 'range' --> [0, 1], 'I' --> do
 nothing, 'var' --> mean 0 var 1, 'custom_function_name' --> use
 your own function (see examples.R)}
+\item{names}{the variable labels to use in the plot (by default,
+they are the variable names with non-alphanumeric characters
+replaced by line breaks \code{'\n'})}
 \item{na.action}{the function to deal with missing values}
 \item{center}{the function to calculate where to center all the
 variables (e.g. center at the medians), or a numeric value, or
@@ -46,13 +67,6 @@ plot or not}
 variables (usually those categorical vars)}
 \item{amount}{jitter amount}
 \item{main}{the title}
-\item{lab.split}{the pattern to ``break'' the axis labels by
-\code{'\n'}; the default \code{'[^[:alnum:]]'} means any
-characters which are not alphanumeric will be replaced by
-\code{'\n'}, i.e. the labels will be broken into several lines;
-this can be useful when the axis labels are too long (if we do not
-break them, they will be squeezed together along the axes); set
-\code{lab.split = NULL} to keep the labels untouched}
 \item{alpha}{the opacity value}
 \item{draw.range}{whether to draw the range values (min and max
 for each variable)}
@@ -66,11 +80,8 @@ library(cranvas)
 
 data(nrcstat)
 qnrc = qdata(nrcstat)
-rownames(qnrc) = paste(nrcstat$Institution.Name, 
-    nrcstat$Program.Name, sep = " -> ")
-
-## brush(qnrc, 'size') = 1 # I cannot work with size >
-#   1 at the moment
+rownames(qnrc) = abbreviate(paste(nrcstat$Institution.Name, 
+    nrcstat$Program.Name, sep = " -> "))
 
 ## Overview: type, rankings
 print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
@@ -102,7 +113,7 @@ qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversit
 
 qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", 
     center = median, horizontal = FALSE, glyph = "tick", 
-    lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
+    boxplot = TRUE, boxwex = 0.8)
 
 # Find ISU, and sort by best rank to least on ISU
 median.centering <- function(x) {
@@ -114,7 +125,7 @@ nrc.medctr <- apply(nrcstat[, 20:68], 2, median.centering)
 var.ord <- order(nrc.medctr[13, ]) + 19
 qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", 
     center = median, horizontal = FALSE, glyph = "tick", 
-    lab.split = NULL, boxplot = TRUE, boxwex = 0.8)
+    boxplot = TRUE, boxwex = 0.8)
 
 ## color palette
 library(RColorBrewer)
@@ -169,9 +180,8 @@ qparallel(data = qiris, scale = "I", order = "MDS")
 qparallel(data = qiris, order = "ANOVA")
 qparallel(data = qiris, scale = "I", order = "ANOVA")
 
-## set color and print verbose timing
+## set color
 qiris$.color = rgb(1, 0, 0, 0.5)
-qparallel(data = qiris, verbose = TRUE)
 
 ## the plot will be updated if we modify the mutaframe
 qparallel(data = qiris)
@@ -301,9 +311,6 @@ library(animation)
 data(pollen)
 qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
 qparallel(data = qpollen)}
-
-
-
 
 
 

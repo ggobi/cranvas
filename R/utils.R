@@ -196,3 +196,22 @@ reorder_var = function(data, type = c('none', 'MDS', 'ANOVA', 'randomForest'),
     }
     vars
 }
+
+##' Insert line breaks into character strings.
+##' By default, all the non-alphanumeric characters are replaced by
+##' \code{'\n'}, which can be useful when plotting long axis labels,
+##' e.g., in parallel coordinates plots.
+##'
+##' @param x a character vector
+##' @param split the rule (regular expression) to replace characters by line breaks
+##' @param ... other arguments passed to \code{\link[base]{gsub}}
+##' @return a character vector with certain characters replaced by \code{'\n'}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples
+##' break_str(c('long label1.1', 'long label1.2', 'long label1.3'), split = ' ')
+##' break_str(names(iris))
+##'
+break_str = function(x, split = '[^[:alnum:]]', ...) {
+    gsub(split, '\n', x, ...)
+}
