@@ -43,9 +43,9 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
         xticklab = vars
     }
     #data = data[, vars, drop = FALSE]
-    if (missing(at)) at = 1:p
-    if (missing(width)) width = max(0.1 * diff(range(at)), 0.2)
-    lims = matrix(c(range(at) + c(-1, 1) * range(width)/2, r), 2)
+    if (is.null(at)) at = 1:p
+    if (is.null(width)) width = max(0.1 * diff(range(at)), 0.2)
+    lims = matrix(c(range(at) + c(-1, 1) * max(width)/2, r), 2)
     if (horizontal) lims = lims[, 2:1]
     lims = .extend.ranges(lims)  # extend the limits here
     main_layer = .bxp.layer(vars = vars, data = data, at = at, width = width,
