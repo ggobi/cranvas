@@ -72,7 +72,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     xat = NULL, yat = NULL, xlabels = NULL, ylabels = NULL,
                     limits = NULL,
                     segx0 = NULL, segx1 = NULL, segy0 = NULL, segy1 = NULL,
-                    x0 = NULL, y0 = NULL, brush.range = c(NA, NA)
+                    x0 = NULL, y0 = NULL, brush.range = c(NA, NA), identified = NULL
     )
 
     ## a long way of transformation
@@ -450,26 +450,25 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         cranvas_debug()
     }
 
-    .identified = NULL
     identify_hover = function(layer, event) {
         if (!b$identify) return()
         meta$pos = as.numeric(event$pos())
         rect = qrect(matrix(c(meta$pos - c(meta$xr, meta$yr)/100, meta$pos + c(meta$xr, meta$yr)/100), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
-        .identified <<- ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
+        meta$identified = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         qupdate(layer.identify)
     }
 
     identify_draw = function(layer, painter) {
-        if (b$identify && length(.identified)) {
+        if (b$identify && length(meta$identified)) {
             qlineWidth(painter) = b$size
             qstrokeColor(painter) = b$color
-            tmpx = mat2seg(meta$x, .identified)
-            tmpy = mat2seg(meta$y, .identified)
+            tmpx = mat2seg(meta$x, meta$identified)
+            tmpy = mat2seg(meta$y, meta$identified)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
             qfont(painter) = Qt$QFont('Monospace')
-            .labels = b$label.gen(data[.identified, meta$vars])
+            .labels = b$label.gen(data[meta$identified, meta$vars])
             bgwidth = qstrWidth(painter, .labels)
             bgheight = qstrHeight(painter, .labels)
             ## adjust drawing directions when close to the boundary
