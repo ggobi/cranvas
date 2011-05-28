@@ -75,10 +75,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     x0 = NULL, y0 = NULL, brush.range = c(NA, NA), identified = NULL
     )
 
-    ## a long way of transformation
-    ## creat some 'global' variables first
-    bxpstats = NULL
-
     data_preprocess = function() {
         meta$plot.data = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
         meta$plot.data = .rm.cons.col(meta$plot.data)  # remove constant columns
@@ -155,13 +151,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         }
     }
 
-    data_boxplot = function() {
-        ## for boxplots
-        if (boxplot)
-            bxpstats <<- apply(meta$plot.data, 2,
-                               function(x) boxplot.stats(x, do.conf = FALSE)$stats)
-    }
-
     ## given orders, rearrange the data
     ## need to update: numcol, plot_data, vars, boxplot data, primitives data
     data_reorder = function(vars) {
@@ -170,7 +159,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         meta$numeric.col = numcol[vars]
         meta$plot.data = meta$plot.data[, vars]
         meta$vars = colnames(meta$plot.data)
-        data_boxplot()
         data_primitives()
     }
 
@@ -228,35 +216,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                 qdrawText(painter, range.d[2, ], meta$limits[2], numcol, halign = 'right')
             }
         }
-    }
-
-    ## (optional) boxplots
-    boxplot_draw = function(layer, painter) {
-        cranvas_debug()
-        qstrokeColor(painter) = "black"
-        for (i in (1:meta$p)[meta$numeric.col]) {
-            x0 = c(rep(i - boxwex/2, 3), rep(i, 2))
-            y0 = bxpstats[c(1, 3, 5, 1, 4), i]
-            x1 = c(rep(i + boxwex/2, 3), rep(i, 2))
-            y1 = bxpstats[c(1, 3, 5, 2, 5), i]
-            xleft = i - boxwex/2
-            ybottom = bxpstats[2, i]
-            xright = i + boxwex/2
-            ytop = bxpstats[4, i]
-            ## exchange x and y if vertical
-            if (!horizontal) {
-                tmp = x0; x0 = y0; y0 = tmp
-                tmp = x1; x1 = y1; y1 = tmp
-                tmp = xleft; xleft = ybottom; ybottom = tmp
-                tmp = xright; xright = ytop; ytop = tmp
-            }
-            qdrawSegment(painter, x0, y0, x1, y1)
-            qdrawRect(painter, xleft, ybottom, xright, ytop, fill = 'darkgray')
-            qlineWidth(painter) = 3
-            qdrawSegment(painter, x0[2], y0[2], x1[2], y1[2])
-            qlineWidth(painter) = 1
-        }
-        cranvas_debug()
     }
 
     ## record the coordinates of the mouse on click
@@ -327,7 +286,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                         qupdate(layer.main)
                         qupdate(layer.brush)
                         if (boxplot) {
-                            data_boxplot()
                             qupdate(layer.boxplot)
                         }
                     }
@@ -344,7 +302,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     qupdate(layer.main)
                     qupdate(layer.brush)
                     if (boxplot) {
-                        data_boxplot()
                         qupdate(layer.boxplot)
                     }
                 }
@@ -517,7 +474,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     layer.root[1, 0] = layer.yaxis
     layer.root[1, 1] = layer.grid
     if (boxplot) {
-        layer.boxplot = qlayer(paintFun = boxplot_draw, limits = qrect(meta$limits))
+        layer.boxplot = qbxp(data = meta, width = boxwex, horizontal = !horizontal,
+                             sister = layer.main)
         layer.root[1, 1] = layer.boxplot
     }
     layer.root[1, 1] = layer.main
@@ -537,7 +495,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                    qupdate(layer.yaxis)
                    qupdate(layer.main)
                    if (boxplot) {
-                       data_boxplot()
                        qupdate(layer.boxplot)
                    }
                })
