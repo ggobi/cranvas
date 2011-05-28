@@ -191,7 +191,8 @@ qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
             y0 = bxp.stats[2, ]
             y1 = bxp.stats[4, ]
         }
-        qdrawRect(painter, x0, y0, x1, y1, fill = 'white', stroke = .boxcol)  # box
+        qdrawRect(painter, x0, y0, x1, y1, fill = ifelse(subset, '#FFFF0099', 'white'),
+                  stroke = .boxcol)  # box
         if (horizontal) {
             y = rep(at, sapply(bxp.out, length))
             x = unlist(bxp.out)
