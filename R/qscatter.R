@@ -234,15 +234,15 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 			qupdate(root)
 		}
 
-		handle_focal_zoom <- function(focus, modifier) {
+		handle_focal_zoom <- function(focus, speed,  forward) {
 	
 			xscale <- (dataRanges[2]-focus[1])/(focus[1] - dataRanges[1])
 			yscale <- (dataRanges[4]-focus[2])/(focus[2] - dataRanges[3])
-			sgn <- if (modifier == Qt$Qt$ShiftModifier) -1 else 1
+			sgn <- if (forward) 1 else -1
 		
-			dataRanges[1] <<- dataRanges[1] + sgn* 0.02*diff(dataRanges[1:2])
+			dataRanges[1] <<- dataRanges[1] + sgn* speed*diff(dataRanges[1:2])
 			dataRanges[2] <<- focus[1] + (focus[1]-dataRanges[1]) * xscale
-			dataRanges[3] <<- dataRanges[3] + sgn*0.02*diff(dataRanges[3:4])
+			dataRanges[3] <<- dataRanges[3] + sgn*speed*diff(dataRanges[3:4])
 			dataRanges[4] <<- focus[2] + (focus[2]-dataRanges[3]) * yscale
 
 
@@ -263,7 +263,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ## record the coordinates of the mouse on click
     brush_mouse_press <- function(item, event) {
 				if (zoom_focal) {
-					handle_focal_zoom(as.numeric(event$pos()), event$modifiers())
+					handle_focal_zoom(as.numeric(event$pos()), 2, event$modifiers() != Qt$Qt$ShiftModifier )
 				} else { 
 					if (zoom) {
 					.zstart <<- as.numeric(event$pos())
@@ -317,6 +317,12 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         .new.brushed[hits] <- TRUE
         data$.brushed <- mode_selection(data$.brushed, .new.brushed,
                                         mode = brush(data)$mode)
+    }
+
+    handle_wheel_event <- function(layer, event) {
+#			print("wheeling")
+#			browser()
+			handle_focal_zoom(as.numeric(event$pos()), event$delta()/100.0,  TRUE)
     }
 
     # Display category information on hover (query) ----------------------------
@@ -448,6 +454,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 												focusOutFun = function(...) {
 													focused(data) <- FALSE
 												},
+												wheelFun = handle_wheel_event,
                         limits = lims, cache=cache, row=1, col=1)
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
                          cache=cache, row=1, col=1)
