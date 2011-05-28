@@ -151,7 +151,7 @@ qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
         if (subset) {
             if (all(!selected(data))) return()
             .boxcol = brush(data)$color
-            data2 = data[selected(data), ]
+            data2 = data[selected(data), , drop = FALSE]
         }
         if (!is.null(vars) && is(vars, 'formula') && length(vars) == 3) {
             vars.a = all.vars(vars)
