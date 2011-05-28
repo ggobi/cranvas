@@ -183,7 +183,7 @@ qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
         ## boxplots statistics
         bxp.data = sapply(data2, boxplot.stats, do.conf = FALSE, simplify = FALSE)
         bxp.stats = sapply(bxp.data, `[[`, 'stats')  # quantiles
-        bxp.out = sapply(bxp.data, `[[`, 'out')  # outliers
+        bxp.out = sapply(bxp.data, `[[`, 'out', simplify = FALSE)  # outliers
         if (horizontal) {
             y0 = rep(at, each = 2)
             x0 = as.vector(bxp.stats[c(1, 4), ])
