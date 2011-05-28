@@ -241,8 +241,10 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         meta$start = as.numeric(event$pos())
         ## on right click, we can resize the brush; left click: only move the brush
         if (event$button() == Qt$Qt$RightButton) {
+            b$cursor = 2L
             meta$brush.move = FALSE
         } else if (event$button() == Qt$Qt$LeftButton) {
+            b$cursor = 0L
             meta$brush.move = TRUE
         }
     }
@@ -358,6 +360,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
         ## on mouse release
         if (event$button() != Qt$Qt$NoButton) {
+            b$cursor = 0L  # restore to Arrow cursor
             csize = length(b$history.list) + 1
             .cur.sel = which(selected(data))
             if (length(.cur.sel) > 0)
@@ -427,6 +430,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
     identify_hover = function(layer, event) {
         if (!b$identify) return()
+        b$cursor = 2L  # Cross
         meta$pos = as.numeric(event$pos())
         rect = qrect(matrix(c(meta$pos - c(meta$xr, meta$yr)/100, meta$pos + c(meta$xr, meta$yr)/100), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
@@ -543,5 +547,11 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         b$colorChanged$disconnect(b.idx)
         remove_listener(data, d.idx)
     })
+    ## change the cursor
+    b$cursorChanged$connect(function() {
+        set_cursor(view, b$cursor)
+    })
+    ## more attributes to come
+
     view
 }
