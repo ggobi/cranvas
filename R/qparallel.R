@@ -518,17 +518,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                })
     })
 
-    ## update the brush layer if brush attributes change
-    brush_update = function() {
-        qupdate(layer.brush)
-    }
-    b.idx = b$colorChanged$connect(brush_update)
-    qconnect(layer.main, 'destroyed', function(x) {
-        b$colorChanged$disconnect(b.idx)
-        remove_listener(data, d.idx)
-    })
-    ## more attributes to come
-
     layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, 30)
     ## the y-axis layer needs 'dynamic' width determined by #{characters}
@@ -544,5 +533,15 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     view = qplotView(scene = scene)
     view$setWindowTitle(meta$main)
     attr(view, 'meta') = meta
+
+    ## update the brush layer if brush attributes change
+    b.idx = b$colorChanged$connect(function() {
+        qupdate(layer.brush)
+    })
+
+    qconnect(layer.main, 'destroyed', function(x) {
+        b$colorChanged$disconnect(b.idx)
+        remove_listener(data, d.idx)
+    })
     view
 }
