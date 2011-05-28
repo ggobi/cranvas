@@ -43,6 +43,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     if(is.null(xlab)) xlab <- deparse(arguments$x)
     if(is.null(ylab)) ylab <- deparse(arguments$y)
 
+		values_out_of_plotting_range <- FALSE
 
     ## parameters for all layers
 		dataRanges <- c(make_data_ranges(xlim), 
@@ -117,13 +118,32 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     scatter.all <- function(item, painter, exposed) {
         fill <- data$.color
         stroke <- data$.color
-        df <- data.frame(data)
-        x <- eval(arguments$x, df)
-        y <- eval(arguments$y, df)
+#        df <- data.frame(data)
+#        x <- eval(arguments$x, df)
+#        y <- eval(arguments$y, df)
 
         radius <- .radius
         qdrawCircle(painter, x = x, y = y, r = radius, fill = fill,
                     stroke = stroke)
+
+				if (values_out_of_plotting_range) {
+					if (any(x) < dataRanges[1]) 
+						qdrawSegment(painter, x0 = dataRanges[1], x1=dataRanges[1], 
+															 y0=dataRanges[3], y1=dataRanges[4],
+															 stroke = "red")
+					if (any(x) > dataRanges[2]) 
+						qdrawSegment(painter, x0 = dataRanges[2], x1=dataRanges[2], 
+															 y0=dataRanges[3], y1=dataRanges[4],
+															 stroke = "red")
+					if (any(y) < dataRanges[3]) 
+						qdrawSegment(painter, x0 = dataRanges[1], x1=dataRanges[2], 
+															 y0=dataRanges[3], y1=dataRanges[3],
+															 stroke = "red")
+					if (any(y) > dataRanges[4]) 
+						qdrawSegment(painter, x0 = dataRanges[1], x1=dataRanges[2], 
+															 y0=dataRanges[4], y1=dataRanges[4],
+															 stroke = "red")
+				}
     }
 
     brush_draw <- function(item, painter, exposed) {
@@ -240,24 +260,34 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 			yscale <- (dataRanges[4]-focus[2])/(focus[2] - dataRanges[3])
 			sgn <- if (forward) 1 else -1
 		
-			dataRanges[1] <<- dataRanges[1] + sgn* speed*diff(dataRanges[1:2])
-			dataRanges[2] <<- focus[1] + (focus[1]-dataRanges[1]) * xscale
-			dataRanges[3] <<- dataRanges[3] + sgn*speed*diff(dataRanges[3:4])
-			dataRanges[4] <<- focus[2] + (focus[2]-dataRanges[3]) * yscale
+			newRanges <- dataRanges
+			newRanges[1] <- dataRanges[1] + sgn* speed*diff(dataRanges[1:2])
+			newRanges[2] <- focus[1] + (focus[1]-newRanges[1]) * xscale
+			newRanges[3] <- dataRanges[3] + sgn*speed*diff(dataRanges[3:4])
+			newRanges[4] <- focus[2] + (focus[2]-newRanges[3]) * yscale
 
+			df <- data.frame(data)
+			sub <- subset(df, (x >= newRanges[1]) & 
+													(x <= newRanges[2]) & 
+													(y >= newRanges[3]) & 
+													(y <= newRanges[4])   )
 
-			
-			xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
-			yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
-
-			lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
-
-			bglayer$setLimits(lims)
-			datalayer$setLimits(lims)
-			brushlayer$setLimits(lims)
-			querylayer$setLimits(lims)
-
-			qupdate(root)
+			values_out_of_plotting_range <<- nrow(sub) < nrow(df)	
+			if (nrow(sub) >= 2) {
+				dataRanges <<- newRanges 
+				
+				xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
+				yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
+	
+				lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
+	
+				bglayer$setLimits(lims)
+				datalayer$setLimits(lims)
+				brushlayer$setLimits(lims)
+				querylayer$setLimits(lims)
+	
+				qupdate(root)
+			}
 		}
 
     ## record the coordinates of the mouse on click
