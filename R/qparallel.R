@@ -19,7 +19,8 @@
 ##' the min/max labels. Plus and minus can adjust the opacity of the
 ##' plot linearly. Delete can make the brushed elements invisible. The
 ##' arrow keys are used to adjust the order of the variables and flip
-##' the values of variables (like a mirror reflection).
+##' the values of variables (like a mirror reflection). PageUp and
+##' PageDown can be used to go back and forth in the brush history.
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
 ##' + x2'; if missing or it is a formula that contains a dot
