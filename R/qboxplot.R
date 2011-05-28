@@ -157,11 +157,10 @@ qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
             vars.a = all.vars(vars)
             data2 = tapply(data[, vars.a[1]], data[, vars.a[2]], I, simplify = FALSE)  # reshape
             vars = names(data2)
-        }
         } else if (is.character(vars))
             data2 = as.data.frame((if (subset) data2 else data)[, vars, drop = FALSE])
         ## if meta data is passed here, use it
-        if (!is.null(data$plot.data) && !is.null(data$numeric.col)) {
+        if (!is.mutaframe(data) && !is.null(data$plot.data) && !is.null(data$numeric.col)) {
             data2 = as.data.frame(data$plot.data)[, data$numeric.col, drop = FALSE]
             at = which(data$numeric.col)
         }
