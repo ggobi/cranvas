@@ -28,19 +28,19 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
         if (vars.n == 2) {
             vars = all.vars(vars)
             y = as.matrix(data[, vars])
-            xticklab = vars
+            xlabels = vars
         } else if (vars.n == 3) {
             r = range(data[, vars.a[1]], na.rm = TRUE)
             p = length(unique(data[, vars.a[2]]))
             y = as.vector(data[, vars.a[1]])
-            xticklab = levels(factor(data[, vars.a[2]]))
+            xlabels = levels(factor(data[, vars.a[2]]))
         }
     } else {
         r = range(if (is.mutaframe(data)) as.data.frame(data)[, vars] else data[, vars],
                   na.rm = TRUE)
         p = length(vars)
         y = as.matrix(as.data.frame(data[, vars]))
-        xticklab = vars
+        xlabels = vars
     }
     #data = data[, vars, drop = FALSE]
     if (is.null(at)) at = 1:p
@@ -48,36 +48,37 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     lims = matrix(c(range(at) + c(-1, 1) * max(width)/2, r), 2)
     if (horizontal) lims = lims[, 2:1]
     lims = .extend.ranges(lims)  # extend the limits here
-    main_layer = .bxp.layer(vars = vars, data = data, at = at, width = width,
+    layer.main = qbxp(vars = vars, data = data, at = at, width = width,
                             horizontal = horizontal, limits = qrect(lims))
     xat = at
     yat = .axis.loc(y)
-    yticklab = format(yat)
+    ylabels = format(yat)
     if (horizontal) {
         tmp = xat; xat = yat; yat = tmp
-        tmp = xticklab; xticklab = yticklab; yticklab = tmp
+        tmp = xlabels; xlabels = ylabels; ylabels = tmp
     }
 
     scene = qscene()
-    root_layer = qlayer(scene)
-    xaxis_layer = qaxis(at = xat, labels = xticklab, side = 1, limits = lims[1:2])
-    yaxis_layer = qaxis(at = yat, labels = yticklab, side = 2, limits = lims[3:4])
-    grid_layer = qgrid(xat = xat, yat = yat, xlim = lims[1:2], ylim = lims[3:4])
-    brush_layer = .bxp.layer(vars = vars, data = data, at = at, width = .8*width,
-                             subset = TRUE, horizontal = horizontal, limits = qrect(lims))
-    root_layer[1, 1] = grid_layer
-    root_layer[1, 1] = main_layer
-    root_layer[1, 1] = brush_layer
-    root_layer[1, 0] = yaxis_layer
-    root_layer[2, 1] = xaxis_layer
-    root_layer[2, 1] = qlayer()  # place-holder
+    layer.root = qlayer(scene)
+    layer.xaxis = qaxis(at = xat, labels = xlabels, side = 1, sister = layer.main)
+    layer.yaxis = qaxis(at = yat, labels = ylabels, side = 2, sister = layer.main)
+    layer.grid = qgrid(xat = xat, yat = yat, sister = layer.main,
+                       minor = ifelse(horizontal, 'x', 'y'))
+    layer.brush = qbxp(vars = vars, data = data, at = at, width = .8*width,
+                             subset = TRUE, horizontal = horizontal, sister = layer.main)
+    layer.root[1, 1] = layer.grid
+    layer.root[1, 1] = layer.main
+    layer.root[1, 1] = layer.brush
+    layer.root[1, 0] = layer.yaxis
+    layer.root[2, 1] = layer.xaxis
+    layer.root[2, 1] = qlayer()  # place-holder
 
-    layout = root_layer$gridLayout()
+    layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, 30)
     ## the y-axis layer needs 'dynamic' width determined by #{characters}
     ## here is a formula by my rule of thumb: 9 * nchar + 5
-    layout$setColumnPreferredWidth(0, 9 * max(nchar(unlist(strsplit(yticklab, '\n')))) + 5)
-    layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', xticklab),
+    layout$setColumnPreferredWidth(0, 9 * max(nchar(unlist(strsplit(ylabels, '\n')))) + 5)
+    layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', xlabels),
                               function(xx) ifelse(any(xx <0), 0, length(xx)) + 2)))
     layout$setColumnMaximumWidth(2, 10)
     layout$setRowStretchFactor(0, 0)
@@ -86,8 +87,8 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
 
     if (is.mutaframe(data)) {
         add_listener(data, function(i, j) {
-            ## main_layer$setLimits(qrect(matrix(c(0, 3, -3, 10), 2)))
-            qupdate(main_layer)
+            ## layer.main$setLimits(qrect(matrix(c(0, 3, -3, 10), 2)))
+            qupdate(layer.main)
         })
     }
     view = qplotView(scene = scene)
