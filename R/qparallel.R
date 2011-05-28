@@ -2,7 +2,24 @@
 ##' Create a parallel coordinates plot from a data frame or matrix, with each
 ##' line representing a row.
 ##'
-##' Press R to toggle the min/max labels.
+##' We can turn on/off identify by setting \code{brush(data,
+##' 'identify')} to be \code{TRUE}/\code{FALSE}. In the identify mode,
+##' the rows of data in a small neighborhood of the mouse will be
+##' shown on the screen. In the brush mode, we can use the left button
+##' of the mouse to drag a brush over the plot, and the brushed
+##' elements will be highlighted; the right button is used to resize
+##' the brush.
+##'
+##' Several key stroke interactions are available as well: in the
+##' brush mode, we can hold the key A for \code{AND} operations,
+##' i.e. only the elements which were brushed in the last time
+##' \emph{and} are also brushed this time will be finally
+##' brushed. Similarly, O is for \code{OR}; X for \code{XOR}; N for
+##' \code{NOT} and C for \code{COMPLEMENT}. We can press R to toggle
+##' the min/max labels. Plus and minus can adjust the opacity of the
+##' plot linearly. Delete can make the brushed elements invisible. The
+##' arrow keys are used to adjust the order of the variables and flip
+##' the values of variables (like a mirror reflection).
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
 ##' + x2'; if missing or it is a formula that contains a dot

@@ -1,13 +1,25 @@
-##' Boxplots for a data frame or a continuous variable vs a categorical variable.
-##'
+##' Boxplots for variables in the data or a continuous variable vs a categorical variable.
 ##' This function can draw side-by-side boxplots for all the variables
 ##' in a data frame or boxplots for a continous variable vs a
 ##' categorical variable.
 ##'
-##' @param vars a list of variables, or a formula
-##' @param data a mutaframe
-##' @param at the locations of the boxplots
-##' @param width width(s) of boxes
+##' The boxplots can respond to changes in the brushed rows, i.e., in
+##' \code{selected(data)}. When we brush in other plots which are
+##' based on the same data, there will be ``child'' boxplots in this
+##' plot showing the distributions of the brushed data.
+##' @param vars a list of variables (a character vector), or a
+##' formula; a one-sided formula like \code{~ x1 + x2 + x3} means to
+##' draw side-by-side boxplots for the variables in the right hand
+##' side, whereas a two-sided formula like \code{y ~ x} means boxplots
+##' of a continuous \code{y} against a categorical \code{x}
+##' @param data a mutaframe or data frame; if missing, the first
+##' argument \code{vars} will be assumed to be the data
+##' @param at the locations of the boxplots (by default from 1 to
+##' \code{p} where \code{p} is the number of variables to plot or the
+##' number of levels of the categorical variable)
+##' @param width width(s) of boxes (do not have to be a same value if
+##' provided as a numeric vector); by default it is about 1/10 of the
+##' screen width
 ##' @param horizontal horizontal or vertical boxplots
 ##' @return NULL
 ##' @author Yihui Xie <\url{http://yihui.name}>

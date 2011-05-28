@@ -6,9 +6,7 @@ library(cranvas)
 
 data(nrcstat)
 qnrc = qdata(nrcstat)
-rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = " -> ")
-
-## brush(qnrc, 'size') = 1  # I cannot work with size > 1 at the moment
+rownames(qnrc) = abbreviate(paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = " -> "))
 
 ## Overview: type, rankings
 print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
