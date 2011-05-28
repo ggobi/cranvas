@@ -145,6 +145,15 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
 qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
                  sister = NULL, ...) {
     .bgcolor = "grey90"  # background color
+    minor_at = function(at, lim) {
+        n = length(at)
+        if (n <= 1) return(NULL)
+        l = at[1] - at[2]; r = at[n] - at[n - 1]
+        at = (at[-1] + at[-n])/2
+        n = n - 1
+        at = sort(c(seq(at[1], lim[1], l), at[-c(1, n)], seq(at[n], lim[2], r)))
+        at[at < lim[2] & at > lim[1]]
+    }
     draw_grid = function(layer, painter) {
         if (!is.null(sister)) {
             lims = as.matrix(sister$limits())
@@ -163,12 +172,14 @@ qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
         ## minor grid
         qlineWidth(painter) = 1
         if (minor %in% c('x', 'xy')) {
-            xat = (xat[-1] + xat[-length(xat)])/2
-            qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
+            xat = minor_at(xat, xlim)
+            if (length(xat))
+                qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
         }
         if (minor %in% c('y', 'xy')) {
-            yat = (yat[-1] + yat[-length(yat)])/2
-            qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
+            yat = minor_at(yat, ylim)
+            if (length(yat))
+                qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
         }
     }
     if (!('limits' %in% names(list(...))) && !is.null(sister))
