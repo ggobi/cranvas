@@ -28,9 +28,10 @@ setHistColorByLabel <- function(qdata, label, scale) {
 #' Create a hist plot
 #' Create a hist plot from 1-D numeric data
 #'
-#' Interactions:
+#' keystroke Interactions:
 #' right/left arrow shift anchors
 #' up/down arrow increase/decrease bin size
+#' M re-adjusts the maximum on the y-axis to 10% above the bin count
 #' @param data mutaframe to use
 #' @param x variable to plot
 #' @param horizontal boolean to decide if the bars are horizontal or vertical
@@ -220,9 +221,9 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     # Draw Axes
     coords <- function(item, painter, exposed) {
         
-        updateBarsInfo()
-        updateRanges()
-        updateLims()
+#        updateBarsInfo()
+#        updateRanges()
+#        updateLims()
         
         if (horizontal) {
             .ylab <<- name
@@ -277,10 +278,9 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         key <- event$key()
         
         if (key == Qt$Qt$Key_Up) {
-            .type$binwidth <<- .type$binwidth * 1.1
-            if (.type$binwidth > maxBinwidthP()) 
-                .type$binwidth <<- maxBinwidthP()
+            .type$binwidth <<- min(.type$binwidth * 1.1, maxBinwidthP())
             updateBarsInfo()
+
             #message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
             if (.yMax < max(.bars_info$data$count))
               .yMax <<- 1.1 * max(.bars_info$data$count)
@@ -362,8 +362,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         else if (key == Qt$Qt$Key_M) {
  
           updateBarsInfo()
-          if (.yMax < max(.bars_info$data$count))
-              .yMax <<- 1.1 * max(.bars_info$data$count)        
+#          if (.yMax < max(.bars_info$data$count))
+          .yMax <<- 1.1 * max(.bars_info$data$count)        
           #message("M ", .yMax, "\n")
           # print(.yMax)
           updateRanges()
@@ -701,8 +701,15 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
         .lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
         #message("update lims 2", windowRanges[3]," ", windowRanges[4], "\n")
+        
+        bglayer$setLimits(.lims)
+        datalayer$setLimits(.lims)
+        brushing_layer$setLimits(.lims)
+        hoverlayer$setLimits(.lims)
     }
-    updateLims()
+
+    windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
+    .lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
     
     .scene <- qscene()
     
