@@ -118,9 +118,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     scatter.all <- function(item, painter, exposed) {
         fill <- data$.color
         stroke <- data$.color
-#        df <- data.frame(data)
-#        x <- eval(arguments$x, df)
-#        y <- eval(arguments$y, df)
+        df <- data.frame(data)
+        x <- eval(arguments$x, df)
+        y <- eval(arguments$y, df)
 
         radius <- .radius
         qdrawCircle(painter, x = x, y = y, r = radius, fill = fill,
