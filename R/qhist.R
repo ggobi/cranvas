@@ -35,15 +35,16 @@ setHistColorByLabel <- function(qdata, label, scale) {
 #' @param data mutaframe to use
 #' @param x variable to plot
 #' @param horizontal boolean to decide if the bars are horizontal or vertical
+#' @param xlim, ylim to fix the scale on either axis
 #' @param ... arguments supplied to hist() or the hist layer
-#' @author Barret Schloerke \email{bigbear@@iastate.edu}
+#' @author Barret Schloerke, Di Cook, Heike Hofmann
 #' @keywords hplot
 #' @example cranvas/inst/examples/qhist-ex.R
 qhist <- function(x, data, splitByCol = -1, horizontal = FALSE, 
     position = "none", color = NULL, fill = NULL, stroke = NULL,
     title = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
     nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
-    bin_algo_str = NULL, xlims=NULL, ylims=NULL, ...) {
+    bin_algo_str = NULL, xlim=NULL, ylim=NULL, ...) {
 
     stopifnot(is.mutaframe(data))
 
@@ -61,18 +62,18 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     .bar_hover_section <- list(top = -1, bottom = 1, right = -1, left = 1)
     .lims <- c() # Window limits??
     .bars_info <- NULL
-    if (is.null(ylims)) {
+    if (is.null(ylim)) {
       .yMin <- 0
       .yMax <- nrow(data)/2
     }
     else {
-      .yMin <- ylims[1]
-      .yMax <- ylims[2]
+      .yMin <- ylim[1]
+      .yMax <- ylim[2]
     }
-    if (is.null(xlims))
+    if (is.null(xlim))
         .dataranges <- c()  # Data limits?
     else
-        .dataranges <- c(xlims, 0, .yMax)
+        .dataranges <- c(xlim, 0, .yMax)
     # message("limits 1 ",.dataranges[1], " ", .dataranges[2]," ", .dataranges[3], " ",.dataranges[4], "\n")
     .xlab <- ""
     .ylab <- ""
@@ -197,18 +198,18 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     updateRanges <- function() {
         # contains c(x_min, x_max, y_min, y_max)
         if (horizontal) {
-            if (is.null(xlims))
+            if (is.null(xlim))
                 .dataranges <<- c(make_data_ranges(c(.yMin, .yMax)),
                           make_data_ranges(c(xMinStartPosP(), xMaxEndPosP())))
             else
-                .dataranges <<- c(make_data_ranges(c(.yMin, .yMax)), xlims) 
+                .dataranges <<- c(make_data_ranges(c(.yMin, .yMax)), xlim) 
         }
         else {
-            if (is.null(xlims))
+            if (is.null(xlim))
                 .dataranges <<- c(make_data_ranges(c(xMinStartPosP(),
                           xMaxEndPosP())), make_data_ranges(c(.yMin, .yMax)))
             else
-                .dataranges <<- c(xlims, make_data_ranges(c(.yMin, .yMax))) 
+                .dataranges <<- c(xlim, make_data_ranges(c(.yMin, .yMax))) 
         }
         # message("limits 2 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], "\n")
 

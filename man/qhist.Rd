@@ -4,7 +4,7 @@
 \usage{qhist(x, data, splitByCol = -1, horizontal = FALSE, 
     position = "none", color, fill, stroke, title, name, 
     ash = FALSE, start = min(data[[x]]), nbins = round(sqrt(nrow(data)), 
-        0), binwidth, bin_algo_str, xlims, ylims, ...)
+        0), binwidth, bin_algo_str, xlim, ylim, ...)
 
 }
 
@@ -12,14 +12,16 @@
 
 \description{Create a hist plot
 Create a hist plot from 1-D numeric data}
-\details{Interactions:
+\details{keystroke Interactions:
 right/left arrow shift anchors
-up/down arrow increase/decrease bin size}
-\author{Barret Schloerke \email{bigbear@iastate.edu}}
+up/down arrow increase/decrease bin size
+M re-adjusts the maximum on the y-axis to 10\% above the bin count}
+\author{Barret Schloerke, Di Cook, Heike Hofmann}
 \keyword{hplot}
 \arguments{\item{data}{mutaframe to use}
 \item{x}{variable to plot}
 \item{horizontal}{boolean to decide if the bars are horizontal or vertical}
+\item{xlim,}{ylim to fix the scale on either axis}
 \item{...}{arguments supplied to hist() or the hist layer}
 }
 \examples{## examples of qhist()
