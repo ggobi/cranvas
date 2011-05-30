@@ -13,15 +13,16 @@
 \description{Create a hist plot
 Create a hist plot from 1-D numeric data}
 \details{keystroke Interactions:
-right/left arrow shift anchors
-up/down arrow increase/decrease bin size
+right/left arrow shift anchors; 
+up/down arrow increase/decrease bin size; 
 M re-adjusts the maximum on the y-axis to 10\% above the bin count}
 \author{Barret Schloerke, Di Cook, Heike Hofmann}
 \keyword{hplot}
 \arguments{\item{data}{mutaframe to use}
 \item{x}{variable to plot}
 \item{horizontal}{boolean to decide if the bars are horizontal or vertical}
-\item{xlim,}{ylim to fix the scale on either axis}
+\item{xlim}{= c(min, max) user specifed data range for the x axis, by default range(x)}
+\item{ylim}{= c(min, max) user specifed data range for the y axis, by default range(y)}
 \item{...}{arguments supplied to hist() or the hist layer}
 }
 \examples{## examples of qhist()

@@ -29,13 +29,14 @@ setHistColorByLabel <- function(qdata, label, scale) {
 #' Create a hist plot from 1-D numeric data
 #'
 #' keystroke Interactions:
-#' right/left arrow shift anchors
-#' up/down arrow increase/decrease bin size
+#' right/left arrow shift anchors; 
+#' up/down arrow increase/decrease bin size; 
 #' M re-adjusts the maximum on the y-axis to 10% above the bin count
 #' @param data mutaframe to use
 #' @param x variable to plot
 #' @param horizontal boolean to decide if the bars are horizontal or vertical
-#' @param xlim, ylim to fix the scale on either axis
+#' @param xlim = c(min, max) user specifed data range for the x axis, by default range(x)
+#' @param ylim = c(min, max) user specifed data range for the y axis, by default range(y)
 #' @param ... arguments supplied to hist() or the hist layer
 #' @author Barret Schloerke, Di Cook, Heike Hofmann
 #' @keywords hplot
