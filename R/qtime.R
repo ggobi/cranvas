@@ -192,8 +192,8 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sy <<- .axis.loc(dataRanges[1:2])
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        tdf$x[tdf$x<=tmpXzoom[1]]=NA
-        tdf$x[tdf$x>=tmpXzoom[2]]=NA
+        tdf$x[tdf$x<tmpXzoom[1]]=NA
+        tdf$x[tdf$x>tmpXzoom[2]]=NA
       }
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
@@ -426,6 +426,23 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   layout$setRowStretchFactor(2, 0)
 
   view <- qplotView(scene=scene)
+
+  ######################
+  ## add some listeners #
+  ######################
+  ## if (is.mutaframe(data)) {
+    func <- function(i, j) {
+      switch(j, .brushed = qupdate(brushlayer),
+             .color = qupdate(datalayer),
+             { ## any other event
+               datalayer$invalidateIndex()
+               qupdate(datalayer)
+               qupdate(brushlayer)
+             })
+    }
+    add_listener(data, func)
+  ## }
+  
   view
 }
 
