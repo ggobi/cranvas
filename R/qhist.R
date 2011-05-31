@@ -596,9 +596,11 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             # nrow(section[]
             val <- section[1, "\ncount"]/sum(.bars_info$data[.bars_info$data$label %in% 
                 section[1, "label"], "count"])
-            if (val != 1) {
-                infostring <- paste(infostring, "\ncolumn proportion: ", pretty_percent(val), 
-                  sep = "")
+            if (is.null(val)) {
+              if (val != 1) {
+                  infostring <- paste(infostring, "\ncolumn proportion: ", pretty_percent(val), 
+                    sep = "")
+              }
             }
         }
         
