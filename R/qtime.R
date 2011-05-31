@@ -43,8 +43,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       warning('Period lengths are not the same.')
     }
     tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
-                     zg=rep(1,nrow(df)),pd=pd,
-                     y=(y-min(y))/(max(y)-min(y)))
+                     zg=rep(1,nrow(df)),pd=pd, y=y)
   }
   
   ## set plot range
@@ -213,13 +212,52 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     if (event$key() == Qt$Qt$Key_U) {
       vertconst <<- vertconst + 0.05
       if (vertconst>1) vertconst <<- 1
-      tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
-                     zg=rep(1,nrow(df)),pd=pd,
-                     y=(y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
-      dataRanges[3:4] <-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
-      windowRanges <- dataRanges
-      lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-      sx <- .axis.loc(unlist(data.frame(tdf[,-(1:3)])))
+      if (ncol(y)==1){
+        tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
+      } else {
+        tdf[,-(1:3)] <- (y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst
+      }
+      dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
+      windowRanges <<- dataRanges
+      lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+      sx <<- (as.integer(unique(pd))-1)*vertconst
+      
+      qupdate(bg_layer)
+      bg_layer$setLimits(lims)
+      main_circle_layer$setLimits(lims)
+      main_line_layer$setLimits(lims)
+      brush_layer$setLimits(lims)
+      query_layer$setLimits(lims)
+    }
+
+    if (event$key() == Qt$Qt$Key_D) {
+      vertconst <<- vertconst - 0.05
+      if (vertconst<0) vertconst <<- 0
+      if (!vertconst) {
+        tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
+                         zg=rep(1,nrow(df)),pd=pd, y=y)
+        dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
+        windowRanges <<- dataRanges
+        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        sx <<- .axis.loc(dataRanges[3:4])
+      } else {
+        if (ncol(y)==1){
+          tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
+        } else {
+          tdf[,-(1:3)] <- (y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst
+        }
+        dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
+        windowRanges <<- dataRanges
+        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        sx <<- (as.integer(unique(pd))-1)*vertconst
+      }
+      
+      qupdate(bg_layer)
+      bg_layer$setLimits(lims)
+      main_circle_layer$setLimits(lims)
+      main_line_layer$setLimits(lims)
+      brush_layer$setLimits(lims)
+      query_layer$setLimits(lims)
     }
 
     if (event$key() == Qt$Qt$Key_Up) {
@@ -333,13 +371,9 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     draw_x_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sy, labelHoriPos = sy,
                                 name = .levelX)
-    if(!vertconst) {
-      aL <- sx; lVP <- sx
-    } else {
-      aL <- pd; lVP <- vertconst*(0:(length(pd)-1))
-    }
+    if (!vertconst) {aL <- sx} else {aL <- unique(pd)}
     draw_y_axes_with_labels_fun(painter, dataRanges,
-                                axisLabel = aL, labelVertPos = lVP,
+                                axisLabel = aL, labelVertPos = sx,
                                 name = ifelse(!vertconst,.levelY,.period))
   }
     
