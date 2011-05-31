@@ -1,30 +1,3 @@
-setHistColorByLabel <- function(qdata, label, scale) {
-
-    arguments <- as.list(match.call()[-1])
-    df.data <- data.frame(qdata)
-#	 
-    label <- eval(arguments$label, df.data)
-	# defaults, should be overwritten, if specified
-    # Need to use discrete scale
-    if (is.null(scale$limits))
-        scale$limits <- range(label)	
-    if (is.null(scale$name))
-      scale$name <- deparse(arguments$label)
-
-    colors <- scale$map(label)
-
-    # Don't need to worry about linking here, column
-    # will be in the same data set
-#    link <- unique(qdata[,link_var(qdata)])
-#    lcolor <- rep(NA, nrow(qmap))
-#    for (i in 1:length(link)) {
-#        j <- which(qhist[,link_var(qhist)] == link[i])
-#          lcolor[j] <- colors[i]
-#    }
-#    qhist$.color <- lcolor
-    attr(qdata, "col.scale") <- scale
-}
-
 #' Create a hist plot
 #' Create a hist plot from 1-D numeric data
 #'
@@ -100,7 +73,12 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     # .bin_col <- data_bin_column(mf_data)
     .data_col_names <- rep("", nrow(data))
     #print(head(data))
-    
+
+    # Check for fill colors
+    if (length(unique(data$.fill)) > 1)
+      fill <- data$.fill
+     message("fill 0 ",length(fill),"\n")
+       
     # Set up wrapper functions.
     dataCol <- function() {
         data[, x]
@@ -171,11 +149,12 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         .bars_info <<- continuous_to_bars(data = data[, x], splitBy = data[, 
             splitByCol], brushed = data[, ".brushed"], typeInfo = .type,
             position = position, color = color, fill = fill, stroke = stroke, ...)
-        
+         message("fill 4 ",length(fill),"\n")
+
         .data_col_names <<- rep("", length(.data_col_names))
         for (i in 1:nrow(.bars_info$data)) {
-            rows <- (.bars_info$data$left[i] < dataCol()) & (.bars_info$data$right[i] >= 
-                dataCol())
+            rows <- (.bars_info$data$left[i] < dataCol()) &
+              (.bars_info$data$right[i] >= dataCol())
             # cat(i, ' - '); print(rows)
             if (any(rows)) {
                 .data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
@@ -400,8 +379,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         top = max(.startBrush[2], .endBrush[2])
         bottom = min(.startBrush[2], .endBrush[2])
         
-        qdrawRect(painter, left, bottom, right, top, fill = rgb(0, 0, 0, alpha = 0.7), 
-            stroke = "grey50")
+        qdrawRect(painter, left, bottom, right, top,
+            fill = rgb(0, 0, 0, alpha = 0.7), stroke = "grey50")
 #        cat("draw brush rect - done\n")
     }
     
@@ -446,12 +425,12 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
                 brushColor[rows] <- newBrushColor
             }
             
-            
-            
             if (horizontal) 
-                qdrawRect(painter, b, section$right, t, section$left, fill = brushColor, 
+                qdrawRect(painter, b, section$right, t, section$left,
+                          fill = brushColor, 
                   stroke = "grey50")
-            else qdrawRect(painter, section$left, b, section$right, t, fill = brushColor, 
+            else qdrawRect(painter, section$left, b, section$right, t,
+                           fill = brushColor, 
                 stroke = "grey50")
         }
         
@@ -591,13 +570,17 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         # Highlight the rect
         brushColor <- brush(data)$color
         if (horizontal) {
-            qdrawRect(painter, xleft = c(section$bottom), ybottom = c(section$right), 
-                xright = c(section$top), ytop = c(section$left), stroke = brushColor, 
+            qdrawRect(painter, xleft = c(section$bottom),
+                      ybottom = c(section$right), 
+                xright = c(section$top), ytop = c(section$left),
+                      stroke = brushColor, 
                 fill = c(NA))
         }
         else {
-            qdrawRect(painter, xleft = c(section$left), ybottom = c(section$bottom), 
-                xright = c(section$right), ytop = c(section$top), stroke = brushColor, 
+            qdrawRect(painter, xleft = c(section$left),
+                      ybottom = c(section$bottom), 
+                xright = c(section$right), ytop = c(section$top),
+                      stroke = brushColor, 
                 fill = c(NA))
         }
         
@@ -655,8 +638,6 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
             "right"), valign = ifelse(vflag, "top", "bottom"))
 
-
-        
         .bar_hover_section <<- list(top = section$top, bottom = section$bottom, left = section$left, 
             right = section$right)
     }

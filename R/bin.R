@@ -31,7 +31,7 @@ make_dodge_pos <- function(breaks, n) {
 #' @param color color to be used for (possibly) both the fill and stroke
 #' @param fill fill to be used
 #' @param color stroke to be used
-#' @author Barret Schloerke \email{bigbear@@iastate.edu}
+#' @author Barret Schloerke 
 #' @keywords internal
 #' @examples
 #'   fill_and_stroke(color = 'red')
@@ -40,10 +40,12 @@ make_dodge_pos <- function(breaks, n) {
 #'   fill_and_stroke(color = 'red', fill = 'black')
 fill_and_stroke <- function(color = NULL, fill = NULL, stroke = NULL) {
     if (is.null(fill))
-        fill = color
+        fill <- color
     if (is.null(stroke)) { # lighter outline, darker fill
-    		rgbfill = col2rgb(fill)
-        stroke = rgb(rgbfill["red",]*2, rgbfill["green",]*2, rgbfill["blue",]*2, maxColorValue=255)
+    	#rgbfill = col2rgb(fill)
+        #stroke = rgb(rgbfill["red",]*2, rgbfill["green",]*2,
+        #  rgbfill["blue",]*2, maxColorValue=255)
+        stroke <- color
     }
     list(fill = fill, stroke = stroke)
 }
@@ -92,7 +94,7 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 #' @param fill vect to fill by
 #' @param stroke vect to outline by
 #' @param ... other params passed to \code{\link[graphics]{hist}}
-#' @author Barret Schloerke \email{bigbear@@iastate.edu}
+#' @author Barret Schloerke 
 #' @keywords internal
 #' @examples
 #' temp_breaks <- hist(mtcars$disp, plot=FALSE)$breaks[1:2]
@@ -103,13 +105,13 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 #' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'relative', stroke = 'black')
 #' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'stack', stroke = 'black')
 continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
-    typeInfo = "hist", position = "none", color = NULL, fill = NULL, stroke = NULL,
-    ...) {
+    typeInfo = "hist", position = "none", color = NULL, fill = NULL,
+    stroke = NULL, ...) {
     ignore <- substitute(...)
     if (any(is.na(data))) data <- na.omit(data)
 
-    original = list(data = data, splitBy = splitBy, color = color, stroke = stroke,
-        fill = fill, position = position)
+    original = list(data = data, splitBy = splitBy, color = color,
+      stroke = stroke, fill = fill, position = position)
 
     if (identical(typeInfo$type, "hist")) {
       #  message("making a hist")
@@ -127,12 +129,22 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     }
 
 #    print(data[brushed == TRUE])
-    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth, range(data, na.rm=T)[2],
-        xMaxEndPos(data))
+    # This line makes the break values on the continuous variable
+    breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth,
+        range(data, na.rm=T)[2], xMaxEndPos(data))
     break_len <- length(breaks)
 
+    if (!is.null(fill)) {
+        if (length(unique(fill)) > 1) {
+            splitBy <- fill
+            message("fill 5 ",length(fill),"\n")
+
+        }
+    }
+    # This line caclaulates the counts in each bin, and by a second variable
     bar_top <- table(cut(data, breaks = breaks), splitBy)
 
+    # I'm not sure that I need to melt the data?
     data_pos <- reshape::melt(bar_top)
     names(data_pos) <- c("label", "group", "top")
     data_pos$count <- data_pos$top
@@ -148,19 +160,21 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
             data_pos$color <- rep("grey20", nrow(data_pos))
         }
         else {
-            data_pos$color <- rep(rainbow(length(group_names)), each = length(label_names))
+#            data_pos$color <- rep(rainbow(length(group_names)),
+#                each = length(label_names))
+            if (!is.factor(data_pos$group))
+                data_pos$group <- factor(data_pos$group)
+            data_pos$color <- rep(dscale(data_pos$group, hue_pal()))
         }
     }
 
     if (position == "dodge") {
-
         pos <- make_dodge_pos(breaks, length(group_names))
         data_pos$left <- pos$start
         data_pos$right <- pos$end
     }
     else {
         # (position == 'stack' || position == 'relative')
-
         data_pos$left <- rep(breaks[1:(break_len - 1)], length(group_names))
         data_pos$right <- rep(breaks[2:break_len], length(group_names))
 
@@ -185,7 +199,9 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     }
 
     # Color Management
+    message("fill 1 ",length(fill),"\n")
     f_and_s <- fill_and_stroke(data_pos$color, fill = fill, stroke = stroke)
+    message("fill 2 ",length(fill),"\n")
     data_pos$fill <- f_and_s$fill
     data_pos$stroke <- f_and_s$stroke
     data_pos$color <- NULL
