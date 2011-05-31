@@ -42,7 +42,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ## parameters for dataRanges
     if(is.null(xlab)) xlab <- deparse(arguments$x)
     if(is.null(ylab)) ylab <- deparse(arguments$y)
-
+#browser()
 		values_out_of_plotting_range <- FALSE
 
     ## parameters for all layers
@@ -127,19 +127,19 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                     stroke = stroke)
 
 				if (values_out_of_plotting_range) {
-					if (any(x) < dataRanges[1]) 
+					if (any(x < dataRanges[1]))
 						qdrawSegment(painter, x0 = dataRanges[1], x1=dataRanges[1], 
 															 y0=dataRanges[3], y1=dataRanges[4],
 															 stroke = "red")
-					if (any(x) > dataRanges[2]) 
+					if (any(x > dataRanges[2]))
 						qdrawSegment(painter, x0 = dataRanges[2], x1=dataRanges[2], 
 															 y0=dataRanges[3], y1=dataRanges[4],
 															 stroke = "red")
-					if (any(y) < dataRanges[3]) 
+					if (any(y < dataRanges[3]))
 						qdrawSegment(painter, x0 = dataRanges[1], x1=dataRanges[2], 
 															 y0=dataRanges[3], y1=dataRanges[3],
 															 stroke = "red")
-					if (any(y) > dataRanges[4]) 
+					if (any(y > dataRanges[4]))
 						qdrawSegment(painter, x0 = dataRanges[1], x1=dataRanges[2], 
 															 y0=dataRanges[4], y1=dataRanges[4],
 															 stroke = "red")
@@ -461,18 +461,14 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     root <- qlayer(scene, cache=cache)
 #    root$setGeometry(qrect(0, 0, xWidth, yWidth))
 
-		xaxis <- qlayer(paintFun = xaxis, limits = qrect(dataRanges[1:2], c(0, 1)),
-                      cache=cache)
-		yaxis <- qlayer(paintFun = yaxis, limits = qrect(c(0, 1), dataRanges[3:4]),
-                      cache=cache)
-    bglayer <- qlayer(paintFun = grid, limits = lims,
-                      cache=cache)
+		xaxis <- qlayer(parent=root, paintFun = xaxis, limits = qrect(dataRanges[1:2], c(0, 1)),
+                      cache=cache, row=2, col=1)
+		yaxis <- qlayer(parent=root, paintFun = yaxis, limits = qrect(c(0, 1), dataRanges[3:4]),
+                      cache=cache, row=1, col=0)
 
-    root[2, 1] = xaxis
-    root[1, 0] = yaxis
-    root[1, 1] = bglayer
-    
-    
+# clipping needs to be turned off - otherwise small integer values cause strange results
+    bglayer <- qlayer(parent= root, paintFun = grid, limits = lims, cache=cache, row=1, col=1, clip=FALSE)
+
     datalayer <- qlayer(parent = root, paintFun = scatter.all,
                         keyPressFun = keyPressFun,
                         mouseMoveFun = identify_mouse_move,
@@ -485,12 +481,12 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 													focused(data) <- FALSE
 												},
 												wheelFun = handle_wheel_event,
-                        limits = lims, cache=cache, row=1, col=1)
+                        limits = lims, cache=cache, row=1, col=1, clip=FALSE)
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
-                         cache=cache, row=1, col=1)
+                         cache=cache, row=1, col=1, clip=FALSE)
     querylayer <- qlayer(parent = root, query_draw, limits = lims,
                          hoverMoveFun = query_hover,
-                         hoverLeaveFun = query_hover_leave, cache=cache, row=1, col=1)
+                         hoverLeaveFun = query_hover_leave, cache=cache, row=1, col=1, clip=FALSE)
  
     layout = root$gridLayout() 
     layout$setRowPreferredHeight(0, 40)	# width of yaxis
