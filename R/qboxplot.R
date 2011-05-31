@@ -87,7 +87,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     layer.root[1, 1] = layer.brush
     layer.root[1, 0] = layer.yaxis
     layer.root[2, 1] = layer.xaxis
-    layer.root[2, 1] = qlayer()  # place-holder
+    layer.root[1, 2] = qlayer()  # place-holder
 
     layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, 30)
