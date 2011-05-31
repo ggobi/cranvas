@@ -1,18 +1,19 @@
-#' Draw a time plot
-#'
-#' @param data Mutaframe data to use
-#' @param time The variable indicating time, which is displayed on the horizontal axis
-#' @param y The variable displayed on the vertical axis
-#' @param tgroup The variable to group the time series. Better to be 'year','month',
-#' or other time resolutions. Default to be null.
-#' @param wrap The switch for wrapping or not when zooming in/out by hitting right 
-#' arrow or left arrow. Default to be TRUE.
-#' @param size Point size, default to be 2
-#' @param alpha Transparency level, 1=completely opaque, default to be 1
-#' @param aspect.ratio Ratio between width and height of the plot
-#' @example cranvas/inst/examples/qtime-ex.R
+##' Draw a time plot
+##'
+##' @param data Mutaframe data to use
+##' @param time The variable indicating time, which is displayed on
+##' the horizontal axis
+##' @param y The variable displayed on the vertical axis
+##' @param period The variable to group the time series. Better to be
+##' 'year','month', or other time resolutions. Default to be null.
+##' @param wrap The switch for wrapping or not when zooming in/out by
+##' hitting right arrow or left arrow. Default to be TRUE.
+##' @param size Point size, default to be 2
+##' @param alpha Transparency level, 1=completely opaque, default to be 1
+##' @param aspect.ratio Ratio between width and height of the plot
+##' @example cranvas/inst/examples/qtime-ex.R
 
-qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=NULL,...){  
+qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=NULL,...){  
 
 #####################
   ## data processing ##----------
@@ -22,24 +23,33 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   df <- data.frame(data)
   x <- eval(arguments$time, df)
   y <- as.data.frame(matrix(eval(arguments$y, df),nrow=nrow(df)))
-  tdf <- mutaframe(x=x,zg=rep(1,nrow(df)))
+  pd <- eval(arguments$period, df)
+  tdf <- mutaframe(x=x,zg=rep(1,nrow(df)),pd=rep(1,nrow(df)),y=y)
   ## tdf: tmp data frame; zg: zoom group.
   .levelX <- deparse(arguments$time)
   .levelY <- deparse(arguments$y)
+  hitscol <- 1
   if (ncol(y)>1) {
     .levelY <- unlist(strsplit(substr(.levelY,3,nchar(.levelY)-1),','))
     .levelY <- gsub(" ","", .levelY)
-    hitscol <- 1
   }
-
+  ## draw by time resolution
+  if (!is.null(pd)){
+    .period <- deparse(arguments$period)
+    ## check whether period lengths are the same
+    pdLen <- tapply(x,factor(pd),length)
+    if (!all(pdLen==pdLen[1])) {
+      warning('Period lengths are not the same.')
+    }
+    tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),zg=rep(1,nrow(df)),pd=as.integer(pd),y=(y-min(y))/(max(y)-min(y))+as.integer(pd))
+  }
+  ## set plot range
   dataRanges <- c(make_data_ranges(range(tdf$x)),
-                  make_data_ranges(range(y)))
+                  make_data_ranges(range(data.frame(tdf[,-(1:3)]))))
   windowRanges <- dataRanges
   lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-  ##  sy <- get_axisPos(tdf$x)
-  ##  sx <- get_axisPos(y)
   sy <- .axis.loc(tdf$x)
-  sx <- .axis.loc(unlist(y))
+  sx <- .axis.loc(unlist(data.frame(tdf[,-(1:3)])))
 
   ## parameters for datalayer
   .radius <- size
@@ -125,26 +135,26 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
         }
-        dataRanges <<- c(make_data_ranges(range(tdf$x)),
-                         make_data_ranges(range(y)))
+        dataRanges[1:2] <<- make_data_ranges(range(tdf$x))
         windowRanges <<- dataRanges
         sy <<- .axis.loc(tdf$x)
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])     
       } else {
-          zoomsize <- min(0.96*zoomsize,zoomsize-2)
-          if (zoomsize < 2) zoomsize <- 2
-          tmpXzoom <- .bstart + c(-0.5,0.5) * zoomsize
-          tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
-          tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
-          print(tmpXzoom)
-          dataRanges <<- c(make_data_ranges(tmpXzoom),
-                           make_data_ranges(range(y)))
-          windowRanges <<- dataRanges
-          sy <<- .axis.loc(dataRanges[1:2])
-          sx <<- .axis.loc(dataRanges[3:4])
-          lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        }
+        tdf$x <- x
+        zoomsize <<- min(0.96*zoomsize,zoomsize-2)
+        if (zoomsize < 2) zoomsize <<- 2
+        tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
+        tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
+        tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
+        dataRanges[1:2] <<- make_data_ranges(tmpXzoom)
+        windowRanges <<- dataRanges
+        sy <<- .axis.loc(dataRanges[1:2])
+        sx <<- .axis.loc(dataRanges[3:4])
+        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        tdf$x[tdf$x<=tmpXzoom[1]]=NA
+        tdf$x[tdf$x>=tmpXzoom[2]]=NA
+      }
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
       main_circle_layer$setLimits(lims)
@@ -165,26 +175,26 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
         }
-        dataRanges <<- c(make_data_ranges(range(tdf$x)),
-                         make_data_ranges(range(y)))
+        dataRanges[1:2] <<- make_data_ranges(range(tdf$x))
         windowRanges <<- dataRanges
         sy <<- .axis.loc(tdf$x)
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       } else {
-          zoomsize <- max(zoomsize*25/24,zoomsize+2)
-          if (zoomsize > (max(x)-min(x))) zoomsize <- max(x)-min(x)
-          tmpXzoom <- .bstart + c(-0.5,0.5) * zoomsize
-          tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
-          tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
-          print(tmpXzoom)
-          dataRanges <<- c(make_data_ranges(tmpXzoom),
-                           make_data_ranges(range(y)))
-          windowRanges <<- dataRanges
-          sy <<- .axis.loc(dataRanges[1:2])
-          sx <<- .axis.loc(dataRanges[3:4])
-          lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        }
+        tdf$x <- x
+        zoomsize <<- max(zoomsize*25/24,zoomsize+2)
+        if (zoomsize > 2*(max(x)-min(x))) zoomsize <<- 2*(max(x)-min(x))
+        tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
+        tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
+        tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
+        dataRanges[1:2] <<- make_data_ranges(tmpXzoom)
+        windowRanges <<- dataRanges
+        sy <<- .axis.loc(dataRanges[1:2])
+        sx <<- .axis.loc(dataRanges[3:4])
+        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        tdf$x[tdf$x<=tmpXzoom[1]]=NA
+        tdf$x[tdf$x>=tmpXzoom[2]]=NA
+      }
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
       main_circle_layer$setLimits(lims)
@@ -244,7 +254,8 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     hitsrow <- round(hits %% nrow(data))
     hitsrow[hitsrow==0] <- nrow(data)
     hitscol <- (hits-0.0000001)%/%nrow(data)+1
-    info <- as.data.frame(data[hitsrow, c(.levelX, .levelY[hitscol])])
+    if (is.null(pd)) {hitspd <- NULL} else {hitspd <- .period}
+    info <- as.data.frame(data[hitsrow, c(.levelX, .levelY[hitscol],hitspd)])
     ## print(info)
     ## browser()
         
@@ -303,20 +314,22 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     draw_x_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sy, labelHoriPos = sy,
                                 name = .levelX)
-
     draw_y_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sx, labelVertPos = sx,
-                                name = .levelY)   
+                                name = ifelse(is.null(pd),.levelY,.period))
   }
     
   main_circle_draw <- function(layer,painter){
     for (j in 1:ncol(y)) {
       color=gray(seq(0,0.6,length=max(tdf$zg)))
       for (i in 1:max(tdf$zg)) {
-        qdrawCircle(painter,tdf[tdf$zg==i,1],
-                    y[tdf$zg==i,j],r=.radius,
-                    fill=color[max(tdf$zg)+1-i],
-                    stroke=color[max(tdf$zg)+1-i])
+        for (k in unique(tdf$pd)) {
+          qdrawCircle(painter,tdf[tdf$zg==i & tdf$pd==k,1],
+                      tdf[tdf$zg==i & tdf$pd==k,j+3],
+                      r=.radius,
+                      fill=color[max(tdf$zg)+1-i],
+                      stroke=color[max(tdf$zg)+1-i])
+        }
       }
     }
   }
@@ -325,8 +338,11 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     for (j in 1:ncol(y)) {
       color=gray(seq(0,0.6,length=max(tdf$zg)))
       for (i in 1:max(tdf$zg)) {
-        qdrawLine(painter,tdf[tdf$zg==i,1],
-                  y[tdf$zg==i,j],stroke=color[max(tdf$zg)+1-i])
+        for (k in unique(tdf$pd)) {
+          qdrawLine(painter,tdf[tdf$zg==i & tdf$pd==k,1],
+                    tdf[tdf$zg==i & tdf$pd==k,j+3],
+                    stroke=color[max(tdf$zg)+1-i])
+        }
       }
     }
   }
@@ -340,7 +356,7 @@ qtime <- function(data,time,y,tgroup=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
                   .bpos[1], .bpos[2], stroke = brush(data)$color)
       }
             
-      hdata <- subset(data.frame(tdf$x,y=data[,.levelY[hitscol]]), .brushed)
+      hdata <- subset(data.frame(tdf$x,y=tdf[,hitscol+3]), .brushed)
             
       if (nrow(hdata) > 0) {
         ## draw the brush rectangle
