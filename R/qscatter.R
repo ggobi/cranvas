@@ -399,16 +399,19 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         # Nothing under mouse
         #    if (nrow(info) == 0) return()
 
+				d <- options()$str$digits.d
         # Work out label text
         idx <- names(info)
         if (length(hits) == 1) {
-            infodata <- as.character(unlist(info[, idx]))
+            infodata <- as.character(round(unlist(info[, idx]), d))
             infostring <- paste(idx, infodata, collapse = "\n", sep = ": ")
         }
         else {
             #browser()
             xymin <- unlist(lapply(info[, idx], min, na.rm = TRUE))
             xymax <- unlist(lapply(info[, idx], max, na.rm = TRUE))
+					  xymin <- round(xymin, d)
+					  xymax <- round(xymax, d)
             infostring <- paste(idx, paste(xymin, xymax, sep = " - "),
                                 collapse = "\n", sep = ": ")
             infostring <- paste(sprintf("%s points\n", length(hits)), infostring)
