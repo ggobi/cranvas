@@ -37,7 +37,7 @@ print(qparallel(data = qcrimes))
 
 #print(qtmap(qstates, long, lat, group, label=region,
 #   labeldata=qcrimes,
-#   by.x='region', by.y='State', colour=Violent.crime))
+# by.x='region', by.y='State', colour=Violent.crime))
 q1 <- qtmap(qstates, long, lat, group, label = region, 
     labeldata = qcrimes, by.x = "region", by.y = "State", 
     colour = log(Violent.crime/Population + 1))
