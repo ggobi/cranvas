@@ -25,7 +25,10 @@ Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will speci
 \item{ylab}{label on vertical axis, default is name of y variable}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 }
-\examples{require(cranvas)
+\examples{library(qtbase)
+library(qtpaint)
+library(plumbr)
+library(cranvas)
 
 data(nrcstat)
 nrcstat[, 26] <- -nrcstat[, 26]
@@ -36,7 +39,38 @@ qnrc = qdata(nrcstat)
 print(qscatter(qnrc, R.Rankings.5th.Percentile, 
     R.Rankings.95th.Percentile))
 print(qscatter(qnrc, S.Rankings.5th.Percentile, 
-    S.Rankings.95th.Percentile))}
+    S.Rankings.95th.Percentile))
+
+
+
+#################
+#
+library(qtbase)
+library(qtpaint)
+library(plumbr)
+library(cranvas)
+
+data(pollen)
+qpollen <- qdata(pollen)
+qscatter(qpollen, RIDGE, CRACK)
+# try zooming into the center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

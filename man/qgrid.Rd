@@ -38,7 +38,7 @@ r = qlayer(s)
 m = qlayer(paintFun = function(layer, painter) {
     qdrawCircle(painter, runif(1000), runif(1000), r = 2)
     qdrawRect(painter, 0, 0, 1, 1)
-}, limits = qrect(matrix(c(0, 1, 0, 1), 2)))
+}, limits = qrect(matrix(c(0, 1, 0, 1), 2)))  # main layer
 g = qgrid(xat = seq(0, 1, 0.2), yat = seq(0, 1, 
     0.5), sister = m)
 r[1, 1] = g  # must add the grid layer FIRST, then the plot layer

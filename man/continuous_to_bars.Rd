@@ -7,7 +7,7 @@
 }
 
 \description{Continuous items to bins}
-\author{Barret Schloerke \email{bigbear@iastate.edu}}
+\author{Barret Schloerke}
 \keyword{internal}
 \arguments{\item{data}{data to be used}
 \item{splitBy}{vect to split by}

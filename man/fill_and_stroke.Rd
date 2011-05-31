@@ -6,7 +6,7 @@
 }
 \description{Fill and Stroke by Color
 Set the fill and stroke by the color if they are already not defined}
-\author{Barret Schloerke \email{bigbear@iastate.edu}}
+\author{Barret Schloerke}
 \keyword{internal}
 \arguments{\item{color}{color to be used for (possibly) both the fill and stroke}
 \item{fill}{fill to be used}
