@@ -9,7 +9,7 @@ library(productplots)
 # Oil Spill Data
 
 # floats data
-floats <- read.csv("http://streaming.stat.iastate.edu/dataexpo/2011/resources/data/floats.csv")
+data(floats)
 floats$call <- as.numeric(floats$callSign)
 floats <- na.omit(floats)
 floats <- subset(floats, (callSign != "Q4901044"))
