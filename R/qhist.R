@@ -171,7 +171,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     }
     updateBarsInfo()
     #if (.yMax < 1.1 * max(.bars_info$data$count))
-    .yMax <- 1.1 * max(.bars_info$data$count)
+    .yMax <- 1.1 * max(.bars_info$data$top)
     #message(.yMax, "\n")
     message("max count ", max(.bars_info$data$top), "\n")
             
@@ -263,8 +263,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             updateBarsInfo()
 
             #message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
-            if (.yMax < max(.bars_info$data$count))
-              .yMax <<- 1.1 * max(.bars_info$data$count)
+            if (.yMax < max(.bars_info$data$top))
+              .yMax <<- 1.1 * max(.bars_info$data$top)
             #message("Up ", .yMax, "\n")
             updateRanges()
             updateLims()
@@ -277,8 +277,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         else if (key == Qt$Qt$Key_Down) {
             .type$binwidth <<- .type$binwidth/1.1
             updateBarsInfo()
-            if (.yMax < max(.bars_info$data$count))
-              .yMax <<- 1.1 * max(.bars_info$data$count)        
+            if (.yMax < max(.bars_info$data$top))
+              .yMax <<- 1.1 * max(.bars_info$data$top)        
             #message("Down ", .yMax, "\n")
             updateRanges()
             updateLims()
@@ -343,8 +343,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         else if (key == Qt$Qt$Key_M) {
  
           updateBarsInfo()
-#          if (.yMax < max(.bars_info$data$count))
-          .yMax <<- 1.1 * max(.bars_info$data$count)        
+#          if (.yMax < max(.bars_info$data$top))
+          .yMax <<- 1.1 * max(.bars_info$data$top)        
           #message("M ", .yMax, "\n")
           # print(.yMax)
           updateRanges()
@@ -715,8 +715,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             qupdate(brushing_layer)
             updateBarsInfo()},
             {updateBarsInfo()
-            if (.yMax < max(.bars_info$data$count)) {
-                .yMax <<- 1.1 * max(.bars_info$data$count)
+            if (.yMax < max(.bars_info$data$top)) {
+                .yMax <<- 1.1 * max(.bars_info$data$top)
                 #message("Data ",.yMax, "\n")
             }
             updateRanges()
