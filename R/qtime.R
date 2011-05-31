@@ -216,7 +216,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
                      zg=rep(1,nrow(df)),pd=pd,
                      y=(y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
-      dataRanges[3:4] <-  make_data_ranges(range(data.frame(tdf[,-(1:3)]))
+      dataRanges[3:4] <-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
       windowRanges <- dataRanges
       lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       sx <- .axis.loc(unlist(data.frame(tdf[,-(1:3)])))
