@@ -268,7 +268,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
     legend_draw <- function(item, painter, exposed, ...) {
         #print('legend_draw')
 #browser()
-        if (is.null(attr(qstates,"col.scale"))) {
+        if (is.null(attr(data,"col.scale"))) {
 					layout$setColumnPreferredWidth(1,0)
 					return()
         }
@@ -276,7 +276,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
 #				print("draw legend")        
 
-        scale <- attr(qstates,"col.scale")
+        scale <- attr(data,"col.scale")
 #        xpos = max(x)
 				xpos = min(x)
         ypos = (max(y) + min(y))/2
