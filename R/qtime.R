@@ -28,21 +28,25 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   ## tdf: tmp data frame; zg: zoom group.
   .levelX <- deparse(arguments$time)
   .levelY <- deparse(arguments$y)
-  hitscol <- 1
   if (ncol(y)>1) {
     .levelY <- unlist(strsplit(substr(.levelY,3,nchar(.levelY)-1),','))
     .levelY <- gsub(" ","", .levelY)
   }
+  
   ## draw by time resolution
   if (!is.null(pd)){
+    if (is.character(pd)) pd <- factor(pd)
     .period <- deparse(arguments$period)
     ## check whether period lengths are the same
     pdLen <- tapply(x,factor(pd),length)
     if (!all(pdLen==pdLen[1])) {
       warning('Period lengths are not the same.')
     }
-    tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),zg=rep(1,nrow(df)),pd=as.integer(pd),y=(y-min(y))/(max(y)-min(y))+as.integer(pd))
+    tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
+                     zg=rep(1,nrow(df)),pd=pd,
+                     y=(y-min(y))/(max(y)-min(y)))
   }
+  
   ## set plot range
   dataRanges <- c(make_data_ranges(range(tdf$x)),
                   make_data_ranges(range(data.frame(tdf[,-(1:3)]))))
@@ -69,6 +73,9 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   .brange <- c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
   ## size for zoom in/out without wrapping
   zoomsize <- max(x,na.rm=TRUE)-min(x,na.rm=TRUE)
+  ## other
+  hitscol <- 1
+  vertconst <- 0
   
 ####################
   ## event handlers ##----------
@@ -203,6 +210,18 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       query_layer$setLimits(lims)
     }
 
+    if (event$key() == Qt$Qt$Key_U) {
+      vertconst <<- vertconst + 0.05
+      if (vertconst>1) vertconst <<- 1
+      tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
+                     zg=rep(1,nrow(df)),pd=pd,
+                     y=(y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
+      dataRanges[3:4] <-  make_data_ranges(range(data.frame(tdf[,-(1:3)]))
+      windowRanges <- dataRanges
+      lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+      sx <- .axis.loc(unlist(data.frame(tdf[,-(1:3)])))
+    }
+
     if (event$key() == Qt$Qt$Key_Up) {
       ## arrow up
       .radius <<- .radius + 1
@@ -314,9 +333,14 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     draw_x_axes_with_labels_fun(painter, dataRanges,
                                 axisLabel = sy, labelHoriPos = sy,
                                 name = .levelX)
+    if(!vertconst) {
+      aL <- sx; lVP <- sx
+    } else {
+      aL <- pd; lVP <- vertconst*(0:(length(pd)-1))
+    }
     draw_y_axes_with_labels_fun(painter, dataRanges,
-                                axisLabel = sx, labelVertPos = sx,
-                                name = ifelse(is.null(pd),.levelY,.period))
+                                axisLabel = aL, labelVertPos = lVP,
+                                name = ifelse(!vertconst,.levelY,.period))
   }
     
   main_circle_draw <- function(layer,painter){
