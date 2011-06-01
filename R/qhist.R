@@ -699,8 +699,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
 
       # max bin height cue area: 
       qdrawRect(painter, .dataranges[1],  .dataranges[4]-diff(.dataranges[3:4])/10, 
-                         .dataranges[2], .dataranges[4],   
-                         "black")
+                         .dataranges[2], .dataranges[4], stroke=NA, fill=NULL
+                        )
 
     }
     
@@ -719,6 +719,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
 			hits <- scales_handle_event(as.numeric(event$pos()))
 			
       if (length(hits) > 0) {
+        hits <- hits[1]
         cu <- .view$cursor 
         switch(hits, {cursor <- Qt$Qt$SizeHorCursor},
           {
