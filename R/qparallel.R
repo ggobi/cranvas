@@ -276,9 +276,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             return()
         }
 
-        ## make the brushed observations invisible when hitting Delete
         if (key == Qt$Qt$Key_Delete)
-            visible(data) = !selected(data)
+            visible(data) = !selected(data) & visible(data)  # make brushed obs invisible
         i = which(key == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
         if (length(i) && !any(is.na(meta$pos))) {
             if (horizontal) {
