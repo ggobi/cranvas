@@ -36,6 +36,8 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     y <- eval(arguments$y, df)
 
 		stopifnot(!is.null(x), !is.null(y))
+		stopifnot(length(x) > 1, length(y) > 1)
+
 		if (is.null(xlim)) xlim <- range(x, na.rm=T)
 		if (is.null(ylim)) ylim <- range(y, na.rm=T)
 		
