@@ -127,8 +127,8 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         y <- eval(arguments$y, df)
 
         radius <- .radius
-        qdrawCircle(painter, x = x, y = y, r = radius, fill = fill,
-                    stroke = stroke)
+        qdrawCircle(painter, x = x, y = y, r = radius, fill = alpha(fill, .alpha),
+                    stroke = alpha(stroke, .alpha))
 
 				if (values_out_of_plotting_range) {
 					if (any(x < dataRanges[1]))
@@ -212,15 +212,16 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         else if (key == Qt$Qt$Key_Right & .alpha < 1) {
             # arrow right
             # increase alpha blending
-            .alpha <<- 1.1 * .alpha
-            datalayer$setOpacity(.alpha)
+            .alpha <<- min(1.1 * .alpha,1)
+          #  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         }
         else if (key == Qt$Qt$Key_Left & .alpha > 1/n) {
             # arrow left
             # decrease alpha blending
-            .alpha <<- 0.9 * .alpha
-            datalayer$setOpacity(.alpha)
+            .alpha <<- max(0.9 * .alpha, 100/nrow(data))
+  #          print(.alpha*nrow(data))
+          #  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         } else if (key == Qt$Qt$Key_Z) {
 					zoom <<- !zoom
