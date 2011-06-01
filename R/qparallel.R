@@ -8,7 +8,9 @@
 ##' shown on the screen. In the brush mode, we can use the left button
 ##' of the mouse to drag a brush over the plot, and the brushed
 ##' elements will be highlighted; the right button is used to resize
-##' the brush.
+##' the brush. A simple click will not activate the brush -- the brush
+##' works only when the mouse is moved to a difference location with
+##' one button being pressed.
 ##'
 ##' Several key stroke interactions are available as well: in the
 ##' brush mode, we can hold the key A for \code{AND} operations,
@@ -348,9 +350,10 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (b$identify) return()
         meta$pos = as.numeric(event$pos())
         ## simple click: don't change meta$brush.range
-        if (!all(meta$pos == meta$start) && (!meta$brush.move)) {
-            meta$brush.range = meta$pos - meta$start
-        }
+        if (!all(meta$pos == meta$start)) {
+            if (!meta$brush.move)
+                meta$brush.range = meta$pos - meta$start
+        } else return()
         .new.brushed = rep(FALSE, meta$n)
         rect = qrect(matrix(c(meta$pos - meta$brush.range, meta$pos + meta$brush.range), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
