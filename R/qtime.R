@@ -135,8 +135,13 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       if (wrap) {
         zoombound=min(round(0.96*crt_range),crt_range-1)
         if (zoombound<3)zoombound <- 3
-        tdf$x <- x%%zoombound
-        tdf$zg <- ceiling(x/zoombound)
+        if (is.null(pd)) {
+          tdf$x <- x%%zoombound
+          tdf$zg <- ceiling(x/zoombound)
+        } else {
+          tdf$x <- rep(1:pdLen[1],length=length(x))%%zoombound
+          tdf$zg <- ceiling(rep(1:pdLen[1],length=length(x))/zoombound)
+        }
         if (sum(tdf$x==0)){
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
@@ -147,7 +152,6 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])     
       } else {
-        tdf$x <- x
         zoomsize <<- min(0.96*zoomsize,zoomsize-2)
         if (zoomsize < 2) zoomsize <<- 2
         tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
@@ -158,8 +162,8 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sy <<- .axis.loc(dataRanges[1:2])
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        tdf$x[tdf$x<=tmpXzoom[1]]=NA
-        tdf$x[tdf$x>=tmpXzoom[2]]=NA
+        tdf$x[x<=tmpXzoom[1]]=NA
+        tdf$x[x>=tmpXzoom[2]]=NA
       }
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
@@ -175,8 +179,13 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       if (wrap) {
         zoombound <- max(round(crt_range*25/24),crt_range+1)
         if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
-        tdf$x <- x%%zoombound
-        tdf$zg <- ceiling(x/zoombound)
+        if (is.null(pd)) {
+          tdf$x <- x%%zoombound
+          tdf$zg <- ceiling(x/zoombound)
+        } else {
+          tdf$x <- rep(1:pdLen[1],length=length(x))%%zoombound
+          tdf$zg <- ceiling(rep(1:pdLen[1],length=length(x))/zoombound)
+        }
         if (sum(tdf$x==0)){
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
@@ -187,7 +196,6 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       } else {
-        tdf$x <- x
         zoomsize <<- max(zoomsize*25/24,zoomsize+2)
         if (zoomsize > 2*(max(x)-min(x))) zoomsize <<- 2*(max(x)-min(x))
         tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
@@ -198,8 +206,8 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sy <<- .axis.loc(dataRanges[1:2])
         sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        tdf$x[tdf$x<tmpXzoom[1]]=NA
-        tdf$x[tdf$x>tmpXzoom[2]]=NA
+        tdf$x[x<tmpXzoom[1]]=NA
+        tdf$x[x>tmpXzoom[2]]=NA
       }
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
@@ -209,7 +217,10 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       query_layer$setLimits(lims)
     }
 
+    if (!is.null(pd)) {
     if (event$key() == Qt$Qt$Key_U) {
+      ## Key U (for Up)
+      
       vertconst <<- vertconst + 0.05
       if (vertconst>1) vertconst <<- 1
       if (ncol(y)==1){
@@ -231,11 +242,16 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     }
 
     if (event$key() == Qt$Qt$Key_D) {
+      ## Key D (for Down)
+      
       vertconst <<- vertconst - 0.05
       if (vertconst<0) vertconst <<- 0
       if (!vertconst) {
-        tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
-                         zg=rep(1,nrow(df)),pd=pd, y=y)
+        if (ncol(y)==1){
+          tdf[,-(1:3)] <- unlist(y)
+        } else {
+          tdf[,-(1:3)] <- y
+        }
         dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
@@ -258,6 +274,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       main_line_layer$setLimits(lims)
       brush_layer$setLimits(lims)
       query_layer$setLimits(lims)
+    }
     }
 
     if (event$key() == Qt$Qt$Key_Up) {
@@ -380,13 +397,15 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   main_circle_draw <- function(layer,painter){
     for (j in 1:ncol(y)) {
       color=gray(seq(0,0.6,length=max(tdf$zg)))
-      for (i in 1:max(tdf$zg)) {
-        for (k in unique(tdf$pd)) {
-          qdrawCircle(painter,tdf[tdf$zg==i & tdf$pd==k,1],
-                      tdf[tdf$zg==i & tdf$pd==k,j+3],
-                      r=.radius,
-                      fill=color[max(tdf$zg)+1-i],
-                      stroke=color[max(tdf$zg)+1-i])
+      for (k in unique(tdf$pd)) {
+        for (i in 1:max(tdf$zg)) {
+          if (sum(tdf$zg==i & tdf$pd==k)){
+            qdrawCircle(painter,tdf[tdf$zg==i & tdf$pd==k,1],
+                        tdf[tdf$zg==i & tdf$pd==k,j+3],
+                        r=.radius,
+                        fill=color[max(tdf$zg)+1-i],
+                        stroke=color[max(tdf$zg)+1-i])
+          }
         }
       }
     }
@@ -395,11 +414,13 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   main_line_draw <- function(layer,painter){
     for (j in 1:ncol(y)) {
       color=gray(seq(0,0.6,length=max(tdf$zg)))
-      for (i in 1:max(tdf$zg)) {
-        for (k in unique(tdf$pd)) {
-          qdrawLine(painter,tdf[tdf$zg==i & tdf$pd==k,1],
-                    tdf[tdf$zg==i & tdf$pd==k,j+3],
-                    stroke=color[max(tdf$zg)+1-i])
+      for (k in unique(tdf$pd)) {
+        for (i in 1:max(tdf$zg)) {
+          if (sum(tdf$zg==i & tdf$pd==k)){
+            qdrawLine(painter,tdf[tdf$zg==i & tdf$pd==k,1],
+                      tdf[tdf$zg==i & tdf$pd==k,j+3],
+                      stroke=color[max(tdf$zg)+1-i])
+          }
         }
       }
     }

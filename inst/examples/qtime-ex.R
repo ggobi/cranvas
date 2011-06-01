@@ -15,3 +15,11 @@ selected(qnasa)[1] <- TRUE
 # qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med))
 # qscatter(qnasa,ts,ps_tovs)
 # qscatter(qnasa,TimeIndx,tsa_tovs)
+
+
+
+## another example -- Norwayprecip
+#data(norwayprecip)
+#nwp <- qdata(data.grid.wk)
+#qtime(nwp,time,obs,year)
+#qtime(nwp,time,obs)
