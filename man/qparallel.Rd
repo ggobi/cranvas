@@ -22,19 +22,23 @@ the rows of data in a small neighborhood of the mouse will be
 shown on the screen. In the brush mode, we can use the left button
 of the mouse to drag a brush over the plot, and the brushed
 elements will be highlighted; the right button is used to resize
-the brush.
+the brush. A simple click will not activate the brush -- the brush
+works only when the mouse is moved to a difference location with
+one button being pressed.
 
 Several key stroke interactions are available as well: in the
-brush mode, we can hold the key A for \code{AND} operations,
-i.e. only the elements which were brushed in the last time
-\emph{and} are also brushed this time will be finally
-brushed. Similarly, O is for \code{OR}; X for \code{XOR}; N for
-\code{NOT} and C for \code{COMPLEMENT}. We can press R to toggle
-the min/max labels. Plus and minus can adjust the opacity of the
-plot linearly. Delete can make the brushed elements invisible. The
-arrow keys are used to adjust the order of the variables and flip
-the values of variables (like a mirror reflection). PageUp and
-PageDown can be used to go back and forth in the brush history.}
+brush mode, we can hold the key \code{A} for \code{AND}
+operations, i.e. only the elements which were brushed in the last
+time \emph{and} are also brushed this time will be finally
+brushed. Similarly, \code{O} is for \code{OR}; \code{X} for
+\code{XOR}; \code{N} for \code{NOT} and \code{C} for
+\code{COMPLEMENT}. We can press \code{R} to toggle the min/max
+labels. Keys \code{+} and \code{-} can adjust the opacity of the
+plot linearly. \code{Delete} can make the brushed elements
+invisible. The arrow keys are used to adjust the order of the
+variables and flip the values of variables (like a mirror
+reflection). \code{PageUp} and \code{PageDown} can be used to go
+back and forth in the brush history.}
 \value{NULL}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{vars}{variables to show; can be a character vector (column
