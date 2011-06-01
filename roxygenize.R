@@ -18,8 +18,10 @@ if (!("cranvas" %in% list.files("../"))) stop("the cranvas package not found und
 ## update git as well; someone wants to be really lazy
 if ("update" %in% commandArgs(TRUE)) system("git pull")
 
-## try(update.packages(ask = FALSE, repos = 'http://cran.r-project.org'))
-
+if (NROW(old.packages(repos = 'http://cran.r-project.org')) &&
+    select.list(c('Yes', 'No'), title = 'Update old R packages?', preselect = 'Yes') == 'Yes') {
+    try(update.packages(ask = FALSE, repos = 'http://cran.r-project.org'))
+}
 ## requires Rd2roxygen and formatR (don't ask why; just do it)
 if (!require("Rd2roxygen")) install.packages("Rd2roxygen", repos = "http://cran.r-project.org")
 if (!require("formatR")) install.packages("formatR", repos = "http://cran.r-project.org")
