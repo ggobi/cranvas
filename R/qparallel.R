@@ -409,10 +409,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                       meta$pos[1] + meta$brush.range[1], meta$pos[2] + meta$brush.range[2],
                       stroke = b$style$color)
         }
+        .visible = which(visible(data))
         if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size
             for (i in seq_along(b$persistent.list)) {
-                idx = b$persistent.list[[i]]
+                idx = intersect(b$persistent.list[[i]], .visible)
+                if (!length(idx)) next
                 qstrokeColor(painter) = b$persistent.color[i]
                 tmpx = mat2seg(meta$x, idx)
                 tmpy = mat2seg(meta$y, idx)
@@ -420,15 +422,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                 qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
             }
         }
-        .brushed = selected(data)
-        if (sum(.brushed, na.rm = TRUE) >= 1) {
+        .brushed = intersect(which(selected(data)), .visible)
+        if (length(.brushed)) {
             qlineWidth(painter) = b$size
             qstrokeColor(painter) = b$color
             tmpx = mat2seg(meta$x, .brushed)
             tmpy = mat2seg(meta$y, .brushed)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
-
        }
         cranvas_debug()
     }
