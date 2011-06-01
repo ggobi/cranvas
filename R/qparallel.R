@@ -21,10 +21,11 @@
 ##' \code{COMPLEMENT}. We can press \code{R} to toggle the min/max
 ##' labels. Keys \code{+} and \code{-} can adjust the opacity of the
 ##' plot linearly. \code{Delete} can make the brushed elements
-##' invisible. The arrow keys are used to adjust the order of the
-##' variables and flip the values of variables (like a mirror
-##' reflection). \code{PageUp} and \code{PageDown} can be used to go
-##' back and forth in the brush history.
+##' invisible while \code{F5} will make all the elements visible. The
+##' arrow keys are used to adjust the order of the variables and flip
+##' the values of variables (like a mirror reflection). \code{PageUp}
+##' and \code{PageDown} can be used to go back and forth in the brush
+##' history.
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
 ##' + x2'; if missing or it is a formula that contains a dot
@@ -278,6 +279,9 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
         if (key == Qt$Qt$Key_Delete)
             visible(data) = !selected(data) & visible(data)  # make brushed obs invisible
+        if (key == Qt$Qt$Key_F5)
+            visible(data) = TRUE  # make all of them visible
+
         i = which(key == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
         if (length(i) && !any(is.na(meta$pos))) {
             if (horizontal) {
