@@ -134,9 +134,6 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         .type <- list(type = "hist", binwidth = diff(xColRange())/nbins,
                       start = start)
     }
-    # Find the maximum height of the counts
-#    .yMax <- maxHeightP()
-# max Height doesn't seem to work too well - use max count + 10 percent - see below
 
     .histOriginalBreaksAndStart <- list(binwidth = .type$binwidth, start = .type$start)
     # cat('\nOriginal Hist Breaks!\n'); print(.histOriginalBreaksAndStart);
@@ -273,6 +270,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             qupdate(.scene)
             qupdate(bglayer)
             qupdate(datalayer)
+            scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
         }
         else if (key == Qt$Qt$Key_Down) {
             .type$binwidth <<- .type$binwidth/1.1
@@ -285,6 +284,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             qupdate(.scene)
             qupdate(bglayer)
             qupdate(datalayer)
+            scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
         }
         else if (key == Qt$Qt$Key_Left) {
             .type$start <<- .type$start - unitShiftP()
@@ -297,6 +298,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             qupdate(.scene)
             qupdate(bglayer)
             qupdate(datalayer)           
+            scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
         }
         else if (key == Qt$Qt$Key_Right) {
             .type$start <<- .type$start + unitShiftP()
@@ -309,6 +312,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             qupdate(.scene)
             qupdate(bglayer)
             qupdate(datalayer)                       
+            scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
         }
         else if (key == Qt$Qt$Key_A) {
             .type$type <<- "ash"
@@ -352,6 +357,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
           qupdate(.scene)
           qupdate(bglayer)
           qupdate(datalayer)
+          scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
         }
         else if (key == 87) {
 #            cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
@@ -676,8 +683,128 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         # print(as.numeric(event$pos()))
         qupdate(hoverlayer)
     }
+    #######################################################
+    # scales
+    scales_draw <- function(item, painter, exposed, ...) {
+      # draw anchor point and line for bin width adjustment under first bin
+      
+      # anchor: 
+      eps <- diff(windowRanges[3:4])/50
+      qdrawSegment(painter, .bars_info$data$left[1], .bars_info$data$bottom[1]-eps/5, 
+                            .bars_info$data$left[1], .bars_info$data$bottom[1]-eps,
+                            "black")
+      # bin width adjust: 
+      qdrawSegment(painter, .bars_info$data$left[2], .bars_info$data$bottom[2]-eps/5, 
+                            .bars_info$data$left[2], .bars_info$data$bottom[2]-eps,
+                            "black")
+
+      # max bin height cue area: 
+      qdrawRect(painter, .dataranges[1],  .dataranges[4]-diff(.dataranges[3:4])/10, 
+                         .dataranges[2], .dataranges[4],   
+                         "black")
+
+    }
     
-    
+    scales_handle_event <- function(pos) {
+			xpos <- pos[1]
+			ypos <- pos[2]
+			xeps <- diff(.dataranges[1:2])/250
+			yeps <- diff(.dataranges[3:4])/250
+			
+			rect = qrect(matrix(c(xpos-xeps, ypos-yeps, xpos + xeps, ypos + yeps), 2, byrow = TRUE))
+      return(scaleslayer$locate(rect) + 1)
+    }
+
+    scales_hover <- function(item, event, ...) {
+
+			hits <- scales_handle_event(as.numeric(event$pos()))
+			
+      if (length(hits) > 0) {
+        cu <- .view$cursor 
+        switch(hits, {cursor <- Qt$Qt$SizeHorCursor},
+          {
+          cursor <- Qt$Qt$SizeHorCursor},
+          {
+          cursor <- Qt$Qt$UpArrowCursor}
+        )
+        cu$setShape(cursor)
+        .view$cursor <- cu
+#      print(hits)
+      } else {
+        cu <- .view$cursor 
+        cu$setShape(Qt$Qt$ArrowCursor)      
+        .view$cursor <- cu
+
+#        event$ignore()
+        bar_hover(item, event, ...)
+
+      }
+    }    
+
+    scales_mouse_press <- function(item, event, ...) {
+			hits <- scales_handle_event(as.numeric(event$pos()))
+        
+      if (length(hits) > 0) {
+        updateBarsInfo()
+        switch (hits, {}, {}, {
+#          if (.yMax < max(.bars_info$data$top))
+          .yMax <<- 1.1 * max(.bars_info$data$top)        
+          #message("M ", .yMax, "\n")
+          # print(.yMax)
+          }
+        )
+        updateRanges()
+        updateLims()
+        qupdate(.scene)
+        qupdate(bglayer)
+        qupdate(datalayer)           
+        scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
+
+      } else
+        # pass mouse event on        
+        brushing_mouse_press(item, event, ...)
+    }
+
+    scales_mouse_release <- function(item, event, ...) {
+			hits <- scales_handle_event(as.numeric(event$pos()))
+        
+      if (length(hits) == 0) {
+        # pass mouse event on        
+        brushing_mouse_release(item, event, ...)
+        }
+    }
+
+
+    scales_mouse_move <- function(item, event, ...) {
+      pos <- as.numeric(event$pos())
+      hits <- scales_handle_event(pos)
+      
+      if (length(hits) > 0) {
+#        print(sprintf("drag %s %s", pos[1], pos[2]))
+        switch(hits, {
+        # change anchor point
+        .type$start <<- pos[1]
+        }, {
+        # change binwidth
+        .type$binwidth <<- pos[1] - .bars_info$data$left[1]
+        })
+        updateBarsInfo()
+          updateRanges()
+        updateLims()
+        qupdate(.scene)
+        qupdate(bglayer)
+        qupdate(datalayer)           
+        scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
+      
+      } else {
+        # pass mouse event on        
+        brushing_mouse_move(item, event, ...)
+      }
+    }
+
+
     #######################################################
     # Layout
     updateLims <- function() {
@@ -691,6 +818,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         datalayer$setLimits(.lims)
         brushing_layer$setLimits(.lims)
         hoverlayer$setLimits(.lims)
+        scaleslayer$setLimits(.lims)
     }
 
     windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
@@ -707,8 +835,15 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         mouseReleaseFun = brushing_mouse_release, 
         limits = .lims, clip = FALSE)
     
+
     hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE,
         hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave)
+
+    scaleslayer <- qlayer(.scene, scales_draw, limits = .lims, clip = FALSE,
+        mousePressFun = scales_mouse_press,
+        mouseReleaseFun = scales_mouse_release,
+        mouseMoveFun = scales_mouse_move,
+        hoverMoveFun = scales_hover)
     
     # # update the brush layer in case of any modifications to the mutaframe
     #if (is.mutaframe(data)) {
@@ -728,6 +863,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             qupdate(bglayer)
             qupdate(brushing_layer)
             qupdate(datalayer)
+            scaleslayer$invalidateIndex()
+        qupdate(scaleslayer)
       })
     }
         
