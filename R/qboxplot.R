@@ -80,7 +80,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     layer.yaxis = qaxis(at = yat, labels = ylabels, side = 2, sister = layer.main)
     layer.grid = qgrid(xat = xat, yat = yat, sister = layer.main,
                        minor = ifelse(horizontal, 'x', 'y'))
-    layer.brush = qbxp(vars = vars, data = data, at = at, width = .8*width,
+    layer.brush = qbxp(vars = vars, data = data, at = at, width = width,
                              subset = TRUE, horizontal = horizontal, sister = layer.main)
     layer.root[1, 1] = layer.grid
     layer.root[1, 1] = layer.main
@@ -166,8 +166,9 @@ qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
         .boxcol = 'black'
         if (subset) {
             if (all(!selected(data))) return()
-            .boxcol = brush(data)$color
+            .boxcol = 'gray'
             data2 = data[selected(data), , drop = FALSE]
+            width = mean(selected(data)) * width
         }
         if (!is.null(vars) && inherits(vars, 'formula') && length(vars) == 3) {
             vars.a = all.vars(vars)
