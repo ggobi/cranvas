@@ -15,7 +15,7 @@
 #' @keywords hplot
 #' @example cranvas/inst/examples/qhist-ex.R
 qhist <- function(x, data, splitByCol = -1, horizontal = FALSE, 
-    position = "none", color = NULL, fill = NULL, stroke = NULL,
+    position = "none", 
     title = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
     nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
     bin_algo_str = NULL, xlim=NULL, ylim=NULL, ...) {
@@ -75,9 +75,9 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     #print(head(data))
 
     # Check for fill colors
-    if (length(unique(data$.fill)) > 1)
-      fill <- data$.fill
-     message("fill 0 ",length(fill),"\n")
+    #if (length(unique(data$.fill)) > 1)
+    #  fill <- data$.fill
+    # message("fill 0 ",length(fill),"\n")
        
     # Set up wrapper functions.
     dataCol <- function() {
@@ -145,8 +145,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     updateBarsInfo <- function() {
         .bars_info <<- continuous_to_bars(data = data[, x], splitBy = data[, 
             splitByCol], brushed = data[, ".brushed"], typeInfo = .type,
-            position = position, color = color, fill = fill, stroke = stroke, ...)
-         message("fill 4 ",length(fill),"\n")
+            position = position, ...)
 
         .data_col_names <<- rep("", length(.data_col_names))
         for (i in 1:nrow(.bars_info$data)) {
@@ -708,8 +707,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     scales_handle_event <- function(pos) {
 			xpos <- pos[1]
 			ypos <- pos[2]
-			xeps <- diff(.dataranges[1:2])/250
-			yeps <- diff(.dataranges[3:4])/250
+			xeps <- diff(.dataranges[1:2])/125
+			yeps <- diff(.dataranges[3:4])/125
 			
 			rect = qrect(matrix(c(xpos-xeps, ypos-yeps, xpos + xeps, ypos + yeps), 2, byrow = TRUE))
       return(scaleslayer$locate(rect) + 1)

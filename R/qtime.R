@@ -32,6 +32,8 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     .levelY <- unlist(strsplit(substr(.levelY,3,nchar(.levelY)-1),','))
     .levelY <- gsub(" ","", .levelY)
   }
+  ## size for zoom in/out without wrapping
+  zoomsize <- max(x,na.rm=TRUE)-min(x,na.rm=TRUE)
   
   ## draw by time resolution
   if (!is.null(pd)){
@@ -44,6 +46,8 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     }
     tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
                      zg=rep(1,nrow(df)),pd=pd, y=y)
+    x <- rep(1:pdLen[1],length=length(x))
+    zoomsize <- max(tdf$x,na.rm=TRUE)-min(tdf$x,na.rm=TRUE)
   }
   
   ## set plot range
@@ -70,8 +74,6 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   .bmove <- TRUE
   ## brush range: horizontal and vertical
   .brange <- c(diff(windowRanges[c(1, 2)]), diff(windowRanges[c(3, 4)]))/30
-  ## size for zoom in/out without wrapping
-  zoomsize <- max(x,na.rm=TRUE)-min(x,na.rm=TRUE)
   ## other
   hitscol <- 1
   vertconst <- 0
@@ -133,15 +135,10 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       ## arrow right
       
       if (wrap) {
-        zoombound=min(round(0.96*crt_range),crt_range-1)
+        zoombound=crt_range-1
         if (zoombound<3)zoombound <- 3
-        if (is.null(pd)) {
-          tdf$x <- x%%zoombound
-          tdf$zg <- ceiling(x/zoombound)
-        } else {
-          tdf$x <- rep(1:pdLen[1],length=length(x))%%zoombound
-          tdf$zg <- ceiling(rep(1:pdLen[1],length=length(x))/zoombound)
-        }
+        tdf$x <- x%%zoombound
+        tdf$zg <- ceiling(x/zoombound)
         if (sum(tdf$x==0)){
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
@@ -149,19 +146,28 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         dataRanges[1:2] <<- make_data_ranges(range(tdf$x))
         windowRanges <<- dataRanges
         sy <<- .axis.loc(tdf$x)
-        sx <<- .axis.loc(dataRanges[3:4])
+        if (is.null(pd) | !vertconst){
+          sx <<- .axis.loc(dataRanges[3:4])
+        } else {
+          sx <<- (as.integer(unique(pd))-1)*vertconst
+        }
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])     
       } else {
-        zoomsize <<- min(0.96*zoomsize,zoomsize-2)
+        zoomsize <<- zoomsize-2
         if (zoomsize < 2) zoomsize <<- 2
         tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
         tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
         tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
         dataRanges[1:2] <<- make_data_ranges(tmpXzoom)
         windowRanges <<- dataRanges
-        sy <<- .axis.loc(dataRanges[1:2])
-        sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        sy <<- .axis.loc(dataRanges[1:2])
+        if (is.null(pd) | !vertconst){
+          sx <<- .axis.loc(dataRanges[3:4])
+        } else {
+          sx <<- (as.integer(unique(pd))-1)*vertconst
+        }
+        tdf$x <- x
         tdf$x[x<=tmpXzoom[1]]=NA
         tdf$x[x>=tmpXzoom[2]]=NA
       }
@@ -177,15 +183,10 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       ## arrow left
       
       if (wrap) {
-        zoombound <- max(round(crt_range*25/24),crt_range+1)
+        zoombound <- crt_range+1
         if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
-        if (is.null(pd)) {
-          tdf$x <- x%%zoombound
-          tdf$zg <- ceiling(x/zoombound)
-        } else {
-          tdf$x <- rep(1:pdLen[1],length=length(x))%%zoombound
-          tdf$zg <- ceiling(rep(1:pdLen[1],length=length(x))/zoombound)
-        }
+        tdf$x <- x%%zoombound
+        tdf$zg <- ceiling(x/zoombound)
         if (sum(tdf$x==0)){
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
@@ -193,19 +194,28 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         dataRanges[1:2] <<- make_data_ranges(range(tdf$x))
         windowRanges <<- dataRanges
         sy <<- .axis.loc(tdf$x)
-        sx <<- .axis.loc(dataRanges[3:4])
+        if (is.null(pd) | !vertconst){
+          sx <<- .axis.loc(dataRanges[3:4])
+        } else {
+          sx <<- (as.integer(unique(pd))-1)*vertconst
+        }
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       } else {
-        zoomsize <<- max(zoomsize*25/24,zoomsize+2)
+        zoomsize <<- zoomsize+2
         if (zoomsize > 2*(max(x)-min(x))) zoomsize <<- 2*(max(x)-min(x))
         tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
         tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
         tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
         dataRanges[1:2] <<- make_data_ranges(tmpXzoom)
         windowRanges <<- dataRanges
-        sy <<- .axis.loc(dataRanges[1:2])
-        sx <<- .axis.loc(dataRanges[3:4])
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+        sy <<- .axis.loc(dataRanges[1:2])
+        if (is.null(pd) | !vertconst){
+          sx <<- .axis.loc(dataRanges[3:4])
+        } else {
+          sx <<- (as.integer(unique(pd))-1)*vertconst
+        }
+        tdf$x <- x
         tdf$x[x<tmpXzoom[1]]=NA
         tdf$x[x>tmpXzoom[2]]=NA
       }
@@ -511,12 +521,12 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   ######################
   ## if (is.mutaframe(data)) {
     func <- function(i, j) {
-      switch(j, .brushed = qupdate(brushlayer),
-             .color = qupdate(datalayer),
+      switch(j, .brushed = qupdate(brush_layer),
+             .color = qupdate(main_circle_layer),
              { ## any other event
-               datalayer$invalidateIndex()
-               qupdate(datalayer)
-               qupdate(brushlayer)
+               main_circle_layer$invalidateIndex()
+               qupdate(main_circle_layer)
+               qupdate(brush_layer)
              })
     }
     add_listener(data, func)
