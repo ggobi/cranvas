@@ -90,8 +90,6 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 #' @param brushed vect to brush by
 #' @param typeInfo typeInfo$type ENUM of 'hist', 'ash', 'dot', 'spine', 'density'
 #' @param position enum{'none', 'stack', 'dodge', 'relative', 'identity'}
-#' @param color vect to color by
-#' @param fill vect to fill by
 #' @param stroke vect to outline by
 #' @param ... other params passed to \code{\link[graphics]{hist}}
 #' @author Barret Schloerke 
@@ -105,17 +103,17 @@ percent_of_brushed <- function(left, right, dataValue, brushVal) {
 #' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'relative', stroke = 'black')
 #' continuous_to_bars(mtcars$disp, mtcars$cyl, typeInfo = type, position = 'stack', stroke = 'black')
 continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
-    typeInfo = "hist", position = "none", color = NULL, fill = NULL,
-    stroke = NULL, ...) {
+    typeInfo = "hist", position = "none", ...) {
     ignore <- substitute(...)
     if (any(is.na(data))) data <- na.omit(data)
 
-    original = list(data = data, splitBy = splitBy, color = color,
-      stroke = stroke, fill = fill, position = position)
+    original = list(data = data, splitBy = splitBy, 
+      position = position)
 
     if (identical(typeInfo$type, "hist")) {
       #  message("making a hist")
-    } else if (identical(typeInfo$type, "ash"))
+    }
+    else if (identical(typeInfo$type, "ash"))
         stop("ash not defined yet")
     else if (identical(typeInfo$type, "dot"))
         stop("dot not defined yet")
@@ -123,9 +121,11 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
         stop("spine-o-gram not defined yet")
     else if (identical(typeInfo$type, "dot"))
         stop("dot not defined yet")
+    else if (identical(typeInfo$type, "density"))
+        stop("dot not defined yet")
     else {
 #        print(typeInfo)
-        stop("Please make typeInfo$type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\"")
+        stop("Please make typeInfo$type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\", \"density\"")
     }
 
 #    print(data[brushed == TRUE])
@@ -134,13 +134,6 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
         range(data, na.rm=T)[2], xMaxEndPos(data))
     break_len <- length(breaks)
 
-    if (!is.null(fill)) {
-        if (length(unique(fill)) > 1) {
-            splitBy <- fill
-            message("fill 5 ",length(fill),"\n")
-
-        }
-    }
     # This line caclaulates the counts in each bin, and by a second variable
     bar_top <- table(cut(data, breaks = breaks), splitBy)
 
@@ -155,7 +148,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
 
     data_pos$bottom <- rep(0, nrow(data_pos))
 
-    if (is.null(color)) {
+#    if (is.null(color)) {
         if (length(group_names) == 1) {
             data_pos$color <- rep("grey20", nrow(data_pos))
         }
@@ -166,7 +159,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
                 data_pos$group <- factor(data_pos$group)
             data_pos$color <- rep(dscale(data_pos$group, hue_pal()))
         }
-    }
+#    }
 
     if (position == "dodge") {
         pos <- make_dodge_pos(breaks, length(group_names))
@@ -199,13 +192,10 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     }
 
     # Color Management
-    message("fill 1 ",length(fill),"\n")
-    f_and_s <- fill_and_stroke(data_pos$color, fill = fill, stroke = stroke)
-    message("fill 2 ",length(fill),"\n")
+    f_and_s <- fill_and_stroke(data_pos$color, fill = NULL, stroke = NULL)
     data_pos$fill <- f_and_s$fill
     data_pos$stroke <- f_and_s$stroke
     data_pos$color <- NULL
-
 
     # Brushing
     data_pos$.brushed <- 0
