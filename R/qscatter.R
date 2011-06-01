@@ -4,6 +4,7 @@
 #' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
 #' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
 #' Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
+#' Key 'r' resets data range to original scale
 #' @param data mutaframe data to use
 #' @param x which designates variable displayed on the horizontal axis
 #' @param y which designates variable displayed on the vertical axis
@@ -228,7 +229,24 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 					zoom_focal <<- !zoom_focal
 					#browser()
   		#		print(sprintf("focal zoom <%s>", event$pos()))
-  		}
+				} else if (key == Qt$Qt$Key_R) {
+					# reset to original boundaries
+
+  				dataRanges <<- c(make_data_ranges(xlim), make_data_ranges(ylim)) 
+	
+					xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
+					yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
+
+					lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
+
+					bglayer$setLimits(lims)
+					datalayer$setLimits(lims)
+					brushlayer$setLimits(lims)
+					querylayer$setLimits(lims)
+		
+					qupdate(root)
+
+				}
 
 
     }
@@ -355,7 +373,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     handle_wheel_event <- function(layer, event) {
 #			print("wheeling")
 #			browser()
-			handle_focal_zoom(as.numeric(event$pos()), event$delta()/100.0,  TRUE)
+			handle_focal_zoom(as.numeric(event$pos()), event$delta()/200.0,  TRUE)
     }
 
     # Display category information on hover (query) ----------------------------
