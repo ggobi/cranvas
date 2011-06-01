@@ -26,7 +26,7 @@ qfl <- qdata(floats)
 qfl$.color <- "grey20"
 #brush(qfl, "color") <- "yellow"
 brush(qfl, "label.color") <- "grey30"
-qhist(data=qfl, xCol="Depth", binwidth=10, horizontal=FALSE)
+qhist(data=qfl, x="Depth", binwidth=10, horizontal=FALSE)
 qscatter(Longitude, Latitude, data=qfl)
 
 #
