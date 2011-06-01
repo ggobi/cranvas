@@ -75,3 +75,9 @@ Tourr$methods(pause = function() {
 Tourr$methods(start = function() {
   timer$start()  
 })
+Tourr$methods(slower = function() {
+  aps <<- aps*0.9
+})
+Tourr$methods(faster = function() {
+  aps <<- aps*1.1
+})
