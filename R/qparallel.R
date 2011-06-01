@@ -21,10 +21,11 @@
 ##' \code{COMPLEMENT}. We can press \code{R} to toggle the min/max
 ##' labels. Keys \code{+} and \code{-} can adjust the opacity of the
 ##' plot linearly. \code{Delete} can make the brushed elements
-##' invisible. The arrow keys are used to adjust the order of the
-##' variables and flip the values of variables (like a mirror
-##' reflection). \code{PageUp} and \code{PageDown} can be used to go
-##' back and forth in the brush history.
+##' invisible while \code{F5} will make all the elements visible. The
+##' arrow keys are used to adjust the order of the variables and flip
+##' the values of variables (like a mirror reflection). \code{PageUp}
+##' and \code{PageDown} can be used to go back and forth in the brush
+##' history.
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
 ##' + x2'; if missing or it is a formula that contains a dot
@@ -276,9 +277,11 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             return()
         }
 
-        ## make the brushed observations invisible when hitting Delete
         if (key == Qt$Qt$Key_Delete)
-            visible(data) = !selected(data)
+            visible(data) = !selected(data) & visible(data)  # make brushed obs invisible
+        if (key == Qt$Qt$Key_F5)
+            visible(data) = TRUE  # make all of them visible
+
         i = which(key == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
         if (length(i) && !any(is.na(meta$pos))) {
             if (horizontal) {
@@ -409,10 +412,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                       meta$pos[1] + meta$brush.range[1], meta$pos[2] + meta$brush.range[2],
                       stroke = b$style$color)
         }
+        .visible = which(visible(data))
         if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size
             for (i in seq_along(b$persistent.list)) {
-                idx = b$persistent.list[[i]]
+                idx = intersect(b$persistent.list[[i]], .visible)
+                if (!length(idx)) next
                 qstrokeColor(painter) = b$persistent.color[i]
                 tmpx = mat2seg(meta$x, idx)
                 tmpy = mat2seg(meta$y, idx)
@@ -420,15 +425,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                 qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
             }
         }
-        .brushed = selected(data)
-        if (sum(.brushed, na.rm = TRUE) >= 1) {
+        .brushed = intersect(which(selected(data)), .visible)
+        if (length(.brushed)) {
             qlineWidth(painter) = b$size
             qstrokeColor(painter) = b$color
             tmpx = mat2seg(meta$x, .brushed)
             tmpy = mat2seg(meta$y, .brushed)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
-
        }
         cranvas_debug()
     }

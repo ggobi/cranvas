@@ -195,7 +195,50 @@ qmap <- function(data, longitude, latitude, group, label = group,
 #			focused(data) <- TRUE
 			selected(data) = mode_selection(selected(data), brushed, mode = brush(data)$mode)			
 	  }
-    
+    # Wheel events -------------------------------------------------------------
+
+
+
+		handle_focal_zoom <- function(focus, speed,  forward) {
+	
+			xscale <- (dataRanges[2]-focus[1])/(focus[1] - dataRanges[1])
+			yscale <- (dataRanges[4]-focus[2])/(focus[2] - dataRanges[3])
+			sgn <- if (forward) 1 else -1
+		
+			newRanges <- dataRanges
+			newRanges[1] <- dataRanges[1] + sgn* speed*diff(dataRanges[1:2])
+			newRanges[2] <- focus[1] + (focus[1]-newRanges[1]) * xscale
+			newRanges[3] <- dataRanges[3] + sgn*speed*diff(dataRanges[3:4])
+			newRanges[4] <- focus[2] + (focus[2]-newRanges[3]) * yscale
+
+			df <- data.frame(data)
+			sub <- subset(df, (x >= newRanges[1]) & 
+													(x <= newRanges[2]) & 
+													(y >= newRanges[3]) & 
+													(y <= newRanges[4])   )
+
+			values_out_of_plotting_range <<- nrow(sub) < nrow(df)	
+			if (nrow(sub) >= 2) {
+				dataRanges <<- newRanges 
+					
+				lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
+	
+				bglayer$setLimits(lims)
+				datalayer$setLimits(lims)
+				brushing_layer$setLimits(lims)
+				querylayer$setLimits(lims)
+	
+				qupdate(root_layer)
+			}
+		}
+
+
+    handle_wheel_event <- function(layer, event) {
+#			print("wheeling")
+#			browser()
+			handle_focal_zoom(as.numeric(event$pos()), event$delta()/200.0,  TRUE)
+    }
+
     
     # Key board events ---------------------------------------------------------
     
@@ -314,14 +357,15 @@ qmap <- function(data, longitude, latitude, group, label = group,
     
     bglayer = qlayer(root_layer, coords, limits = lims, clip = FALSE)
     datalayer = qlayer(root_layer, draw, limits = lims, 
-focusInFun = function(...) {
-	print("focus map on")
-	focused(data) <- TRUE
-},
-focusOutFun = function(...) {
-	print("focus map off")
-	focused(data) <- FALSE
-},
+        focusInFun = function(...) {
+          print("focus map on")
+          focused(data) <- TRUE
+        },
+        focusOutFun = function(...) {
+          print("focus map off")
+          focused(data) <- FALSE
+        },
+        wheelFun = handle_wheel_event,
         clip = FALSE)
     legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
     brushing_layer = qlayer(root_layer, brushing_draw, mousePressFun = brushing_mouse_press, 
