@@ -35,6 +35,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     x <- eval(arguments$x, df)
     y <- eval(arguments$y, df)
 
+		stopifnot(!is.null(x), !is.null(y))
+		stopifnot(length(x) > 1, length(y) > 1)
+
 		if (is.null(xlim)) xlim <- range(x, na.rm=T)
 		if (is.null(ylim)) ylim <- range(y, na.rm=T)
 		
@@ -465,9 +468,9 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 #    root$setGeometry(qrect(0, 0, xWidth, yWidth))
 
 		xaxis <- qlayer(parent=root, paintFun = xaxis, limits = qrect(dataRanges[1:2], c(0, 1)),
-                      cache=cache, row=2, col=1)
+                      cache=cache, row=2, col=1, clip=FALSE)
 		yaxis <- qlayer(parent=root, paintFun = yaxis, limits = qrect(c(0, 1), dataRanges[3:4]),
-                      cache=cache, row=1, col=0)
+                      cache=cache, row=1, col=0, clip=FALSE)
 
 # clipping needs to be turned off - otherwise small integer values cause strange results
     bglayer <- qlayer(parent= root, paintFun = grid, limits = lims, cache=cache, row=1, col=1, clip=FALSE)
