@@ -18,7 +18,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     position = "none", 
     title = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
     nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
-    bin_algo_str = NULL, xlim=NULL, ylim=NULL, ...) {
+    bin_algo_str = NULL, xlim=NULL, ylim=NULL, cache=TRUE, ...) {
 
     stopifnot(is.mutaframe(data))
 
@@ -266,11 +266,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             updateLims()
             #message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
            # message("limits ", .dataranges[3]," ", .dataranges[4], "\n")
-            qupdate(.scene)
-            qupdate(bglayer)
-            qupdate(datalayer)
             scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_Down) {
             .type$binwidth <<- .type$binwidth/1.1
@@ -280,11 +277,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             #message("Down ", .yMax, "\n")
             updateRanges()
             updateLims()
-            qupdate(.scene)
-            qupdate(bglayer)
-            qupdate(datalayer)
             scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_Left) {
             .type$start <<- .type$start - unitShiftP()
@@ -294,11 +288,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             updateBarsInfo()
             updateRanges()
             updateLims()
-            qupdate(.scene)
-            qupdate(bglayer)
-            qupdate(datalayer)           
             scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_Right) {
             .type$start <<- .type$start + unitShiftP()
@@ -308,11 +299,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             updateBarsInfo()
             updateRanges()
             updateLims()
-            qupdate(.scene)
-            qupdate(bglayer)
-            qupdate(datalayer)                       
             scaleslayer$invalidateIndex()
-            qupdate(scaleslayer)
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_A) {
             .type$type <<- "ash"
@@ -328,7 +316,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             qupdate(bglayer)
             qupdate(datalayer)                       
             scaleslayer$invalidateIndex()
-            qupdate(scaleslayer)
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_O) {
             .type$type <<- "dot"
@@ -359,27 +347,13 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
           # print(.yMax)
           updateRanges()
           updateLims()
-          qupdate(.scene)
-          qupdate(bglayer)
-          qupdate(datalayer)
           scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
+          qupdate(.scene)
         }
         else if (key == 87) {
 #            cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
         }
-        
-        if (key %in% c(Qt$Qt$Key_Up, Qt$Qt$Key_Down, Qt$Qt$Key_Left, Qt$Qt$Key_Right, 
-            82, Qt$Qt$Key_M)) {
-            #message("updating everything")
-	    # updateBarsInfo()
-            # qupdate(.scene)
-            # qupdate(bglayer)
-            # qupdate(datalayer)
-            # qupdate(hoverlayer)
-            # qupdate(brushing_layer)
-        }
-        
+                
     }
     #######################################################
     # Brushing
@@ -798,12 +772,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         updateBarsInfo()
           updateRanges()
         updateLims()
-        qupdate(.scene)
-        qupdate(bglayer)
-        qupdate(datalayer)           
         scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
-      
+        qupdate(.scene)
       } else {
         # pass mouse event on        
         brushing_mouse_move(item, event, ...)
@@ -831,25 +801,27 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     .lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
     
     .scene <- qscene()
+    root <- qlayer(.scene, cache=cache, clip = FALSE)
     
-    bglayer <- qlayer(.scene, coords, limits = .lims, clip = FALSE,
-        keyPressFun = keyPressFun)
-    datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE)
-    brushing_layer <- qlayer(.scene, brushing_draw,
+    bglayer <- qlayer(parent=root, coords, limits = .lims, clip = FALSE,
+        keyPressFun = keyPressFun, row=1, col=1)
+
+    datalayer <- qlayer(root, hist.all, limits = .lims, clip = FALSE, row=1, col=1)
+    brushing_layer <- qlayer(root, brushing_draw,
         mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move,
         mouseReleaseFun = brushing_mouse_release, 
-        limits = .lims, clip = FALSE)
+        limits = .lims, clip = FALSE, row=1, col=1)
     
 
-    hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE,
-        hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave)
+    hoverlayer <- qlayer(root, bar_hover_draw, limits = .lims, clip = FALSE,
+        hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave, row=1, col=1)
 
     scaleslayer <- qlayer(.scene, scales_draw, limits = .lims, clip = FALSE,
         mousePressFun = scales_mouse_press,
         mouseReleaseFun = scales_mouse_release,
         mouseMoveFun = scales_mouse_move,
-        hoverMoveFun = scales_hover)
+        hoverMoveFun = scales_hover, row=1, col=1)
     
     # # update the brush layer in case of any modifications to the mutaframe
     #if (is.mutaframe(data)) {
@@ -857,20 +829,21 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         switch (j, .brushed = {
             qupdate(brushing_layer)
             updateBarsInfo()},
-            {updateBarsInfo()
-            if (.yMax < max(.bars_info$data$top)) {
-                .yMax <<- 1.1 * max(.bars_info$data$top)
-                #message("Data ",.yMax, "\n")
-            }
-            updateRanges()
-            updateLims()
-            #message("Data ",.lims[1],.lims[2], .lims[3], lims[4], "\n")
-            qupdate(.scene)
-            qupdate(bglayer)
-            qupdate(brushing_layer)
-            qupdate(datalayer)
-            scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
+            {
+              updateBarsInfo()
+              if (.yMax < max(.bars_info$data$top)) {
+                  .yMax <<- 1.1 * max(.bars_info$data$top)
+                  #message("Data ",.yMax, "\n")
+              }
+              updateRanges()
+              updateLims()
+              #message("Data ",.lims[1],.lims[2], .lims[3], lims[4], "\n")
+              qupdate(.scene)
+              qupdate(bglayer)
+              qupdate(brushing_layer)
+              qupdate(datalayer)
+              scaleslayer$invalidateIndex()
+              qupdate(scaleslayer)
       })
     }
         

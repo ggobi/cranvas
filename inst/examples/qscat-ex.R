@@ -2,6 +2,7 @@ library(qtbase)
 library(qtpaint)
 library(plumbr)
 library(cranvas)
+library(scales)
 
 data(nrcstat)
 nrcstat[,26]<- -nrcstat[,26]
@@ -20,6 +21,7 @@ library(qtbase)
 library(qtpaint)
 library(plumbr)
 library(cranvas)
+library(scales)
 
 data(pollen)
 qpollen <- qdata(pollen)

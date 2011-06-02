@@ -111,7 +111,77 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
       position = position)
 
     if (identical(typeInfo$type, "hist")) {
-      #  message("making a hist")
+        # This line makes the break values on the continuous variable
+        breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth,
+            range(data, na.rm=T)[2], xMaxEndPos(data))
+        break_len <- length(breaks)
+
+        # This line caclaulates the counts in each bin, and by a second variable
+        bar_top <- table(cut(data, breaks = breaks), splitBy)
+
+        data_pos <- reshape::melt(bar_top)
+        names(data_pos) <- c("label", "group", "top")
+        data_pos$count <- data_pos$top
+        data_pos <- data_pos[, c(1, 2, 4, 3)]
+
+        label_names <- unique(data_pos$label)
+        group_names <- unique(data_pos$group)
+
+        data_pos$bottom <- rep(0, nrow(data_pos))
+
+        if (length(group_names) == 1) {
+            data_pos$color <- rep("grey20", nrow(data_pos))
+        }
+        else {
+            if (!is.factor(data_pos$group))
+                data_pos$group <- factor(data_pos$group)
+            data_pos$color <- rep(dscale(data_pos$group, hue_pal()))
+        }
+
+        if (position == "dodge") {
+            pos <- make_dodge_pos(breaks, length(group_names))
+            data_pos$left <- pos$start
+            data_pos$right <- pos$end
+        }
+        else {
+            # (position == 'stack' || position == 'relative')
+            data_pos$left <- rep(breaks[1:(break_len - 1)], length(group_names))
+            data_pos$right <- rep(breaks[2:break_len], length(group_names))
+ 
+            if (position != "identity") {
+                 # make the bar_top be stacked (cumulative)
+                for (i in 1:nrow(bar_top)) {
+                    bar_top[i, ] <- cumsum(bar_top[i, ])
+                }
+                data_pos <- ddply(data_pos, c("label"), transform, top = cumsum(top))
+            }
+   
+            #make the bar_bottom 'stack'
+            data_pos <- data_pos[order(data_pos$top), ]
+            data_pos <- ddply(data_pos, "label", transform, bottom = c(0, sort(top)[-length(top)]))
+
+            # relative
+            if (position == "relative") {
+                data_pos <- ddply(data_pos, c("label"), transform,
+                     bottom = divide_by_maximum(bottom, top))
+                data_pos <- ddply(data_pos, c("label"), transform,
+                     top = divide_by_maximum(top))
+            }
+        }
+
+        # Color Management
+        f_and_s <- fill_and_stroke(data_pos$color, fill = NULL, stroke = NULL)
+        data_pos$fill <- f_and_s$fill
+        data_pos$stroke <- f_and_s$stroke
+        data_pos$color <- NULL
+
+        # Brushing
+        data_pos$.brushed <- 0
+        for (i in seq_len(NROW(data_pos))) {
+            data_pos$.brushed[i] <- percent_of_brushed(data_pos[i, "left"],
+                data_pos[i, "right"], data, brushed)
+        }
+        message("making a hist")
     }
     else if (identical(typeInfo$type, "ash"))
         stop("ash not defined yet")
@@ -121,14 +191,15 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
         stop("spine-o-gram not defined yet")
     else if (identical(typeInfo$type, "dot"))
         stop("dot not defined yet")
-    else if (identical(typeInfo$type, "density"))
-        stop("dot not defined yet")
+    else if (identical(typeInfo$type, "density")) {
+      
+        stop("density not defined yet")
+    }
     else {
 #        print(typeInfo)
         stop("Please make typeInfo$type one of the following: \"hist\", \"ash\", \"dot\", \"spine\", \"dot\", \"density\"")
     }
 
-#    print(data[brushed == TRUE])
     # This line makes the break values on the continuous variable
     breaks <- calcBinPosition(typeInfo$start, typeInfo$binwidth,
         range(data, na.rm=T)[2], xMaxEndPos(data))
@@ -137,7 +208,6 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
     # This line caclaulates the counts in each bin, and by a second variable
     bar_top <- table(cut(data, breaks = breaks), splitBy)
 
-    # I'm not sure that I need to melt the data?
     data_pos <- reshape::melt(bar_top)
     names(data_pos) <- c("label", "group", "top")
     data_pos$count <- data_pos$top
@@ -148,18 +218,14 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
 
     data_pos$bottom <- rep(0, nrow(data_pos))
 
-#    if (is.null(color)) {
-        if (length(group_names) == 1) {
-            data_pos$color <- rep("grey20", nrow(data_pos))
-        }
-        else {
-#            data_pos$color <- rep(rainbow(length(group_names)),
-#                each = length(label_names))
-            if (!is.factor(data_pos$group))
-                data_pos$group <- factor(data_pos$group)
-            data_pos$color <- rep(dscale(data_pos$group, hue_pal()))
-        }
-#    }
+    if (length(group_names) == 1) {
+        data_pos$color <- rep("grey20", nrow(data_pos))
+    }
+    else {
+        if (!is.factor(data_pos$group))
+            data_pos$group <- factor(data_pos$group)
+        data_pos$color <- rep(dscale(data_pos$group, hue_pal()))
+    }
 
     if (position == "dodge") {
         pos <- make_dodge_pos(breaks, length(group_names))
@@ -199,8 +265,6 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
 
     # Brushing
     data_pos$.brushed <- 0
-    # data_pos <- ddply(data_pos, c('label', 'group'), transform, .brushed =
-    #   percent_of_brushed(left, right, original$data, brushed))
     for (i in seq_len(NROW(data_pos))) {
         data_pos$.brushed[i] <- percent_of_brushed(data_pos[i, "left"], data_pos[i,
             "right"], data, brushed)
