@@ -266,8 +266,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             updateLims()
             #message("max count ", max(.bars_info$data$top), " .yMax ", .yMax, "\n")
            # message("limits ", .dataranges[3]," ", .dataranges[4], "\n")
-              scaleslayer$invalidateIndex()
-              qupdate(root)
+            scaleslayer$invalidateIndex()
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_Down) {
             .type$binwidth <<- .type$binwidth/1.1
@@ -277,8 +277,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             #message("Down ", .yMax, "\n")
             updateRanges()
             updateLims()
-              scaleslayer$invalidateIndex()
-              qupdate(root)
+            scaleslayer$invalidateIndex()
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_Left) {
             .type$start <<- .type$start - unitShiftP()
@@ -288,8 +288,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             updateBarsInfo()
             updateRanges()
             updateLims()
-              scaleslayer$invalidateIndex()
-              qupdate(root)
+            scaleslayer$invalidateIndex()
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_Right) {
             .type$start <<- .type$start + unitShiftP()
@@ -299,8 +299,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             updateBarsInfo()
             updateRanges()
             updateLims()
-              scaleslayer$invalidateIndex()
-              qupdate(root)
+            scaleslayer$invalidateIndex()
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_A) {
             .type$type <<- "ash"
@@ -341,8 +341,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
           # print(.yMax)
           updateRanges()
           updateLims()
-              scaleslayer$invalidateIndex()
-              qupdate(root)
+          scaleslayer$invalidateIndex()
+          qupdate(.scene)
         }
         else if (key == 87) {
 #            cat("\n\n\nClosing window!!!! - ", .view$close(), "\n")
@@ -729,8 +729,11 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         )
         updateRanges()
         updateLims()
+        qupdate(.scene)
+        qupdate(bglayer)
+        qupdate(datalayer)           
         scaleslayer$invalidateIndex()
-        qupdate(root)
+        qupdate(scaleslayer)
 
       } else
         # pass mouse event on        
@@ -764,8 +767,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
           updateRanges()
         updateLims()
         scaleslayer$invalidateIndex()
-        qupdate(root)
-      
+        qupdate(.scene)
       } else {
         # pass mouse event on        
         brushing_mouse_move(item, event, ...)
@@ -830,9 +832,13 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
               updateRanges()
               updateLims()
               #message("Data ",.lims[1],.lims[2], .lims[3], lims[4], "\n")
+              qupdate(.scene)
+              qupdate(bglayer)
+              qupdate(brushing_layer)
+              qupdate(datalayer)
               scaleslayer$invalidateIndex()
-              qupdate(root)
-            })
+              qupdate(scaleslayer)
+      })
     }
         
     add_listener(data, func)
