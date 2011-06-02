@@ -196,6 +196,31 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     
     #######################################################
     # Draw Axes
+
+    xaxis <- function(item, painter, exposed) {
+				horiPos <- .axis.loc(.dataranges[1:2])
+       .xlab <- name
+       if (horizontal) .xlab <- "count"
+
+        draw_x_axes_with_labels_fun(painter, c(.dataranges[1:2],1,5), horiPos, horiPos, .xlab)
+    }
+
+    yaxis <- function(item, painter, exposed) {
+        .ylab <- "count"
+        if (horizontal) .ylab <- name
+        
+        vertPos <- .axis.loc(.dataranges[3:4])
+        draw_y_axes_with_labels_fun(painter, c(1,5,.dataranges[3:4]), vertPos, vertPos, .ylab)            
+    }
+
+    grid <- function(item, painter, exposed) {
+				sx <- .axis.loc(.dataranges[1:2])
+				sy <- .axis.loc(.dataranges[3:4])
+
+        # grey background with grid lines
+        draw_grid_with_positions_fun(painter, .dataranges, sx, sy)
+    }
+
     coords <- function(item, painter, exposed) {
         
 #        updateBarsInfo()
@@ -662,7 +687,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
       # draw anchor point and line for bin width adjustment under first bin
       
       # anchor: 
-      eps <- diff(windowRanges[3:4])/50
+      eps <- diff(.dataranges[3:4])/50
       qdrawSegment(painter, .bars_info$data$left[1], .bars_info$data$bottom[1]-eps/5, 
                             .bars_info$data$left[1], .bars_info$data$bottom[1]-eps,
                             "black")
@@ -729,11 +754,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         )
         updateRanges()
         updateLims()
-        qupdate(.scene)
-        qupdate(bglayer)
-        qupdate(datalayer)           
         scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
+        qupdate(.scene)
 
       } else
         # pass mouse event on        
@@ -764,7 +786,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         .type$binwidth <<- pos[1] - .bars_info$data$left[1]
         })
         updateBarsInfo()
-          updateRanges()
+        updateRanges()
         updateLims()
         scaleslayer$invalidateIndex()
         qupdate(.scene)
@@ -777,11 +799,14 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
 
     #######################################################
     # Layout
-    updateLims <- function() {
-        #message("update lims ", .dataranges[3]," ", .dataranges[4], "\n")
-       
-        windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
-        .lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+    updateLims <- function(xlim=.dataranges[1:2], ylim=.dataranges[3:4]) {
+        .dataranges <<- c(xlim, ylim)
+
+			  xaxis$setLimits(qrect(.dataranges[1:2], c(0, 1)))
+			  yaxis$setLimits(qrect(c(0, 1), .dataranges[3:4]))
+
+        .lims <<- qrect(xlim, ylim)
+
         #message("update lims 2", windowRanges[3]," ", windowRanges[4], "\n")
         
         bglayer$setLimits(.lims)
@@ -791,14 +816,20 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         scaleslayer$setLimits(.lims)
     }
 
-    windowRanges <- make_window_ranges(.dataranges, .xlab, .ylab)
-    .lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
+     .lims <- qrect(.dataranges[1:2], .dataranges[3:4])
     
     .scene <- qscene()
-    root <- qlayer(.scene, cache=cache, clip = FALSE)
+    root <- qlayer(.scene, cache=cache)
+
+		xaxis <- qlayer(parent=root, paintFun = xaxis, limits = qrect(.dataranges[1:2], c(0, 1)),
+                      cache=cache, row=2, col=1, clip=FALSE)
+		yaxis <- qlayer(parent=root, paintFun = yaxis, limits = qrect(c(0, 1), .dataranges[3:4]),
+                      cache=cache, row=1, col=0, clip=FALSE)
     
-    bglayer <- qlayer(parent=root, coords, limits = .lims, clip = FALSE,
-        keyPressFun = keyPressFun, row=1, col=1)
+#    bglayer <- qlayer(parent=root, coords, limits = .lims, clip = FALSE,
+#        keyPressFun = keyPressFun, row=1, col=1)
+    bglayer <- qlayer(parent= root, paintFun = grid, limits = .lims, keyPressFun = keyPressFun,
+                  cache=cache, row=1, col=1, clip=FALSE)
 
     datalayer <- qlayer(root, hist.all, limits = .lims, clip = FALSE, row=1, col=1)
     brushing_layer <- qlayer(root, brushing_draw,
@@ -811,7 +842,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     hoverlayer <- qlayer(root, bar_hover_draw, limits = .lims, clip = FALSE,
         hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave, row=1, col=1)
 
-    scaleslayer <- qlayer(.scene, scales_draw, limits = .lims, clip = FALSE,
+    scaleslayer <- qlayer(root, scales_draw, limits = .lims, clip = FALSE,
         mousePressFun = scales_mouse_press,
         mouseReleaseFun = scales_mouse_release,
         mouseMoveFun = scales_mouse_move,
@@ -831,23 +862,33 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
               }
               updateRanges()
               updateLims()
-              #message("Data ",.lims[1],.lims[2], .lims[3], lims[4], "\n")
-              qupdate(.scene)
-              qupdate(bglayer)
-              qupdate(brushing_layer)
-              qupdate(datalayer)
+              #message("Data ",.lims[1],.lims[2], .lims[3], .lims[4], "\n")
               scaleslayer$invalidateIndex()
-              qupdate(scaleslayer)
+              qupdate(.scene)
       })
     }
         
     add_listener(data, func)
-    #}
 
 
     brush_update = function() {
         qupdate(brushing_layer)
     }
-    .view <- qplotView(scene = .scene)
+
+    layout <- root$gridLayout() 
+    layout$setRowPreferredHeight(0, 40)	# white space above plot
+    layout$setColumnPreferredWidth(0, 50) # width of yaxis
+    layout$setRowPreferredHeight(2, 50) # height of xaxis
+    layout$setColumnPreferredWidth(2, 40) # white space on right side
+    layout$setRowStretchFactor(0, 0)
+    layout$setColumnStretchFactor(0, 0)
+    layout$setRowStretchFactor(2, 0)
+    
+
+ 		.view <- qplotView(scene = .scene)
+
+    if (is.null(title)) title <- sprintf("Histogram of %s", name)
+    .view$setWindowTitle(title)
+
     .view
 } 
