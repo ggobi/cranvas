@@ -825,25 +825,27 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     .lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
     
     .scene <- qscene()
+    root <- qlayer(.scene, cache=cache, clip = FALSE)
     
-    bglayer <- qlayer(.scene, coords, limits = .lims, clip = FALSE,
-        keyPressFun = keyPressFun)
-    datalayer <- qlayer(.scene, hist.all, limits = .lims, clip = FALSE)
-    brushing_layer <- qlayer(.scene, brushing_draw,
+    bglayer <- qlayer(parent=root, coords, limits = .lims, clip = FALSE,
+        keyPressFun = keyPressFun, row=1, col=1)
+
+    datalayer <- qlayer(root, hist.all, limits = .lims, clip = FALSE, row=1, col=1)
+    brushing_layer <- qlayer(root, brushing_draw,
         mousePressFun = brushing_mouse_press, 
         mouseMoveFun = brushing_mouse_move,
         mouseReleaseFun = brushing_mouse_release, 
-        limits = .lims, clip = FALSE)
+        limits = .lims, clip = FALSE, row=1, col=1)
     
 
-    hoverlayer <- qlayer(.scene, bar_hover_draw, limits = .lims, clip = FALSE,
-        hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave)
+    hoverlayer <- qlayer(root, bar_hover_draw, limits = .lims, clip = FALSE,
+        hoverMoveFun = bar_hover, hoverLeaveFun = bar_leave, row=1, col=1)
 
     scaleslayer <- qlayer(.scene, scales_draw, limits = .lims, clip = FALSE,
         mousePressFun = scales_mouse_press,
         mouseReleaseFun = scales_mouse_release,
         mouseMoveFun = scales_mouse_move,
-        hoverMoveFun = scales_hover)
+        hoverMoveFun = scales_hover, row=1, col=1)
     
     # # update the brush layer in case of any modifications to the mutaframe
     #if (is.mutaframe(data)) {
@@ -851,21 +853,22 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         switch (j, .brushed = {
             qupdate(brushing_layer)
             updateBarsInfo()},
-            {updateBarsInfo()
-            if (.yMax < max(.bars_info$data$top)) {
-                .yMax <<- 1.1 * max(.bars_info$data$top)
-                #message("Data ",.yMax, "\n")
-            }
-            updateRanges()
-            updateLims()
-            #message("Data ",.lims[1],.lims[2], .lims[3], lims[4], "\n")
-            qupdate(.scene)
-            qupdate(bglayer)
-            qupdate(brushing_layer)
-            qupdate(datalayer)
-            scaleslayer$invalidateIndex()
-        qupdate(scaleslayer)
-      })
+            {
+              updateBarsInfo()
+              if (.yMax < max(.bars_info$data$top)) {
+                  .yMax <<- 1.1 * max(.bars_info$data$top)
+                  #message("Data ",.yMax, "\n")
+              }
+              updateRanges()
+              updateLims()
+              #message("Data ",.lims[1],.lims[2], .lims[3], lims[4], "\n")
+              qupdate(.scene)
+              qupdate(bglayer)
+              qupdate(brushing_layer)
+              qupdate(datalayer)
+              scaleslayer$invalidateIndex()
+              qupdate(scaleslayer)
+            })
     }
         
     add_listener(data, func)
