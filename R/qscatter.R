@@ -1,3 +1,4 @@
+
 #' Draw a scatterplot
 #'
 #' arrow up/down: in-/de-crease size of points
@@ -81,6 +82,24 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 		.zstop <- NULL
 
 		zoom_focal <- FALSE
+		################################ helper function
+		
+		updatelimits <- function(xlim, ylim) {
+  		dataRanges <<- c(xlim, ylim) 
+
+			xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
+			yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
+
+			lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
+
+			bglayer$setLimits(lims)
+			datalayer$setLimits(lims)
+			brushlayer$setLimits(lims)
+			querylayer$setLimits(lims)
+
+			qupdate(root)
+		}
+
 
     ################################ end data processing & parameters
 
@@ -233,19 +252,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 				} else if (key == Qt$Qt$Key_R) {
 					# reset to original boundaries
 
-  				dataRanges <<- c(make_data_ranges(xlim), make_data_ranges(ylim)) 
-	
-					xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
-					yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
-
-					lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
-
-					bglayer$setLimits(lims)
-					datalayer$setLimits(lims)
-					brushlayer$setLimits(lims)
-					querylayer$setLimits(lims)
-		
-					qupdate(root)
+					updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))	
 
 				}
 
@@ -256,24 +263,12 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 		print(.zstart)
 		print(.zstop)		
 			if (!all(.zstart == .zstop))
-				dataRanges <<- c(min(.zstart[1],.zstop[1]), max(.zstart[1],.zstop[1]), 
-								 min(.zstart[2],.zstop[2]), max(.zstart[2],.zstop[2])) 
+				updatelimits(c(min(.zstart[1],.zstop[1]), max(.zstart[1],.zstop[1])),
+										 c(min(.zstart[2],.zstop[2]), max(.zstart[2],.zstop[2])))								 
 			else # reset zoom to default
-				dataRanges <<- c(make_data_ranges(xlim), make_data_ranges(ylim)) 
+				updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))
 	
 			.zstart <<- .zstop <<- NULL
-			
-			xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
-			yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
-
-			lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
-
-			bglayer$setLimits(lims)
-			datalayer$setLimits(lims)
-			brushlayer$setLimits(lims)
-			querylayer$setLimits(lims)
-
-			qupdate(root)
 		}
 
 		handle_focal_zoom <- function(focus, speed,  forward) {
@@ -296,19 +291,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 
 			values_out_of_plotting_range <<- nrow(sub) < nrow(df)	
 			if (nrow(sub) >= 2) {
-				dataRanges <<- newRanges 
-				
-				xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
-				yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
-	
-				lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
-	
-				bglayer$setLimits(lims)
-				datalayer$setLimits(lims)
-				brushlayer$setLimits(lims)
-				querylayer$setLimits(lims)
-	
-				qupdate(root)
+				updatelimits(newRanges[1:2], newRanges[1:2])
 			}
 		}
 
