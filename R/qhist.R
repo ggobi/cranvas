@@ -334,8 +334,14 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         }
         else if (key == Qt$Qt$Key_D) {
             .type$type <<- "density"
-            stop("Ash not implemented")
-            
+            updateBarsInfo()
+            updateRanges()
+            updateLims()
+            qupdate(.scene)
+            qupdate(bglayer)
+            qupdate(datalayer)                       
+            scaleslayer$invalidateIndex()
+            qupdate(.scene)
         }
         else if (key == Qt$Qt$Key_O) {
             .type$type <<- "dot"
