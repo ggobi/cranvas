@@ -5,12 +5,14 @@
 ##' the horizontal axis
 ##' @param y The variable displayed on the vertical axis
 ##' @param period The variable to group the time series. Better to be
-##' 'year','month', or other time resolutions. Default to be null.
+##' 'year','month', or other time resolutions. Default to be
+##' null. When it is not null, the key U and D can be hit to separate
+##' the groups or overlap them together to watch the patterns.
 ##' @param wrap The switch for wrapping or not when zooming in/out by
 ##' hitting right arrow or left arrow. Default to be TRUE.
-##' @param size Point size, default to be 2
-##' @param alpha Transparency level, 1=completely opaque, default to be 1
-##' @param aspect.ratio Ratio between width and height of the plot
+##' @param size Point size, default to be 2.
+##' @param alpha Transparency level, 1=completely opaque, default to be 1.
+##' @param aspect.ratio Ratio between width and height of the plot.
 ##' @example cranvas/inst/examples/qtime-ex.R
 
 qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=NULL,...){  
@@ -233,11 +235,16 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       
       vertconst <<- vertconst + 0.05
       if (vertconst>1) vertconst <<- 1
+      print(vertconst)
       if (ncol(y)==1){
         tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
       } else {
+        print(str(tdf[,-(1:3)]))
+        print(str((y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst))
         tdf[,-(1:3)] <- (y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst
       }
+      print(tdf)
+      
       dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
       windowRanges <<- dataRanges
       lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])

@@ -10,8 +10,9 @@ selected(qnasa)[1] <- TRUE
 # qtime(qnasa,TimeIndx,ts,wrap=FALSE)
 # qtime(qnasa,TimeIndx,ts,Year)
 # qtime(qnasa,TimeIndx,ts,Year,wrap=FALSE)
- qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med))
+# qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med))
 # qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med),wrap=FALSE)
+ qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med),Year)
 
 
 ## example 2: Norway precipitation data
