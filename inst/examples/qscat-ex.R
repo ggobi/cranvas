@@ -21,6 +21,7 @@ library(qtbase)
 library(qtpaint)
 library(plumbr)
 library(cranvas)
+library(scales)
 
 data(pollen)
 qpollen <- qdata(pollen)
