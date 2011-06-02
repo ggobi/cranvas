@@ -27,6 +27,9 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 ##' Interactive Maps.
 ##' Create an interactive map from qdata
 ##'
+##' mouse wheel events are translated to focal zoom
+##'
+##' 'R' resets maps to original scale after zoom
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
 ##' @param latitude spatial x variable
@@ -243,10 +246,24 @@ qmap <- function(data, longitude, latitude, group, label = group,
     # Key board events ---------------------------------------------------------
     
     keyPressFun <- function(item, event, ...) {
-        if (event$key() == Qt$Qt$Key_Shift) 
+        if (event$key() == Qt$Qt$Key_Shift) {
             .extended <<- !.extended
         print("extended:")
         print(.extended)
+}        
+        if (event$key() == Qt$Qt$Key_R) {
+          dataRanges <<- c(make_data_ranges(c(min(x), max(x))), make_data_ranges(range(y)))
+            
+          lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
+    
+          bglayer$setLimits(lims)
+          datalayer$setLimits(lims)
+          brushing_layer$setLimits(lims)
+          querylayer$setLimits(lims)
+    
+          qupdate(root_layer)
+        
+        }
     }
     
     
