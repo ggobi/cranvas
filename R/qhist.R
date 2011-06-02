@@ -18,7 +18,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     position = "none", 
     title = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
     nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
-    bin_algo_str = NULL, xlim=NULL, ylim=NULL, ...) {
+    bin_algo_str = NULL, xlim=NULL, ylim=NULL, cache=TRUE, ...) {
 
     stopifnot(is.mutaframe(data))
 
