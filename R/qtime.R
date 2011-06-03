@@ -235,16 +235,16 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       
       vertconst <<- vertconst + 0.05
       if (vertconst>1) vertconst <<- 1
-      print(vertconst)
       if (ncol(y)==1){
-        tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
+        tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+
+                               (as.integer(pd)-1)*vertconst)
       } else {
-        print(str(tdf[,-(1:3)]))
-        print(str((y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst))
-        tdf[,-(1:3)] <- (y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst
+        for (j in 1:ncol(y)) {
+          tdf[,j+3] <- (y[,j]-min(y))/(max(y)-min(y))+
+                       (as.integer(pd)-1)*vertconst
+        }
       }
-      print(tdf)
-      
+
       dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
       windowRanges <<- dataRanges
       lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
@@ -267,7 +267,9 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         if (ncol(y)==1){
           tdf[,-(1:3)] <- unlist(y)
         } else {
-          tdf[,-(1:3)] <- y
+          for (j in 1:ncol(y)) {
+            tdf[,j+3] <- y[,j]
+          }
         }
         dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
         windowRanges <<- dataRanges
@@ -275,10 +277,15 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         sx <<- .axis.loc(dataRanges[3:4])
       } else {
         if (ncol(y)==1){
-          tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst)
+          tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+
+                                 (as.integer(pd)-1)*vertconst)
         } else {
-          tdf[,-(1:3)] <- (y-min(y))/(max(y)-min(y))+(as.integer(pd)-1)*vertconst
+          for (j in 1:ncol(y)) {
+            tdf[,j+3] <- (y[,j]-min(y))/(max(y)-min(y))+
+                         (as.integer(pd)-1)*vertconst
+          }
         }
+       
         dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
@@ -541,4 +548,3 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   
   view
 }
-
