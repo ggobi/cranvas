@@ -40,7 +40,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
-##' @example cranvas/inst/examples/maps-ex.R
+##' @example cranvas/inst/examples/qmap-ex.R
 qmap <- function(data, longitude, latitude, group, label = group,
     main = NULL, ...) {
 
