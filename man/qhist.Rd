@@ -2,9 +2,9 @@
 \alias{qhist}
 \title{Create a hist plot..}
 \usage{qhist(x, data, splitByCol = -1, horizontal = FALSE, 
-    position = "none", color, fill, stroke, title, name, 
-    ash = FALSE, start = min(data[[x]]), nbins = round(sqrt(nrow(data)), 
-        0), binwidth, bin_algo_str, xlim, ylim, ...)
+    position = "none", title, name, ash = FALSE, start = min(data[[x]]), 
+    nbins = round(sqrt(nrow(data)), 0), binwidth, bin_algo_str, 
+    xlim, ylim, cache = TRUE, ...)
 
 }
 

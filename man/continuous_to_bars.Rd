@@ -2,10 +2,9 @@
 \alias{continuous_to_bars}
 \title{Continuous items to bins..}
 \usage{continuous_to_bars(data, splitBy, brushed, typeInfo = "hist", 
-    position = "none", color, fill, stroke, ...)
+    position = "none", ...)
 
 }
-
 \description{Continuous items to bins}
 \author{Barret Schloerke}
 \keyword{internal}
@@ -14,8 +13,6 @@
 \item{brushed}{vect to brush by}
 \item{typeInfo}{typeInfo$type ENUM of 'hist', 'ash', 'dot', 'spine', 'density'}
 \item{position}{enum{'none', 'stack', 'dodge', 'relative', 'identity'}}
-\item{color}{vect to color by}
-\item{fill}{vect to fill by}
 \item{stroke}{vect to outline by}
 \item{...}{other params passed to \code{\link[graphics]{hist}}}
 }

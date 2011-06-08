@@ -11,7 +11,8 @@
 \details{arrow up/down: in-/de-crease size of points
 arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
 Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
-Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key}
+Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
+Key 'r' resets data range to original scale}
 \arguments{\item{data}{mutaframe data to use}
 \item{x}{which designates variable displayed on the horizontal axis}
 \item{y}{which designates variable displayed on the vertical axis}
@@ -29,6 +30,7 @@ Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will speci
 library(qtpaint)
 library(plumbr)
 library(cranvas)
+library(scales)
 
 data(nrcstat)
 nrcstat[, 26] <- -nrcstat[, 26]
@@ -49,11 +51,14 @@ library(qtbase)
 library(qtpaint)
 library(plumbr)
 library(cranvas)
+library(scales)
 
 data(pollen)
 qpollen <- qdata(pollen)
 qscatter(qpollen, RIDGE, CRACK)
 # try zooming into the center}
+
+
 
 
 
