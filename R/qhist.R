@@ -16,7 +16,7 @@
 #' @example cranvas/inst/examples/qhist-ex.R
 qhist <- function(x, data, splitByCol = -1, horizontal = FALSE, 
     position = "none", 
-    title = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
+    main = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
     nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
     bin_algo_str = NULL, xlim=NULL, ylim=NULL, cache=TRUE, ...) {
 
@@ -247,8 +247,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         draw_x_axes_with_labels_fun(painter, .dataranges, horiPos, horiPos, .xlab)
         draw_y_axes_with_labels_fun(painter, .dataranges, vertPos, vertPos, .ylab)            
         # title
-        if (is.null(title)) title <- paste("Histogram of", name)
-        add_title_fun(painter, .dataranges, title)
+        if (is.null(main)) main <- paste("Histogram of", name)
+        add_title_fun(painter, .dataranges, main)
     }
     
     
@@ -893,8 +893,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
 
  		.view <- qplotView(scene = .scene)
 
-    if (is.null(title)) title <- sprintf("Histogram of %s", name)
-    .view$setWindowTitle(title)
+    if (is.null(main)) main <- sprintf("Histogram of %s", name)
+    .view$setWindowTitle(main)
 
     .view
 } 
