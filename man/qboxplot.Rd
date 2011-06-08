@@ -32,6 +32,7 @@ screen width}
 \examples{library(cranvas)
 
 df = matrix(rnorm(1000), 200)
+colnames(df) <- c("V1", "V2", "V3", "V4", "V5")
 qboxplot(df)
 qboxplot(df, horizontal = TRUE)
 qboxplot(df, at = (1:5)^2)  # at different locations
@@ -43,7 +44,16 @@ df = qdata(round(data.frame(x = rnorm(100), y = runif(100),
     z = rbeta(100, 1, 0.8)), 2))
 
 qboxplot(data = df)
-qparallel(data = df)  # brush on par-coords and you see little boxplots}
+qparallel(~., data = df)  # brush on par-coords and you see little boxplots
+
+data(flea)
+qflea <- qdata(flea[, 1:6])
+qboxplot(. ~ species, data = flea)}
+
+
+
+
+
 
 
 
