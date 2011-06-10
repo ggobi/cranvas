@@ -181,7 +181,7 @@ continuous_to_bars <- function(data = NULL, splitBy = NULL, brushed = NULL,
             data_pos$.brushed[i] <- percent_of_brushed(data_pos[i, "left"],
                 data_pos[i, "right"], data, brushed)
         }
-        message("making a hist")
+        #message("making a hist")
     }
     else if (identical(typeInfo$type, "ash"))
         stop("ash not defined yet")

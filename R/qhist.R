@@ -16,11 +16,15 @@
 #' @example cranvas/inst/examples/qhist-ex.R
 qhist <- function(x, data, splitByCol = -1, horizontal = FALSE, 
     position = "none", 
-    main = NULL, name = NULL, ash = FALSE, start = min(data[[x]]),
+    main = NULL, name = NULL, ash = FALSE, start = NULL,
     nbins = round(sqrt(nrow(data)), 0), binwidth = NULL, 
     bin_algo_str = NULL, xlim=NULL, ylim=NULL, cache=TRUE, ...) {
 
     stopifnot(is.mutaframe(data))
+
+    arguments <- as.list(match.call()[-1])
+    df <- data.frame(data)
+    x <- eval(arguments$x, df)
 
     # 'Global' variables (start with a '.')
     .view <- c()
@@ -36,6 +40,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     .bar_hover_section <- list(top = -1, bottom = 1, right = -1, left = 1)
     .lims <- c() # Window limits??
     .bars_info <- NULL
+    if (is.null(start))
+      start <- min(x)
     if (is.null(ylim)) {
       .yMin <- 0
       .yMax <- nrow(data)/2
@@ -54,10 +60,10 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     .histOriginalBreaksAndStart <- list()
     .updateinfo <- FALSE
     if (is.null(name)) { 
-        if (is.character(x))
-            name <- x
-        else
-          name <- names(data)[x]
+        #if (is.character(arguments$x))
+            name <- as.character(arguments$x)
+        #else
+        #  name <- names(data)[x]
     }
     # mf_data <- qdata(data)
     #if (!is.mutaframe(data)) 
@@ -80,38 +86,38 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     # message("fill 0 ",length(fill),"\n")
        
     # Set up wrapper functions.
-    dataCol <- function() {
-        data[, x]
-    }
+    # dataCol <- function() {
+    #    data[, x]
+    #}
     xColRange <- function() {
-        range(dataCol())
+        range(x)
     }
     maxBinwidthP <- function() {
-        maxBinwidth(dataCol())
+        maxBinwidth(x)
     }
     baseHistP <- function(...) {
-        baseHist(dataCol(), ...)
+        baseHist(x, ...)
     }
     unitShiftP <- function() {
-        unitShift(dataCol())
+        unitShift(x)
     }
     maxShiftP <- function() {
-        maxShift(dataCol())
+        maxShift(x)
     }
     xMaxStartPosP <- function() {
-        xMaxStartPos(dataCol())
+        xMaxStartPos(x)
     }
     xMinStartPosP <- function() {
-        xMinStartPos(dataCol())
+        xMinStartPos(x)
     }
     xMaxEndPosP <- function() {
-        xMaxEndPos(dataCol())
+        xMaxEndPos(x)
     }
     calcBinPosP <- function(start, binwidth) {
         calcBinPosition(start, binwidth, xColRange()[2], xMaxEndPosP())
     }
     maxHeightP <- function() {
-        maxHeight(dataCol(), ...)
+        maxHeight(x, ...)
     }
     # cat('.xMin: ', xMinStartPosP(), '.xMax: ', xMaxEndPosP(), '\n')
     # cat('maxShift(): ', maxShiftP(), '\n')
@@ -143,14 +149,14 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     # cat('nbins: ');print(nbins)
     
     updateBarsInfo <- function() {
-        .bars_info <<- continuous_to_bars(data = data[, x], splitBy = data[, 
-            splitByCol], brushed = data[, ".brushed"], typeInfo = .type,
-            position = position, ...)
+        .bars_info <<- continuous_to_bars(data = x,
+            splitBy = data[, splitByCol], brushed = data[, ".brushed"],
+            typeInfo = .type, position = position, ...)
 
         .data_col_names <<- rep("", length(.data_col_names))
         for (i in 1:nrow(.bars_info$data)) {
-            rows <- (.bars_info$data$left[i] < dataCol()) &
-              (.bars_info$data$right[i] >= dataCol())
+            rows <- (.bars_info$data$left[i] < x) &
+              (.bars_info$data$right[i] >= x)
             # cat(i, ' - '); print(rows)
             if (any(rows)) {
                 .data_col_names[rows] <<- as.character(.bars_info$data[i, "label"])
@@ -567,8 +573,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
             y <- .bar_queryPos[2]
         }
         
-        section <- subset(.bars_info$data, (y <= top) & (y >= bottom) & (x <= right) & 
-            (x >= left))
+        section <- subset(.bars_info$data, (y <= top) & (y >= bottom) & (x <= right) & (x >= left))
         # print(head(section))
         
         # Nothing under mouse
