@@ -394,7 +394,7 @@ qdensity <- function(x, data, main = NULL,
         if (length(hits) == 0)
             return()
 
-        info <- data.frame(x[hits], y[hits])
+        info <- data.frame(x[hits])
         names(info) <- c(xlab, ylab)
         #browser()
 
