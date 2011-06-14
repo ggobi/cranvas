@@ -52,6 +52,8 @@ brushGen = setRefClass('BRUSH',
 ##' b$colorChanged$disconnect(idx)
 ##'
 brush = function(data, attr) {
+    if (!is.mutaframe(data) || !('Brush' %in% names(attributes(data))))
+        stop("data must be a mutaframe and have an attribute 'Brush' (typically created by qdata())")
     .brush.attr = base::attr(data, 'Brush')
     if (missing(attr)) {
         .brush.attr
