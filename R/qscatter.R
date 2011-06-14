@@ -20,7 +20,7 @@
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qscat-ex.R
 
-qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
+qscatter <- function(data, x, y, asp = NULL, main = NULL,
                      labeled = TRUE, size = 2, alpha = 1, xlim=NULL,
                      ylim=NULL, xlab=NULL, ylab=NULL, cache = T, ...)
 {
@@ -444,8 +444,8 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     ###################
     xWidth <- 600
     yWidth <- 600
-    if (!is.null(aspect.ratio))
-        yWidth <- round(1.0 * xWidth * aspect.ratio, 0)
+    if (!is.null(asp))
+        yWidth <- round(1.0 * xWidth * asp, 0)
 
 #print(yWidth)
 
