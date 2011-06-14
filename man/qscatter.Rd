@@ -1,7 +1,7 @@
 \name{qscatter}
 \alias{qscatter}
 \title{Draw a scatterplot..}
-\usage{qscatter(data, x, y, aspect.ratio, main, labeled = TRUE, 
+\usage{qscatter(data, x, y, asp, main, labeled = TRUE, 
     size = 2, alpha = 1, xlim, ylim, xlab, ylab, cache = T, 
     ...)
 
@@ -26,10 +26,7 @@ Key 'r' resets data range to original scale}
 \item{ylab}{label on vertical axis, default is name of y variable}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 }
-\examples{library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
+\examples{library(cranvas)
 library(scales)
 
 data(nrcstat)
@@ -43,33 +40,10 @@ print(qscatter(qnrc, R.Rankings.5th.Percentile,
 print(qscatter(qnrc, S.Rankings.5th.Percentile, 
     S.Rankings.95th.Percentile))
 
-
-
-#################
-#
-library(qtbase)
-library(qtpaint)
-library(plumbr)
-library(cranvas)
-library(scales)
-
 data(pollen)
 qpollen <- qdata(pollen)
 qscatter(qpollen, RIDGE, CRACK)
 # try zooming into the center}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
