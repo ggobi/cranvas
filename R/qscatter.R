@@ -174,11 +174,11 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         .brushed <- data$.brushed
         if (.brush) {
             if (!any(is.na(.bpos))) {
-                qlineWidth(painter) = brush(data)$size
+                qlineWidth(painter) = b$style$size
                 ##qdash(painter)=c(1,3,1,3)
                 qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                           .bpos[1] + .brange[1], .bpos[2] + .brange[2],
-                          stroke = brush(data)$color)
+                          stroke = b$style$color)
             }
 
             hdata <- subset(df, .brushed)
