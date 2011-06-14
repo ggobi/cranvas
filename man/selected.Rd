@@ -9,13 +9,15 @@ selected(data) <- value
 brushed (i.e. those \code{TRUE}'s are selected).
 
 }
-\value{\code{selected}: \code{selected(data)} returns the logical vector
-corresponding to whether the observations are selected or not;
-\code{selected(data) <- value} sets the selected status of
-observations.
+\value{\code{selected}: returns the logical vector corresponding to whether the
+observations are selected or not
+
+\code{selected<-}: sets the selected status of observations
+
 
 }
 \author{Yihui Xie <\url{http://yihui.name}>}
+\seealso{\code{\link{qdata}}}
 \arguments{\item{data}{the mutaframe}
 \item{value}{a logical vector of the length \code{nrow(data)}}
 }

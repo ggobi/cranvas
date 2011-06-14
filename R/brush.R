@@ -21,19 +21,6 @@ brushGen = setRefClass('BRUSH',
 
 ##' Set or query the brush attributes.
 ##'
-##' @param data the mutaframe created by \code{\link{qdata}},
-##' with an attribute \code{Brush}
-##' @param attr the name of the brush attribute (a character scalar),
-##' e.g. \code{style} (the color, size and linetype of the brush),
-##' \code{color} (the color of the objects selected by the brush),
-##' \code{size} (the size of the selected objects, e.g. line width or
-##' size of points); if \code{attr} is missing, the whole brush object
-##' (as a reference object; see \code{\link[methods]{setRefClass}})
-##' will be returned
-##' @return the brush object or the attribute of the brush; note the
-##' brush object can be further manipulated with other methods -- see
-##' examples below.
-##'
 ##' The list of attributes in the brush (they can be accessed by the
 ##' \code{$} method):
 ##'
@@ -63,7 +50,20 @@ brushGen = setRefClass('BRUSH',
 ##' persistent brushing history (a list of indices of the brushed
 ##' elements)} \item{cursor}{the cursor type (an integer; see
 ##' \code{\link{set_cursor}})}}
+##' @param data the mutaframe created by \code{\link{qdata}},
+##' with an attribute \code{Brush}
+##' @param attr the name of the brush attribute (a character scalar),
+##' e.g. \code{style} (the color, size and linetype of the brush),
+##' \code{color} (the color of the objects selected by the brush),
+##' \code{size} (the size of the selected objects, e.g. line width or
+##' size of points); if \code{attr} is missing, the whole brush object
+##' (as a reference object; see \code{\link[methods]{setRefClass}})
+##' will be returned
+##' @return the brush object or the attribute of the brush; note the
+##' brush object can be further manipulated with other methods -- see
+##' examples below.
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{qdata}}
 ##' @export
 ##' @examples library(cranvas)
 ##' qiris = qdata(head(iris))  # create a mutaframe

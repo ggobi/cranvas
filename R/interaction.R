@@ -1,23 +1,29 @@
-##' Create a mutaframe from data with several attributes for interaction.
+##' Create a mutaframe from data with attributes for interaction.
 ##'
-##' First check if the names of some predefined row attributes
-##' (e.g. .color, .brushed) exist in the data (will issue an error if
-##' this happens); then augment the ...  arguments to the data and
-##' convert the augmented data to a mutaframe; in the end add some
-##' attributes to the mutaframe to control the appearance of elements
-##' for interaction (e.g. the color of the brush, the size of the
-##' brushed objects, and whether to show the labels of the brushed
-##' objects).
+##' This function will first check if the names of some predefined row
+##' attributes (e.g. \code{.color}, \code{.brushed}) exist in the
+##' column names of the data (will issue an error if they do); then
+##' append these columns to the original data to create an augmented
+##' data as a \code{\link[plumbr]{mutaframe}}; in the end add some
+##' attributes to the mutaframe to control the behavior of interaction
+##' (mainly the \code{\link{brush}} object and the
+##' \code{\link{link}}ing specification).
+##'
 ##' @param data a data frame (typically); it will be coerced to a data
 ##' frame
-##' @param color colors of rows (default black)
+##' @param color colors of graphical elements (default black)
+##' corresponding to rows of data
+##' @param fill colors for filling the graphical elements
+##' (e.g. rectangles)
 ##' @param size sizes of rows (default 1)
 ##' @param brushed a logical vector indicating whether the rows are
 ##' brushed (default all \code{FALSE})
 ##' @param visible a logical vector indicating whether the rows are
 ##' visible (default all \code{TRUE})
-##' @return a mutaframe with some attributes like the brush
+##' @return a mutaframe with attributes for interaction
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link[plumbr]{mutaframe}}, \code{\link{brush}},
+##' \code{\link{link}}
 ##' @export
 ##' @examples
 ##' iris0 = qdata(iris, color = 'red', brushed = FALSE)
@@ -42,7 +48,7 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
         data = as.data.frame(data)
     ## check if the attribute exists
     ## row attributes needed by all plotting functions
-    row_attrs = c(".color", ".fill", ".size", ".brushed")
+    row_attrs = c(".color", ".fill", ".size", ".brushed", ".visible")
     ## once in a blue moon...
     conflict_attrs = row_attrs %in% colnames(data)
     if (any(conflict_attrs)) {
@@ -117,6 +123,8 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
 ##' @param mode the selection mode string; see Details
 ##' @return a logical vector indicating whether the objects are selected
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link[base]{&}}, \code{\link[base]{|}},
+##' \code{\link[base]{xor}}, \code{\link[base]{!}}
 ##' @export
 ##' @examples
 ##' x1 = c(TRUE, TRUE, FALSE, FALSE)
@@ -143,6 +151,7 @@ mode_selection = function(x, y, mode = "none") {
 ##' @return a logical value: whether the plot corresponding to this
 ##' mutaframe is on focus or not
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{qdata}}
 ##' @export
 ##' @examples
 ##' mf = qdata(head(iris))
@@ -171,10 +180,10 @@ focused = function(data) {
 ##' observations. This can be useful for ``deleting'' certain
 ##' observations from the plot (set their visibility to \code{FALSE}).
 ##' @param data the mutaframe
-##' @return \code{visible(data)} returns the logical vector to control
-##' the visibility of observations, and \code{visible(data) <- value}
-##' changes this logical vector
+##' @return returns the logical vector to control the visibility of
+##' observations
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{qdata}}
 ##' @export
 ##' @examples df = qdata(iris)
 ##'
@@ -191,6 +200,7 @@ visible = function(data) {
 ##' @usage visible(data) <- value
 ##' @param value a logical vector of the length \code{nrow(data)}
 ##' @export "visible<-"
+##' @return changes the logical vector of visibility (i.e., \code{data$.visible})
 `visible<-` = function(data, value) {
     data$.visible = value
     data
@@ -201,11 +211,10 @@ visible = function(data) {
 ##' The column \code{.brushed} controls which observations are being
 ##' brushed (i.e. those \code{TRUE}'s are selected).
 ##' @param data the mutaframe
-##' @return \code{selected(data)} returns the logical vector
-##' corresponding to whether the observations are selected or not;
-##' \code{selected(data) <- value} sets the selected status of
-##' observations.
+##' @return returns the logical vector corresponding to whether the
+##' observations are selected or not
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{qdata}}
 ##' @export
 ##' @examples df = qdata(iris)
 ##'
@@ -223,6 +232,7 @@ selected = function(data) {
 ##' @usage selected(data) <- value
 ##' @param value a logical vector of the length \code{nrow(data)}
 ##' @export "selected<-"
+##' @return sets the selected status of observations
 `selected<-` = function(data, value) {
     data$.brushed = value
     data
@@ -251,7 +261,11 @@ selected = function(data) {
 ##' ClosedHandCursor; 15: WhatsThisCursor; 16: BusyCursor; 20:
 ##' DragMoveCursor; 19: DragCopyCursor; 21: DragLinkCursor; 24:
 ##' BitmapCursor
-##' @param view the view for which to change the cursor
+##'
+##' We can pass either the integer code or the character string to the
+##' \code{cursor} argument.
+##' @param view the view for which to change the cursor (created by
+##' \code{\link[qtpaint]{qplotView}})
 ##' @param cursor an integer or a character string (see Details)
 ##' @return NULL; the cursor of the view is set as a side effect
 ##' @author Yihui Xie <\url{http://yihui.name}>

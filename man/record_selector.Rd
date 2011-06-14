@@ -11,9 +11,12 @@ variable (using the mouse or keyboard) and all the observations
 which have the same values on this variable will be brushed. This
 selector can link to any plots based on a mutaframe created by
 \code{\link{qdata}}.}
-\value{NULL}
+\value{\code{NULL} (a GUI will pop up if the \pkg{gWidgetsQt}
+package is available)}
 \author{Yihui Xie <\url{http://yihui.name}>}
-\arguments{\item{data}{a mutaframe (with a column \code{.brushed})}
+\seealso{\code{\link{qdata}}}
+\arguments{\item{data}{a mutaframe created by \code{\link{qdata}} (with a
+column \code{.brushed})}
 \item{vars}{character or integer: the variable to be displayed in
 the data selector (if not specified, the first non-numeric
 variable will be used; if all columns are numeric, the first

@@ -6,13 +6,16 @@
 ##' which have the same values on this variable will be brushed. This
 ##' selector can link to any plots based on a mutaframe created by
 ##' \code{\link{qdata}}.
-##' @param data a mutaframe (with a column \code{.brushed})
+##' @param data a mutaframe created by \code{\link{qdata}} (with a
+##' column \code{.brushed})
 ##' @param vars character or integer: the variable to be displayed in
 ##' the data selector (if not specified, the first non-numeric
 ##' variable will be used; if all columns are numeric, the first
 ##' column will be used)
-##' @return NULL
+##' @return \code{NULL} (a GUI will pop up if the \pkg{gWidgetsQt}
+##' package is available)
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{qdata}}
 ##' @export
 ##' @examples
 ##' ## old iris as the toy example

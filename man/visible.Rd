@@ -10,12 +10,15 @@ observations. This can be useful for ``deleting'' certain
 observations from the plot (set their visibility to \code{FALSE}).
 
 }
-\value{\code{visible}: \code{visible(data)} returns the logical vector to control
-the visibility of observations, and \code{visible(data) <- value}
-changes this logical vector
+\value{\code{visible}: returns the logical vector to control the visibility of
+observations
+
+\code{visible<-}: changes the logical vector of visibility (i.e., \code{data$.visible})
+
 
 }
 \author{Yihui Xie <\url{http://yihui.name}>}
+\seealso{\code{\link{qdata}}}
 \arguments{\item{data}{the mutaframe}
 \item{value}{a logical vector of the length \code{nrow(data)}}
 }

@@ -17,6 +17,7 @@ mutaframe is on focus or not
 
 }
 \author{Yihui Xie <\url{http://yihui.name}>}
+\seealso{\code{\link{qdata}}}
 \arguments{\item{data}{the mutaframe}
 \item{value}{a logical value: whether on focus or not}
 }

@@ -11,6 +11,7 @@ categorical variable; this linking variable can be specified with
 \value{the mutaframes will be linked together by their
 linking variables (listeners added)}
 \author{Yihui Xie <\url{http://yihui.name}>}
+\seealso{\code{\link{qdata}}, \code{\link{link_var}}}
 \arguments{\item{...}{the mutaframes (at least two mutaframes); the
 mutaframes are typically created by \code{\link{qdata}}}
 }
@@ -35,7 +36,7 @@ link(data1, data2)
 
 ## now we brush data1
 focused(data1) = TRUE  # suppose data1 is on focus
-data1$.brushed[1] = TRUE  # the first row is brushed
+selected(data1)[1] = TRUE  # the first row is brushed
 ## check the changes: data2 has been updated
 data1
 data2
@@ -43,11 +44,11 @@ data2
 ## and we move the mouse over data2
 focused(data2) = TRUE
 focused(data1) = FALSE  # data1 lost focus, of course
-data2$.brushed[3] = TRUE  # we brush the category 'virginica'
+selected(data2)[3] = TRUE  # we brush the category 'virginica'
 data2
 data1
 
-data2$.brushed[1] = FALSE  # do not brush 'setosa'
+selected(data2)[1] = FALSE  # do not brush 'setosa'
 data2
 data1
 
@@ -67,7 +68,7 @@ link(qnrc, qnrc.agg)
 qparallel(vars = c(8, 10:19), data = qnrc)
 qparallel(data = qnrc.agg)
 
-brush(qnrc.agg, ".label.show") = TRUE  # turn on labels}
+brush(qnrc.agg, "identify") = TRUE  # turn on labels}
 
 
 

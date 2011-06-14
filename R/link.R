@@ -9,6 +9,7 @@
 ##' @return the mutaframes will be linked together by their
 ##' linking variables (listeners added)
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{qdata}}, \code{\link{link_var}}
 ##' @export
 ##' @example cranvas/inst/examples/link-ex.R
 link = function(...) {
@@ -54,6 +55,7 @@ link = function(...) {
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export link_var
 ##' @export "link_var<-"
+##' @seealso \code{\link{qdata}}, \code{\link{link}}
 ##' @examples
 ##' mf = qdata(head(iris))
 ##' link_var(mf)  # NULL

@@ -17,6 +17,8 @@
 We can hold the key while brushing: A for 'and', O for 'or', X for 'xor', N for 'not' and C for 'complement'.}
 \value{a logical vector indicating whether the objects are selected}
 \author{Yihui Xie <\url{http://yihui.name}>}
+\seealso{\code{\link[base]{&}}, \code{\link[base]{|}},
+\code{\link[base]{xor}}, \code{\link[base]{!}}}
 \arguments{\item{x}{logical: the previous selection status}
 \item{y}{logical: the current selection status}
 \item{mode}{the selection mode string; see Details}

@@ -12,6 +12,7 @@ link_var(data) <- value
 
 }
 \author{Yihui Xie <\url{http://yihui.name}>}
+\seealso{\code{\link{qdata}}, \code{\link{link}}}
 \arguments{\item{data}{the mutaframe (typically created by
 \code{\link{qdata}}), with an attribute \code{Link}}
 \item{value}{the name of the linking variable}
