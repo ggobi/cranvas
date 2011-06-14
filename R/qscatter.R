@@ -171,7 +171,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 
     brush_draw <- function(item, painter, exposed) {
         df <- as.data.frame(data)
-        .brushed <- data$.brushed
+        .brushed <- selected(data)
         if (.brush) {
             if (!any(is.na(.bpos))) {
                 qlineWidth(painter) = b$style$size
