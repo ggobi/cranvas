@@ -51,8 +51,8 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     values_out_of_plotting_range <- FALSE
 
     ## parameters for all layers
-    dataRanges <- c(make_data_ranges(xlim),
-                    make_data_ranges(ylim))
+    dataRanges <- c(extend_ranges(xlim),
+                    extend_ranges(ylim))
 
     lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
 
@@ -234,7 +234,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
         } else if (key == Qt$Qt$Key_R) {
             ## reset to original boundaries
 
-            updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))
+            updatelimits(extend_ranges(xlim), extend_ranges(ylim))
         }
     }
     handle_zoom <- function() {
@@ -245,7 +245,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
             updatelimits(c(min(.zstart[1],.zstop[1]), max(.zstart[1],.zstop[1])),
                          c(min(.zstart[2],.zstop[2]), max(.zstart[2],.zstop[2])))
         else # reset zoom to default
-            updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))
+            updatelimits(extend_ranges(xlim), extend_ranges(ylim))
 
         .zstart <<- .zstop <<- NULL
     }

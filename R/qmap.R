@@ -69,7 +69,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
     if (is.null(main))
         .df.title <- paste("Map of", deparse(substitute(data)))
 
-    dataRanges <- c(make_data_ranges(c(min(x), max(x))), make_data_ranges(range(y)))
+    dataRanges <- c(extend_ranges(x), extend_ranges(y))
 
     # space in window around plot (margins in base R)
     # this space depends on the labels needed on the left
@@ -252,7 +252,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
         print(.extended)
 }
         if (event$key() == Qt$Qt$Key_R) {
-          dataRanges <<- c(make_data_ranges(c(min(x), max(x))), make_data_ranges(range(y)))
+          dataRanges <<- c(extend_ranges(x), extend_ranges(y))
 
           lims <<- qrect(dataRanges[1:2], dataRanges[3:4])
 

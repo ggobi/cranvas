@@ -20,7 +20,7 @@ qdensity <- function(x, data, main = NULL,
     cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
-    
+
     ################################
     # data processing & parameters #
     ################################
@@ -44,7 +44,7 @@ qdensity <- function(x, data, main = NULL,
     values_out_of_plotting_range <- FALSE
 
     ## parameters for all layers
-    dataRanges <- c(make_data_ranges(xlim), make_data_ranges(ylim))
+    dataRanges <- c(extend_ranges(xlim), extend_ranges(ylim))
 
     lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
 
@@ -75,9 +75,9 @@ qdensity <- function(x, data, main = NULL,
 
     zoom_focal <- FALSE
     ################################ helper function
-    	
+
     updatelimits <- function(xlim, ylim) {
-        dataRanges <<- c(xlim, ylim) 
+        dataRanges <<- c(xlim, ylim)
 
         xaxis$setLimits(qrect(dataRanges[1:2], c(0, 1)))
         yaxis$setLimits(qrect(c(0, 1), dataRanges[3:4]))
@@ -101,7 +101,7 @@ qdensity <- function(x, data, main = NULL,
     xaxis <- function(item, painter, exposed) {
         sx <- .axis.loc(dataRanges[1:2])
         #xlabels <- rep("", length(sx))
-                
+
         draw_x_axes_with_labels_fun(painter, c(dataRanges[1:2],1,5),
             axisLabel = sx, labelHoriPos = sx, name = xlab)
     }
@@ -109,7 +109,7 @@ qdensity <- function(x, data, main = NULL,
     yaxis <- function(item, painter, exposed) {
         sy <- .axis.loc(dataRanges[3:4])
         #ylabels <- rep("", length(sy))
-                
+
         draw_y_axes_with_labels_fun(painter, c(1,5, dataRanges[3:4]),
             axisLabel = sy, labelVertPos = sy, name = ylab)
     }
@@ -130,7 +130,7 @@ qdensity <- function(x, data, main = NULL,
 #        dx <- density(x)
 #        qdrawLine(painter, x=dx$x, y=dx$y, stroke = = alpha(stroke, .alpha))
 #    }
-    
+
     rug <- function(item, painter, exposed) {
         fill <- data$.color
         stroke <- data$.color
@@ -192,7 +192,7 @@ qdensity <- function(x, data, main = NULL,
                 stroke <- brush(data)$color
                 radius <- .radius
                 message(brushx[1], " ", brushx[2], " ",brushx[3], " ",brushx[4], "\n")
-                
+
                 qdrawCircle(painter, x = brushx, y = brushy, r = radius,
                     fill = fill, stroke = stroke)
             }
@@ -249,29 +249,29 @@ qdensity <- function(x, data, main = NULL,
         else if (key == Qt$Qt$Key_R) {
     # reset to original boundaries
 
-        updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))    
+        updatelimits(extend_ranges(xlim), extend_ranges(ylim))
         }
 
     }
     handle_zoom <- function() {
         print("zoom action")
         print(.zstart)
-        print(.zstop)        
+        print(.zstop)
         if (!all(.zstart == .zstop))
             updatelimits(c(min(.zstart[1],.zstop[1]), max(.zstart[1],
                .zstop[1])),c(min(.zstart[2],.zstop[2]),
-               max(.zstart[2],.zstop[2])))                                 
+               max(.zstart[2],.zstop[2])))
         else # reset zoom to default
-            updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))
+            updatelimits(extend_ranges(xlim), extend_ranges(ylim))
         .zstart <<- .zstop <<- NULL
     }
 
     handle_focal_zoom <- function(focus, speed,  forward) {
-    
+
         xscale <- (dataRanges[2]-focus[1])/(focus[1] - dataRanges[1])
         yscale <- (dataRanges[4]-focus[2])/(focus[2] - dataRanges[3])
             sgn <- if (forward) 1 else -1
-        
+
         newRanges <- dataRanges
         newRanges[1] <- dataRanges[1] + sgn* speed*diff(dataRanges[1:2])
         newRanges[2] <- focus[1] + (focus[1]-newRanges[1]) * xscale
@@ -282,7 +282,7 @@ qdensity <- function(x, data, main = NULL,
         sub <- subset(df, (x >= newRanges[1]) & (x <= newRanges[2]) &
             (y >= newRanges[3]) & (y <= newRanges[4])   )
 
-        values_out_of_plotting_range <<- nrow(sub) < nrow(df)    
+        values_out_of_plotting_range <<- nrow(sub) < nrow(df)
         if (nrow(sub) >= 2) {
             updatelimits(newRanges[1:2], newRanges[1:2])
         }
@@ -294,7 +294,7 @@ qdensity <- function(x, data, main = NULL,
             handle_focal_zoom(as.numeric(event$pos()), 2,
                 event$modifiers() != Qt$Qt$ShiftModifier )
         }
-        else { 
+        else {
             if (zoom) {
                 .zstart <<- as.numeric(event$pos())
             }
@@ -318,7 +318,7 @@ qdensity <- function(x, data, main = NULL,
         if (zoom) {
             .zstop <<- as.numeric(event$pos())
             handle_zoom()
-        } 
+        }
     }
 
     identify_mouse_move <- function(layer, event) {
@@ -337,7 +337,7 @@ qdensity <- function(x, data, main = NULL,
         .bpos[2] <<- 0
         .new.brushed <- rep(FALSE, n)
         #xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
-        
+
         #yrange <- diff(dataRanges[c(3, 4)]) * 0.01
         xrange <- 0
         yrange <- 0
@@ -495,14 +495,14 @@ qdensity <- function(x, data, main = NULL,
         focusOutFun = function(...) { focused(data) <- FALSE },
         wheelFun = handle_wheel_event, limits = lims,
             cache=cache, row=1, col=1, clip=FALSE)
-    
+
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
        cache=cache, row=1, col=1, clip=FALSE)
     querylayer <- qlayer(parent = root, query_draw, limits = lims,
        hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
        cache=cache, row=1, col=1, clip=FALSE)
- 
-    layout = root$gridLayout() 
+
+    layout = root$gridLayout()
     layout$setRowPreferredHeight(0, 40)    # width of yaxis
     ## the y-axis layer needs 'dynamic' width determined by #{characters}
     ## here is a formula by my rule of thumb: 9 * nchar + 5
@@ -516,7 +516,7 @@ qdensity <- function(x, data, main = NULL,
  # space on right side
     layout$setColumnPreferredWidth(3,40) # height of xaxis
     layout$setColumnStretchFactor(3, 0)
-    
+
 
          view <- qplotView(scene = scene)
 
@@ -530,7 +530,7 @@ qdensity <- function(x, data, main = NULL,
     #if (is.mutaframe(data)) {
     func <- function(i, j) {
         switch(j, .brushed = qupdate(brushlayer),
-            .color = qupdate(datalayer), 
+            .color = qupdate(datalayer),
             {    # any other event
                 datalayer$invalidateIndex()
                 qupdate(datalayer)

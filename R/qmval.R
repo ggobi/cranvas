@@ -84,7 +84,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
 
     p <- length(vars)
 
-    dataRanges <- c(make_data_ranges(c(0, 1)), make_data_ranges(c(0, 1)))
+    dataRanges <- c(extend_ranges(c(0, 1)), extend_ranges(c(0, 1)))
 
     # space in window around plot (margins in base R)
     # this space depends on the labels needed on the left

@@ -15,12 +15,12 @@
 ##' @param aspect.ratio Ratio between width and height of the plot.
 ##' @example cranvas/inst/examples/qtime-ex.R
 
-qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=NULL,...){  
+qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=NULL,...){
 
 #####################
   ## data processing ##----------
 #####################
-  
+
   arguments <- as.list(match.call()[-1])
   df <- data.frame(data)
   x <- eval(arguments$time, df)
@@ -36,7 +36,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   }
   ## size for zoom in/out without wrapping
   zoomsize <- max(x,na.rm=TRUE)-min(x,na.rm=TRUE)
-  
+
   ## draw by time resolution
   if (!is.null(pd)){
     if (is.character(pd)) pd <- factor(pd)
@@ -51,10 +51,10 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     x <- rep(1:pdLen[1],length=length(x))
     zoomsize <- max(tdf$x,na.rm=TRUE)-min(tdf$x,na.rm=TRUE)
   }
-  
+
   ## set plot range
-  dataRanges <- c(make_data_ranges(range(tdf$x)),
-                  make_data_ranges(range(data.frame(tdf[,-(1:3)]))))
+  dataRanges <- c(extend_ranges(tdf$x),
+                  extend_ranges(range(data.frame(tdf[,-(1:3)]))))
   windowRanges <- dataRanges
   lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
   sy <- .axis.loc(tdf$x)
@@ -79,11 +79,11 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   ## other
   hitscol <- 1
   vertconst <- 0
-  
+
 ####################
   ## event handlers ##----------
 ####################
-  
+
   brush_mouse_press <- function(layer, event) {
     .bstart <<- as.numeric(event$pos())
     if (event$button() == Qt$Qt$RightButton) {
@@ -135,7 +135,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
     if (event$key()==Qt$Qt$Key_Right){
       ## arrow right
-      
+
       if (wrap) {
         zoombound=crt_range-1
         if (zoombound<3)zoombound <- 3
@@ -145,7 +145,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
         }
-        dataRanges[1:2] <<- make_data_ranges(range(tdf$x))
+        dataRanges[1:2] <<- extend_ranges(tdf$x)
         windowRanges <<- dataRanges
         sy <<- .axis.loc(tdf$x)
         if (is.null(pd) | !vertconst){
@@ -153,14 +153,14 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         } else {
           sx <<- (as.integer(unique(pd))-1)*vertconst
         }
-        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])     
+        lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       } else {
         zoomsize <<- zoomsize-2
         if (zoomsize < 2) zoomsize <<- 2
         tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
         tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
         tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
-        dataRanges[1:2] <<- make_data_ranges(tmpXzoom)
+        dataRanges[1:2] <<- extend_ranges(tmpXzoom)
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
         sy <<- .axis.loc(dataRanges[1:2])
@@ -183,7 +183,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
     if (event$key()==Qt$Qt$Key_Left){
       ## arrow left
-      
+
       if (wrap) {
         zoombound <- crt_range+1
         if (zoombound>(max(x)-min(x)+1)) zoombound <- max(x)-min(x)+1
@@ -193,7 +193,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
         }
-        dataRanges[1:2] <<- make_data_ranges(range(tdf$x))
+        dataRanges[1:2] <<- extend_ranges(tdf$x)
         windowRanges <<- dataRanges
         sy <<- .axis.loc(tdf$x)
         if (is.null(pd) | !vertconst){
@@ -208,7 +208,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         tmpXzoom <- .bstart[1] + c(-0.5,0.5) * zoomsize
         tmpXzoom[1] <- max(tmpXzoom[1], min(x, na.rm=TRUE))
         tmpXzoom[2] <- min(tmpXzoom[2], max(x, na.rm=TRUE))
-        dataRanges[1:2] <<- make_data_ranges(tmpXzoom)
+        dataRanges[1:2] <<- extend_ranges(tmpXzoom)
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
         sy <<- .axis.loc(dataRanges[1:2])
@@ -232,7 +232,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     if (!is.null(pd)) {
     if (event$key() == Qt$Qt$Key_U) {
       ## Key U (for Up)
-      
+
       vertconst <<- vertconst + 0.05
       if (vertconst>1) vertconst <<- 1
       if (ncol(y)==1){
@@ -245,11 +245,11 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
         }
       }
 
-      dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
+      dataRanges[3:4] <<-  extend_ranges(range(data.frame(tdf[,-(1:3)])))
       windowRanges <<- dataRanges
       lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
       sx <<- (as.integer(unique(pd))-1)*vertconst
-      
+
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
       main_circle_layer$setLimits(lims)
@@ -260,7 +260,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
     if (event$key() == Qt$Qt$Key_D) {
       ## Key D (for Down)
-      
+
       vertconst <<- vertconst - 0.05
       if (vertconst<0) vertconst <<- 0
       if (!vertconst) {
@@ -271,7 +271,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
             tdf[,j+3] <- y[,j]
           }
         }
-        dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
+        dataRanges[3:4] <<-  extend_ranges(range(data.frame(tdf[,-(1:3)])))
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
         sx <<- .axis.loc(dataRanges[3:4])
@@ -285,13 +285,13 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
                          (as.integer(pd)-1)*vertconst
           }
         }
-       
-        dataRanges[3:4] <<-  make_data_ranges(range(data.frame(tdf[,-(1:3)])))
+
+        dataRanges[3:4] <<-  extend_ranges(range(data.frame(tdf[,-(1:3)])))
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
         sx <<- (as.integer(unique(pd))-1)*vertconst
       }
-      
+
       qupdate(bg_layer)
       bg_layer$setLimits(lims)
       main_circle_layer$setLimits(lims)
@@ -331,13 +331,13 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
   ## Display time information on hover (query) ----------------------
   .queryPos <- NULL
-    
+
   query_draw <- function(item, painter, exposed, ...) {
     if (is.null(.queryPos)) return()
-        
+
     xpos <- .queryPos[1]
     ypos <- .queryPos[2]
-        
+
     xrange <- .radius/root_layer$size$width() * diff(windowRanges[c(1, 2)])
     yrange <- .radius/root_layer$size$height() * diff(windowRanges[c(3, 4)])
 
@@ -356,7 +356,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     info <- as.data.frame(data[hitsrow, c(.levelX, .levelY[hitscol],hitspd)])
     ## print(info)
     ## browser()
-        
+
     ## Work out label text
     idx <- names(info)
     if (length(hits) == 1) {
@@ -373,7 +373,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     }
     bgwidth <- qstrWidth(painter, infostring)
     bgheight <- qstrHeight(painter, infostring)
-        
+
     ## adjust drawing directions when close to the boundary
     hflag <- windowRanges[2] - xpos > bgwidth
     vflag <- ypos - windowRanges[3] > bgheight
@@ -382,30 +382,30 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
               ypos + ifelse(vflag, -1, 1) * bgheight,
               stroke = rgb(1, 1, 1),
               fill = rgb(1, 1, 1, 0.9))
-        
+
     qstrokeColor(painter) <- brush(data)$label.color
     qdrawText(painter, infostring, xpos, ypos,
               halign = ifelse(hflag, "left", "right"),
               valign = ifelse(vflag, "top", "bottom"))
-        
+
   }
-    
+
   query_hover <- function(item, event, ...) {
     .queryPos <<- as.numeric(event$pos())
     qupdate(query_layer)
   }
-    
+
   query_hover_leave <- function(item, event, ...) {
     .queryPos <<- NULL
     qupdate(query_layer)
   }
-    
-  
-  
+
+
+
 ############
   ## layers ##----------
 ############
-  
+
   bg_draw <- function(item, painter, exposed) {
     draw_grid_with_positions_fun(painter, dataRanges, sy, sx)
 
@@ -417,7 +417,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
                                 axisLabel = aL, labelVertPos = sx,
                                 name = ifelse(!vertconst,.levelY,.period))
   }
-    
+
   main_circle_draw <- function(layer,painter){
     for (j in 1:ncol(y)) {
       color=gray(seq(0,0.6,length=max(tdf$zg)))
@@ -449,23 +449,23 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
       }
     }
   }
-  
+
   brush_draw <- function(layer, painter) {
     .brushed = data$.brushed
     if (.brush) {
       if (!any(is.na(.bpos))) {
         qlineWidth(painter) = brush(data)$size
-        qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2], 
+        qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                   .bpos[1], .bpos[2], stroke = brush(data)$color)
       }
-            
+
       hdata <- subset(data.frame(tdf$x,y=tdf[,hitscol+3]), .brushed)
-            
+
       if (nrow(hdata) > 0) {
         ## draw the brush rectangle
         if (!any(is.na(.bpos))) {
           qlineWidth(painter) <- brush(data)$size
-          qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2], 
+          qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                     .bpos[1], .bpos[2], stroke = brush(data)$color)
         }
         ## (re)draw brushed data points
@@ -489,7 +489,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
   }
 
-  
+
 #####################
   ## draw the canvas ##----------
 #####################
@@ -497,7 +497,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   xWidth <- 800
   yWidth <- 500
   if (!is.null(aspect.ratio)) xWidth <- round(yWidth*aspect.ratio)
-  
+
   scene <- qscene()
   root_layer <- qlayer(scene)
   root_layer$setGeometry(qrect(0, 0, xWidth, yWidth))
@@ -506,7 +506,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
   main_circle_layer <- qlayer(root_layer,paintFun=main_circle_draw,
                               mousePressFun=brush_mouse_press,
                               mouseReleaseFun=brush_mouse_move,
-                              mouseMove = brush_mouse_move, 
+                              mouseMove = brush_mouse_move,
                               keyPressFun=key_press,
                               limits=lims, row = 1, col = 1)
   main_line_layer <- qlayer(root_layer,paintFun=main_line_draw,
@@ -545,6 +545,6 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
     }
     add_listener(data, func)
   ## }
-  
+
   view
 }
