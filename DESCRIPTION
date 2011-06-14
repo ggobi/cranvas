@@ -1,6 +1,6 @@
 Package: cranvas
 Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.6.0),
-    stringr
+    stringr, signal
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
 Title: Interactive plots on a layered canvas
