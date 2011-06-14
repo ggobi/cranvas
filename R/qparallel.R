@@ -384,7 +384,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                 if (length(.cur.sel) > 0) {
                     b$persistent.list[[csize]] = .cur.sel
                     b$persistent.color[csize] = b$color
-                    b$.color[.cur.sel] = b$color
+                    data$.color[.cur.sel] = b$color
                 }
                 if (csize > hsize) {
                     b$persistent.list[1:(csize - hsize)] = NULL
