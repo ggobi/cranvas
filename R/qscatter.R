@@ -108,7 +108,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     ##########
 
 
-    xaxis <- function(item, painter, exposed) {
+    xaxis <- function(layer, painter) {
         sx <- .axis.loc(dataRanges[1:2])
         xlabels <- rep("", length(sx))
 
@@ -119,7 +119,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
 
     }
 
-    yaxis <- function(item, painter, exposed) {
+    yaxis <- function(layer, painter) {
         sy <- .axis.loc(dataRanges[3:4])
         ylabels <- rep("", length(sy))
 
@@ -129,7 +129,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
                                     labelVertPos = sy, name = ylab)
     }
 
-    grid <- function(item, painter, exposed) {
+    grid <- function(layer, painter) {
         sx <- .axis.loc(dataRanges[1:2])
         sy <- .axis.loc(dataRanges[3:4])
 
@@ -138,7 +138,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     }
 
 
-    scatter.all <- function(item, painter, exposed) {
+    scatter.all <- function(layer, painter) {
         fill <- data$.color
         stroke <- data$.color
         df <- data.frame(data)
@@ -169,7 +169,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
         }
     }
 
-    brush_draw <- function(item, painter, exposed) {
+    brush_draw <- function(layer, painter) {
         if (.brush) {
             if (!any(is.na(.bpos))) {
                 qlineWidth(painter) = b$style$size
@@ -193,7 +193,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     ## event handlers ##
     ####################
 
-    keyPressFun <- function(item, event, ...) {
+    keyPressFun <- function(layer, event) {
         ## arrow up/down: in/de-crease point size
         ## arrow left/right: de/in-crease alpha level
         ## z toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
@@ -275,7 +275,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     }
 
     ## record the coordinates of the mouse on click
-    brush_mouse_press <- function(item, event) {
+    brush_mouse_press <- function(layer, event) {
         if (zoom_focal) {
             handle_focal_zoom(as.numeric(event$pos()), 2, event$modifiers() != Qt$Qt$ShiftModifier )
         } else {
@@ -295,7 +295,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
         }
     }
 
-    mouse_release <- function(item, event) {
+    mouse_release <- function(layer, event) {
                                         #print(zoom)
         if (zoom) {
             .zstop <<- as.numeric(event$pos())
@@ -338,7 +338,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     ## Display category information on hover (query) ----------------------------
     .queryPos <- NULL
 
-    query_draw <- function(item, painter, exposed, ...) {
+    query_draw <- function(layer, painter) {
         if (zoom) {
             if (!is.null(.zstart)) {
                 if (!all(.zstart == .zstop)) {
@@ -409,13 +409,13 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
 
     }
 
-    query_hover <- function(item, event, ...) {
+    query_hover <- function(layer, event) {
         ##    if (.brush) return()
         .queryPos <<- as.numeric(event$pos())
         qupdate(querylayer)
     }
 
-    query_hover_leave <- function(item, event, ...) {
+    query_hover_leave <- function(layer, event) {
         .queryPos <<- NULL
         qupdate(querylayer)
     }
