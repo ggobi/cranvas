@@ -186,17 +186,17 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
             if (nrow(hdata) > 0) {
                 ## draw the brush rectangle
                 if (!any(is.na(.bpos))) {
-                    qlineWidth(painter) = brush(data)$size
+                    qlineWidth(painter) = b$size
                     ##qdash(painter)=c(1,3,1,3)
                     qdrawRect(painter, .bpos[1] - .brange[1],
                               .bpos[2] - .brange[2], .bpos[1] + .brange[1],
-                              .bpos[2] + .brange[2], stroke = brush(data)$color)
+                              .bpos[2] + .brange[2], stroke = b$color)
                 }
                 ## (re)draw brushed data points
                 brushx <- eval(arguments$x, hdata)
                 brushy <- eval(arguments$y, hdata)
-                fill <- brush(data)$color
-                stroke <- brush(data)$color
+                fill <- b$color
+                stroke <- b$color
                 radius <- .radius
 
                 qdrawCircle(painter, x = brushx, y = brushy, r = radius,
@@ -335,7 +335,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
         .new.brushed <- rep(FALSE, n)
         xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
         yrange <- .radius/root$size$height() * diff(dataRanges[c(3, 4)])
-        #
+
         rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
                                .bpos + .brange + c(xrange, yrange)),
                              2, byrow = TRUE))
@@ -345,7 +345,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
 
         .new.brushed[hits] <- TRUE
         data$.brushed <- mode_selection(data$.brushed, .new.brushed,
-                                        mode = brush(data)$mode)
+                                        mode = b$mode)
     }
 
     handle_wheel_event <- function(layer, event) {
@@ -419,7 +419,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                   ypos + ifelse(vflag, -1, 1) * bgheight,
                   stroke = rgb(1, 1, 1), fill = rgb(1, 1, 1, 0.9))
 
-        qstrokeColor(painter) <- brush(data)$label.color
+        qstrokeColor(painter) <- b$label.color
         qdrawText(painter, infostring, xpos, ypos,
                   halign = ifelse(hflag, "left", "right"),
                   valign = ifelse(vflag, "top", "bottom"))
