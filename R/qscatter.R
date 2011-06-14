@@ -327,7 +327,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
         hits <- layer$locate(rect) + 1
 
         .new.brushed[hits] <- TRUE
-        data$.brushed <- mode_selection(data$.brushed, .new.brushed,
+        selected(data) <- mode_selection(selected(data), .new.brushed,
                                         mode = b$mode)
     }
 
