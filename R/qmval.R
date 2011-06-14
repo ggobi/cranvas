@@ -43,8 +43,6 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     ## check if an attribute exist
     #  browser()
     # if (!is.mutaframe(data)) data <- qdata(data)
-    if (!(".brushed" %in% names(data)))
-        data$.brushed <- FALSE
 
     #  ## parameters for the brush
     #  .brush.attr = attr(data, '.brush.attr')

@@ -77,10 +77,6 @@ qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max 
 ##' @example cranvas/inst/examples/mosaic-ex.R
 qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE,
     na.rm = FALSE, subset = NULL,  main = NULL, cache= T, ...) {
-    ## check if an attribute exist
-    has_attr = function(attr) {
-        attr %in% names(data)
-    }
 
     ## parameters for the updating events
     .recalc <- FALSE
