@@ -68,7 +68,7 @@ brush = function(data, attr) {
 ##' @export "brush<-"
 ##' @return set the attribute of the brush
 `brush<-` = function (data, attr, value) {
-    b = attr(data, "Brush")
+    b = brush(data)
     eval(parse(text = paste('b$', attr[1], ' = value', sep = '')))
     data
 }
