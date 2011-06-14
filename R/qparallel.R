@@ -369,28 +369,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         ## on mouse release
         if (event$button() != Qt$Qt$NoButton) {
             b$cursor = 0L  # restore to Arrow cursor
-            csize = length(b$history.list) + 1
-            .cur.sel = which(selected(data))
-            if (length(.cur.sel) > 0)
-                b$history.list[[csize]] = .cur.sel
-            ## remove the first few columns due to the history size limit
-            if (csize > (hsize <- b$history.size)) {
-                b$history.list[1:(csize - hsize)] = NULL
-            }
-            b$history.index = length(b$history.list)
-            ## persistent brushing: store brushed objects
-            if (b$persistent) {
-                csize = length(b$persistent.list) + 1
-                if (length(.cur.sel) > 0) {
-                    b$persistent.list[[csize]] = .cur.sel
-                    b$persistent.color[csize] = b$color
-                    data$.color[.cur.sel] = b$color
-                }
-                if (csize > hsize) {
-                    b$persistent.list[1:(csize - hsize)] = NULL
-                    b$persistent.color = b$persistent.color[-(1:(csize - hsize))]
-                }
-            }
+            brush_history(data)  # store brushing history
         }
         cranvas_debug()
     }
