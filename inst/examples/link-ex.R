@@ -49,4 +49,4 @@ link(qnrc, qnrc.agg)
 qparallel(vars = c(8, 10:19), data = qnrc)
 qparallel(data = qnrc.agg)
 
-brush(qnrc.agg, ".label.show") = TRUE  # turn on labels
+brush(qnrc.agg, "identify") = TRUE  # turn on labels
