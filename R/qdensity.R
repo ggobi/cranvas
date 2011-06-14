@@ -100,24 +100,25 @@ qdensity <- function(x, data, main = NULL,
 
     xaxis <- function(item, painter, exposed) {
         sx <- .axis.loc(dataRanges[1:2])
-        xlabels <- rep("", length(sx))
+        #xlabels <- rep("", length(sx))
                 
         draw_x_axes_with_labels_fun(painter, c(dataRanges[1:2],1,5),
-            axisLabel = xlabels, labelHoriPos = sx, name = xlab)
+            axisLabel = sx, labelHoriPos = sx, name = xlab)
     }
 
     yaxis <- function(item, painter, exposed) {
         sy <- .axis.loc(dataRanges[3:4])
-        ylabels <- rep("", length(sy))
+        #ylabels <- rep("", length(sy))
                 
         draw_y_axes_with_labels_fun(painter, c(1,5, dataRanges[3:4]),
-            axisLabel = ylabels, labelVertPos = sy, name = ylab)
+            axisLabel = sy, labelVertPos = sy, name = ylab)
     }
 
     grid <- function(item, painter, exposed) {
         sx <- .axis.loc(dataRanges[1:2])
         sy <- .axis.loc(dataRanges[3:4])
 
+        message("axes ", sx, sy,"\n")
         # grey background with grid lines
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)
     }
@@ -395,7 +396,8 @@ qdensity <- function(x, data, main = NULL,
             return()
 
         info <- data.frame(x[hits])
-        names(info) <- c(xlab, ylab)
+        message("dim ", dim(info),"\n")
+        names(info) <- xlab
         #browser()
 
         # Nothing under mouse
