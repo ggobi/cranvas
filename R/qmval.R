@@ -1,7 +1,4 @@
-require(qtbase)
-require(qtpaint)
-require(plumbr)
-require(plyr)
+## please use source('../load.R') and avoid writing the require() statements here
 
 myvarsummary <- function(x) {
     if (is.factor(x) || is.character(x))

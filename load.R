@@ -3,5 +3,6 @@
 library(qtbase)
 library(qtpaint)
 library(cranvas)
-library(plumbr) 
-library(scales) 
+library(plumbr)
+library(scales)
+library(ggplot2)
