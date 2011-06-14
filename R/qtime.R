@@ -12,10 +12,10 @@
 ##' hitting right arrow or left arrow. Default to be TRUE.
 ##' @param size Point size, default to be 2.
 ##' @param alpha Transparency level, 1=completely opaque, default to be 1.
-##' @param aspect.ratio Ratio between width and height of the plot.
+##' @param asp Ratio between width and height of the plot.
 ##' @example cranvas/inst/examples/qtime-ex.R
 
-qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=NULL,...){
+qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,asp=NULL,...){
 
 #####################
   ## data processing ##----------
@@ -496,7 +496,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,aspect.ratio=
 
   xWidth <- 800
   yWidth <- 500
-  if (!is.null(aspect.ratio)) xWidth <- round(yWidth*aspect.ratio)
+  if (!is.null(asp)) xWidth <- round(yWidth*asp)
 
   scene <- qscene()
   root_layer <- qlayer(scene)
