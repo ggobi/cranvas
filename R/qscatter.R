@@ -25,7 +25,7 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
                      ylim=NULL, xlab=NULL, ylab=NULL, cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
-
+    b = brush(data)
     ################################
     # data processing & parameters #
     ################################
