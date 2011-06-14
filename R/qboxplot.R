@@ -63,7 +63,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
         lims = lims[, 2:1]
         ext = ext[, 2:1]
     }
-    lims = .extend.ranges(lims, ext)  # extend the limits here
+    lims = extend_ranges(lims, ext)  # extend the limits here
     layer.main = qbxp(vars = vars, data = data, at = at, width = width,
                             horizontal = horizontal, limits = qrect(lims))
     xat = at

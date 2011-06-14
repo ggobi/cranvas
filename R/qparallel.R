@@ -157,7 +157,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         meta$xr = diff(range(meta$x))
         meta$yr = diff(range(meta$y))
         ## extend margins
-        meta$limits = .extend.ranges(matrix(c(range(meta$x), range(meta$y)), 2))
+        meta$limits = extend_ranges(matrix(c(range(meta$x), range(meta$y)), 2))
 
         ## 'auto' means 'line's when n*p<=5000*10, and 'tick's otherwise
         if (meta$glyph == 'auto')
