@@ -184,14 +184,6 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
             hdata <- subset(df, .brushed)
 
             if (nrow(hdata) > 0) {
-                ## draw the brush rectangle
-                if (!any(is.na(.bpos))) {
-                    qlineWidth(painter) = b$size
-                    ##qdash(painter)=c(1,3,1,3)
-                    qdrawRect(painter, .bpos[1] - .brange[1],
-                              .bpos[2] - .brange[2], .bpos[1] + .brange[1],
-                              .bpos[2] + .brange[2], stroke = b$color)
-                }
                 ## (re)draw brushed data points
                 brushx <- eval(arguments$x, hdata)
                 brushy <- eval(arguments$y, hdata)
