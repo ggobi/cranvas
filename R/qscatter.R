@@ -321,12 +321,11 @@ qscatter <- function(data, x, y, aspect.ratio = NULL, main = NULL,
     }
 
     identify_mouse_move <- function(layer, event) {
-			if (zoom) {
-#print("identify_mouse_move")
-				.zstop <<- as.numeric(event$pos())
-				qupdate(querylayer)
-				return()
-			}
+        if (zoom) {
+            .zstop <<- as.numeric(event$pos())
+            qupdate(querylayer)
+            return()
+        }
         pos <- event$pos()
         .bpos <<- as.numeric(pos)
         ## simple click: don't change .brange
