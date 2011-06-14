@@ -56,7 +56,7 @@ record_selector = function(data, vars) {
         svalue(gtbl) = x[idx]
         .brushed = logical(length(x))
         .brushed[idx] = TRUE
-        data$.brushed = .brushed
+        selected(data) = .brushed
     })
     invisible(NULL)
 }

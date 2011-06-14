@@ -30,7 +30,7 @@
 ##' iris0$.color = 'green'
 ##' ## 'brushing' by command line
 ##' for (i in 1:10) {
-##'     iris0$.brushed = sample(c(TRUE, FALSE), nrow(iris), replace = TRUE)
+##'     selected(iris0) = sample(c(TRUE, FALSE), nrow(iris), replace = TRUE)
 ##'     Sys.sleep(1)
 ##' }
 ##' ## change the brush color to green
