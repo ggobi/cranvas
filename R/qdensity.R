@@ -64,7 +64,7 @@ qdensity <- function(x, data, main = NULL,
     ## move brush?
     .bmove <- TRUE
     ## brush range: horizontal and vertical
-    .brange <- c(diff(dataRanges[c(1, 2)])/30, diff(dataRanges[c(3, 4)]))
+    .brange <- c(diff(dataRanges[c(1, 2)])/30, diff(dataRanges[c(3, 4)])/30)
 
     n <- nrow(data)
 
@@ -118,7 +118,6 @@ qdensity <- function(x, data, main = NULL,
         sx <- .axis.loc(dataRanges[1:2])
         sy <- .axis.loc(dataRanges[3:4])
 
-        message("axes ", sx, sy,"\n")
         # grey background with grid lines
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)
     }
@@ -165,6 +164,7 @@ qdensity <- function(x, data, main = NULL,
     brush_draw <- function(item, painter, exposed) {
         df <- as.data.frame(data)
         .brushed <- data$.brushed
+        # Check if in brush mode, and do brushing if so
         if (.brush) {
             if (!any(is.na(.bpos))) {
                 qlineWidth(painter) = brush(data)$size
@@ -191,7 +191,8 @@ qdensity <- function(x, data, main = NULL,
                 fill <- brush(data)$color
                 stroke <- brush(data)$color
                 radius <- .radius
-
+                message(brushx[1], " ", brushx[2], " ",brushx[3], " ",brushx[4], "\n")
+                
                 qdrawCircle(painter, x = brushx, y = brushy, r = radius,
                     fill = fill, stroke = stroke)
             }
@@ -299,6 +300,7 @@ qdensity <- function(x, data, main = NULL,
             }
             else {
                 .bstart <<- as.numeric(event$pos())
+                .bstart[2] <<- 0
                  ## on right click, we can resize the brush; left click: only move the
                  ## brush
                 if (event$button() == Qt$Qt$RightButton) {
@@ -332,18 +334,28 @@ qdensity <- function(x, data, main = NULL,
         if (!all(.bpos == .bstart) && (!.bmove)) {
             .brange <<- .bpos - .bstart
         }
+        .bpos[2] <<- 0
         .new.brushed <- rep(FALSE, n)
-        xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
-        yrange <- diff(dataRanges[c(3, 4)])
+        #xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
+        
+        #yrange <- diff(dataRanges[c(3, 4)]) * 0.01
+        xrange <- 0
+        yrange <- 0
+        message("hello ", length(.bpos), " ", .bpos[1], " ", .bpos[2], " ", length(.brange), " ", .brange[1], " ", .brange[2], " ", length(.bstart), " ", .bstart[1], " ", .bstart[2], "\n")
+        message(.bpos - .brange - c(xrange, yrange)," ", .bpos + .brange + c(xrange, yrange), "\n")
 #        yrange <- .radius/root$size$height() * diff(dataRanges[c(3, 4)])
         #
         rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
                                .bpos + .brange + c(xrange, yrange)),
                              2, byrow = TRUE))
+
         ##browser()
         ##rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2,
         ##             byrow = TRUE))
         hits <- layer$locate(rect) + 1
+
+        message(.bmove,"\n")
+        message("hits ",length(hits), " ", hits[1], " ", hits[2]," ", hits[3]," ", hits[4],"\n")
 
         #browser()
         .new.brushed[hits] <- TRUE
@@ -396,7 +408,6 @@ qdensity <- function(x, data, main = NULL,
             return()
 
         info <- data.frame(x[hits])
-        message("dim ", dim(info),"\n")
         names(info) <- xlab
         #browser()
 
@@ -523,7 +534,7 @@ qdensity <- function(x, data, main = NULL,
             {    # any other event
                 datalayer$invalidateIndex()
                 qupdate(datalayer)
-        qupdate(brushlayer)
+                qupdate(brushlayer)
             })
     }
 
