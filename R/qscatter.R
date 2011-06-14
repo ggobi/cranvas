@@ -170,29 +170,20 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     }
 
     brush_draw <- function(item, painter, exposed) {
-        df <- as.data.frame(data)
-        .brushed <- selected(data)
         if (.brush) {
             if (!any(is.na(.bpos))) {
                 qlineWidth(painter) = b$style$size
-                ##qdash(painter)=c(1,3,1,3)
                 qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                           .bpos[1] + .brange[1], .bpos[2] + .brange[2],
                           stroke = b$style$color)
             }
-
-            hdata <- subset(df, .brushed)
-
+            hdata <- subset(as.data.frame(data), selected(data))
             if (nrow(hdata) > 0) {
                 ## (re)draw brushed data points
                 brushx <- eval(arguments$x, hdata)
                 brushy <- eval(arguments$y, hdata)
-                fill <- b$color
-                stroke <- b$color
-                radius <- .radius
-
-                qdrawCircle(painter, x = brushx, y = brushy, r = radius,
-                            fill = fill, stroke = stroke)
+                qdrawCircle(painter, x = brushx, y = brushy, r = .radius,
+                            fill = b$color, stroke = b$color)
             }
         }
     }
