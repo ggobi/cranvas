@@ -455,11 +455,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     scene = qscene()
     layer.root = qlayer(scene)
 
-    ## title
-    title_layer = qlayer(layer.root, function(layer, painter) {
-        qdrawText(painter, meta$main, (meta$limits[1] + meta$limits[2])/2, 0, "center", "bottom")
-    }, limits = qrect(c(meta$limits[1], meta$limits[2]), c(0, 1)), row = 0, col = 1)
-
     layer.main = qlayer(paintFun = main_draw,
         mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
         mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
@@ -474,12 +469,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     layer.range = qlayer(paintFun = range_draw, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
+    layer.title = qmtext(data = meta, side = 3, text = main, sister = layer.main)
     layer.xaxis = qaxis(data = meta, side = 1, sister = layer.main)
     layer.yaxis = qaxis(data = meta, side = 2, sister = layer.main)
     layer.grid = qgrid(data = meta, sister = layer.main,
                        minor = ifelse(horizontal, 'y', 'x'))
     layer.legend = qlayer()  # legend layer (currently only acts as place holder)
 
+    layer.root[0, 1] = layer.title
     layer.root[2, 1] = layer.xaxis
     layer.root[1, 0] = layer.yaxis
     layer.root[1, 1] = layer.grid
