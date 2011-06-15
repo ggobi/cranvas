@@ -1,5 +1,4 @@
 Package: cranvas
-Depends: scales
 Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.6.0),
     stringr
 Maintainer: Yihui Xie <xie@yihui.name>
@@ -14,6 +13,7 @@ Description: Experiments with interactive graphics based on the
     coordinated multiple views, linked brushing, ...
 Version: 0.1-0
 URL: http://github.com/ggobi/cranvas
+Depends: scales
 Suggests: productplots, gWidgetsRGtk2
 Collate: 'axes.R' 'bin.R' 'brush.R' 'cranvas-package.R' 'data.R'
     'GUI-selector.R' 'interaction.R' 'link.R' 'options.R'

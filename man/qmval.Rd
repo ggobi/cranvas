@@ -11,10 +11,7 @@
 along with several row attributes}
 \item{...}{}
 }
-\examples{require(qtbase)
-require(qtpaint)
-require(plumbr)
-require(plyr)
+\examples{require(plyr)
 library(cranvas)
 
 # BRFSS data
@@ -28,9 +25,6 @@ data(tao)
 qtao <- qdata(tao)
 qmval(qtao)
 qscatter(qtao, longitude, latitude)}
-
-
-
 
 
 

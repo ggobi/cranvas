@@ -1,6 +1,3 @@
-require(qtbase)
-require(qtpaint)
-require(plumbr)
 require(plyr)
 library(cranvas)
 
@@ -13,5 +10,5 @@ qparallel(qbrfss, vars = 1:3)
 # TAO data
 data(tao)
 qtao <- qdata(tao)
-qmval(qtao) 
+qmval(qtao)
 qscatter(qtao, longitude, latitude)
