@@ -9,15 +9,15 @@ paste_formula <- function(form) {
     # form has pieces wt, marg and cond
     # output is character - needs to be converted to formula afterwards
     wtStr <- ""
-    if (length(form$wt) > 0) 
+    if (length(form$wt) > 0)
         wtStr <- form$wt[1]
     margStr <- "1"
-    if (length(form$marg) > 0) 
+    if (length(form$marg) > 0)
         margStr <- paste(form$marg, collapse = "+")
     condStr <- ""
-    if (length(form$cond) > 0) 
+    if (length(form$cond) > 0)
         condStr <- paste("|", paste(form$cond, collapse = "+"))
-    
+
     formstring <- paste(wtStr, "~", margStr, condStr)
     return(formstring)
 }
@@ -25,22 +25,22 @@ paste_formula <- function(form) {
 extract_formula <- function(formula) {
     form <- parse_product_formula(formula)
     form$marg <- setdiff(form$marg, c(".brushed", ".color"))
-    
+
     return(paste_formula(form))
 }
 
 
 addDivider <- function(divider, level = length(divider)) {
     # adds a spine divider orthogonal to the previous direction
-    if (is.function(divider)) 
+    if (is.function(divider))
         return(divider)
-    
-    if (level > length(divider)) 
+
+    if (level > length(divider))
         level <- length(divider)
     dvd <- rev(rev(divider)[1:level])
-    if (dvd[1] %in% c("hspine", "hbar")) 
+    if (dvd[1] %in% c("hspine", "hbar"))
         dividerhil <- c("vspine", dvd)
-    else if (dvd[1] %in% c("vspine", "vbar")) 
+    else if (dvd[1] %in% c("vspine", "vbar"))
         dividerhil <- c("hspine", dvd)
     return(dividerhil)
 }
@@ -55,7 +55,7 @@ qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max 
 ##' Mosaic plot.
 ##' Create a mosaicplot using a formula (as described in prodplot)
 ##'
-##' up arrow - takes out top var, 
+##' up arrow - takes out top var,
 ##' down arrow - adds next variable (if available)
 ##' r toggles top variable between horizontal and vertical direction
 ##' b/s changes top variable between (b)archarts and (s)pine plots
@@ -75,41 +75,37 @@ qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max 
 ##' @author Heike Hofmann
 ##' @export
 ##' @example cranvas/inst/examples/mosaic-ex.R
-qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, 
+qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE,
     na.rm = FALSE, subset = NULL,  main = NULL, cache= T, ...) {
-    ## check if an attribute exist
-    has_attr = function(attr) {
-        attr %in% names(data)
-    }
-    
+
     ## parameters for the updating events
     .recalc <- FALSE
     .recalchiliting <- FALSE
-    
-    
+
+
     .formula <- formula
     form <- parse_product_formula(.formula)
     .activevars <- c(form$marg, form$cond)
     .ncond <- length(form$cond)
     .inactivevars <- NULL
-    
-    if (is.function(divider)) 
+
+    if (is.function(divider))
         divider <- divider(length(.activevars))
     .divider <- divider
-    
+
     recalchiliting <- function() {
         ## depends on .formula and data
-        
+
         ## hilite setup
         #print('recalchiliting')
-        
+
         form <- parse_product_formula(.formula)
         form$marg <- c(".brushed", setdiff(form$marg, ".color"))
         hformula <- as.formula(paste_formula(form))
-        
+
         hdivider <- addDivider(tail(divider, length(.activevars)))
         #print(hdivider)
-        
+
         #print('hformula')
         #print(hformula)
         #print(summary(data$.brushed))
@@ -122,7 +118,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         .recalchiliting <<- FALSE
         ##print(summary(helperdata))
     }
-    
+
     recalc <- function() {
         # depends on .formula
         # sets xdata and bkdata
@@ -130,7 +126,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         #   before color)
         # all.data contains all steps of hierarchical build
         #print('recalc')
-        
+
         .divider <- tail(divider, length(.activevars))
         ## color setup
 
@@ -138,66 +134,66 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 				# move .color variable to the front, whereever it was before
 				# it probably should not be part of .formula - that's the plan at least
 				form$marg <- c(".color", setdiff(form$marg, ".color"))
-				
+
 				.formula <- as.formula(paste_formula(form))
 				.divider <- addDivider(divider)
-        
+
         ## calculate all bin sizes & positions
         df <- data.frame(data)
         all.data <<- qprodcalc(df, .formula, .divider, cascade, scale_max, na.rm = na.rm)
         ##print(summary(all.data))
         # keep only highest level
-        if (is.null(all.data$.brushed)) 
+        if (is.null(all.data$.brushed))
             all.data$.brushed <<- FALSE
-        
+
         xdata <<- subset(all.data, level == max(all.data$level), drop = FALSE)
         bkdata <<- subset(all.data, level == max(all.data$level) - 1, drop = FALSE)
 
-        
+
         .recalc <<- FALSE
         recalchiliting()
     }
-    
+
     ## initialize cross-tabulated data
     all.data <- NULL
     xdata <- NULL
     bkdata <- NULL
-    
+
     ## initialize hiliting data hdata
     hdata <- NULL
     # recalc calls recalchiliting
     recalc()
-    
+
     top <- xdata$t
     bottom <- xdata$b
     left <- xdata$l
     right <- xdata$r
-    
-    if (is.null(main)) 
+
+    if (is.null(main))
         .df.title <- TRUE
     xlab <- find_x_label(xdata)
     ylab <- find_y_label(xdata)
-    dataRanges <- c(make_data_ranges(c(min(left, na.rm = T), max(right, na.rm = T))), 
-        make_data_ranges(c(min(bottom, na.rm = T), max(top, na.rm = T))))
+    dataRanges <- c(extend_ranges(c(min(left, na.rm = T), max(right, na.rm = T))),
+        extend_ranges(c(min(bottom, na.rm = T), max(top, na.rm = T))))
     # space in window around plot (margins in base R)
     # this space depends on the labels needed on the left
     # find out about these first:
-    
+
     row <- find_row_level(xdata)
     ylabels <- NULL
-    if (!is.na(row)) 
+    if (!is.na(row))
         ylabels <- row_labels(xdata[xdata$level == row, ])
-    
-    
+
+
     if (.df.title) {
         main <- extract_formula(.formula)
         #  print(main)
     }
-    windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = !is.null(ylabels), 
+    windowRanges <- make_window_ranges(dataRanges, xlab, ylab, ytickmarks = !is.null(ylabels),
         main = main)
-    
+
     lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-    
+
     coords <- function(item, painter, exposed) {
         sx <- scale_x_product(xdata)
 				if (max(sx$breaks) <= 1) {
@@ -207,100 +203,100 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 				if (max(sy$breaks) <= 1) {
 					sy$breaks <- 100*sy$breaks	# needed because of scaling in qprodcalc
 				}
-        
+
         # grey background with grid lines
-        draw_grid_with_positions_fun(painter, dataRanges, sx$breaks, sy$breaks,  minor.horiPos=NULL, 
+        draw_grid_with_positions_fun(painter, dataRanges, sx$breaks, sy$breaks,  minor.horiPos=NULL,
             sy$minor_breaks) # no minor axes on x
-        
+
         # put labels, if appropriate
         col <- find_col_level(xdata)
         if (!is.na(col)) {
             labels <- col_labels(xdata[xdata$level == col, ])
-            
-            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = labels$label, 
+
+            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = labels$label,
                 labelHoriPos = labels$pos, name = xlab)
         }
         else {
-            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = rep("", 
+            draw_x_axes_with_labels_fun(painter, dataRanges, axisLabel = rep("",
                 length(sx$breaks)), labelHoriPos = sx$breaks, name = xlab)
         }
-        
+
         if (!is.na(row)) {
             labels <- row_labels(xdata[xdata$level == row, ])
-            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = labels$label, 
+            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = labels$label,
                 labelVertPos = labels$pos, name = ylab)
         }
         else {
-            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = rep("", 
+            draw_y_axes_with_labels_fun(painter, dataRanges, axisLabel = rep("",
                 length(sy$breaks)), labelVertPos = sy$breaks, name = ylab)
         }
     }
-    
+
     mdraw <- function(item, painter, exposed) {
         # extract data at level .level and draw
         #print('mdraw: full mosaic drawn')
         ##print(summary(xdata))
-        if (.recalc) 
+        if (.recalc)
             recalc()
-        
-        
+
+
         top <- xdata$t
         bottom <- xdata$b
         left <- xdata$l
         right <- xdata$r
         # use a lighter shade of any color specified for points
         color <- as.character(xdata$.color)
-                
+
         qdrawRect(painter, left, bottom, right, top, fill = lighter(color, 1.1))
-        
+
         if (.df.title) {
             add_title_fun(painter, dataRanges, title = extract_formula(.formula))
         }
     }
-    
+
     # Brushing -----------------------------------------------------------------
     .startBrush <- NULL
     .endBrush <- NULL
     .brush <- FALSE
-    
+
     drawBrush <- function(item, painter, exposed) {
         left = min(.startBrush[1], .endBrush[1])
         right = max(.startBrush[1], .endBrush[1])
         top = max(.startBrush[2], .endBrush[2])
         bottom = min(.startBrush[2], .endBrush[2])
-        
-        qdrawRect(painter, left, bottom, right, top, fill = rgb(0, 0, 0, alpha = 0.3), 
+
+        qdrawRect(painter, left, bottom, right, top, fill = rgb(0, 0, 0, alpha = 0.3),
             stroke = "black")
     }
-    
-    
+
+
     brushing_draw <- function(item, painter, exposed, ...) {
-        if (.recalchiliting) 
+        if (.recalchiliting)
             recalchiliting()
-        
+
         if (.brush) {
             #print(names(xdata))
             hdata <<- subset(bkdata, .brushed == TRUE)
             print(names(bkdata))
-            
+
         }
         if (nrow(hdata) > 0) {
             top <- hdata$t
             bottom <- hdata$b
             left <- hdata$l
             right <- hdata$r
-            
+
             #  .brush.attr = attr(odata, '.brush.attr')
-            
+
             brushcolor <- brush(data)$color
             qdrawRect(painter, left, bottom, right, top, fill = brushcolor)
         }
-        
+
         if (!is.null(.endBrush)) {
             drawBrush(item, painter, exposed)
         }
     }
-    
+
     brushing_mouse_press <- function(item, event, ...) {
         #print('brushing_mouse_press')
         .brush <<- TRUE
@@ -308,62 +304,62 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
             .startBrush <<- as.numeric(event$pos())
             .endBrush <<- as.numeric(event$pos())
         }
-        
+
         setHiliting()
         qupdate(brushing_layer)
     }
-    
+
     brushing_mouse_move <- function(item, event, ...) {
         #print('brushing_mouse_move')
         .endBrush <<- as.numeric(event$pos())
-        
+
         setHiliting()
         qupdate(brushing_layer)
     }
-    
+
     brushing_mouse_release <- function(item, event, ...) {
         #print('brushing_mouse_release')
         .endBrush <<- as.numeric(event$pos())
         setHiliting()
         qupdate(brushing_layer)
-        
-        
+
+
         .brush <<- FALSE
-        
-        
+
+
         .startBrush <<- NULL
         .endBrush <<- NULL
-        
+
         setSelected()
     }
-    
+
     setHiliting <- function() {
         left = min(.startBrush[1], .endBrush[1])
         right = max(.startBrush[1], .endBrush[1])
         top = max(.startBrush[2], .endBrush[2])
         bottom = min(.startBrush[2], .endBrush[2])
-        
+
         # use .level - .colored to select all bins, independently of color
         # if colored bins should be available for highlighting separately use level ==
         #   .level
-        
-        bkdata$.brushed <<- (bkdata$l <= right) & (bkdata$r >= left) & (bkdata$b <= 
+
+        bkdata$.brushed <<- (bkdata$l <= right) & (bkdata$r >= left) & (bkdata$b <=
             top) & (bkdata$t >= bottom)
     }
-    
+
     setSelected <- function() {
         # propagate highlighting to the data set and other plots
-        
+
         print(names(bkdata))
         print(.activevars)
-        hdata <- subset(bkdata, (.brushed == TRUE), drop = FALSE)[, .activevars, 
+        hdata <- subset(bkdata, (.brushed == TRUE), drop = FALSE)[, .activevars,
             drop = FALSE]
-        
+
         if (nrow(hdata) > 0) {
             hdata$ID <- 1:nrow(hdata)
             res.melt <- melt(hdata, id.var = "ID")
             res.cond <- adply(res.melt, 1, function(x) {
-                if (is.na(x$value)) 
+                if (is.na(x$value))
                   cstr <- paste("is.na(", x$variable, ")", sep = "")
                 else cstr <- paste("(", x$variable, "=='", x$value, "')", sep = "")
                 return(cond = cstr)
@@ -371,32 +367,32 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
             res.cond <- res.cond[, -3]
             names(res.cond)[3] <- "value"
             cast.res <- cast(res.cond, ID ~ ., function(x) return(paste(x, collapse = " & ")))
-            
+
             cond1 <- paste("(", cast.res[, 2], ")", sep = "", collapse = " | ")
             idx <- with(data.frame(data), which(eval(parse(text = cond1))))
-            
+
             .brushed <- rep(FALSE, nrow(data))
-            if (length(idx)) 
+            if (length(idx))
                 .brushed[idx] <- TRUE
-            
+
             data$.brushed <- .brushed
         }
         else {
             data$.brushed <- FALSE
         }
     }
-    
+
     # Key board events ---------------------------------------------------------
-    
+
     keyPressFun <- function(item, event, ...) {
         #print(event$key())
         key <- event$key()
-        
+
         datachanged <- FALSE
         formulachanged <- FALSE
         form <- parse_product_formula(.formula)
         form$marg <- setdiff(form$marg, c(".color", ".brushed"))
-        
+
         if (key == Qt$Qt$Key_Up) {
             # arrow up
             # remove marginal variables first
@@ -426,7 +422,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
                 }
                 .activevars <<- c(.activevars, .inactivevars[1])
                 .inactivevars <<- .inactivevars[-1]
-                
+
                 #       .level <<- .level + 1
             }
             else return()
@@ -455,17 +451,17 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         else if (key == Qt$Qt$Key_R) {
             # 'r' or 'R' for 'rotate'
             lindx <- length(divider) - length(.activevars) + 1
-            
-            if (divider[lindx] %in% c("hbar", "vbar")) 
+
+            if (divider[lindx] %in% c("hbar", "vbar"))
                 divider[lindx] <<- setdiff(c("hbar", "vbar"), divider[lindx])
-            if (divider[lindx] %in% c("hspine", "vspine")) 
+            if (divider[lindx] %in% c("hspine", "vspine"))
                 divider[lindx] <<- setdiff(c("hspine", "vspine"), divider[lindx])
         }
         else if (key == Qt$Qt$Key_U) {
             # 'u' or 'U' for 'unconditioning'
             if (length(form$cond) > 0) {
                 # take first conditioning variable and use as last marginal variable
-                
+
                 form$marg <- c(form$marg, form$cond[1])
                 form$cond <- form$cond[-1]
             }
@@ -484,13 +480,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         else if (key == Qt$Qt$Key_S) {
             # 's' or 'S' for 'spine'
             lindx <- length(divider) - length(.activevars) + 1
-            
+
             divider[lindx] <<- gsub("bar", "spine", divider[lindx])
         }
         else if (key == Qt$Qt$Key_B) {
             # 'b' or 'B' for 'bar'
             lindx <- length(divider) - length(.activevars) + 1
-            
+
             divider[lindx] <<- gsub("spine", "bar", divider[lindx])
         }
         #    if (.colored) {
@@ -503,36 +499,36 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         qupdate(datalayer)
         qupdate(brushing_layer)
     }
-    
-    
+
+
     # Display category information on hover (query) ----------------------------
     .queryPos <- NULL
-    
+
     query_draw <- function(item, painter, exposed, ...) {
         # Don't draw when brushing
-        if (.brush) 
+        if (.brush)
             return()
-        if (is.null(.queryPos)) 
+        if (is.null(.queryPos))
             return()
-        
+
         xpos <- x <- .queryPos[1]
         ypos <- y <- .queryPos[2]
-        
+
         info <- subset(xdata, (y <= t) & (y >= b) & (x <= r) & (x >= l))
         #      (level == .level))
-        
+
         # Nothing under mouse
-        if (nrow(info) == 0) 
+        if (nrow(info) == 0)
             return()
-        
+
         # Work out label text
-        idx <- setdiff(names(xdata), c("l", "t", "r", "b", ".wt", "level", ".brushed", 
+        idx <- setdiff(names(xdata), c("l", "t", "r", "b", ".wt", "level", ".brushed",
         	".color", .inactivevars))
         infodata <- as.character(unlist(info[1, idx]))
         infostring <- paste(idx, infodata, collapse = "\n", sep = ":  ")
-#browser()        
+#browser()
         infostring <- paste("\n", infostring)
-				if (info[1,".wt"] > 1) 
+				if (info[1,".wt"] > 1)
 					infostring <- paste(infostring, sprintf("\ncount:  %s", info[1,".wt"]))
 				else {
 					infostring <- paste(infostring, sprintf("\nPct:  %s%%", round(100*info[1,".wt"], 1)))
@@ -541,44 +537,44 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         #    qdrawText(painter, infostring, x, y, valign='top', halign='left')
         bgwidth = qstrWidth(painter, infostring)
         bgheight = qstrHeight(painter, infostring)
-        
+
         ## adjust drawing directions when close to the boundary
         hflag = windowRanges[2] - xpos > bgwidth
         vflag = ypos - windowRanges[3] > bgheight
-        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos + 
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1, 
+        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos +
+            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1,
             1, 1, 0.95))
-        
+
         qstrokeColor(painter) = brush(data)$label.color
-        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left", 
+        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left",
             "right"), valign = ifelse(vflag, "top", "bottom"))
-        
+
     }
-    
+
     query_hover <- function(item, event, ...) {
-        if (.brush) 
+        if (.brush)
             return()
-        
+
         .queryPos <<- as.numeric(event$pos())
         qupdate(querylayer)
     }
-    
+
     query_hover_leave <- function(item, event, ...) {
         .queryPos <<- NULL
         qupdate(querylayer)
     }
-    
-    
+
+
     scene = qscene()
     bglayer = qlayer(scene, coords, limits = lims,  cache = cache)
     datalayer = qlayer(scene, mdraw, limits = lims, cache = cache)
-    brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press, 
-        mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release, 
+    brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press,
+        mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
         keyPressFun = keyPressFun, limits = lims,  cache = cache)
-    querylayer = qlayer(scene, query_draw, limits = lims,  hoverMoveFun = query_hover, 
+    querylayer = qlayer(scene, query_draw, limits = lims,  hoverMoveFun = query_hover,
         hoverLeaveFun = query_hover_leave, cache = cache)
-    
-    
+
+
     ## update the brush layer in case of any modifications to the mutaframe
     add_listener(data, function(i, j) {
         switch(j, .brushed = {
@@ -596,13 +592,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
             qupdate(brushing_layer)
         })
     })
-    
-    
+
+
     ## update the brush layer if brush attributes change
     # add_listener(.brush.attr, function(i, j) {
     #   qupdate(brush_layer)
     # })
-    
+
     qplotView(scene = scene)
 }
- 
+

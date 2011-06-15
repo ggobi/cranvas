@@ -28,24 +28,6 @@ find_y_label <- function(df) {
 }
 
 
-#' makes the data ranges
-#' makes the data ranges with a small buffer
-#'
-#' @param dataColumn vector containing numeric elements
-#' @author Barret Schloerke \email{bigbear@@iastate.edu}
-#' @keywords hplot
-#' @examples
-#'  make_data_ranges(mtcars$disp)
-make_data_ranges <- function(dataColumn) {
-    maxdata <- max(dataColumn, na.rm = T)
-    mindata <- min(dataColumn, na.rm = T)
-    range <- maxdata - mindata
-
-    # add a five percent space around all points
-    c(mindata - 0.05 * range, maxdata + 0.05 * range)
-}
-
-
 #' make the window ranges
 #' make the window ranges
 #'

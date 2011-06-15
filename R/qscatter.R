@@ -51,8 +51,8 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     values_out_of_plotting_range <- FALSE
 
     ## parameters for all layers
-    dataRanges <- c(make_data_ranges(xlim),
-                    make_data_ranges(ylim))
+    dataRanges <- c(extend_ranges(xlim),
+                    extend_ranges(ylim))
 
     lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
 
@@ -109,7 +109,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
 
 
     xaxis <- function(layer, painter) {
-        sx <- .axis.loc(dataRanges[1:2])
+        sx <- axis_loc(dataRanges[1:2])
         xlabels <- rep("", length(sx))
 
         if (labeled) xlabels <- sx
@@ -120,7 +120,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     }
 
     yaxis <- function(layer, painter) {
-        sy <- .axis.loc(dataRanges[3:4])
+        sy <- axis_loc(dataRanges[3:4])
         ylabels <- rep("", length(sy))
 
         if (labeled) ylabels <- sy
@@ -130,8 +130,8 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     }
 
     grid <- function(layer, painter) {
-        sx <- .axis.loc(dataRanges[1:2])
-        sy <- .axis.loc(dataRanges[3:4])
+        sx <- axis_loc(dataRanges[1:2])
+        sy <- axis_loc(dataRanges[3:4])
 
                                         # grey background with grid lines
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)
@@ -199,30 +199,14 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
         ## z toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
         key <- event$key()
 
-        if (key == Qt$Qt$Key_Up) {
-            ## arrow up
-            .radius <<- .radius + 1
+        if (length(i <- which(key == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
+            ## arrow up/down
+            .radius <<- max(0, .radius + c(1, -1)[i])
             qupdate(datalayer)
             qupdate(brushlayer)
-        }
-        else if (key == Qt$Qt$Key_Down & .radius > 0) {
-            ## arrow down
-            .radius <<- .radius - 1
-            qupdate(datalayer)
-            qupdate(datalayer)
-        }
-        else if (key == Qt$Qt$Key_Right & .alpha < 1) {
-            ## arrow right
-            ## increase alpha blending
-            .alpha <<- min(1.1 * .alpha,1)
-            ##  datalayer$setOpacity(.alpha)
-            qupdate(datalayer)
-        }
-        else if (key == Qt$Qt$Key_Left & .alpha > 1/n) {
-            ## arrow left
-            ## decrease alpha blending
-            .alpha <<- max(0.9 * .alpha, 100/nrow(data))
-            ##          print(.alpha*nrow(data))
+        } else if (length(i <- which(key == c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)))) {
+            ## arrow right/left: alpha blending
+            .alpha <<- max(0, min(1, c(0.01, -0.01)[i] + .alpha))
             ##  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         } else if (key == Qt$Qt$Key_Z) {
@@ -234,7 +218,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
         } else if (key == Qt$Qt$Key_R) {
             ## reset to original boundaries
 
-            updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))
+            updatelimits(extend_ranges(xlim), extend_ranges(ylim))
         }
     }
     handle_zoom <- function() {
@@ -245,7 +229,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
             updatelimits(c(min(.zstart[1],.zstop[1]), max(.zstart[1],.zstop[1])),
                          c(min(.zstart[2],.zstop[2]), max(.zstart[2],.zstop[2])))
         else # reset zoom to default
-            updatelimits(make_data_ranges(xlim), make_data_ranges(ylim))
+            updatelimits(extend_ranges(xlim), extend_ranges(ylim))
 
         .zstart <<- .zstop <<- NULL
     }

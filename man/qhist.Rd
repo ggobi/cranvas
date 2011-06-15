@@ -2,19 +2,18 @@
 \alias{qhist}
 \title{Create a hist plot..}
 \usage{qhist(x, data, splitByCol = -1, horizontal = FALSE, 
-    position = "none", main, name, ash = FALSE, start = min(data[[x]]), 
-    nbins = round(sqrt(nrow(data)), 0), binwidth, bin_algo_str, 
-    xlim, ylim, cache = TRUE, ...)
+    position = "none", main, name, ash = FALSE, start, nbins = round(sqrt(nrow(data)), 
+        0), binwidth, bin_algo_str, xlim, ylim, cache = TRUE, 
+    ...)
 
 }
-
 
 
 \description{Create a hist plot
 Create a hist plot from 1-D numeric data}
 \details{keystroke Interactions:
-right/left arrow shift anchors; 
-up/down arrow increase/decrease bin size; 
+right/left arrow shift anchors;
+up/down arrow increase/decrease bin size;
 M re-adjusts the maximum on the y-axis to 10\% above the bin count}
 \author{Barret Schloerke, Di Cook, Heike Hofmann}
 \keyword{hplot}
@@ -37,21 +36,21 @@ qtennis <- qdata(tennis)
 #qtennis <- qdata(tennis,
 #   fill=dscale(factor(tennis$Matches), hue_pal()))
 
-print(qhist("First.Serve.Pct", qtennis, horizontal = FALSE))
-print(qhist("Serve.Speed", qtennis, horizontal = FALSE))
+print(qhist(First.Serve.Pct, qtennis, horizontal = FALSE))
+print(qhist(Serve.Speed, qtennis, horizontal = FALSE))
 
-print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
     horizontal = FALSE))
 
 qtennis <- qdata(tennis, fill = dscale(factor(tennis$Matches), 
     hue_pal()))
 
 # Position argument doesn't seem to work.
-print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
     horizontal = FALSE, postion = "dodge"))
-print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
     horizontal = FALSE, postion = "relative"))
-print(qhist("First.Serve.Pct", qtennis, splitByCol = "Matches", 
+print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
     horizontal = FALSE, postion = "identity"))}
 
 

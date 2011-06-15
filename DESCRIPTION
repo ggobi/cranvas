@@ -3,7 +3,7 @@ Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.6.0),
     stringr
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
-Title: Interactive plots on a layered canvas
+Title: Interactive statistical graphics based on Qt
 Type: Package
 LazyLoad: yes
 Author: Hadley Wickham, Michael Lawrence, Heike Hofmann, Di Cook,

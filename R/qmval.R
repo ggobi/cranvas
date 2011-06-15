@@ -1,7 +1,4 @@
-require(qtbase)
-require(qtpaint)
-require(plumbr)
-require(plyr)
+## please use source('../load.R') and avoid writing the require() statements here
 
 myvarsummary <- function(x) {
     if (is.factor(x) || is.character(x))
@@ -46,8 +43,6 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     ## check if an attribute exist
     #  browser()
     # if (!is.mutaframe(data)) data <- qdata(data)
-    if (!(".brushed" %in% names(data)))
-        data$.brushed <- FALSE
 
     #  ## parameters for the brush
     #  .brush.attr = attr(data, '.brush.attr')
@@ -87,7 +82,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
 
     p <- length(vars)
 
-    dataRanges <- c(make_data_ranges(c(0, 1)), make_data_ranges(c(0, 1)))
+    dataRanges <- c(extend_ranges(c(0, 1)), extend_ranges(c(0, 1)))
 
     # space in window around plot (margins in base R)
     # this space depends on the labels needed on the left
