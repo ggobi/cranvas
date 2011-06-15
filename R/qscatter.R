@@ -206,7 +206,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
             qupdate(brushlayer)
         } else if (length(i <- which(key == c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)))) {
             ## arrow right/left: alpha blending
-            .alpha <<- max(0, min(1, c(0.01, -0.01)[i] + .alpha))
+            .alpha <<- max(0.01, min(1, c(1.1, 0.9)[i] * .alpha))
             ##  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         } else if (key == Qt$Qt$Key_Z) {
