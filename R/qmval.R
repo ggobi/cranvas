@@ -319,22 +319,38 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     }
 
     scene = qscene()
-    bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
-    datalayer = qlayer(scene, draw, keyPressFun = keyPressFun, limits = lims, clip = FALSE)
-    brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press,
+    rootlayer = qlayer(scene)
+    datalayer = qlayer(paintFun = draw, keyPressFun = keyPressFun, limits = lims)
     bglayer = qgrid(xat = axis_loc(dataRanges[1:2]),
                     yat = seq(0.5/p, 1, 1/p),
                     xlim = dataRanges[1:2], ylim = dataRanges[3:4], minor = 'x',
                     sister = datalayer)
     xaxislayer = qaxis(side = 1, at = axis_loc(c(0, 1)), sister = datalayer)
+    brushing_layer = qlayer(paintFun = brushing_draw, mousePressFun = brushing_mouse_press,
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
-        limits = lims, clip = FALSE)
-    querylayer = qlayer(scene, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
-        limits = lims, clip = FALSE)
-    legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
-
-
+        limits = lims)
+    querylayer = qlayer(paintFun = query_draw, hoverMoveFun = query_hover,
+                        hoverLeaveFun = query_hover_leave, limits = lims)
+    legendlayer = qlayer(paintFun = legend_draw, limits = lims)
     titlelayer = qmtext(side = 3, text = main, sister = datalayer)
+
+    rootlayer[1, 1] = bglayer
+    rootlayer[1, 1] = datalayer
+    rootlayer[1, 1] = brushing_layer
+    rootlayer[1, 1] = querylayer
+    rootlayer[1, 2] = legendlayer
+    rootlayer[0, 1] = titlelayer
+    rootlayer[2, 1] = xaxislayer
+    rootlayer[1, 0] = qlayer()
+
+    layout = rootlayer$gridLayout()
+    layout$setRowPreferredHeight(0, 30)
+    layout$setRowPreferredHeight(2, 15)
+    layout$setRowStretchFactor(0, 0)
+    layout$setRowStretchFactor(2, 0)
+    layout$setColumnPreferredWidth(0, 10)
+    layout$setColumnMaximumWidth(2, 10)
+    layout$setColumnStretchFactor(0, 0)
 
     ## update the brush layer in case of any modifications to the mutaframe
     add_listener(data, function(i, j) {
