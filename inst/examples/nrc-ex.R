@@ -22,8 +22,8 @@ qnrc$.color = "red"
 
 record_selector(qnrc, "Institution.Name", "RGtk2")
 
-qscatter(data = qnrc, x = R.Rankings.95th.Percentile, y = R.Rankings.5th.Percentile)
-qscatter(qnrc, S.Rankings.95th.Percentile, S.Rankings.5th.Percentile)
+qscatter(x = R.Rankings.95th.Percentile, y = R.Rankings.5th.Percentile, data = qnrc)
+qscatter(S.Rankings.95th.Percentile, S.Rankings.5th.Percentile, qnrc)
 
 median.centering <- function(x) {
     x <- (x - min(x, na.rm = T))/(max(x, na.rm = T) - min(x, na.rm = T))

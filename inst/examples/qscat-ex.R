@@ -7,10 +7,10 @@ colnames(nrcstat)[26]<-"Neg.Median.Time.to.Degree"
 
 qnrc = qdata(nrcstat)
 
-print(qscatter(qnrc, R.Rankings.5th.Percentile, R.Rankings.95th.Percentile))
-print(qscatter(qnrc, S.Rankings.5th.Percentile, S.Rankings.95th.Percentile))
+print(qscatter(R.Rankings.5th.Percentile, R.Rankings.95th.Percentile, qnrc))
+print(qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile, qnrc))
 
 data(pollen)
 qpollen <- qdata(pollen)
-qscatter(qpollen, RIDGE, CRACK)
+qscatter(RIDGE, CRACK, qpollen)
 # try zooming into the center

@@ -1,4 +1,3 @@
-
 #' Draw a scatterplot
 #'
 #' arrow up/down: in-/de-crease size of points
@@ -20,7 +19,7 @@
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qscat-ex.R
 
-qscatter <- function(data, x, y, asp = NULL, main = NULL,
+qscatter <- function(x, y, data, asp = NULL, main = NULL,
                      labeled = TRUE, size = 2, alpha = 1, xlim=NULL,
                      ylim=NULL, xlab=NULL, ylab=NULL, cache = T, ...)
 {

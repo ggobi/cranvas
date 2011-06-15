@@ -9,7 +9,7 @@ library(cranvas)
 data(nasa)
 qnasa <- qdata(nasa)
 
-qscatter(data = qnasa, Long, Lat)
-qscatter(data = qnasa, TimeIndx, tsa_tovs)
+qscatter(Long, Lat, data = qnasa)
+qscatter(TimeIndx, tsa_tovs, data = qnasa)
 qparallel(data = qnasa)
  

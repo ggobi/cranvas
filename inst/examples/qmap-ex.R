@@ -28,7 +28,7 @@ link_var(qcrimes) = "State"
 link_var(qstates) = "region"
 
 link(qcrimes, qstates)
-qscatter(qcrimes, Population, Robbery)
+qscatter(Population, Robbery, qcrimes)
 
 
 
