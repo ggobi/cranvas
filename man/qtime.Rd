@@ -2,10 +2,9 @@
 \alias{qtime}
 \title{Draw a time plot..}
 \usage{qtime(data, time, y, period, wrap = TRUE, size = 2, 
-    alpha = 1, aspect.ratio, ...)
+    alpha = 1, asp, ...)
 
 }
-
 \description{Draw a time plot}
 \arguments{\item{data}{Mutaframe data to use}
 \item{time}{The variable indicating time, which is displayed on
@@ -19,7 +18,7 @@ the groups or overlap them together to watch the patterns.}
 hitting right arrow or left arrow. Default to be TRUE.}
 \item{size}{Point size, default to be 2.}
 \item{alpha}{Transparency level, 1=completely opaque, default to be 1.}
-\item{aspect.ratio}{Ratio between width and height of the plot.}
+\item{asp}{Ratio between width and height of the plot.}
 }
 \examples{require(cranvas)
 

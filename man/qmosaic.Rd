@@ -9,7 +9,7 @@
 
 \description{
 Create a mosaicplot using a formula (as described in prodplot)}
-\details{up arrow - takes out top var, 
+\details{up arrow - takes out top var,
 down arrow - adds next variable (if available)
 r toggles top variable between horizontal and vertical direction
 b/s changes top variable between (b)archarts and (s)pine plots
