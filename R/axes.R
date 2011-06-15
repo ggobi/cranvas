@@ -92,7 +92,7 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
     qlayer(parent, paintFun = draw_axis, ...)
 }
 
-##' Calculate the pretty locations of axis tick marks.
+##' Calculate pretty locations of axis tick marks.
 ##' The pretty locations are calculated by the function
 ##' \code{\link[base]{pretty}}, but the locations that exceed the
 ##' range of the data are removed. A special case is the factor: the
