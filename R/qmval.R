@@ -92,10 +92,8 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     if (missing(main)) {
         main <- paste("Missing Value Plot of", dataname)
     }
-    windowRanges <- make_window_ranges(dataRanges, "", "", ytickmarks = FALSE, main = main)
 
-    lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-
+    lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
 
     draw <- function(item, painter, exposed) {
         ## basic rectangle: each with width 0.6*1/p
@@ -294,8 +292,8 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
         bgheight = qstrHeight(painter, infostring)
 
         ## adjust drawing directions when close to the boundary
-        hflag = windowRanges[2] - xpos > bgwidth
-        vflag = ypos - windowRanges[3] > bgheight
+        hflag = dataRanges[2] - xpos > bgwidth
+        vflag = ypos - dataRanges[3] > bgheight
         qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos +
             ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.5), fill = rgb(1,
             1, 1, 0.5))
