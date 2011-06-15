@@ -1,4 +1,5 @@
 Package: cranvas
+Depends: scales
 Imports: qtbase, qtpaint, reshape, plyr, plumbr (>= 0.6.0),
     stringr
 Maintainer: Yihui Xie <xie@yihui.name>
