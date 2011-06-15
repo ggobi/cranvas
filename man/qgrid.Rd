@@ -10,6 +10,7 @@ A layer with gray background and white grid lines corresponding to
 axis tick marks. Minor grid lines are optional and thinner.}
 \value{a layer object}
 \author{Yihui Xie <\url{http://yihui.name}>}
+\seealso{\code{\link[graphics]{grid}}, \code{\link[qtpaint]{qlayer}}}
 \arguments{\item{parent}{the parent layer (default to be \code{NULL}, which
 means creating an independent layer with no parents, but it can be
 added to a parent layer using the approach \code{parent[i, j] <-

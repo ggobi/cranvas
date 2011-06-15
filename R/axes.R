@@ -23,6 +23,7 @@
 ##' @return a layer object
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
+##' @seealso \code{\link[graphics]{axis}}, \code{\link[qtpaint]{qlayer}}
 ##' @note The vertical range of the x-axis is [0, 1], and the
 ##' horizontal limit of y-axis is [0, 1].
 ##' @examples
@@ -142,6 +143,7 @@ axis_loc = function(x) {
 ##' @return a layer object
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
+##' @seealso \code{\link[graphics]{grid}}, \code{\link[qtpaint]{qlayer}}
 ##' @examples
 ##' library(cranvas)
 ##' library(qtbase)

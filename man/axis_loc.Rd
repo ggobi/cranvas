@@ -1,6 +1,6 @@
 \name{axis_loc}
 \alias{axis_loc}
-\title{Calculate the pretty locations of axis tick marks}
+\title{Calculate pretty locations of axis tick marks}
 \usage{axis_loc(x)
 
 }
