@@ -199,30 +199,14 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
         ## z toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
         key <- event$key()
 
-        if (key == Qt$Qt$Key_Up) {
-            ## arrow up
-            .radius <<- .radius + 1
+        if (length(i <- which(key == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
+            ## arrow up/down
+            .radius <<- max(0, .radius + c(1, -1)[i])
             qupdate(datalayer)
             qupdate(brushlayer)
-        }
-        else if (key == Qt$Qt$Key_Down & .radius > 0) {
-            ## arrow down
-            .radius <<- .radius - 1
-            qupdate(datalayer)
-            qupdate(datalayer)
-        }
-        else if (key == Qt$Qt$Key_Right & .alpha < 1) {
-            ## arrow right
-            ## increase alpha blending
-            .alpha <<- min(1.1 * .alpha,1)
-            ##  datalayer$setOpacity(.alpha)
-            qupdate(datalayer)
-        }
-        else if (key == Qt$Qt$Key_Left & .alpha > 1/n) {
-            ## arrow left
-            ## decrease alpha blending
-            .alpha <<- max(0.9 * .alpha, 100/nrow(data))
-            ##          print(.alpha*nrow(data))
+        } else if (length(i <- which(key == c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)))) {
+            ## arrow right/left: alpha blending
+            .alpha <<- max(0, min(1, c(0.01, -0.01)[i] + .alpha))
             ##  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         } else if (key == Qt$Qt$Key_Z) {
