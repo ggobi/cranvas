@@ -144,14 +144,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             meta$y = meta$plot.data
             meta$xat = 1:meta$p
             meta$xlabels = meta$names
-            meta$yat = .axis.loc(meta$y)
+            meta$yat = axis_loc(meta$y)
             meta$ylabels = format(meta$yat)
         } else {
             meta$y = col(meta$plot.data)
             meta$x = meta$plot.data
             meta$yat = 1:meta$p
             meta$ylabels = meta$names
-            meta$xat = .axis.loc(meta$x)
+            meta$xat = axis_loc(meta$x)
             meta$xlabels = format(meta$xat)
         }
         meta$xr = diff(range(meta$x))

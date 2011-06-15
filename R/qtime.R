@@ -57,8 +57,8 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,asp=NULL,...)
                   extend_ranges(range(data.frame(tdf[,-(1:3)]))))
   windowRanges <- dataRanges
   lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-  sy <- .axis.loc(tdf$x)
-  sx <- .axis.loc(unlist(data.frame(tdf[,-(1:3)])))
+  sy <- axis_loc(tdf$x)
+  sx <- axis_loc(unlist(data.frame(tdf[,-(1:3)])))
 
   ## parameters for datalayer
   .radius <- size
@@ -147,9 +147,9 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,asp=NULL,...)
         }
         dataRanges[1:2] <<- extend_ranges(tdf$x)
         windowRanges <<- dataRanges
-        sy <<- .axis.loc(tdf$x)
+        sy <<- axis_loc(tdf$x)
         if (is.null(pd) | !vertconst){
-          sx <<- .axis.loc(dataRanges[3:4])
+          sx <<- axis_loc(dataRanges[3:4])
         } else {
           sx <<- (as.integer(unique(pd))-1)*vertconst
         }
@@ -163,9 +163,9 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,asp=NULL,...)
         dataRanges[1:2] <<- extend_ranges(tmpXzoom)
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        sy <<- .axis.loc(dataRanges[1:2])
+        sy <<- axis_loc(dataRanges[1:2])
         if (is.null(pd) | !vertconst){
-          sx <<- .axis.loc(dataRanges[3:4])
+          sx <<- axis_loc(dataRanges[3:4])
         } else {
           sx <<- (as.integer(unique(pd))-1)*vertconst
         }
@@ -195,9 +195,9 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,asp=NULL,...)
         }
         dataRanges[1:2] <<- extend_ranges(tdf$x)
         windowRanges <<- dataRanges
-        sy <<- .axis.loc(tdf$x)
+        sy <<- axis_loc(tdf$x)
         if (is.null(pd) | !vertconst){
-          sx <<- .axis.loc(dataRanges[3:4])
+          sx <<- axis_loc(dataRanges[3:4])
         } else {
           sx <<- (as.integer(unique(pd))-1)*vertconst
         }
@@ -211,9 +211,9 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,asp=NULL,...)
         dataRanges[1:2] <<- extend_ranges(tmpXzoom)
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        sy <<- .axis.loc(dataRanges[1:2])
+        sy <<- axis_loc(dataRanges[1:2])
         if (is.null(pd) | !vertconst){
-          sx <<- .axis.loc(dataRanges[3:4])
+          sx <<- axis_loc(dataRanges[3:4])
         } else {
           sx <<- (as.integer(unique(pd))-1)*vertconst
         }
@@ -274,7 +274,7 @@ qtime <- function(data,time,y,period=NULL,wrap=TRUE,size=2,alpha=1,asp=NULL,...)
         dataRanges[3:4] <<-  extend_ranges(range(data.frame(tdf[,-(1:3)])))
         windowRanges <<- dataRanges
         lims <<- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-        sx <<- .axis.loc(dataRanges[3:4])
+        sx <<- axis_loc(dataRanges[3:4])
       } else {
         if (ncol(y)==1){
           tdf[,-(1:3)] <- unlist((y-min(y))/(max(y)-min(y))+

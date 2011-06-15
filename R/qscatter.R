@@ -109,7 +109,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
 
 
     xaxis <- function(layer, painter) {
-        sx <- .axis.loc(dataRanges[1:2])
+        sx <- axis_loc(dataRanges[1:2])
         xlabels <- rep("", length(sx))
 
         if (labeled) xlabels <- sx
@@ -120,7 +120,7 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     }
 
     yaxis <- function(layer, painter) {
-        sy <- .axis.loc(dataRanges[3:4])
+        sy <- axis_loc(dataRanges[3:4])
         ylabels <- rep("", length(sy))
 
         if (labeled) ylabels <- sy
@@ -130,8 +130,8 @@ qscatter <- function(data, x, y, asp = NULL, main = NULL,
     }
 
     grid <- function(layer, painter) {
-        sx <- .axis.loc(dataRanges[1:2])
-        sy <- .axis.loc(dataRanges[3:4])
+        sx <- axis_loc(dataRanges[1:2])
+        sy <- axis_loc(dataRanges[3:4])
 
                                         # grey background with grid lines
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)

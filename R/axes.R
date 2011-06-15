@@ -92,8 +92,24 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
     qlayer(parent, paintFun = draw_axis, ...)
 }
 
-## calculate the 'pretty' locations of axis tick marks
-.axis.loc = function(x) {
+##' Calculate the pretty locations of axis tick marks.
+##' The pretty locations are calculated by the function
+##' \code{\link[base]{pretty}}, but the locations that exceed the
+##' range of the data are removed. A special case is the factor: the
+##' locations are 1, 2, ..., up to the number of levels.
+##'
+##' @param x the data vector (either numeric or factor)
+##' @return a numeric vector of the axis tick marks locations
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @seealso \code{\link[base]{pretty}}
+##' @examples library(cranvas)
+##' axis_loc(1)
+##' axis_loc(c(0, 1))
+##' axis_loc(rnorm(100))
+##' axis_loc(iris$Species)  # a factor, so locations are 1, 2, 3
+##'
+axis_loc = function(x) {
     if (is.factor(x)) {
         return(seq_along(levels(x)))
     }

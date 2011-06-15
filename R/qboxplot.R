@@ -67,7 +67,7 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     layer.main = qbxp(vars = vars, data = data, at = at, width = width,
                             horizontal = horizontal, limits = qrect(lims))
     xat = at
-    yat = .axis.loc(y)
+    yat = axis_loc(y)
     ylabels = format(yat)
     if (horizontal) {
         tmp = xat; xat = yat; yat = tmp

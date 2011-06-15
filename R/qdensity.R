@@ -99,7 +99,7 @@ qdensity <- function(x, data, main = NULL,
     ##########
 
     xaxis <- function(item, painter, exposed) {
-        sx <- .axis.loc(dataRanges[1:2])
+        sx <- axis_loc(dataRanges[1:2])
         #xlabels <- rep("", length(sx))
 
         draw_x_axes_with_labels_fun(painter, c(dataRanges[1:2],1,5),
@@ -107,7 +107,7 @@ qdensity <- function(x, data, main = NULL,
     }
 
     yaxis <- function(item, painter, exposed) {
-        sy <- .axis.loc(dataRanges[3:4])
+        sy <- axis_loc(dataRanges[3:4])
         #ylabels <- rep("", length(sy))
 
         draw_y_axes_with_labels_fun(painter, c(1,5, dataRanges[3:4]),
@@ -115,8 +115,8 @@ qdensity <- function(x, data, main = NULL,
     }
 
     grid <- function(item, painter, exposed) {
-        sx <- .axis.loc(dataRanges[1:2])
-        sy <- .axis.loc(dataRanges[3:4])
+        sx <- axis_loc(dataRanges[1:2])
+        sy <- axis_loc(dataRanges[3:4])
 
         # grey background with grid lines
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)

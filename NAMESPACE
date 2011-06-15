@@ -1,4 +1,5 @@
 export(qaxis)
+export(axis_loc)
 export(qgrid)
 export(brush)
 export("brush<-")

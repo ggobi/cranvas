@@ -204,7 +204,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     # Draw Axes
 
     xaxis <- function(item, painter, exposed) {
-				horiPos <- .axis.loc(.dataranges[1:2])
+				horiPos <- axis_loc(.dataranges[1:2])
        .xlab <- name
        if (horizontal) .xlab <- "count"
 
@@ -215,13 +215,13 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         .ylab <- "count"
         if (horizontal) .ylab <- name
 
-        vertPos <- .axis.loc(.dataranges[3:4])
+        vertPos <- axis_loc(.dataranges[3:4])
         draw_y_axes_with_labels_fun(painter, c(1,5,.dataranges[3:4]), vertPos, vertPos, .ylab)
     }
 
     grid <- function(item, painter, exposed) {
-				sx <- .axis.loc(.dataranges[1:2])
-				sy <- .axis.loc(.dataranges[3:4])
+				sx <- axis_loc(.dataranges[1:2])
+				sy <- axis_loc(.dataranges[3:4])
 
         # grey background with grid lines
         draw_grid_with_positions_fun(painter, .dataranges, sx, sy)
@@ -243,8 +243,8 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         }
 
         # grey background with grid lines
-        horiPos <- .axis.loc(.dataranges[1:2])
-        vertPos <- .axis.loc(.dataranges[3:4])
+        horiPos <- axis_loc(.dataranges[1:2])
+        vertPos <- axis_loc(.dataranges[3:4])
         #message("limits 3 ",.dataranges[1]," ", .dataranges[2]," ", .dataranges[3]," ", .dataranges[4], horiPos, vertPos, "\n")
 
         draw_grid_with_positions_fun(painter, .dataranges, horiPos, vertPos)
