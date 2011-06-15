@@ -205,6 +205,83 @@ qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
     qlayer(parent, paintFun = draw_grid, ...)
 }
 
+##' Create a margin text layer.
+##' This function is similar to \code{\link[graphics]{mtext}}, which
+##' draws text into the margin of a plot. A slight difference is this
+##' function creates a layer which can be put anywhere in the layout.
+##' We can also create a title layer with this function.
+##'
+##' As in R base graphics, the margin means the bottom, left, top and
+##' right area of the main plot region. This function will adjust the
+##' direction of the text according to the side to which it is drawn,
+##' e.g., the left or right side will make the text vertical.
+##' @param parent the parent layer (default to be \code{NULL}, which
+##' means creating an independent layer with no parents, but it can be
+##' added to a parent layer using the approach \code{parent[i, j] <-
+##' child_layer})
+##' @param data \code{NULL} means to use \code{x} and \code{y}
+##' directly, otherwise it should contain a child element named
+##' \code{limits} which is a matrix and defines the limits of the main
+##' plot region (in the form \code{matrix(c(x0, x1, y0, y1), 2)});
+##' this matrix will be used to calculate the appropriate coordinates
+##' to draw the text so that the text is in the center of the layer;
+##' this argument will override \code{x} and \code{y} if provided
+##' @param side which side to draw the text (following the convention
+##' of R base graphics); e.g. \code{side = 3} can be used to create
+##' the title layer
+##' @param text the character string to draw
+##' @param x the x coordinate
+##' @param y the y coordinate
+##' @param cex the expansion factor
+##' @param sister a sister layer beside which to draw this text layer;
+##' if provided, its limits will be used to calculate \code{x} and \code{y}
+##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
+##' @return a layer object
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @seealso \code{\link[graphics]{mtext}}, \code{\link[qtpaint]{qlayer}}
+##' @examples library(cranvas)
+##' library(qtbase)
+##' library(qtpaint)
+##'
+##' s = qscene()
+##' r = qlayer(s)  # root layer
+##' m = qlayer(paintFun = function(layer, painter) {
+##'     qdrawCircle(painter, runif(1000), runif(1000), r = 2)
+##'     qdrawRect(painter, 0, 0, 1, 1)
+##' }, limits = qrect(matrix(c(0, 1, 0, 1), 2))) # main layer
+##' m1 = qmtext(text = 'x axis title!', side = 1, sister = m)
+##' m2 = qmtext(text = 'y axis title!', side = 2, sister = m)
+##' m3 = qmtext(text = 'THE MAIN TITLE', side = 3, sister = m)
+##' m4 = qmtext(text = 'text on the right margin', side = 4, sister = m)
+##' ## note how to arrange these layers appropriately in the margin
+##' r[1, 1] = m
+##' r[2, 1] = m1
+##' r[1, 0] = m2
+##' r[0, 1] = m3
+##' r[1, 2] = m4
+##' print(qplotView(scene = s))
+##'
+qmtext = function(parent = NULL, data = NULL, side = 1, text = '', x = NULL, y = NULL,
+                  cex = 1, sister = NULL, ...) {
+    if (!is.null(sister)) {
+        lims = as.matrix(sister$limits())
+        at = colMeans(lims)
+        x = at[1]; y = at[2]
+        lims = qrect(if (side%%2) cbind(lims[, 1], 0:1) else cbind(0:1, lims[, 2]))
+    }
+    draw_text = function(layer, painter) {
+        if (!is.null(data)) {
+            at = colMeans(data$limits)
+            x = at[1]; y = at[2]
+        }
+        if (side%%2) y <- 0.5 else x <- 0.5
+        qdrawText(painter, text, x, y, rot = c(0, 90, 0, 90)[side], cex = cex)
+    }
+    if (!('limits' %in% names(list(...))) && !is.null(sister))
+        qlayer(parent, paintFun = draw_text, limits = lims, ...) else
+    qlayer(parent, paintFun = draw_text, ...)
+}
 
 #' draw grid with qt
 #' draws the grid at given positions

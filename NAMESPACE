@@ -1,6 +1,7 @@
 export(qaxis)
 export(axis_loc)
 export(qgrid)
+export(qmtext)
 export(brush)
 export("brush<-")
 export(brush_history)
