@@ -393,12 +393,13 @@ qdensity <- function(x, data, main = NULL,
             return()
 
         xpos <- .queryPos[1]
-        ypos <- .queryPos[2]
+        ypos <- 0
 
-        xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
-        yrange <- .radius/root$size$height() * diff(dataRanges[c(3, 4)])
+        xrange <- diff(dataRanges[c(1, 2)])/100
+        yrange <- diff(dataRanges[c(3, 4)])/100
         rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
             xpos + xrange, ypos + yrange), 2, byrow = TRUE))
+        #rect <- qrect(matrix(c(1.9999, -0.00001, 2.0001, 0.00001), 2, byrow=TRUE))
         hits <- datalayer$locate(rect) + 1
         #print(hits)
         #print(.queryPos)
@@ -407,6 +408,7 @@ qdensity <- function(x, data, main = NULL,
         if (length(hits) == 0)
             return()
 
+        message("identify ",length(hits)," ", xpos, " ",ypos, " ", xrange, " ", yrange, "\n")
         info <- data.frame(x[hits])
         names(info) <- xlab
         #browser()
