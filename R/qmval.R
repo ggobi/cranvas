@@ -98,11 +98,11 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
 
 
     draw <- function(item, painter, exposed) {
-        # basic rectangle:
-        top <- 0.1
+        ## basic rectangle: each with width 0.6*1/p
+        top <- 0.8 * 1/p
         left <- 0
         right <- 1
-        bottom <- 0.1 + 0.6 * 1/p
+        bottom <- 0.2 * 1/p
 
         n <- nrow(data)
         for (i in 1:p) {
@@ -117,10 +117,9 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
         }
 
         # put labels on top
-        bottom <- 0.1
+        bottom <- 0.5 * 1/p
         for (i in 1:p) {
-            qdrawText(painter, .data.summary$Names[i], left, bottom, halign = "left",
-                valign = "bottom")
+            qdrawText(painter, .data.summary$Names[i], left, bottom, halign = "left")
             bottom <- bottom + 1/p
         }
 
@@ -150,10 +149,10 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
         brushcolor <- brush(data)$color
 
         # basic rectangle:
-        top <- 0.1
+        top <- 0.8 * 1/p
         left <- 0
         right <- 1
-        bottom <- 0.1 + 0.6 * 1/p
+        bottom <- 0.2 * 1/p
 
         n <- nrow(data)
         for (i in 1:p) {
@@ -166,11 +165,10 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
         }
 
         # put labels on top
-        bottom <- 0.1
+        bottom <- 0.5 * 1/p
         qstrokeColor(painter) <- "black"
         for (i in 1:p) {
-            qdrawText(painter, .data.summary$Names[i], left, bottom, halign = "left",
-                valign = "bottom")
+            qdrawText(painter, .data.summary$Names[i], left, bottom, halign = "left")
             bottom <- bottom + 1/p
         }
 
