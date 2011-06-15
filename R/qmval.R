@@ -312,9 +312,6 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
         qupdate(querylayer)
     }
 
-    coords <- function(item, painter, exposed) {
-    }
-
     # Display legend information for colour ----------------------------
 
     legend_draw <- function(item, painter, exposed, ...) {
@@ -325,6 +322,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     bglayer = qlayer(scene, coords, limits = lims, clip = FALSE)
     datalayer = qlayer(scene, draw, keyPressFun = keyPressFun, limits = lims, clip = FALSE)
     brushing_layer = qlayer(scene, brushing_draw, mousePressFun = brushing_mouse_press,
+    xaxislayer = qaxis(side = 1, at = axis_loc(c(0, 1)), sister = datalayer)
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
         limits = lims, clip = FALSE)
     querylayer = qlayer(scene, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
