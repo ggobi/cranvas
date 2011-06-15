@@ -120,10 +120,6 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
             qdrawText(painter, .data.summary$Names[i], left, bottom, halign = "left")
             bottom <- bottom + 1/p
         }
-
-        add_title_fun(painter, dataRanges, title = main)
-
-        #    datalayer <<- item
     }
 
     # Brushing -----------------------------------------------------------------
@@ -336,6 +332,7 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
 
 
+    titlelayer = qmtext(side = 3, text = main, sister = datalayer)
 
     ## update the brush layer in case of any modifications to the mutaframe
     add_listener(data, function(i, j) {
