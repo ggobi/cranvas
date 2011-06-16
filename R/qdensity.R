@@ -191,7 +191,6 @@ qdensity <- function(x, data, main = NULL,
                 fill <- brush(data)$color
                 stroke <- brush(data)$color
                 radius <- .radius
-                message(brushx[1], " ", brushx[2], " ",brushx[3], " ",brushx[4], "\n")
 
                 qdrawCircle(painter, x = brushx, y = brushy, r = radius,
                     fill = fill, stroke = stroke)
@@ -341,8 +340,6 @@ qdensity <- function(x, data, main = NULL,
         #yrange <- diff(dataRanges[c(3, 4)]) * 0.01
         xrange <- 0
         yrange <- 0
-        message("hello ", length(.bpos), " ", .bpos[1], " ", .bpos[2], " ", length(.brange), " ", .brange[1], " ", .brange[2], " ", length(.bstart), " ", .bstart[1], " ", .bstart[2], "\n")
-        message(.bpos - .brange - c(xrange, yrange)," ", .bpos + .brange + c(xrange, yrange), "\n")
 #        yrange <- .radius/root$size$height() * diff(dataRanges[c(3, 4)])
         #
         rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
@@ -352,10 +349,12 @@ qdensity <- function(x, data, main = NULL,
         ##browser()
         ##rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2,
         ##             byrow = TRUE))
-        hits <- layer$locate(rect) + 1
-
-        message(.bmove,"\n")
-        message("hits ",length(hits), " ", hits[1], " ", hits[2]," ", hits[3]," ", hits[4],"\n")
+        #hits <- layer$locate(rect) + 1
+        # Do my own detection!!
+        df <- as.data.frame(data)
+        x <- eval(arguments$x, df)
+        hits <- c(1:nrow(df))[x > (.bpos[1] - .brange[1] - xrange) &
+                             x < (.bpos[1] + .brange[1] + xrange)]
 
         #browser()
         .new.brushed[hits] <- TRUE
@@ -396,11 +395,20 @@ qdensity <- function(x, data, main = NULL,
         ypos <- 0
 
         xrange <- diff(dataRanges[c(1, 2)])/100
-        yrange <- diff(dataRanges[c(3, 4)])/100
+        yrange <- diff(dataRanges[c(3, 4)])/1000
         rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
             xpos + xrange, ypos + yrange), 2, byrow = TRUE))
         #rect <- qrect(matrix(c(1.9999, -0.00001, 2.0001, 0.00001), 2, byrow=TRUE))
-        hits <- datalayer$locate(rect) + 1
+        # hits <- datalayer$locate(rect) + 1
+        # My own identification function, finds the closest point
+        df <- as.data.frame(data)
+        x <- eval(arguments$x, df)
+        dx <- sqrt((x-xpos)^2)
+        if (min(dx) < diff(dataRanges[c(1, 2)])/100)
+          hits <- order(dx, decreasing=F)[1]
+        else
+          hits <- NULL
+       
         #print(hits)
         #print(.queryPos)
         #browser()
@@ -408,7 +416,6 @@ qdensity <- function(x, data, main = NULL,
         if (length(hits) == 0)
             return()
 
-        message("identify ",length(hits)," ", xpos, " ",ypos, " ", xrange, " ", yrange, "\n")
         info <- data.frame(x[hits])
         names(info) <- xlab
         #browser()
