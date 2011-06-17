@@ -1,0 +1,54 @@
+\documentclass[12pt,english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage[letterpaper]{geometry}
+\geometry{verbose,tmargin=4cm,bmargin=4.5cm,lmargin=3.2cm,rmargin=3.5cm}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{babel}
+\usepackage{longtable}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\usepackage[nogin,noae]{Sweave}
+\newcommand{\Rcode}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rcommand}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newenvironment{wrapsweave}{\par}{\par}
+\usepackage{tikz}
+
+\makeatother
+
+\usepackage{babel}
+
+\usepackage{fullpage}
+
+\begin{document}
+
+\title{cranvas: Interactive and Dynamic Graphics in R}
+%\centerline{\Large\bf Teaching Statistical Distributions Using Lineups}
+\author{Yihui Xie, Xiaoyue Cheng, Heike Hofmann, Dianne Cook, Barret Schloerke, \\Department of Statistics, Iowa State University}
+\date{}
+\maketitle
+
+\section{Introduction}
+
+One of the long frustrating limitations for users and developers of interactive graphics is that it is possible to program them in a high-level language like R, or integrate them seamlessly with analytical methods. Software such as ggobi \cite{STLBC03} and MANET \cite{UHS96} are not easily modified. For all practical purposes they are canned, use as is, software.  This paper describes a new interactive and dynamic graphics package for R, with essentially the capability of these ancestors. The closer association with R makes for easier integration with other parts of the statistical analysis. The package is not programmable, but contains a collection of standard plot types supporting interaction and linking between plots. 
+
+
+What is this good for?
+
+Dependencies: qtbase, qtpaint, plumbr, objectSignals
+
+Plot types and interactions available
+
+Examples
+
+\bibliography{cranvas}  
+
+\end{document}
