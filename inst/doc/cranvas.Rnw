@@ -27,6 +27,7 @@
 \usepackage{babel}
 
 \usepackage{fullpage}
+\usepackage{harvard}
 
 \begin{document}
 
@@ -49,6 +50,7 @@ Plot types and interactions available
 
 Examples
 
+\bibliographystyle{agsm}
 \bibliography{cranvas}  
 
 \end{document}
