@@ -1,11 +1,9 @@
 \name{qmap}
 \alias{qmap}
-\title{Interactive Maps}
-\usage{qmap(data, longitude, latitude, group, label = group, 
-    main, ...)
-
+\title{Interactive Maps.}
+\usage{qmap(data, longitude, latitude, group, label=group, main, ...)
 }
-\description{
+\description{Interactive Maps.
 Create an interactive map from qdata}
 \details{mouse wheel events are translated to focal zoom
 
@@ -23,20 +21,18 @@ along with several row attributes}
 \examples{library(qtbase)
 library(qtpaint)
 library(cranvas)
-library(plumbr)
+library(plumbr) 
 library(maps)
 library(ggplot2)
 
 states <- map_data("state")
 qstates <- qdata(states)
 
-qstates$.color <- sample(c("red", "blue"), nrow(states), 
-    replace = TRUE)
+qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
 qmap(qstates, long, lat, group, region)
 
 # recolor
-qstates$.color <- sample(c("red", "blue"), nrow(states), 
-    replace = TRUE)
+qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
 
 
 #######################
@@ -45,25 +41,23 @@ data(crimes)
 crimes$State <- tolower(crimes$State)
 
 qcrimes <- qdata(crimes)
-print(qparallel(data = qcrimes))
+print(qparallel(data=qcrimes))
 
 # now link map and crimes data set
 link_var(qcrimes) = "State"
 link_var(qstates) = "region"
 
 link(qcrimes, qstates)
-qscatter(qcrimes, Population, Robbery)
+qscatter(Population, Robbery, qcrimes)
 
 
 
 
 # Choropleth maps
-setMapColorByLabel(qstates, qcrimes, Robbery/Population, 
-    scale_colour_gradient())
+setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient())
 
 # change to different choropleth map:
-setMapColorByLabel(qstates, qcrimes, log(1e+05 * 
-    Robbery/Population + 1), scale_colour_gradient2())
+setMapColorByLabel(qstates, qcrimes, log(100000*Robbery/Population + 1), scale_colour_gradient2())
 
 ##############
 
@@ -93,74 +87,5 @@ qmap(qworld, long, lat, group, label = id)
 
 library(profr)
 
-#res <- profr(print(qmap(qworld, long, lat, group,
-#   label=id)))}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#res <- profr(print(qmap(qworld, long, lat, group, label=id)))}
 

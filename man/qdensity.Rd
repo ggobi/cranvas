@@ -1,14 +1,13 @@
 \name{qdensity}
 \alias{qdensity}
-\title{Draw a univariate density plot, with a rug plot underneath..}
-\usage{qdensity(x, data, main, size = 2, alpha = 1, xlim, 
-    ylim, xlab, ylab, cache = T, ...)
-
+\title{Draw a univariate density plot, with a rug plot underneath...}
+\usage{qdensity(x, data, main, binwidth, size=4, alpha=0.5, xlim, ylim, xlab,
+    ylab, cache=T, ...)
 }
-
 \description{Draw a univariate density plot, with a rug plot underneath}
 \details{arrow up/down: in-/de-crease size of points
-arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
+arrow -/+: de-/in-crease alpha level (starts at alpha=1 by default)
+arrow left/right: de-/in-crease binwidth for density
 Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
 Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
 Key 'r' resets data range to original scale}
@@ -23,31 +22,16 @@ Key 'r' resets data range to original scale}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 }
 \examples{# Examples for qdensity
-library(qtbase)
-library(qtpaint)
-library(plumbr)
 library(cranvas)
 library(scales)
-
-x <- data.frame(x = c(1:10), y = c(1:10))
-qx <- qdata(x)
-print(qdensity(x, qx))
 
 data(tennis)
 qtennis <- qdata(tennis)
 
-print(qdensity(First.Serve.Pct, qtennis))}
+print(qdensity(First.Serve.Pct, qtennis))
+print(qdensity(Second.Serve.Pts, qtennis))
 
-
-
-
-
-
-
-
-
-
-
-
-
+data(pollen)
+qpollen <- qdata(pollen)
+print(qdensity(RIDGE, qpollen))}
 

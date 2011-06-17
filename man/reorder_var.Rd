@@ -1,13 +1,10 @@
 \name{reorder_var}
 \alias{reorder_var}
-\title{Re-order the columns of a data frame based on MDS or ANOVA}
-\usage{reorder_var(data, type = c("none", "MDS", "ANOVA", 
-    "randomForest"), vars = names(data), numcol = sapply(data, 
-    is.numeric), x = data$.color)
-
+\title{Re-order the columns of a data frame based on MDS or ANOVA.}
+\usage{reorder_var(data, type=c("none", "MDS", "ANOVA", "randomForest"),
+    vars=names(data), numcol=sapply(data, is.numeric),
+    x=data$.color)
 }
-
-
 \description{Re-order the columns of a data frame based on MDS or ANOVA.}
 \details{For the MDS method, we use (1 - correlation matrix) as the
 distance matrix and re-order the columns according their distances
@@ -34,13 +31,9 @@ the end and they will not go into the computation}
 \item{x}{the x variable to be used in ANOVA and randomForest}
 }
 \examples{data(tennis)
-reorder_var(tennis, type = "MDS")
+reorder_var(tennis, type = 'MDS')
 
-reorder_var(iris, type = "ANOVA", x = iris$Species)
+reorder_var(iris, type = 'ANOVA', x = iris$Species)
 names(iris)  # original column names
-reorder_var(iris, type = "randomForest", x = iris$Species)}
-
-
-
-
+reorder_var(iris, type = 'randomForest', x = iris$Species)}
 

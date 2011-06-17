@@ -1,10 +1,9 @@
 \name{qpar}
 \alias{qpar}
-\title{Graphical parameters in cranvas}
+\title{Graphical parameters in cranvas.}
 \usage{qpar(...)
-
 }
-\description{
+\description{Graphical parameters in cranvas.
 This function can set or query the graphical parameters in the
 \code{cranvas} package.}
 \value{the current list of parameters or set new options}
@@ -15,5 +14,4 @@ This function can set or query the graphical parameters in the
 \examples{op = qpar()
 qpar(mar = 0.05)  # the degree to extend the plot margin (inner margin)
 qpar(op)  # restore}
-
 

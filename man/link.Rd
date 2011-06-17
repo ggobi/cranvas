@@ -1,8 +1,7 @@
 \name{link}
 \alias{link}
-\title{Link mutaframes by a common categorical variable}
+\title{Link mutaframes by a common categorical variable.}
 \usage{link(...)
-
 }
 \description{Link mutaframes by a common categorical variable.}
 \details{This function links several mutaframes together by a common
@@ -27,8 +26,7 @@ data2 = qdata(tab2)
 data1
 data2
 
-## specify the linking variable respectively: link
-#   'Species' with 'type'
+## specify the linking variable respectively: link 'Species' with 'type'
 link_var(data1) = "Species"
 link_var(data2) = "type"
 
@@ -54,10 +52,9 @@ data1
 
 
 
-### (2) linking two par-coords plots: one original
-#   data, one aggregated
+### (2) linking two par-coords plots: one original data, one aggregated
 data(nrcstat)
-nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code), 
+nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code),
     function(x) round(mean(x), 1))
 qnrc = qdata(nrcstat)
 qnrc.agg = qdata(nrcstat.agg)
@@ -69,54 +66,4 @@ qparallel(vars = c(8, 10:19), data = qnrc)
 qparallel(data = qnrc.agg)
 
 brush(qnrc.agg, "identify") = TRUE  # turn on labels}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

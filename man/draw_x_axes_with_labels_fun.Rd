@@ -1,9 +1,7 @@
 \name{draw_x_axes_with_labels_fun}
 \alias{draw_x_axes_with_labels_fun}
-\title{draw x axes with qt..}
-\usage{draw_x_axes_with_labels_fun(plotObj, dataRanges, 
-    axisLabels, labelHoriPos, name)
-
+\title{draw x axes with qt...}
+\usage{draw_x_axes_with_labels_fun(plotObj, dataRanges, axisLabels, labelHoriPos, name)
 }
 \description{draw x axes with qt
 draws the x axes with the labels and label positions given
@@ -15,3 +13,4 @@ can be used as part of a recall function to update a particular layer}
 \item{axisLabels}{vector of labels}
 \item{labelHoriPos}{horizontal position of the axisLabels}
 }
+

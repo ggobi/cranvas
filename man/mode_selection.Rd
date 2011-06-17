@@ -1,8 +1,7 @@
 \name{mode_selection}
 \alias{mode_selection}
-\title{Logical operations under different selection mode}
-\usage{mode_selection(x, y, mode = "none")
-
+\title{Logical operations under different selection mode.}
+\usage{mode_selection(x, y, mode="none")
 }
 \description{Logical operations under different selection mode.}
 \details{There are five selection modes:
@@ -25,16 +24,10 @@ We can hold the key while brushing: A for 'and', O for 'or', X for 'xor', N for 
 }
 \examples{x1 = c(TRUE, TRUE, FALSE, FALSE)
 x2 = c(FALSE, TRUE, TRUE, FALSE)
-mode_selection(x1, x2, "none")
-mode_selection(x1, x2, "and")
-mode_selection(x1, x2, "or")
-mode_selection(x1, x2, "xor")
-mode_selection(x1, x2, "not")
-mode_selection(x1, x2, "complement")}
-
-
-
-
-
-
+mode_selection(x1, x2, 'none')
+mode_selection(x1, x2, 'and')
+mode_selection(x1, x2, 'or')
+mode_selection(x1, x2, 'xor')
+mode_selection(x1, x2, 'not')
+mode_selection(x1, x2, 'complement')}
 

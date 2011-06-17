@@ -1,8 +1,7 @@
 \name{summary_one}
 \alias{summary_one}
-\title{Give a column-wise scalar summary of the data frame or matrix}
-\usage{summary_one(x, fun = median, ...)
-
+\title{Give a column-wise scalar summary of the data frame or matrix.}
+\usage{summary_one(x, fun=median, ...)
 }
 \description{Give a column-wise scalar summary of the data frame or matrix.}
 \details{For numeric columns, the function specified by \code{fun} will be applied
@@ -19,5 +18,4 @@ returned value is a single string with the category labels separated by
 \examples{summary_one(iris)
 summary_one(iris[1:70, ])
 summary_one(mtcars)}
-
 

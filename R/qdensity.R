@@ -1,7 +1,8 @@
 #' Draw a univariate density plot, with a rug plot underneath
 #'
 #' arrow up/down: in-/de-crease size of points
-#' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
+#' arrow -/+: de-/in-crease alpha level (starts at alpha=1 by default)
+#' arrow left/right: de-/in-crease binwidth for density
 #' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
 #' Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
 #' Key 'r' resets data range to original scale
@@ -15,8 +16,8 @@
 #' @param ylab label on vertical axis, default is name of y variable
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qdensity-ex.R
-qdensity <- function(x, data, main = NULL,
-    size = 2, alpha = 1, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL,
+qdensity <- function(x, data, main = NULL, binwidth = NULL,
+    size = 4, alpha = 0.5, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL,
     cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
@@ -34,9 +35,16 @@ qdensity <- function(x, data, main = NULL,
     stopifnot(!is.null(x))
     stopifnot(length(x) > 1)
 
-    if (is.null(xlim)) xlim <- range(x, na.rm=T)
-    if (is.null(ylim)) ylim <- c(0, max(density(x)$y))
+    # Initialize plot limits
+    if (is.null(xlim))
+      xlim <- range(x, na.rm=T)
+    if (is.null(ylim))
+      ylim <- c(0, max(density(x, bw=(xlim[2]-xlim[1])/50)$y))
 
+    # Initalize binwidth to default for the density function
+    if (is.null(binwidth))
+      binwidth <- density(x)$bw
+    
     ## parameters for dataRanges
     if (is.null(xlab)) xlab <- deparse(arguments$x)
     ylab <- ""
@@ -44,7 +52,7 @@ qdensity <- function(x, data, main = NULL,
     values_out_of_plotting_range <- FALSE
 
     ## parameters for all layers
-    dataRanges <- c(extend_ranges(xlim), extend_ranges(ylim))
+    dataRanges <- c(extend_ranges(xlim), extend_ranges(ylim, 0.15))
 
     lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
 
@@ -137,9 +145,9 @@ qdensity <- function(x, data, main = NULL,
         df <- data.frame(data)
         x <- eval(arguments$x, df)
         y <- rep(0, length(x))
-        dx <- density(x)
-        qlineWidth(painter) <- 2
-        qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(stroke, .alpha))
+        dx <- density(x, bw=binwidth)
+        qlineWidth(painter) <- 3
+        qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(stroke, 1))
 
         radius <- .radius
         qdrawCircle(painter, x = x, y = y, r = radius, fill = alpha(fill,
@@ -215,14 +223,21 @@ qdensity <- function(x, data, main = NULL,
             qupdate(datalayer)
             qupdate(brushlayer)
         }
-        else if (length(i <- which(key == c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)))) {
-            # arrow left/right - alpha blending
+        else if (length(i <- which(key == c(c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus))))) {
+            # +/- - alpha blending
             .alpha <<- max(0.01, min(1, c(1.1, 0.9)[i] * .alpha))
   #          print(.alpha*nrow(data))
           #  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         }
-        else if (key == Qt$Qt$Key_Z) {
+        else if (length(i <- which(key == c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)))) {
+            # arrow left/right - alpha blending
+            binwidth <<- max((xlim[2]-xlim[1])/100, min((xlim[2]-xlim[1])/3, c(1.1, 0.9)[i] * binwidth))
+  #          print(.alpha*nrow(data))
+          #  datalayer$setOpacity(.alpha)
+            qupdate(datalayer)
+        }
+       else if (key == Qt$Qt$Key_Z) {
             zoom <<- !zoom
             print(sprintf("zoom: %s", zoom))
         }
@@ -458,6 +473,127 @@ qdensity <- function(x, data, main = NULL,
 
     ########## end event handlers
 
+    #######################################################
+    # scales
+    scales_draw <- function(item, painter, exposed, ...) {
+      # draw anchor point and line for bin width adjustment under first bin
+
+      # anchor:
+      eps <- diff(ylim)/50 # height of strokes
+      qlineWidth(painter) <- 3
+      qdrawSegment(painter, xlim[1], ylim[1]-4*eps, xlim[1], ylim[1]-5*eps,
+        "grey50")
+      # bin width adjust:
+      qdrawSegment(painter, xlim[1]+binwidth, ylim[1]-4*eps,
+        xlim[1]+binwidth, ylim[1]-5*eps, "grey50")
+
+    }
+
+    scales_handle_event <- function(pos) {
+      xpos <- pos[1]
+      ypos <- ylim[1]
+      xeps <- diff(xlim)/125
+      yeps <- diff(ylim)/50
+
+      rect = qrect(matrix(c(xpos-xeps, ypos-4*yeps, xpos + xeps,
+        ypos - 5*yeps), 2, byrow = TRUE))
+      return(scaleslayer$locate(rect) + 1)
+    }
+
+    scales_hover <- function(item, event, ...) {
+      pos <- as.numeric(event$pos())
+      if (pos[2] < (-4*diff(ylim)/50)) {
+        hits <- scales_handle_event(pos)
+
+        if (length(hits) > 0) {
+          hits <- hits[1]
+          cu <- view$cursor
+          switch(hits, {cursor <- Qt$Qt$SizeHorCursor},
+            {cursor <- Qt$Qt$SizeHorCursor},
+            {cursor <- Qt$Qt$UpArrowCursor}
+          )
+          cu$setShape(cursor)
+          view$cursor <- cu
+#      print(hits)
+        }
+      }
+      else {
+        cu <- view$cursor
+        cu$setShape(Qt$Qt$ArrowCursor)
+        view$cursor <- cu
+
+#        event$ignore()
+        #bar_hover(item, event, ...)
+      }
+    }
+
+    scales_mouse_press <- function(item, event, ...) {
+      pos <- as.numeric(event$pos())
+      if (pos[2] < (-4*diff(ylim)/50)) {
+        hits <- scales_handle_event(pos)
+
+        #if (length(hits) > 0) {
+        #  switch (hits, {}, {}, {
+#          if (.yMax < max(.bars_info$data$top))
+         # binwidth <- diff
+          #message("M ", .yMax, "\n")
+          # print(.yMax)
+        #    }
+        #  )
+        #updateRanges()
+        #updateLims()
+        #scaleslayer$invalidateIndex()
+        #qupdate(.scene)
+
+        #} #else
+        # pass mouse event on
+      }
+      else
+        brush_mouse_press(item, event, ...)
+    }
+
+    scales_mouse_release <- function(item, event, ...) {
+     pos <- as.numeric(event$pos())
+     if (pos[2] < (-4*diff(ylim)/50)) {
+        hits <- scales_handle_event(pos)
+
+        if (length(hits) == 0) {
+        # pass mouse event on
+          mouse_release(item, event, ...)
+        }
+      }
+    }
+
+
+    scales_mouse_move <- function(item, event, ...) {
+      pos <- as.numeric(event$pos())
+      if (pos[2] < (-4*diff(ylim)/50)) {
+        hits <- scales_handle_event(pos)
+
+        if (length(hits) > 0) {
+#        print(sprintf("drag %s %s", pos[1], pos[2]))
+        #switch(hits, {
+        # change anchor point
+        #.type$start <<- pos[1]
+        #}, {
+        # change binwidth
+          bwtmp <- pos[1] - xlim[1]
+          if ((bwtmp > (xlim[2]-xlim[1])/100) & (bwtmp < (xlim[2]-xlim[1])/3))
+            binwidth <<- pos[1] - xlim[1]
+        #})
+        #updateBarsInfo()
+        #updateRanges()
+        #updateLims()
+          scaleslayer$invalidateIndex()
+          qupdate(scene)
+        }
+      }
+      else {
+        # pass mouse event on
+          identify_mouse_move(item, event, ...)
+      }
+    }
+
     ###################
     # draw the canvas #
     ###################
@@ -497,6 +633,12 @@ qdensity <- function(x, data, main = NULL,
        hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
        cache=cache, row=1, col=1, clip=FALSE)
 
+    scaleslayer <- qlayer(root, scales_draw, limits = lims, clip = FALSE,
+      mousePressFun = scales_mouse_press,
+      mouseReleaseFun = scales_mouse_release,
+      mouseMoveFun = scales_mouse_move,
+      hoverMoveFun = scales_hover, row=1, col=1)
+
     layout = root$gridLayout()
     layout$setRowPreferredHeight(0, 40)    # width of yaxis
     ## the y-axis layer needs 'dynamic' width determined by #{characters}
@@ -513,7 +655,7 @@ qdensity <- function(x, data, main = NULL,
     layout$setColumnStretchFactor(3, 0)
 
 
-         view <- qplotView(scene = scene)
+    view <- qplotView(scene = scene)
 
     title <- sprintf("Density plot of %s", xlab)
     view$setWindowTitle(title)

@@ -1,11 +1,9 @@
 \name{qaxis}
 \alias{qaxis}
-\title{Create an axis layer}
-\usage{qaxis(parent, data, side = 1, at, labels, sister, 
-    ...)
-
+\title{Create an axis layer.}
+\usage{qaxis(parent, data, side=1, at, labels, sister, ...)
 }
-\description{
+\description{Create an axis layer.
 This function creates an axis layer which contains tick marks and
 labels at given locations.}
 \value{a layer object}
@@ -40,30 +38,13 @@ library(qtpaint)
 s = qscene()
 r = qlayer(s)
 r[1, 1] = qlayer(paintFun = function(layer, painter) {
-    qdrawCircle(painter, runif(1000), runif(1000), r = 2)
-    qdrawRect(painter, 0, 0, 1, 1)
-}, limits = qrect(matrix(c(0, 1, 0, 1), 2)))  # main layer
+qdrawCircle(painter, runif(1000), runif(1000), r = 2)
+qdrawRect(painter, 0, 0, 1, 1)
+}, limits = qrect(matrix(c(0, 1, 0, 1), 2))) # main layer
 
-r[2, 1] = qaxis(side = 1, at = c(0, 0.1, 0.3, 
-    0.7, 0.8), sister = r[1, 1])  # x-axis
-r[1, 0] = qaxis(side = 2, at = c(0.2, 0.5, 0.6, 
-    0.7, 0.9), sister = r[1, 1])  # y-axis
-r[0, 1] = qaxis(side = 3, data = list(xat = c(0.1, 
-    0.3, 0.7), xlabels = c("a", "b", "c")), sister = r[1, 
-    1])  # top x-axis
-print(qplotView(scene = s))  # default layout is ugly; tune in r$gridLayout()}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+r[2, 1] = qaxis(side = 1, at = c(0, .1, .3, .7, .8), sister = r[1, 1]) # x-axis
+r[1, 0] = qaxis(side = 2, at = c(0.2, .5, .6, .7, .9), sister = r[1, 1]) # y-axis
+r[0, 1] = qaxis(side = 3, data = list(xat = c(.1, .3, .7), xlabels = c('a', 'b', 'c')),
+sister = r[1, 1]) # top x-axis
+print(qplotView(scene = s)) # default layout is ugly; tune in r$gridLayout()}
 

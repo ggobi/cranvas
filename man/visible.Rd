@@ -1,9 +1,8 @@
 \name{visible}
 \alias{visible}
-\title{Set or query the visibility of observations}
+\title{Set or query the visibility of observations.}
 \usage{visible(data)
-visible(data) <- value
-}
+visible(data) <- value}
 \description{Set or query the visibility of observations.}
 \details{\code{visible}: There is a column \code{.visible} to control the visibility of
 observations. This can be useful for ``deleting'' certain
@@ -29,10 +28,5 @@ visible(df)
 visible(df) = rep(c(TRUE, FALSE), c(100, 50))  # hide the last 50 obs
 
 visible(df)}
-
-
-
-
-
-
 \alias{visible<-}
+

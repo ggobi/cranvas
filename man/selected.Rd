@@ -1,9 +1,8 @@
 \name{selected}
 \alias{selected}
-\title{Set or query the selected (brushed) observations}
+\title{Set or query the selected (brushed) observations.}
 \usage{selected(data)
-selected(data) <- value
-}
+selected(data) <- value}
 \description{Set or query the selected (brushed) observations.}
 \details{\code{selected}: The column \code{.brushed} controls which observations are being
 brushed (i.e. those \code{TRUE}'s are selected).
@@ -28,10 +27,5 @@ selected(df)
 selected(df) = rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
 
 selected(df)}
-
-
-
-
-
-
 \alias{selected<-}
+
