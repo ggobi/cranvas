@@ -265,7 +265,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         ## change opacity of layer: + or -
         i = which(key == c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus))
         if (length(i)) {
-            meta$alpha = max(0, min(1, c(0.01, -0.01)[i] + meta$alpha))
+            meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
             layer.main$setOpacity(meta$alpha)
             qupdate(layer.main)
         }
