@@ -4,6 +4,7 @@
 ##' @importFrom qtbase qrect qfont qsize qconnect
 ##' @import qtpaint
 ##' @import plumbr
+##' @import objectSignals
 ##' @exportPattern ".*"
 ##' @name cranvas-package
 ##' @docType package
