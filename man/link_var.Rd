@@ -1,8 +1,9 @@
 \name{link_var}
 \alias{link_var}
-\title{Set or query the linking variable in a mutaframe.}
+\title{Set or query the linking variable in a mutaframe}
 \usage{link_var(data)
-link_var(data) <- value}
+link_var(data) <- value
+}
 \description{Set or query the linking variable in a mutaframe.}
 \value{\code{link_var}: the name of the linking variable
 
@@ -18,7 +19,9 @@ link_var(data) <- value}
 }
 \examples{mf = qdata(head(iris))
 link_var(mf)  # NULL
-link_var(mf) = 'Species'  # linking by 'Species'
+link_var(mf) = "Species"  # linking by 'Species'
 link_var(mf)}
-\alias{link_var<-}
 
+
+
+\alias{link_var<-}

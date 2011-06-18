@@ -1,9 +1,12 @@
 \name{qscatter}
 \alias{qscatter}
-\title{Draw a scatterplot...}
-\usage{qscatter(x, y, data, asp, main, labeled=TRUE, size=2, alpha=1, xlim, ylim,
-    xlab, ylab, cache=T, ...)
+\title{Draw a scatterplot..}
+\usage{qscatter(x, y, data, asp, main, labeled = TRUE, 
+    size = 2, alpha = 1, xlim, ylim, xlab, ylab, cache = T, 
+    ...)
+
 }
+
 \description{Draw a scatterplot}
 \details{arrow up/down: in-/de-crease size of points
 arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
@@ -27,16 +30,32 @@ Key 'r' resets data range to original scale}
 library(scales)
 
 data(nrcstat)
-nrcstat[,26]<- -nrcstat[,26]
-colnames(nrcstat)[26]<-"Neg.Median.Time.to.Degree"
+nrcstat[, 26] <- -nrcstat[, 26]
+colnames(nrcstat)[26] <- "Neg.Median.Time.to.Degree"
 
 qnrc = qdata(nrcstat)
 
-print(qscatter(R.Rankings.5th.Percentile, R.Rankings.95th.Percentile, qnrc))
-print(qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile, qnrc))
+print(qscatter(R.Rankings.5th.Percentile, R.Rankings.95th.Percentile, 
+    qnrc))
+print(qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile, 
+    qnrc))
 
 data(pollen)
 qpollen <- qdata(pollen)
 qscatter(RIDGE, CRACK, qpollen)
 # try zooming into the center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,9 +1,12 @@
 \name{qtime}
 \alias{qtime}
-\title{Draw a time plot...}
-\usage{qtime(data, time, y, period, wrap=TRUE, shift=c(1, 7, 12, 24), size=2,
-    alpha=1, asp, main, xlab, ylab, ...)
+\title{Draw a time plot..}
+\usage{qtime(data, time, y, period, wrap = TRUE, shift = c(1, 
+    7, 12, 24), size = 2, alpha = 1, asp, main, xlab, ylab, 
+    ...)
+
 }
+
 \description{Draw a time plot}
 \arguments{\item{data}{Mutaframe data to use}
 \item{time}{The variable indicating time, which is displayed on
@@ -31,36 +34,77 @@ data(nasa)
 nasa11 <- subset(nasa, Gridx == 1 & Gridy == 1)
 qnasa <- qdata(nasa11)
 selected(qnasa)[1] <- TRUE
-print(qtime(qnasa,TimeIndx,ts))
-print(qtime(qnasa,TimeIndx,ts,wrap=FALSE))
-print(qtime(qnasa,TimeIndx,ts,Year))
-print(qtime(qnasa,TimeIndx,ts,Year,wrap=FALSE))
-print(qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med)))
-print(qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med),wrap=FALSE))
-print(qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med),Year))
-print(qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med),Year,wrap=FALSE))
+print(qtime(qnasa, TimeIndx, ts))
+print(qtime(qnasa, TimeIndx, ts, wrap = FALSE))
+print(qtime(qnasa, TimeIndx, ts, Year))
+print(qtime(qnasa, TimeIndx, ts, Year, wrap = FALSE))
+print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med)))
+print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med), 
+    wrap = FALSE))
+print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med), 
+    Year))
+print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med), 
+    Year, wrap = FALSE))
 
 
 ## example 2: Norway precipitation data
 data(norwayprecip)
 nwp <- qdata(data.grid.wk)
-print(qtime(nwp,time,obs,year))
-print(qtime(nwp,time,obs,year,wrap=FALSE))
+print(qtime(nwp, time, obs, year))
+print(qtime(nwp, time, obs, year, wrap = FALSE))
 
 
 ## example 3: Remifentanil in the nlme package
 require(nlme)
-Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
-                          Remifentanil$ID==1,])
-Remi <- qdata(Remifentanil[complete.cases(Remifentanil),])
-print(qtime(Rem,Time,conc))
-print(qtime(Remi,Time,conc,ID))
+Rem <- qdata(Remifentanil[complete.cases(Remifentanil) & 
+    Remifentanil$ID == 1, ])
+Remi <- qdata(Remifentanil[complete.cases(Remifentanil), 
+    ])
+print(qtime(Rem, Time, conc))
+print(qtime(Remi, Time, conc, ID))
 
 
 ## example 4: Wages data
 data(wages)
-wage <- qdata(wages[,1:3])
-wage31 <- qdata(wages[wages$id==31,1:3])
-print(qtime(wage31,exper,lnw))
-print(qtime(wage,exper,lnw,id))}
+wage <- qdata(wages[, 1:3])
+wage31 <- qdata(wages[wages$id == 31, 1:3])
+print(qtime(wage31, exper, lnw))
+print(qtime(wage, exper, lnw, id))}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

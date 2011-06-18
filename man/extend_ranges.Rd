@@ -1,7 +1,8 @@
 \name{extend_ranges}
 \alias{extend_ranges}
-\title{Extend the range of data by an amount.}
-\usage{extend_ranges(x, f=qpar("mar"))
+\title{Extend the range of data by an amount}
+\usage{extend_ranges(x, f = qpar("mar"))
+
 }
 \description{Extend the range of data by an amount.}
 \details{This is useful for setting a margin in the plot region.}
@@ -16,7 +17,11 @@ columns}
 \examples{extend_ranges(c(0, 1))
 extend_ranges(1:10)
 
-m = matrix(c(c(1,10), c(5, 8)), nrow = 2)
+m = matrix(c(c(1, 10), c(5, 8)), nrow = 2)
 extend_ranges(m)
-extend_ranges(m, c(.1, .2))}
+extend_ranges(m, c(0.1, 0.2))}
+
+
+
+
 

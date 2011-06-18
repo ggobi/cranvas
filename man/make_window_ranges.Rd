@@ -1,7 +1,9 @@
 \name{make_window_ranges}
 \alias{make_window_ranges}
-\title{make the window ranges...}
-\usage{make_window_ranges(dataRanges, xlab, ylab, xtickmarks=FALSE, ytickmarks=FALSE, main)
+\title{make the window ranges..}
+\usage{make_window_ranges(dataRanges, xlab, ylab, xtickmarks = FALSE, 
+    ytickmarks = FALSE, main)
+
 }
 \description{make the window ranges
 make the window ranges}
@@ -12,5 +14,4 @@ make the window ranges}
 \item{xlab}{if xlab is replaced with somthing other than null, it will be assumed that an axis label will be used}
 \item{ylab}{if ylab is replaced with somthing other than null, it will be assumed that an axis label will be used}
 }
-\examples{make_window_ranges(c(0,1,2,3))}
-
+\examples{make_window_ranges(c(0, 1, 2, 3))}

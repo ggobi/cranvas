@@ -1,7 +1,8 @@
 \name{record_selector}
 \alias{record_selector}
-\title{Select a subset of data through a GUI to be brushed.}
+\title{Select a subset of data through a GUI to be brushed}
 \usage{record_selector(data, vars)
+
 }
 \description{Select a subset of data through a GUI to be brushed.}
 \details{We use a GUI based on \pkg{gWidgetsQt} to subset the data based on
@@ -29,8 +30,19 @@ record_selector(qiris)
 ## NRC rankings
 data(nrcstat)
 qnrc = qdata(nrcstat)
-qparallel(vars = 10:13, data = qnrc, main = 'Overview of Rankings', horizontal=FALSE)
-record_selector(qnrc, 'Institution.Name')
-qparallel(vars = 14:19, data = qnrc, main = 'Research, Student Support, Diversity')
-qparallel(vars = 20:26, data = qnrc, main = 'Publication, Award, Time to Degree')}
+qparallel(vars = 10:13, data = qnrc, main = "Overview of Rankings", 
+    horizontal = FALSE)
+record_selector(qnrc, "Institution.Name")
+qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity")
+qparallel(vars = 20:26, data = qnrc, main = "Publication, Award, Time to Degree")}
+
+
+
+
+
+
+
+
+
+
 

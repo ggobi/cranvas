@@ -1,13 +1,19 @@
 \name{qparallel}
 \alias{qparallel}
-\title{Parallel coordinates plot.}
-\usage{qparallel(vars, data, scale="range", names=break_str(vars),
-    na.action=na.impute, center, order=c("none", "MDS", "ANOVA",
-    "randomForest"), horizontal=TRUE, glyph=c("auto", "line",
-    "tick", "circle", "square", "triangle"), boxplot=FALSE,
-    boxwex, jitter, amount, main, alpha=1, draw.range=TRUE)
+\title{Parallel coordinates plot}
+\usage{qparallel(vars, data, scale = "range", names = break_str(vars), 
+    na.action = na.impute, center, order = c("none", "MDS", 
+        "ANOVA", "randomForest"), horizontal = TRUE, glyph = c("auto", 
+        "line", "tick", "circle", "square", "triangle"), 
+    boxplot = FALSE, boxwex, jitter, amount, main, alpha = 1, 
+    draw.range = TRUE)
+
 }
-\description{Parallel coordinates plot.
+
+
+
+
+\description{
 Create a parallel coordinates plot from a data frame or matrix, with each
 line representing a row.}
 \details{We can turn on/off identify by setting \code{brush(data,
@@ -70,7 +76,8 @@ variables (usually those categorical vars)}
 \item{draw.range}{whether to draw the range values (min and max
 for each variable)}
 }
-\examples{## interaction: drag with the right button to resize the brush; left button to move it
+\examples{## interaction: drag with the right button to resize
+#   the brush; left button to move it
 
 ## options(cranvas_debug = TRUE)
 
@@ -78,25 +85,27 @@ library(cranvas)
 
 data(nrcstat)
 qnrc = qdata(nrcstat)
-rownames(qnrc) = abbreviate(paste(nrcstat$Institution.Name, nrcstat$Program.Name, sep = " -> "))
+rownames(qnrc) = abbreviate(paste(nrcstat$Institution.Name, 
+    nrcstat$Program.Name, sep = " -> "))
 
 ## Overview: type, rankings
-print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
-    horizontal = FALSE, boxplot = TRUE))
+print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
+    glyph = "tick", horizontal = FALSE, boxplot = TRUE))
 
 qnrc$.color = "red"
 
-brush(qnrc, 'persistent') = TRUE  # begin persistent brushing
-brush(qnrc, 'color') = 'brown'
+brush(qnrc, "persistent") = TRUE  # begin persistent brushing
+brush(qnrc, "color") = "brown"
 ## select other objects now
-brush(qnrc, 'color') = 'green'
+brush(qnrc, "color") = "green"
 ## again, select other objects
-brush(qnrc, 'color') = 'yellow'
-brush(qnrc, 'persistent') = FALSE  # transient brushing
+brush(qnrc, "color") = "yellow"
+brush(qnrc, "persistent") = FALSE  # transient brushing
 
 record_selector(qnrc, vars = "Institution.Name")
 
-## How to find out ISU by intersection and negation? public, midwest, large program
+## How to find out ISU by intersection and negation?
+#   public, midwest, large program
 
 ## show data labels (identifying)
 brush(qnrc, "identify") = TRUE
@@ -104,27 +113,31 @@ brush(qnrc, "label.color") = "black"
 
 brush(qnrc, "identify") = FALSE  # turn off identification
 
-qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity",
+qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity", 
     center = median, horizontal = FALSE, glyph = "tick")
 
-qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", center = median,
-    horizontal = FALSE, glyph = "tick", boxplot = TRUE, boxwex = 0.8)
+qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", 
+    center = median, horizontal = FALSE, glyph = "tick", 
+    boxplot = TRUE, boxwex = 0.8)
 
 # Find ISU, and sort by best rank to least on ISU
 median.centering <- function(x) {
-    x <- (x - min(x, na.rm = T))/(max(x, na.rm = T) - min(x, na.rm = T))
+    x <- (x - min(x, na.rm = T))/(max(x, na.rm = T) - min(x, 
+        na.rm = T))
     x <- x - median(x, na.rm = T)
 }
 nrc.medctr <- apply(nrcstat[, 20:68], 2, median.centering)
 var.ord <- order(nrc.medctr[13, ]) + 19
-qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", center = median,
-    horizontal = FALSE, glyph = "tick", boxplot = TRUE, boxwex = 0.8)
+qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", 
+    center = median, horizontal = FALSE, glyph = "tick", 
+    boxplot = TRUE, boxwex = 0.8)
 
 ## color palette
 library(RColorBrewer)
 
 qnrc$.color = brewer.pal(3, "Set1")[as.integer(nrcstat$Control)]  # public or private
-qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", boxplot = TRUE)
+qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
+    boxplot = TRUE)
 
 
 ## old iris...
@@ -141,9 +154,11 @@ st2 = function(x) ((x - min(x))/(max(x) - min(x)))^2
 qparallel(data = qiris, scale = "st2")
 
 ## subsetting
-qparallel(data = qiris, vars = c("Sepal.Length", "Sepal.Width", "Species"))
+qparallel(data = qiris, vars = c("Sepal.Length", 
+    "Sepal.Width", "Species"))
 ## or formula interface
-qparallel(data = qiris, vars = ~Sepal.Length + Sepal.Width)
+qparallel(data = qiris, vars = ~Sepal.Length + 
+    Sepal.Width)
 # '.' means all variables in the data frame as usual
 qparallel(data = qiris, vars = ~.)
 
@@ -196,8 +211,10 @@ qparallel(data = qiris, center = median, boxplot = TRUE)
 
 ## labeling
 brush(qiris, "identify") = TRUE
-## we can also change the row names and the labels will change accordingly
-rownames(qiris) = paste(abbreviate(iris$Species), 1:50, sep = "")
+## we can also change the row names and the labels will
+#   change accordingly
+rownames(qiris) = paste(abbreviate(iris$Species), 
+    1:50, sep = "")
 
 qmtcars = qdata(mtcars)
 qparallel(data = qmtcars)
@@ -206,57 +223,69 @@ qparallel(data = qmtcars, order = "MDS")
 qparallel(data = qmtcars, order = "ANOVA")
 
 ## test speed
-test.mat1 = qdata(matrix(rnorm(1000 * 10), ncol = 10), color = rgb(1,
-    0, 0, 0.2))
+test.mat1 = qdata(matrix(rnorm(1000 * 10), ncol = 10), 
+    color = rgb(1, 0, 0, 0.2))
 qparallel(data = test.mat1)
 
-test.mat2 = qdata(matrix(rnorm(1000 * 15), ncol = 15), color = rgb(1,
-    0, 0, 0.2))
+test.mat2 = qdata(matrix(rnorm(1000 * 15), ncol = 15), 
+    color = rgb(1, 0, 0, 0.2))
 qparallel(data = test.mat2, boxplot = TRUE)
 
 ## slow for brushing in my laptop
-test.mat3 = qdata(matrix(rnorm(5000 * 10), ncol = 10), color = rgb(1,
-    0, 0, 0.05))
+test.mat3 = qdata(matrix(rnorm(5000 * 10), ncol = 10), 
+    color = rgb(1, 0, 0, 0.05))
 
 options(cranvas_debug = TRUE)
 qparallel(data = test.mat3)
 
 ## speed tests
-## on my laptop, 10000x10 takes 5 secs to build the brushing cache
-## identifying is generally very fast once the cache was built
-qhuge1 = qdata(matrix(rbeta(10000 * 10, 5, 30), ncol = 10))
+## on my laptop, 10000x10 takes 5 secs to build the
+#   brushing cache
+## identifying is generally very fast once the cache
+#   was built
+qhuge1 = qdata(matrix(rbeta(10000 * 10, 5, 30), 
+    ncol = 10))
 qparallel(data = qhuge1)
 ## 30000x10 takes 45 seconds
-qhuge2 = qdata(matrix(rbeta(30000 * 10, 5, 30), ncol = 10))
+qhuge2 = qdata(matrix(rbeta(30000 * 10, 5, 30), 
+    ncol = 10))
 qparallel(data = qhuge2)
 ## 1 million points to torture Qt!!
-qhuge3 = qdata(matrix(rbeta(1e+05 * 10, 5, 30), ncol = 10))
+qhuge3 = qdata(matrix(rbeta(1e+05 * 10, 5, 30), 
+    ncol = 10))
 qparallel(data = qhuge3)
 
 options(cranvas_debug = FALSE)
 
-## linking two parcoords plots: split the data into 2 parts
-testdata = qdata(as.data.frame(matrix(rnorm(2000 * 10), ncol = 10)))
-qparallel(testdata, vars = sprintf("V%d", 1:6))
-qparallel(testdata, vars = sprintf("V%d", 4:10))
+## linking two parcoords plots: split the data into 2
+#   parts
+testdata = qdata(as.data.frame(matrix(rnorm(2000 * 
+    10), ncol = 10)))
+qparallel(testdata, vars = sprintf("V\%d", 1:6))
+qparallel(testdata, vars = sprintf("V\%d", 4:10))
 
 library(ggplot2)
-qdiamonds = qdata(diamonds, color = rgb(1, 0, 0, 0.01))
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", jitter = ~cut +
-    color + clarity)
+qdiamonds = qdata(diamonds, color = rgb(1, 0, 
+    0, 0.01))
+qparallel(data = qdiamonds, vars = 1:7, glyph = "line", 
+    jitter = ~cut + color + clarity)
 qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
+qparallel(data = qdiamonds, vars = 1:7, glyph = "line", 
+    order = "ANOVA")
 qdiamonds$.color = brewer.pal(7, "Set1")[as.integer(diamonds$color)]
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
+qparallel(data = qdiamonds, vars = 1:7, glyph = "line", 
+    order = "ANOVA")
 
-## for large data, glyphs (short ticks) are automatically used instead of
+## for large data, glyphs (short ticks) are
+#   automatically used instead of
 #   segments
 
 ## residential data: 18221x8
 if (!require("YaleToolkit")) install.packages("YaleToolkit")
 library(YaleToolkit)
 data(NewHavenResidential)
-qnhr = qdata(NewHavenResidential, color = rgb(1, 0, 0, 0.1))
+qnhr = qdata(NewHavenResidential, color = rgb(1, 
+    0, 0, 0.1))
 qparallel(data = qnhr)
 
 qparallel(data = qnhr, vars = names(NewHavenResidential)[1:4])
@@ -279,11 +308,226 @@ qparallel(data = qnhr, horizontal = FALSE)
 # jitter is hopeless for huge data...
 qnhr$.color = rgb(1, 0, 0, 0.01)
 qparallel(data = qnhr, jitter = "zone", amount = 0.3)
-qparallel(data = qnhr, jitter = c("bedrms", "zone"), amount = 0.2)
+qparallel(data = qnhr, jitter = c("bedrms", "zone"), 
+    amount = 0.2)
 
 
 library(animation)
 data(pollen)
 qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
 qparallel(data = qpollen)}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

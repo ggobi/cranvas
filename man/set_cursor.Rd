@@ -1,7 +1,8 @@
 \name{set_cursor}
 \alias{set_cursor}
-\title{Set the cursor of a view.}
-\usage{set_cursor(view, cursor="ArrowCursor")
+\title{Set the cursor of a view}
+\usage{set_cursor(view, cursor = "ArrowCursor")
+
 }
 \description{Set the cursor of a view.}
 \details{All possible cursor types with the corresponding integer code are:
@@ -31,7 +32,15 @@ qlayer(scene)
 v = qplotView(scene = scene)
 print(v)
 
-set_cursor(v, 'WaitCursor')
+set_cursor(v, "WaitCursor")
 
 set_cursor(v, 2L)  # CrossCursor}
+
+
+
+
+
+
+
+
 

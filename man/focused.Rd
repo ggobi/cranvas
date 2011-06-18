@@ -1,8 +1,9 @@
 \name{focused}
 \alias{focused}
-\title{Set or query the focus status.}
+\title{Set or query the focus status}
 \usage{focused(data)
-focused(data) <- value}
+focused(data) <- value
+}
 \description{Set or query the focus status.}
 \details{\code{focused}: The plot on top of all the rest of plots is on focus, and the
 corresponding mutaframe is said to be on focus too.
@@ -25,5 +26,8 @@ mutaframe is on focus or not
 focused(mf)
 
 focused(mf) = TRUE}
-\alias{focused<-}
 
+
+
+
+\alias{focused<-}

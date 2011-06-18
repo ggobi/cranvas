@@ -1,9 +1,11 @@
 \name{qgrid}
 \alias{qgrid}
-\title{Create a background grid layer.}
-\usage{qgrid(parent, data, xat, yat, xlim, ylim, minor="xy", sister, ...)
+\title{Create a background grid layer}
+\usage{qgrid(parent, data, xat, yat, xlim, ylim, minor = "xy", 
+    sister, ...)
+
 }
-\description{Create a background grid layer.
+\description{
 A layer with gray background and white grid lines corresponding to
 axis tick marks. Minor grid lines are optional and thinner.}
 \value{a layer object}
@@ -35,11 +37,24 @@ library(qtpaint)
 s = qscene()
 r = qlayer(s)
 m = qlayer(paintFun = function(layer, painter) {
-qdrawCircle(painter, runif(1000), runif(1000), r = 2)
-qdrawRect(painter, 0, 0, 1, 1)
-}, limits = qrect(matrix(c(0, 1, 0, 1), 2))) # main layer
-g = qgrid(xat = seq(0, 1, .2), yat = seq(0, 1, .5), sister = m)
+    qdrawCircle(painter, runif(1000), runif(1000), r = 2)
+    qdrawRect(painter, 0, 0, 1, 1)
+}, limits = qrect(matrix(c(0, 1, 0, 1), 2)))  # main layer
+g = qgrid(xat = seq(0, 1, 0.2), yat = seq(0, 1, 
+    0.5), sister = m)
 r[1, 1] = g  # must add the grid layer FIRST, then the plot layer
 r[1, 1] = m
 print(qplotView(scene = s))}
+
+
+
+
+
+
+
+
+
+
+
+
 

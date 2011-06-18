@@ -1,9 +1,11 @@
 \name{qdensity}
 \alias{qdensity}
-\title{Draw a univariate density plot, with a rug plot underneath...}
-\usage{qdensity(x, data, main, binwidth, size=4, alpha=0.5, xlim, ylim, xlab,
-    ylab, cache=T, ...)
+\title{Draw a univariate density plot, with a rug plot underneath..}
+\usage{qdensity(x, data, main, binwidth, size = 4, alpha = 0.5, 
+    xlim, ylim, xlab, ylab, cache = T, ...)
+
 }
+
 \description{Draw a univariate density plot, with a rug plot underneath}
 \details{arrow up/down: in-/de-crease size of points
 arrow -/+: de-/in-crease alpha level (starts at alpha=1 by default)
@@ -34,4 +36,15 @@ print(qdensity(Second.Serve.Pts, qtennis))
 data(pollen)
 qpollen <- qdata(pollen)
 print(qdensity(RIDGE, qpollen))}
+
+
+
+
+
+
+
+
+
+
+
 

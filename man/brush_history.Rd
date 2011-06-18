@@ -1,9 +1,10 @@
 \name{brush_history}
 \alias{brush_history}
-\title{Create the brush history.}
-\usage{brush_history(data, index=selected(data))
+\title{Create the brush history}
+\usage{brush_history(data, index = selected(data))
+
 }
-\description{Create the brush history.
+\description{
 Given the indices of the brushed elements, this function stores
 these indices in the \code{\link{brush}} object and changes the
 colors of graphical elements permanently (via changing the
@@ -65,4 +66,24 @@ b$persistent.list  # what happened to the brush object?
 b$persistent.color
 b$color
 b$history.list}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

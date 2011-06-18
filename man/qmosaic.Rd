@@ -1,10 +1,13 @@
 \name{qmosaic}
 \alias{qmosaic}
-\title{Mosaic plot.}
-\usage{qmosaic(data, formula, divider=mosaic(), cascade=0, scale_max=TRUE,
-    na.rm=FALSE, subset, main, cache=T, ...)
+\title{Mosaic plot}
+\usage{qmosaic(data, formula, divider = mosaic(), cascade = 0, 
+    scale_max = TRUE, na.rm = FALSE, subset, main, cache = T, 
+    ...)
+
 }
-\description{Mosaic plot.
+
+\description{
 Create a mosaicplot using a formula (as described in prodplot)}
 \details{up arrow - takes out top var,
 down arrow - adds next variable (if available)
@@ -38,11 +41,30 @@ data(Titanic)
 titanic <- as.data.frame(Titanic)
 qtitanic <- qdata(titanic)
 
-print(qmosaic(qtitanic, Freq ~ Survived, "hbar")) 
-print(qmosaic(qtitanic, Freq ~ Age, "hbar")) 
-print(qmosaic(qtitanic, Freq ~ Sex, "hbar")) 
-print(qmosaic(qtitanic, Freq ~ Class, "hbar")) 
+print(qmosaic(qtitanic, Freq ~ Survived, "hbar"))
+print(qmosaic(qtitanic, Freq ~ Age, "hbar"))
+print(qmosaic(qtitanic, Freq ~ Sex, "hbar"))
+print(qmosaic(qtitanic, Freq ~ Class, "hbar"))
 
 
-print(qmosaic(qtitanic, Freq ~ Sex + Age | Class, mosaic()))}
+print(qmosaic(qtitanic, Freq ~ Sex + Age | Class, 
+    mosaic()))}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
