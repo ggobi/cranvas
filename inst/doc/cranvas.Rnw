@@ -7,6 +7,7 @@
 \onehalfspacing
 \usepackage{babel}
 \usepackage{longtable}
+\usepackage{graphicx}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
@@ -39,18 +40,234 @@
 
 \section{Introduction}
 
-One of the long frustrating limitations for users and developers of interactive graphics is that it is possible to program them in a high-level language like R, or integrate them seamlessly with analytical methods. Software such as ggobi \cite{STLBC03} and MANET \cite{UHS96} are not easily modified. For all practical purposes they are canned, use as is, software.  This paper describes a new interactive and dynamic graphics package for R, with essentially the capability of these ancestors. The closer association with R makes for easier integration with other parts of the statistical analysis. The package is not programmable, but contains a collection of standard plot types supporting interaction and linking between plots. 
+One of the long frustrating limitations for users and developers of interactive graphics is that it is possible to program them in a high-level language like R, or integrate them seamlessly with analytical methods. Software such as ggobi \cite{STLBC03} and MANET \cite{UHS96} are not easily modified. GGobi has plugins and an API so that other software could access its data structure, but very few users took advantages of these features. For all practical purposes they are use, as is, software.  This paper describes a new interactive and dynamic graphics package for R, with essentially the capability of these ancestors. The closer association with R should make for easier integration with other parts of the statistical analysis. The cranvas package is not programmable, but contains a collection of standard plot types supporting interaction and linking between plots. They might be used as examples for others who have ideas and interests in developing different, or new, interactive plots. 
+
+The code fragment and plots in Figure \ref{scat}, below shows an example of linking two scatterplots. The data contains statistics from the 2006 Australian Open mens tennis matches. The scatterplots show four variables first and second serve points, and number of matches played (the more the further the player has gone in the tournament) and average number of sets played. One player, who has played 7 matches (a lot) and averaged exactly 3 sets, has been brushed (yellow) in the left plot, and their values on first and second serve points is highlighted at right. This player doesn't win many first serve points but is the top second serve points winner.
+
+\begin{wrapsweave}
+<<echo=TRUE>>=
+require(cranvas)
+data(tennis)
+qtennis <- qdata(tennis)
+qscatter(First.Serve.Points, Second.Serve.Pts, qtennis)
+qscatter(Matches, Sets, qtennis)
+@
+\end{wrapsweave}
+
+\begin{figure*}[htp]
+\centerline{\includegraphics[width=0.45\textwidth]{images/scat1.png}\includegraphics[width=0.45\textwidth]{images/scat2.png}}
+\caption{Simple example of linked cranvas plots.}
+\label{scat}
+\end{figure*}
+
+\section{Data}
+
+Data frames need to be converted to mutaframes for plotting with \texttt{cranvas}, using the \texttt{qdata} function. Mutaframes provide the basis for communication between plots. Plots will listen to changes in the data and update themselves accordingly. The \texttt{qdata} sets up columns, such as \texttt{.brushed} in the data for interaction modes to listen to for updates. \citeasnoun{WLCBKS08} describes the approach. The \texttt{qdata} function also summarizes the number of missing values in the data.
+
+\section{Plot Types and Interactions}
+
+\subsection{Scatterplot}
+
+The scatterplot (Figure \ref{scat}) shows two variables. Clicking the mouse and dragging the cursor around the plot window defaults to brushing. Other actions are:
+
+\begin{itemize} \itemsep 0in
+\item {\sf z}: toggles the interaction mode to zoom. Clicking and dragging in the window now defaults to rescaling the plot. Points in the rectangle are zoomed to the full plot window size. Reset to the original by a single click.
+\item {\sf x}: toggles the interaction mode to focal point zoom. Clicking sets the focal point. Dragging the cursor zooms in. Holding shift while dragging zooms out. 
+\item {\sf r}: Resets the scale. 
+\item $\uparrow$/$\downarrow$: increases or decreases the point size.
+\item $\rightarrow$/$\leftarrow$: changes the transparency (alpha level).
+\end{itemize}
+
+A thin red line on the adge of the plot indicates points (hidden) outside the plotting region.
+
+\subsection{Histogram}
+
+The histogram (Figure \ref{hist} and code fragment) shows the distribution of one variable. Clicking the mouse and dragging the cursor around the plot window defaults to brushing. Grips below the histogram allows the binwidth to be changed by dragging the cursor. Other actions are:
+
+\begin{itemize} \itemsep 0in
+\item $\uparrow$/$\downarrow$: increases or decreases the binwidth.
+\item $\rightarrow$/$\leftarrow$: changes the starting value for binning data.
+\item rescaling: The region at the top of the window is sensitive to mouse clicks, which will rescale the vertical axis.
+\end{itemize}
+  
+\begin{wrapsweave}
+<<echo=TRUE>>=
+require(ggplot2)
+#qhist(First.Serve.Points, qtennis)
+qscatter(Matches, Sets, qtennis)
+@
+\end{wrapsweave}
+
+\begin{figure*}[htp]
+\centerline{\includegraphics[width=0.55\textwidth]{images/hist1.png}\includegraphics[width=0.4\textwidth]{images/scat3.png}}
+\caption{Histogram linked to a scatterplot.}
+\label{hist}
+\end{figure*}
+
+\begin{figure*}[hbp]
+\centerline{\includegraphics[width=0.5\textwidth]{images/density.png}\includegraphics[width=0.45\textwidth]{images/scat3.png}}
+\caption{Density and dot plot linked to a scatterplot.}
+\label{density}
+\end{figure*}
+
+\subsection{Density}
+
+The density display (Figure \ref{density} and code fragment) shows the distribution of one variable. Clicking the mouse and dragging the cursor on the dotplot below the density defaults to brushing. Grips below the dotplot allows the binwidth for the density to be changed by dragging the cursor. Other actions are:
+
+\begin{itemize} \itemsep 0in
+\item $\uparrow$/$\downarrow$: increases or decreases the size of the points.
+\item $\rightarrow$/$\leftarrow$: increases or decreases the binwidth.
+\item $+$/$-$: increases or decreases the transparency.
+\end{itemize}
+ 
+\begin{wrapsweave}
+<<echo=TRUE>>=
+qdensity(First.Serve.Points, qtennis)
+qscatter(Matches, Sets, qtennis)
+@
+\end{wrapsweave}
+
+\begin{figure*}[htbp]
+\centerline{\includegraphics[width=0.95\textwidth]{images/parcoord.png}}
+\caption{Parallel coordinate plot.}
+\label{parcoord}
+\end{figure*}
+
+\subsection{Parallel coordinate plot}
+
+A parallel coordinate plot (Figure \ref{parcoord} and code fragment below) displays multiple variables on parallel axes. Clicking the mouse and dragging the cursor around the plot window defaults to brushing. Labels are shown on mouse over of the plt. Some methods for re-ordering variables, choosing glyph type, orientation, jitter can be entered on the input line. Interactive actions include:
+
+\begin{itemize} \itemsep 0in
+\item $\uparrow$/$\downarrow$: flips the orientation of a variable.
+\item $\rightarrow$/$\leftarrow$: moves the variable to the left or right in the order of variables in the plot.
+\item $+$/$-$: increases or decreases the transparency.
+\item {\sf Delete/F5}: makes brushed items invisible/visible.
+\item {\sf a, o, x, n, c}: for AND, OR, XOR, NOT, COMPLEMENT brushing.
+\item {sf r}: to toggle min/max labels on and off.
+\item {\sf PageUp/PageDown}: Brush history.  
+\end{itemize}
 
 
-What is this good for?
+\begin{wrapsweave}
+<<echo=TRUE>>=
+qparallel(vars=c(3,5,7,11,9,10,13,4,14,15,8,16,18), qtennis)
+@
+\end{wrapsweave}
 
-Dependencies: qtbase, qtpaint, plumbr, objectSignals
+\subsection{Time series}
 
-Plot types and interactions available
+The time series plot displays measurements collected in a temporal context. Figure \ref{time} and code fragment show six years of monthly data collected on climate variables at a location in central America. Clicking the mouse and dragging the cursor around the plot window defaults to brushing. In addition, the seasonality in the time series can be explored by zooming the time axis, because the series will wrap on itself, so that the peaks and troughs alignment can be checked.
 
-Examples
+\begin{itemize} \itemsep 0in
+\item $\uparrow$/$\downarrow$: increases/decreases point size.
+\item $\rightarrow$/$\leftarrow$: scales the time axis, series will wrap on itself as it goes off the plot window.
+\item $+$/$-$: increases or decreases the transparency.
+\end{itemize}
+
+\begin{wrapsweave}
+<<echo=TRUE>>=
+data(nasa)
+nasa11 <- subset(nasa, Gridx == 1 & Gridy == 1)
+qnasa <- qdata(nasa11)
+selected(qnasa)[1] <- TRUE
+print(qtime(qnasa,TimeIndx,ts))
+qscatter(o3_tovs, ca_high, qnasa)
+@
+\end{wrapsweave}
+
+\begin{figure*}[hbp]
+\centerline{\includegraphics[width=0.6\textwidth]{images/time.png}\includegraphics[width=0.42\textwidth]{images/scat4.png}}
+\caption{Time series plot of temperature data linked to a scatterplot of ozone and cloud variables.}
+\label{time}
+\end{figure*}
+
+\subsection{Map}
+
+Maps can be plotted using the \texttt{qmap} function. Clicking the mouse and dragging the cursor around the plot window defaults to brushing. Mouse wheel events are translated into focal zoom. Scale reset occurs using {\sf r}.
+
+\begin{wrapsweave}
+<<echo=TRUE>>=
+require(maps)
+states <- map_data("state")
+qstates <- qdata(states)
+qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
+qmap(qstates, long, lat, group, region)
+@
+\end{wrapsweave}
+
+\begin{figure*}[htp]
+\centerline{\includegraphics[width=0.85\textwidth]{images/map1.png}}
+\caption{US Map with states colored.}
+\label{map}
+\end{figure*}
+
+\begin{figure*}[hbp]
+\centerline{\includegraphics[width=0.65\textwidth]{images/map2.png}\includegraphics[width=0.3\textwidth]{images/scat5.png}}
+\caption{Map of the USA with states colored by robbery rate, linked to a scatterplot of robbery by population. The states with the highest rates are brushed.}
+\label{time}
+\end{figure*}
+
+\begin{wrapsweave}
+<<echo=TRUE>>=
+data(crimes)
+qcrimes <- qdata(crimes)
+crimes$State <- tolower(crimes$State)
+link_var(qcrimes) = "State"
+link_var(qstates) = "region"
+link(qcrimes, qstates)
+qscatter(Population, Robbery, qcrimes)
+setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient())
+@
+\end{wrapsweave}
+
+\subsection{Mosaic plot}
+
+Mosaic plots (Figure \ref{mosaic} and code fragment) display multiple catgorical variables. Interactions include:
+
+\begin{itemize} \itemsep 0in
+\item $\uparrow$/$\downarrow$: removes/includes the variables in order of last entered.
+\item {\sf r}: toggles last variable as vertically or horizontally displayed.
+\item {\sf b/s}: Switches display between barchart and spine plot.
+\end{itemize}
+
+\begin{wrapsweave}
+<<echo=TRUE>>=
+require(stringr)
+require(productplots)
+data(Titanic)
+titanic <- as.data.frame(Titanic)
+qtitanic <- qdata(titanic)
+qmosaic(qtitanic, Freq ~ Sex + Age | Class, mosaic())
+qmosaic(qtitanic, Freq ~ Survived, "hbar")
+@
+\end{wrapsweave}
+
+\begin{figure*}[htp]
+\centerline{\includegraphics[width=0.45\textwidth]{images/mosaic1.png}\includegraphics[width=0.45\textwidth]{images/mosaic2.png}}
+\caption{Mosaic plots of the titanic data. In this case only one variable is shown in each, which corresponds to a bar chart and a spine plot.}
+\label{mosaic}
+\end{figure*}
+
+\subsection{Side-by-side boxplots}
+
+\subsection{Missing values}
+
+\subsection{Command line scripting of data attributes}
+
+\section{Dependencies}
+
+The cranvas package is built on several other packages. 
+
+\begin{itemize} \itemsep 0in
+\item \texttt{qtbase}: provides the interface to the {\sf Qt} library. 
+\item \texttt{qtpaint}: provides a low-level interaction to the {\sf Qt} toolkit.  It covers functions for efficient drawing. 
+\item \texttt{plumbr}:  provides a mutable, dynamic tabular data model. Models may be chained together to form the complex plumbing necessary for interactive graphics.
+\item \texttt{objectSignals}: A mutable Signal object can report changes to its state, clients could register functions so that they are called whenever the signal is emited. The signal could be emited, disconnected, blocked, unblocked, and buffered. 
+\end{itemize}
+
+Some plotting functions further depend on other packages: \texttt{productplots}, \texttt{ggplot2}, \texttt{scales}. 
 
 \bibliographystyle{agsm}
-\bibliography{cranvas}  
+\bibliography{cranvas} 
 
 \end{document}
