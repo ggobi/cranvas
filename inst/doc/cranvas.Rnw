@@ -8,6 +8,7 @@
 \usepackage{babel}
 \usepackage{longtable}
 \usepackage{graphicx}
+\usepackage{framed}
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
@@ -44,15 +45,20 @@ One of the long frustrating limitations for users and developers of interactive 
 
 The code fragment and plots in Figure \ref{scat}, below shows an example of linking two scatterplots. The data contains statistics from the 2006 Australian Open mens tennis matches. The scatterplots show four variables first and second serve points, and number of matches played (the more the further the player has gone in the tournament) and average number of sets played. One player, who has played 7 matches (a lot) and averaged exactly 3 sets, has been brushed (yellow) in the left plot, and their values on first and second serve points is highlighted at right. This player doesn't win many first serve points but is the top second serve points winner.
 
-\begin{wrapsweave}
-<<echo=TRUE>>=
+%\begin{wrapsweave}
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 require(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 qscatter(First.Serve.Points, Second.Serve.Pts, qtennis)
 qscatter(Matches, Sets, qtennis)
-@
-\end{wrapsweave}
+\end{verbatim}
+\end{quote}
+\end{framed}
+%@
+%\end{wrapsweave}
 
 \begin{figure*}[htp]
 \centerline{\includegraphics[width=0.45\textwidth]{images/scat1.png}\includegraphics[width=0.45\textwidth]{images/scat2.png}}
@@ -90,13 +96,15 @@ The histogram (Figure \ref{hist} and code fragment) shows the distribution of on
 \item rescaling: The region at the top of the window is sensitive to mouse clicks, which will rescale the vertical axis.
 \end{itemize}
   
-\begin{wrapsweave}
-<<echo=TRUE>>=
+%qhist(First.Serve.Points, qtennis)
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 require(ggplot2)
-#qhist(First.Serve.Points, qtennis)
 qscatter(Matches, Sets, qtennis)
-@
-\end{wrapsweave}
+\end{verbatim}
+\end{quote}
+\end{framed}
 
 \begin{figure*}[htp]
 \centerline{\includegraphics[width=0.55\textwidth]{images/hist1.png}\includegraphics[width=0.4\textwidth]{images/scat3.png}}
@@ -120,12 +128,14 @@ The density display (Figure \ref{density} and code fragment) shows the distribut
 \item $+$/$-$: increases or decreases the transparency.
 \end{itemize}
  
-\begin{wrapsweave}
-<<echo=TRUE>>=
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 qdensity(First.Serve.Points, qtennis)
 qscatter(Matches, Sets, qtennis)
-@
-\end{wrapsweave}
+\end{verbatim}
+\end{quote}
+\end{framed}
 
 \begin{figure*}[htbp]
 \centerline{\includegraphics[width=0.95\textwidth]{images/parcoord.png}}
@@ -148,11 +158,13 @@ A parallel coordinate plot (Figure \ref{parcoord} and code fragment below) displ
 \end{itemize}
 
 
-\begin{wrapsweave}
-<<echo=TRUE>>=
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 qparallel(vars=c(3,5,7,11,9,10,13,4,14,15,8,16,18), qtennis)
-@
-\end{wrapsweave}
+\end{verbatim}
+\end{quote}
+\end{framed}
 
 \subsection{Time series}
 
@@ -164,16 +176,18 @@ The time series plot displays measurements collected in a temporal context. Figu
 \item $+$/$-$: increases or decreases the transparency.
 \end{itemize}
 
-\begin{wrapsweave}
-<<echo=TRUE>>=
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 data(nasa)
 nasa11 <- subset(nasa, Gridx == 1 & Gridy == 1)
 qnasa <- qdata(nasa11)
 selected(qnasa)[1] <- TRUE
 print(qtime(qnasa,TimeIndx,ts))
 qscatter(o3_tovs, ca_high, qnasa)
-@
-\end{wrapsweave}
+\end{verbatim}
+\end{quote}
+\end{framed}
 
 \begin{figure*}[hbp]
 \centerline{\includegraphics[width=0.6\textwidth]{images/time.png}\includegraphics[width=0.42\textwidth]{images/scat4.png}}
@@ -185,15 +199,17 @@ qscatter(o3_tovs, ca_high, qnasa)
 
 Maps can be plotted using the \texttt{qmap} function. Clicking the mouse and dragging the cursor around the plot window defaults to brushing. Mouse wheel events are translated into focal zoom. Scale reset occurs using {\sf r}.
 
-\begin{wrapsweave}
-<<echo=TRUE>>=
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 require(maps)
 states <- map_data("state")
 qstates <- qdata(states)
 qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
 qmap(qstates, long, lat, group, region)
-@
-\end{wrapsweave}
+\end{verbatim}
+\end{quote}
+\end{framed}
 
 \begin{figure*}[htp]
 \centerline{\includegraphics[width=0.85\textwidth]{images/map1.png}}
@@ -207,8 +223,9 @@ qmap(qstates, long, lat, group, region)
 \label{time}
 \end{figure*}
 
-\begin{wrapsweave}
-<<echo=TRUE>>=
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 data(crimes)
 qcrimes <- qdata(crimes)
 crimes$State <- tolower(crimes$State)
@@ -216,9 +233,11 @@ link_var(qcrimes) = "State"
 link_var(qstates) = "region"
 link(qcrimes, qstates)
 qscatter(Population, Robbery, qcrimes)
-setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient())
-@
-\end{wrapsweave}
+setMapColorByLabel(qstates, qcrimes, Robbery/Population, 
+  scale_colour_gradient())
+\end{verbatim}
+\end{quote}
+\end{framed}
 
 \subsection{Mosaic plot}
 
@@ -230,8 +249,9 @@ Mosaic plots (Figure \ref{mosaic} and code fragment) display multiple catgorical
 \item {\sf b/s}: Switches display between barchart and spine plot.
 \end{itemize}
 
-\begin{wrapsweave}
-<<echo=TRUE>>=
+\begin{framed}
+\begin{quote}
+\begin{verbatim}
 require(stringr)
 require(productplots)
 data(Titanic)
@@ -239,8 +259,9 @@ titanic <- as.data.frame(Titanic)
 qtitanic <- qdata(titanic)
 qmosaic(qtitanic, Freq ~ Sex + Age | Class, mosaic())
 qmosaic(qtitanic, Freq ~ Survived, "hbar")
-@
-\end{wrapsweave}
+\end{verbatim}
+\end{quote}
+\end{framed}
 
 \begin{figure*}[htp]
 \centerline{\includegraphics[width=0.45\textwidth]{images/mosaic1.png}\includegraphics[width=0.45\textwidth]{images/mosaic2.png}}
