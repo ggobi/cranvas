@@ -12,7 +12,7 @@
 
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
-\usepackage[nogin,noae]{Sweave}
+\usepackage[nogin]{Sweave}
 \newcommand{\Rcode}[1]{{\texttt{#1}}}
 \newcommand{\Robject}[1]{{\texttt{#1}}}
 \newcommand{\Rcommand}[1]{{\texttt{#1}}}
@@ -21,12 +21,8 @@
 \newcommand{\Rpackage}[1]{{\textit{#1}}}
 \newcommand{\Rmethod}[1]{{\textit{#1}}}
 \newcommand{\Rclass}[1]{{\textit{#1}}}
-\newenvironment{wrapsweave}{\par}{\par}
-\usepackage{tikz}
 
 \makeatother
-
-\usepackage{babel}
 
 \usepackage{fullpage}
 \usepackage{harvard}
@@ -45,7 +41,6 @@ One of the long frustrating limitations for users and developers of interactive 
 
 The code fragment and plots in Figure \ref{scat}, below shows an example of linking two scatterplots. The data contains statistics from the 2006 Australian Open mens tennis matches. The scatterplots show four variables first and second serve points, and number of matches played (the more the further the player has gone in the tournament) and average number of sets played. One player, who has played 7 matches (a lot) and averaged exactly 3 sets, has been brushed (yellow) in the left plot, and their values on first and second serve points is highlighted at right. This player doesn't win many first serve points but is the top second serve points winner.
 
-%\begin{wrapsweave}
 \begin{framed}
 \begin{quote}
 \begin{verbatim}
@@ -58,7 +53,6 @@ qscatter(Matches, Sets, qtennis)
 \end{quote}
 \end{framed}
 %@
-%\end{wrapsweave}
 
 \begin{figure*}[htp]
 \centerline{\includegraphics[width=0.45\textwidth]{images/scat1.png}\includegraphics[width=0.45\textwidth]{images/scat2.png}}
