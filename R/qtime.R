@@ -313,12 +313,12 @@ qtime <- function(data, time, y, period=NULL, wrap=TRUE,
 
     if (event$key() == Qt$Qt$Key_Plus & .alpha < 1) {
       ## plus
-      .alpha <<- 1.1 * .alpha
+      .alpha <<- min(1, 1.1 * .alpha)
     }
 
     if (event$key() == Qt$Qt$Key_Minus & .alpha > 1/nrow(data)) {
       ## minus
-      .alpha <<- 0.9 * .alpha
+      .alpha <<- max(0.01, 0.9 * .alpha)
     }
     qupdate(main_circle_layer)
     qupdate(main_line_layer)
