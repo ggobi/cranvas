@@ -25,7 +25,7 @@
 \makeatother
 
 \usepackage{fullpage}
-\usepackage{harvard}
+\usepackage[authoryear]{natbib}
 
 \begin{document}
 
@@ -37,7 +37,7 @@
 
 \section{Introduction}
 
-One of the long frustrating limitations for users and developers of interactive graphics is that it is possible to program them in a high-level language like R, or integrate them seamlessly with analytical methods. Software such as ggobi \cite{STLBC03} and MANET \cite{UHS96} are not easily modified. GGobi has plugins and an API so that other software could access its data structure, but very few users took advantages of these features. For all practical purposes they are use, as is, software.  This paper describes a new interactive and dynamic graphics package for R, with essentially the capability of these ancestors. The closer association with R should make for easier integration with other parts of the statistical analysis. The cranvas package is not programmable, but contains a collection of standard plot types supporting interaction and linking between plots. They might be used as examples for others who have ideas and interests in developing different, or new, interactive plots. 
+One of the long frustrating limitations for users and developers of interactive graphics is that it is possible to program them in a high-level language like R, or integrate them seamlessly with analytical methods. Software such as ggobi \citep{STLBC03} and MANET \citep{UHS96} are not easily modified. GGobi has plugins and an API so that other software could access its data structure, but very few users took advantages of these features. For all practical purposes they are use, as is, software.  This paper describes a new interactive and dynamic graphics package for R, with essentially the capability of these ancestors. The closer association with R should make for easier integration with other parts of the statistical analysis. The cranvas package is not programmable, but contains a collection of standard plot types supporting interaction and linking between plots. They might be used as examples for others who have ideas and interests in developing different, or new, interactive plots. 
 
 The code fragment and plots in Figure \ref{scat}, below shows an example of linking two scatterplots. The data contains statistics from the 2006 Australian Open mens tennis matches. The scatterplots show four variables first and second serve points, and number of matches played (the more the further the player has gone in the tournament) and average number of sets played. One player, who has played 7 matches (a lot) and averaged exactly 3 sets, has been brushed (yellow) in the left plot, and their values on first and second serve points is highlighted at right. This player doesn't win many first serve points but is the top second serve points winner.
 
@@ -62,7 +62,7 @@ qscatter(Matches, Sets, qtennis)
 
 \section{Data}
 
-Data frames need to be converted to mutaframes for plotting with \texttt{cranvas}, using the \texttt{qdata} function. Mutaframes provide the basis for communication between plots. Plots will listen to changes in the data and update themselves accordingly. The \texttt{qdata} sets up columns, such as \texttt{.brushed} in the data for interaction modes to listen to for updates. \citeasnoun{WLCBKS08} describes the approach. The \texttt{qdata} function also summarizes the number of missing values in the data.
+Data frames need to be converted to mutaframes for plotting with \texttt{cranvas}, using the \texttt{qdata} function. Mutaframes provide the basis for communication between plots. Plots will listen to changes in the data and update themselves accordingly. The \texttt{qdata} sets up columns, such as \texttt{.brushed} in the data for interaction modes to listen to for updates. \citet{WLCBKS08} describes the approach. The \texttt{qdata} function also summarizes the number of missing values in the data.
 
 \section{Plot Types and Interactions}
 
@@ -282,7 +282,7 @@ The cranvas package is built on several other packages.
 
 Some plotting functions further depend on other packages: \texttt{productplots}, \texttt{ggplot2}, \texttt{scales}. 
 
-\bibliographystyle{agsm}
+\bibliographystyle{apa}
 \bibliography{cranvas} 
 
 \end{document}
