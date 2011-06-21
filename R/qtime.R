@@ -8,6 +8,7 @@
 ##' 'year','month', or other time resolutions. Default to be
 ##' null. When it is not null, the key U and D can be hit to separate
 ##' the groups or overlap them together to watch the patterns.
+##' @param group Similar to period, but is used for longitudinal data grouping.
 ##' @param wrap The switch for wrapping or not when zooming in/out by
 ##' hitting right arrow or left arrow. Default to be TRUE.
 ##' @param shift Wrapping speed selector. The default possible speeds
@@ -20,7 +21,7 @@
 ##' @param ylab label on vertical axis, default is name of y variable
 ##' @example cranvas/inst/examples/qtime-ex.R
 
-qtime <- function(data, time, y, period=NULL, wrap=TRUE,
+qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
                   shift=c(1,7,12,24), size=2, alpha=1, asp=NULL, 
                   main=NULL, xlab=NULL, ylab=NULL,...){
 
@@ -34,6 +35,7 @@ qtime <- function(data, time, y, period=NULL, wrap=TRUE,
   y <- as.data.frame(matrix(eval(arguments$y, df),nrow=nrow(df)),
                      stringsAsFactors=FALSE)
   pd <- eval(arguments$period, df)
+  gp <- eval(arguments$group, df)
 
   stopifnot(!is.null(x), !is.null(y))
   stopifnot(length(x) > 1, nrow(y) > 1,
@@ -67,6 +69,11 @@ qtime <- function(data, time, y, period=NULL, wrap=TRUE,
     tdf <- mutaframe(x=rep(1:pdLen[1],length=length(x)),
                      zg=rep(1,nrow(df)),pd=pd, y)
     x <- rep(1:pdLen[1],length=length(x))
+    zoomsize <- max(tdf$x,na.rm=TRUE)-min(tdf$x,na.rm=TRUE)
+  } else if (!is.null(gp)) {
+    if (is.character(gp)) gp <- factor(gp)
+    .group <- deparse(arguments$group)
+    tdf <- mutaframe(x=x, zg=rep(1,nrow(df)),pd=gp, y)
     zoomsize <- max(tdf$x,na.rm=TRUE)-min(tdf$x,na.rm=TRUE)
   }
 
@@ -231,7 +238,7 @@ qtime <- function(data, time, y, period=NULL, wrap=TRUE,
       query_layer$setLimits(lims)
     }
 
-    if (!is.null(pd)) {
+    if (!is.null(pd) | !is.null(gp)) {
       if (event$key() == Qt$Qt$Key_U) {
         ## Key U (for Up)
 
