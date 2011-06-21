@@ -153,7 +153,7 @@ A parallel coordinate plot (Figure \ref{parcoord} and code fragment below) displ
 \item $+$/$-$: increases or decreases the transparency.
 \item {\sf Delete/F5}: makes brushed items invisible/visible.
 \item {\sf a, o, x, n, c}: for AND, OR, XOR, NOT, COMPLEMENT brushing.
-\item {sf r}: to toggle min/max labels on and off.
+\item {\sf r}: to toggle min/max labels on and off.
 \item {\sf PageUp/PageDown}: Brush history.  
 \end{itemize}
 
