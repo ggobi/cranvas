@@ -18,8 +18,8 @@ print(qtime(qnasa,TimeIndx,c(ts,ps_tovs,ca_med),Year,wrap=FALSE))
 ## example 2: Norway precipitation data
 data(norwayprecip)
 nwp <- qdata(data.grid.wk)
-print(qtime(nwp,time,obs,year))
-print(qtime(nwp,time,obs,year,wrap=FALSE))
+print(qtime(nwp,time,obs,period=year))
+print(qtime(nwp,time,obs,period=year,wrap=FALSE))
 
 
 ## example 3: Remifentanil in the nlme package
@@ -28,7 +28,8 @@ Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
                           Remifentanil$ID==1,])
 Remi <- qdata(Remifentanil[complete.cases(Remifentanil),])
 print(qtime(Rem,Time,conc))
-print(qtime(Remi,Time,conc,ID))
+print(qtime(Remi,Time,conc,group=ID))
+print(qtime(Remi,Time,conc,group=ID,wrap=FALSE))
 
 
 ## example 4: Wages data
@@ -36,5 +37,5 @@ data(wages)
 wage <- qdata(wages[,1:3])
 wage31 <- qdata(wages[wages$id==31,1:3])
 print(qtime(wage31,exper,lnw))
-print(qtime(wage,exper,lnw,id))
+print(qtime(wage,exper,lnw,group=id))
 
