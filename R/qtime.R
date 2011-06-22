@@ -74,8 +74,11 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
     if (is.character(gp)) gp <- factor(gp)
     .group <- deparse(arguments$group)
     tdf <- mutaframe(x=x, zg=rep(1,nrow(df)),pd=gp, y)
+    pd <- gp
+    .period <- .group
     zoomsize <- max(tdf$x,na.rm=TRUE)-min(tdf$x,na.rm=TRUE)
   }
+  ## print(tdf[c(1:5,51:55),])
 
   ## set plot range
   dataRanges <- c(extend_ranges(tdf$x),
@@ -165,7 +168,7 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
       ## arrow right
 
       if (wrap) {
-        zoombound=crt_range-shift[1]
+        zoombound <- crt_range-shift[1]
         if (shift[1]==1 & zoombound<3){
           zoombound <- 3
         } else if (shift[1]!=1 & zoombound<shift[1]){
@@ -207,12 +210,27 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
 
       if (wrap) {
         zoombound <- crt_range+shift[1]
-        if (zoombound>(zoomsize+1)) zoombound <- zoomsize+1
+        if (zoombound>(zoomsize+min(x,na.rm=TRUE))) {
+          zoombound <- zoomsize+min(x,na.rm=TRUE)
+        }
         tdf$x <- x%%zoombound
         tdf$zg <- ceiling(x/zoombound)
         if (sum(tdf$x==0)){
           tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
           tdf$x[tdf$x==0] <- zoombound
+        }
+        while (max(tdf$x)-min(tdf$x)+1 <= crt_range &
+               zoombound<zoomsize+min(x,na.rm=TRUE)) {
+          zoombound <- zoombound+shift[1]
+          if (zoombound>(zoomsize+min(x,na.rm=TRUE))) {
+            zoombound <- zoomsize+min(x,na.rm=TRUE)
+          }
+          tdf$x <- x%%zoombound
+          tdf$zg <- ceiling(x/zoombound)
+          if (sum(tdf$x==0)){
+            tdf$zg[tdf$x==0] <- tdf$zg[which(tdf$x==0)-1]
+            tdf$x[tdf$x==0] <- zoombound
+          }
         }
         dataRanges[1:2] <<- extend_ranges(tdf$x)
         lims <<- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
@@ -238,7 +256,7 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
       query_layer$setLimits(lims)
     }
 
-    if (!is.null(pd) | !is.null(gp)) {
+    if (!is.null(pd)) {
       if (event$key() == Qt$Qt$Key_U) {
         ## Key U (for Up)
 
