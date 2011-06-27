@@ -42,7 +42,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 ##' @export
 ##' @example cranvas/inst/examples/qmap-ex.R
 qmap <- function(data, longitude, latitude, group, label = group,
-    main = NULL, ...) {
+    main = NULL, width=600, height=600, ...) {
 
     ## check if an attribute exist
     #  browser()
@@ -323,51 +323,6 @@ qmap <- function(data, longitude, latitude, group, label = group,
     coords <- function(item, painter, exposed) {
     }
 
-    # Display legend information for colour ----------------------------
-
-    legend_draw <- function(item, painter, exposed, ...) {
-        #print('legend_draw')
-#browser()
-        if (is.null(attr(data,"col.scale"))) {
-					layout$setColumnPreferredWidth(1,0)
-					return()
-        }
-				layout$setColumnPreferredWidth(1,200)
-
-#				print("draw legend")
-
-        scale <- attr(data,"col.scale")
-#        xpos = max(x)
-				xpos = min(x)
-        ypos = (max(y) + min(y))/2
-        #browser()
-        qstrokeColor(painter) <- "black"
-        qdrawText(painter, scale$name, xpos, ypos, valign = "top",
-            halign = "left")
-        fontHeight <- qstrHeight(painter, scale$name)
-
-        # create a set of rectangles
-        r0 <- 0.05 * c(0, 0, diff(range(x)), diff(range(y)))
-        ypos <- ypos - 3 * qstrHeight(painter, scale$name)
-        r0 <- r0 + c(xpos, ypos)
-
-        d <- options()$str$digits.d
-        #   browser()
-        qval <- seq(scale$limits[1],scale$limits[2],length=5)
-        qcol <- scale$map(qval)
-
-
-        for (i in 1:length(qcol)) {
-            qdrawRect(painter, r0[1], r0[2], r0[3], r0[4], fill = qcol[i],
-            	stroke = "black")
-            qdrawText(painter, as.character(round(qval[i],d)), xpos + 1.5 * (r0[3] - r0[1]),
-                ypos + fontHeight, valign = "top", halign = "left")
-            ypos <- ypos - 1.5 * fontHeight
-            r0[2] <- r0[2] - 1.5 * fontHeight
-            r0[4] <- r0[4] - 1.5 * fontHeight
-        }
-
-    }
 
     scene = qscene()
     root_layer = qlayer(scene)
@@ -384,12 +339,13 @@ qmap <- function(data, longitude, latitude, group, label = group,
         },
         wheelFun = handle_wheel_event,
         clip = FALSE)
-    legendlayer = qlayer(scene, legend_draw, limits = lims, clip = FALSE)
+    legendlayer = qlegend(parent=NULL, data=data, vertical=TRUE, sister=bglayer)
     brushing_layer = qlayer(root_layer, brushing_draw, mousePressFun = brushing_mouse_press,
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
         keyPressFun = keyPressFun, limits = lims, clip = FALSE)
     querylayer = qlayer(root_layer, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
         limits = lims, clip = FALSE)
+
 
   root_layer[0,1] <- legendlayer
 
@@ -426,8 +382,8 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
    layout = root_layer$gridLayout()
 # map area
-    layout$setRowPreferredHeight(0, 400)
-    layout$setColumnPreferredWidth(0, 400)
+    layout$setRowPreferredHeight(0, height)
+    layout$setColumnPreferredWidth(0, width)
 # legend area
     layout$setColumnPreferredWidth(1,100)
     layout$setColumnStretchFactor(1, 0)
