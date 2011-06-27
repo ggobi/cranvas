@@ -5,13 +5,15 @@
 #' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
 #' Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
 #' Key 'r' resets data range to original scale
-#' @param data mutaframe data to use
 #' @param x which designates variable displayed on the horizontal axis
 #' @param y which designates variable displayed on the vertical axis
+#' @param data mutaframe data to use
 #' @param main main title for the plot
 #' @param labeled whether axes should be labeled
 #' @param size point size
 #' @param alpha transparency level, 1=completely opaque
+#' @param width width of plotting device (in pixels) at opening
+#' @param height height of plotting device (in pixels) at opening
 #' @param xlim = c(min, max) user specifed data range for the x axis, by default range(x)
 #' @param ylim = c(min, max) user specifed data range for the y axis, by default range(y)
 #' @param xlab label on horizontal axis, default is name of x variable
@@ -19,8 +21,8 @@
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @example cranvas/inst/examples/qscat-ex.R
 
-qscatter <- function(x, y, data, asp = NULL, main = NULL,
-                     labeled = TRUE, size = 2, alpha = 1, xlim=NULL,
+qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
+                     labeled = TRUE, size = 2, alpha = 1, width=600, height=600,  xlim=NULL,
                      ylim=NULL, xlab=NULL, ylab=NULL, cache = T, ...)
 {
     stopifnot(is.mutaframe(data))
@@ -408,8 +410,8 @@ qscatter <- function(x, y, data, asp = NULL, main = NULL,
     ###################
     # draw the canvas #
     ###################
-    xWidth <- 600
-    yWidth <- 600
+    xWidth <- width
+    yWidth <- height
     if (!is.null(asp))
         yWidth <- round(1.0 * xWidth * asp, 0)
 
