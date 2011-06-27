@@ -202,12 +202,12 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
 
         if (length(i <- which(key == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
             ## arrow up/down
-            .radius <<- max(0, .radius + c(1, -1)[i])
+            .radius <<- max(0.1, .radius + c(1, -1)[i])
             qupdate(datalayer)
             qupdate(brushlayer)
         } else if (length(i <- which(key == c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)))) {
             ## arrow right/left: alpha blending
-            .alpha <<- max(0.01, min(1, c(1.1, 0.9)[i] * .alpha))
+            .alpha <<- max(0.01, 1/nrow(data), min(1, c(1.1, 0.9)[i] * .alpha))
             ##  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         } else if (key == Qt$Qt$Key_Z) {
@@ -412,8 +412,8 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
     ###################
     xWidth <- width
     yWidth <- height
-    if (!is.null(asp))
-        yWidth <- round(1.0 * xWidth * asp, 0)
+    if (!is.null(aspect.ratio))
+        yWidth <- round(1.0 * xWidth * aspect.ratio, 0)
 
 #print(yWidth)
 
@@ -449,6 +449,7 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
     querylayer <- qlayer(parent = root, query_draw, limits = lims,
                          hoverMoveFun = query_hover,
                          hoverLeaveFun = query_hover_leave, cache=cache, row=1, col=1, clip=FALSE)
+
 
     layout = root$gridLayout()
     layout$setRowPreferredHeight(0, 40)	# width of yaxis
