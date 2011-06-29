@@ -2,11 +2,7 @@
 ## Indicators are sorted by ISU, most above median to most below
 ## Use the university selector to choose ISU, examine its strengths/weaknesses
 ## Hold CTL and then select NCSU, to compare the two
-
-require(qtbase)
-require(qtpaint)
-require(plumbr)
-require(cranvas)
+library(cranvas)
 
 # scatterplots of ratings variables, 5th vs 95th percentiles
 # parallel coords of criteria

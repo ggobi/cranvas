@@ -28,10 +28,10 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
     arguments <- as.list(match.call()[-1])
 
-    ## transform the data
+    ## extract the variable of interest from data
     df <- data.frame(data)
     x <- eval(arguments$x, df)
-#browser()
+
     stopifnot(!is.null(x))
     stopifnot(length(x) > 1)
 
@@ -48,7 +48,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     ## parameters for dataRanges
     if (is.null(xlab)) xlab <- deparse(arguments$x)
     ylab <- ""
-#browser()
+
     values_out_of_plotting_range <- FALSE
 
     ## parameters for all layers
@@ -60,10 +60,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     .radius <- size
     .alpha <- alpha
 
-    ## parameters event handling
-    .startBrush <- NULL
-    .endBrush <- NULL
-    ## whether in the brush mode
+    ## parameters used in event handling
     .brush <- TRUE
     ## mouse position
     .bpos <- c(NA, NA)
@@ -108,7 +105,6 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
     xaxis <- function(item, painter, exposed) {
         sx <- axis_loc(dataRanges[1:2])
-        #xlabels <- rep("", length(sx))
 
         draw_x_axes_with_labels_fun(painter, c(dataRanges[1:2],1,5),
             axisLabel = sx, labelHoriPos = sx, name = xlab)
@@ -116,7 +112,6 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
     yaxis <- function(item, painter, exposed) {
         sy <- axis_loc(dataRanges[3:4])
-        #ylabels <- rep("", length(sy))
 
         draw_y_axes_with_labels_fun(painter, c(1,5, dataRanges[3:4]),
             axisLabel = sy, labelVertPos = sy, name = ylab)
@@ -130,29 +125,25 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         draw_grid_with_positions_fun(painter, dataRanges, sx, sy)
     }
 
-#    density <- function(item, painter, exposed) {
-#        stroke <- data$.color
-#        df <- data.frame(data)
-#        x <- eval(arguments$x, df)
-
-#        dx <- density(x)
-#        qdrawLine(painter, x=dx$x, y=dx$y, stroke = = alpha(stroke, .alpha))
-#    }
-
-    rug <- function(item, painter, exposed) {
+    draw_points_density <- function(item, painter, exposed) {
+        # Set drawing attributes
         fill <- data$.color
         stroke <- data$.color
+        # Get data column
         df <- data.frame(data)
         x <- eval(arguments$x, df)
         y <- rep(0, length(x))
+        # Compute density function, and draw
         dx <- density(x, bw=binwidth)
         qlineWidth(painter) <- 3
         qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(stroke, 1))
 
+        # Draw points
         radius <- .radius
         qdrawCircle(painter, x = x, y = y, r = radius, fill = alpha(fill,
             .alpha), stroke = alpha(stroke, .alpha))
 
+        # Draw indications that there is data outside plot window
         if (values_out_of_plotting_range) {
         if (any(x < dataRanges[1]))
                 qdrawSegment(painter, x0 = dataRanges[1], x1=dataRanges[1],
@@ -214,7 +205,8 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     keyPressFun <- function(item, event, ...) {
         # arrow up/down: in/de-crease point size
         # arrow left/right: de/in-crease alpha level
-    # z toggle zoom on/off (default is off): mouse click & drag will specify a zoom window
+        # z toggle zoom on/off (default is off): mouse click & drag
+        #     will specify a zoom window
         key <- event$key()
 
         if (length(i <- which(key == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
@@ -226,15 +218,12 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         else if (length(i <- which(key == c(c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus))))) {
             # +/- - alpha blending
             .alpha <<- max(0.01, min(1, c(1.1, 0.9)[i] * .alpha))
-  #          print(.alpha*nrow(data))
-          #  datalayer$setOpacity(.alpha)
             qupdate(datalayer)
         }
         else if (length(i <- which(key == c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)))) {
             # arrow left/right - alpha blending
-            binwidth <<- max((xlim[2]-xlim[1])/100, min((xlim[2]-xlim[1])/3, c(1.1, 0.9)[i] * binwidth))
-  #          print(.alpha*nrow(data))
-          #  datalayer$setOpacity(.alpha)
+            binwidth <<- max((xlim[2]-xlim[1])/100, min((xlim[2]-xlim[1])/3,
+                c(1.1, 0.9)[i] * binwidth))
             qupdate(datalayer)
         }
        else if (key == Qt$Qt$Key_Z) {
@@ -243,16 +232,14 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         }
         else if (key == Qt$Qt$Key_X) {
             zoom_focal <<- !zoom_focal
-#browser()
-#        print(sprintf("focal zoom <%s>", event$pos()))
-    }
-        else if (key == Qt$Qt$Key_R) {
-    # reset to original boundaries
-
-        updatelimits(extend_ranges(xlim), extend_ranges(ylim))
         }
+        #else if (key == Qt$Qt$Key_R) {
+        # reset to original boundaries
+        #    updatelimits(extend_ranges(xlim), extend_ranges(ylim))
+        #}
 
     }
+    
     handle_zoom <- function() {
         print("zoom action")
         print(.zstart)
@@ -314,16 +301,15 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     }
 
     mouse_release <- function(item, event) {
-#print(zoom)
+
         if (zoom) {
             .zstop <<- as.numeric(event$pos())
             handle_zoom()
         }
     }
 
-    identify_mouse_move <- function(layer, event) {
+    mouse_move <- function(layer, event) {
         if (zoom) {
-#print("identify_mouse_move")
             .zstop <<- as.numeric(event$pos())
             qupdate(querylayer)
             return()
@@ -336,36 +322,25 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         }
         .bpos[2] <<- 0
         .new.brushed <- rep(FALSE, n)
-        #xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
 
-        #yrange <- diff(dataRanges[c(3, 4)]) * 0.01
         xrange <- 0
         yrange <- 0
-#        yrange <- .radius/root$size$height() * diff(dataRanges[c(3, 4)])
-        #
         rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
                                .bpos + .brange + c(xrange, yrange)),
                              2, byrow = TRUE))
 
-        ##browser()
-        ##rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2,
-        ##             byrow = TRUE))
-        #hits <- layer$locate(rect) + 1
         # Do my own detection!!
         df <- as.data.frame(data)
         x <- eval(arguments$x, df)
         hits <- c(1:nrow(df))[x > (.bpos[1] - .brange[1] - xrange) &
                              x < (.bpos[1] + .brange[1] + xrange)]
 
-        #browser()
         .new.brushed[hits] <- TRUE
         data$.brushed <- mode_selection(data$.brushed, .new.brushed,
                                         mode = brush(data)$mode)
     }
 
     handle_wheel_event <- function(layer, event) {
-#            print("wheeling")
-#            browser()
         handle_focal_zoom(as.numeric(event$pos()), event$delta()/200.0,  TRUE)
     }
 
@@ -399,8 +374,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         yrange <- diff(dataRanges[c(3, 4)])/1000
         rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
             xpos + xrange, ypos + yrange), 2, byrow = TRUE))
-        #rect <- qrect(matrix(c(1.9999, -0.00001, 2.0001, 0.00001), 2, byrow=TRUE))
-        # hits <- datalayer$locate(rect) + 1
+
         # My own identification function, finds the closest point
         df <- as.data.frame(data)
         x <- eval(arguments$x, df)
@@ -410,19 +384,15 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         else
           hits <- NULL
        
-        #print(hits)
-        #print(.queryPos)
-        #browser()
         # Nothing under mouse?
         if (length(hits) == 0)
             return()
 
         info <- data.frame(x[hits])
         names(info) <- xlab
-        #browser()
 
         # Nothing under mouse
-        #    if (nrow(info) == 0) return()
+        if (nrow(info) == 0) return()
 
         d <- options()$str$digits.d
         # Work out label text
@@ -432,7 +402,6 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
             infostring <- paste(idx, infodata, collapse = "\n", sep = ": ")
         }
         else {
-            #browser()
             xymin <- unlist(lapply(info[, idx], min, na.rm = TRUE))
             xymax <- unlist(lapply(info[, idx], max, na.rm = TRUE))
                       xymin <- round(xymin, d)
@@ -460,8 +429,6 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     }
 
     query_hover <- function(item, event, ...) {
-        #    if (.brush) return()
-
         .queryPos <<- as.numeric(event$pos())
         qupdate(querylayer)
     }
@@ -514,39 +481,21 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
           )
           cu$setShape(cursor)
           view$cursor <- cu
-#      print(hits)
         }
       }
       else {
         cu <- view$cursor
         cu$setShape(Qt$Qt$ArrowCursor)
         view$cursor <- cu
-
-#        event$ignore()
-        #bar_hover(item, event, ...)
       }
     }
 
     scales_mouse_press <- function(item, event, ...) {
       pos <- as.numeric(event$pos())
       if (pos[2] < (-4*diff(ylim)/50)) {
+        # Only if the cursor is in the bottom part of the plot - scale area
         hits <- scales_handle_event(pos)
 
-        #if (length(hits) > 0) {
-        #  switch (hits, {}, {}, {
-#          if (.yMax < max(.bars_info$data$top))
-         # binwidth <- diff
-          #message("M ", .yMax, "\n")
-          # print(.yMax)
-        #    }
-        #  )
-        #updateRanges()
-        #updateLims()
-        #scaleslayer$invalidateIndex()
-        #qupdate(.scene)
-
-        #} #else
-        # pass mouse event on
       }
       else
         brush_mouse_press(item, event, ...)
@@ -555,6 +504,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     scales_mouse_release <- function(item, event, ...) {
      pos <- as.numeric(event$pos())
      if (pos[2] < (-4*diff(ylim)/50)) {
+        # Only if the cursor is in the bottom part of the plot - scale area
         hits <- scales_handle_event(pos)
 
         if (length(hits) == 0) {
@@ -564,33 +514,25 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
       }
     }
 
-
     scales_mouse_move <- function(item, event, ...) {
       pos <- as.numeric(event$pos())
       if (pos[2] < (-4*diff(ylim)/50)) {
+        # Only if the cursor is in the bottom part of the plot - scale area
         hits <- scales_handle_event(pos)
 
         if (length(hits) > 0) {
-#        print(sprintf("drag %s %s", pos[1], pos[2]))
-        #switch(hits, {
-        # change anchor point
-        #.type$start <<- pos[1]
-        #}, {
-        # change binwidth
+          # change binwidth
           bwtmp <- pos[1] - xlim[1]
           if ((bwtmp > (xlim[2]-xlim[1])/100) & (bwtmp < (xlim[2]-xlim[1])/3))
             binwidth <<- pos[1] - xlim[1]
-        #})
-        #updateBarsInfo()
-        #updateRanges()
-        #updateLims()
+
           scaleslayer$invalidateIndex()
           qupdate(scene)
         }
       }
       else {
         # pass mouse event on
-          identify_mouse_move(item, event, ...)
+          mouse_move(item, event, ...)
       }
     }
 
@@ -600,13 +542,8 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     xWidth <- 600
     yWidth <- 600
 
-#print(yWidth)
-
-#    size <- qsize(as.integer(c(xWidth, yWidth)))
-#    limits <- qrect(c(0, 1), c(0, 1))
     scene <- qscene()
     root <- qlayer(scene, cache=cache)
-#    root$setGeometry(qrect(0, 0, xWidth, yWidth))
 
     xaxis <- qlayer(parent=root, paintFun = xaxis,
        limits = qrect(dataRanges[1:2], c(0, 1)),
@@ -619,8 +556,8 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     bglayer <- qlayer(parent = root, paintFun = grid,
         limits = lims, cache=cache, row=1, col=1, clip=FALSE)
 
-    datalayer <- qlayer(parent = root, paintFun = rug,
-        keyPressFun = keyPressFun, mouseMoveFun = identify_mouse_move,
+    datalayer <- qlayer(parent = root, paintFun = draw_points_density,
+        keyPressFun = keyPressFun, mouseMoveFun = mouse_move,
         mousePressFun = brush_mouse_press, mouseReleaseFun = mouse_release,
         focusInFun = function(...) { focused(data) <- TRUE },
         focusOutFun = function(...) { focused(data) <- FALSE },
@@ -629,6 +566,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
        cache=cache, row=1, col=1, clip=FALSE)
+    
     querylayer <- qlayer(parent = root, query_draw, limits = lims,
        hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
        cache=cache, row=1, col=1, clip=FALSE)
@@ -659,12 +597,11 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
     title <- sprintf("Density plot of %s", xlab)
     view$setWindowTitle(title)
-    # view$setMaximumSize(plot1$size)
 
     ######################
     # add some listeners #
     ######################
-    #if (is.mutaframe(data)) {
+
     func <- function(i, j) {
         switch(j, .brushed = qupdate(brushlayer),
             .color = qupdate(datalayer),
@@ -676,7 +613,6 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     }
 
     add_listener(data, func)
-    #}
     view$resize(xWidth, yWidth)
 
     return(view)
