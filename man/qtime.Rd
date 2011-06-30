@@ -1,9 +1,9 @@
 \name{qtime}
 \alias{qtime}
 \title{Draw a time plot..}
-\usage{qtime(data, time, y, period, wrap = TRUE, shift = c(1, 
-    7, 12, 24), size = 2, alpha = 1, asp, main, xlab, ylab, 
-    ...)
+\usage{qtime(data, time, y, period, group, wrap = TRUE, 
+    shift = c(1, 7, 12, 24), size = 2, alpha = 1, asp, main, 
+    xlab, ylab, ...)
 
 }
 
@@ -16,6 +16,7 @@ the horizontal axis}
 'year','month', or other time resolutions. Default to be
 null. When it is not null, the key U and D can be hit to separate
 the groups or overlap them together to watch the patterns.}
+\item{group}{Similar to period, but is used for longitudinal data grouping.}
 \item{wrap}{The switch for wrapping or not when zooming in/out by
 hitting right arrow or left arrow. Default to be TRUE.}
 \item{shift}{Wrapping speed selector. The default possible speeds
@@ -50,8 +51,8 @@ print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med),
 ## example 2: Norway precipitation data
 data(norwayprecip)
 nwp <- qdata(data.grid.wk)
-print(qtime(nwp, time, obs, year))
-print(qtime(nwp, time, obs, year, wrap = FALSE))
+print(qtime(nwp, time, obs, period = year))
+print(qtime(nwp, time, obs, period = year, wrap = FALSE))
 
 
 ## example 3: Remifentanil in the nlme package
@@ -61,7 +62,8 @@ Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
 Remi <- qdata(Remifentanil[complete.cases(Remifentanil), 
     ])
 print(qtime(Rem, Time, conc))
-print(qtime(Remi, Time, conc, ID))
+print(qtime(Remi, Time, conc, group = ID))
+print(qtime(Remi, Time, conc, group = ID, wrap = FALSE))
 
 
 ## example 4: Wages data
@@ -69,7 +71,8 @@ data(wages)
 wage <- qdata(wages[, 1:3])
 wage31 <- qdata(wages[wages$id == 31, 1:3])
 print(qtime(wage31, exper, lnw))
-print(qtime(wage, exper, lnw, id))}
+print(qtime(wage, exper, lnw, group = id))}
+
 
 
 

@@ -1,9 +1,9 @@
 \name{qscatter}
 \alias{qscatter}
 \title{Draw a scatterplot..}
-\usage{qscatter(x, y, data, asp, main, labeled = TRUE, 
-    size = 2, alpha = 1, xlim, ylim, xlab, ylab, cache = T, 
-    ...)
+\usage{qscatter(x, y, data, aspect.ratio, main, labeled = TRUE, 
+    size = 2, alpha = 1, width = 600, height = 600, xlim, 
+    ylim, xlab, ylab, cache = T, ...)
 
 }
 
@@ -13,13 +13,15 @@ arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
 Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
 Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
 Key 'r' resets data range to original scale}
-\arguments{\item{data}{mutaframe data to use}
-\item{x}{which designates variable displayed on the horizontal axis}
+\arguments{\item{x}{which designates variable displayed on the horizontal axis}
 \item{y}{which designates variable displayed on the vertical axis}
+\item{data}{mutaframe data to use}
 \item{main}{main title for the plot}
 \item{labeled}{whether axes should be labeled}
 \item{size}{point size}
 \item{alpha}{transparency level, 1=completely opaque}
+\item{width}{width of plotting device (in pixels) at opening}
+\item{height}{height of plotting device (in pixels) at opening}
 \item{xlim}{= c(min, max) user specifed data range for the x axis, by default range(x)}
 \item{ylim}{= c(min, max) user specifed data range for the y axis, by default range(y)}
 \item{xlab}{label on horizontal axis, default is name of x variable}
