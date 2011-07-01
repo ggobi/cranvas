@@ -31,6 +31,10 @@ print(qtime(Rem,Time,conc))
 print(qtime(Remi,Time,conc,group=ID))
 print(qtime(Remi,Time,conc,group=ID,wrap=FALSE))
 
+# for categorical brushing self-link dataset by ID:
+link_var(Remi) = "ID"
+link(Remi, Remi)
+
 ## example 4: Wages data
 data(wages)
 wage <- qdata(wages[,1:3])

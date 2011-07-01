@@ -536,27 +536,27 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
   root_layer <- qlayer(scene)
   ##root_layer$setGeometry(qrect(0, 0, xWidth, yWidth))
   xaxis_layer <- qlayer(parent=root_layer, paintFun = xaxis,
-                        limits = qrect(dataRanges[1:2], c(0, 1)),
-                        row=2, col=1, clip=FALSE)
+    limits = qrect(dataRanges[1:2], c(0, 1)),
+    row=2, col=1, clip=FALSE)
   yaxis_layer <- qlayer(parent=root_layer, paintFun = yaxis,
-                        limits = qrect(c(0, 1), dataRanges[3:4]),
-                        row=1, col=0, clip=FALSE)
+    limits = qrect(c(0, 1), dataRanges[3:4]),
+    row=1, col=0, clip=FALSE)
   bg_layer <- qlayer(parent= root_layer, paintFun = grid,
-                     limits = lims, row=1, col=1, clip=FALSE)
+    limits = lims, row=1, col=1, clip=FALSE)
   main_circle_layer <- qlayer(root_layer,paintFun=main_circle_draw,
-                              mousePressFun=brush_mouse_press,
-                              mouseReleaseFun=brush_mouse_move,
-                              mouseMove = brush_mouse_move,
-                              keyPressFun=key_press,
-                              limits=lims, row = 1, col = 1, clip=FALSE)
+    mousePressFun=brush_mouse_press, mouseReleaseFun=brush_mouse_move,
+    mouseMove = brush_mouse_move, keyPressFun=key_press,
+    focusInFun = function(...) {focused(data) <- TRUE},
+    focusOutFun = function(...) {focused(data) <- FALSE},
+    limits=lims, row = 1, col = 1, clip=FALSE)
   main_line_layer <- qlayer(root_layer,paintFun=main_line_draw,
-                            limits=lims, row = 1, col = 1, clip=FALSE)
+    limits=lims, row = 1, col = 1, clip=FALSE)
   brush_layer <- qlayer(root_layer, brush_draw,
-                        limits=lims, row = 1, col = 1, clip=FALSE)
+    limits=lims, row = 1, col = 1, clip=FALSE)
   query_layer <- qlayer(root_layer, query_draw,
-                        limits = lims, hoverMoveFun = query_hover,
-                        hoverLeaveFun = query_hover_leave,
-                        row = 1, col = 1, clip=FALSE)
+    limits = lims, hoverMoveFun = query_hover,
+    hoverLeaveFun = query_hover_leave,
+    row = 1, col = 1, clip=FALSE)
 
   layout = root_layer$gridLayout()
   layout$setRowPreferredHeight(0, 10)
