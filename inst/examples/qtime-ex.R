@@ -1,4 +1,4 @@
-require(cranvas)
+library(cranvas)
 
 ## example 1: NASA temperature data
 data(nasa)
@@ -30,7 +30,6 @@ Remi <- qdata(Remifentanil[complete.cases(Remifentanil),])
 print(qtime(Rem,Time,conc))
 print(qtime(Remi,Time,conc,group=ID))
 print(qtime(Remi,Time,conc,group=ID,wrap=FALSE))
-
 
 ## example 4: Wages data
 data(wages)

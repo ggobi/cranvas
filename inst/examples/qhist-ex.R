@@ -1,7 +1,7 @@
 ## examples of qhist()
-require(ggplot2)
-require(cranvas)
-require(scales)
+library(ggplot2)
+library(cranvas)
+library(scales)
 
 data(tennis)
 qtennis <- qdata(tennis)
