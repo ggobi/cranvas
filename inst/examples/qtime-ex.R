@@ -32,8 +32,10 @@ print(qtime(Remi,Time,conc,group=ID))
 print(qtime(Remi,Time,conc,group=ID,wrap=FALSE))
 
 # for categorical brushing self-link dataset by ID:
-link_var(Remi) = "ID"
+link_var(Remi) = "ID"   # ON
 link(Remi, Remi)
+
+link_var(Remi)          # OFF
 
 ## example 4: Wages data
 data(wages)

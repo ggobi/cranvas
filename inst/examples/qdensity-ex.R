@@ -1,6 +1,5 @@
 # Examples for qdensity
 library(cranvas)
-library(scales)
 
 data(tennis)
 qtennis <- qdata(tennis)
