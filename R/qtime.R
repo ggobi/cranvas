@@ -1,5 +1,14 @@
 ##' Draw a time plot
 ##'
+##' Arrow up/down: in-/de-crease size of points.
+##' Arrow left/right: wrap the time series when wrap=TRUE, while zoom
+##' in/out with the center of the last clicked dot when wrap=FALSE.
+##' Key '+'/'-': de-/in-crease alpha level (starts at alpha=1 by
+##' default).
+##' Key 'u'/'d': separate/mix the series groups by shifting them up
+##' and down.
+##' Key 'g': change the wrapping speed circularly in the values of
+##' parameter 'shift'.
 ##' @param data Mutaframe data to use
 ##' @param time The variable indicating time, which is displayed on
 ##' the horizontal axis
@@ -160,7 +169,8 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
   key_press <- function(layer, event){
     crt_range <- max(tdf$x)-min(tdf$x)+1
 
-    if (event$key()==Qt$Qt$Key_Shift){
+    if (event$key()==Qt$Qt$Key_G){
+      ## key G for gear(shift the wrapping speed)
       shift <<- c(shift[-1],shift[1])
     }
 
