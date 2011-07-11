@@ -177,9 +177,9 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     ## given orders, rearrange the data
     ## need to update: numcol, plot_data, vars, boxplot data, primitives data
     data_reorder = function(vars) {
-        numcol = meta$numeric.col
-        names(numcol) = colnames(meta$plot.data)
-        meta$numeric.col = numcol[vars]
+        tmp = meta$numeric.col
+        names(tmp) = colnames(meta$plot.data)
+        meta$numeric.col = tmp[vars]
         meta$plot.data = meta$plot.data[, vars]
         meta$vars = colnames(meta$plot.data)
         data_primitives()
