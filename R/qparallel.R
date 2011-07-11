@@ -180,6 +180,9 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         tmp = meta$numeric.col
         names(tmp) = colnames(meta$plot.data)
         meta$numeric.col = tmp[vars]
+        tmp = meta$names
+        names(tmp) = colnames(meta$plot.data)
+        meta$names = tmp[vars]
         meta$plot.data = meta$plot.data[, vars]
         meta$vars = colnames(meta$plot.data)
         data_primitives()
@@ -307,6 +310,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     }
                     if (any(vars0 != meta$vars)) {
                         data_reorder(vars0)
+                        data_primitives()
                         qupdate(layer.xaxis)
                         qupdate(layer.yaxis)
                         layer.main$invalidateIndex()
