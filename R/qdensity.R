@@ -1,10 +1,15 @@
 #' Draw a univariate density plot, with a rug plot underneath
 #'
 #' arrow up/down: in-/de-crease size of points
+#'
 #' arrow -/+: de-/in-crease alpha level (starts at alpha=1 by default)
+#'
 #' arrow left/right: de-/in-crease binwidth for density
+#'
 #' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
+#'
 #' Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
+#'
 #' Key 'r' resets data range to original scale
 #' @param x which designates variable displayed on the horizontal axis
 #' @param data mutaframe data to use
@@ -66,12 +71,13 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     ## mouse position
     .bpos <- c(NA, NA)
     ## drag start
-    .bstart <- c(NA, NA)
+    .bstart <- c(mean(dataRanges[c(1, 2)]), 0)
     ## move brush?
     .bmove <- TRUE
     ## brush range: horizontal and vertical
-    .brange <- c(diff(dataRanges[c(1, 2)])/30, diff(dataRanges[c(3, 4)])/30)
-
+    .bsize <- c(diff(dataRanges[c(1, 2)])/15, diff(dataRanges[c(3, 4)])/30)
+    .bsizestart <- .bsize # For brush resizing
+    
     n <- nrow(data)
 
     ## zooming on?
@@ -169,9 +175,13 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
             if (!any(is.na(.bpos))) {
                 qlineWidth(painter) = brush(data)$size
                 ##qdash(painter)=c(1,3,1,3)
-                qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
-                    .bpos[1] + .brange[1], .bpos[2] + .brange[2],
+                qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2] - .bsize[2],
+                    .bpos[1], .bpos[2] + .bsize[2],
                     stroke = brush(data)$color)
+                  qlineWidth(painter) = 2*brush(data)$size
+                  qdrawSegment(painter, .bpos[1], .bpos[2] - .bsize[2],
+                               .bpos[1], .bpos[2] + .bsize[2],
+                               stroke = brush(data)$color)
             }
 
             hdata <- subset(df, .brushed)
@@ -181,9 +191,13 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
                 if (!any(is.na(.bpos))) {
                   qlineWidth(painter) = brush(data)$size
                   ##qdash(painter)=c(1,3,1,3)
-                  qdrawRect(painter, .bpos[1] - .brange[1],
-                      .bpos[2] - .brange[2], .bpos[1] + .brange[1],
-                      .bpos[2] + .brange[2], stroke = brush(data)$color)
+                  qdrawRect(painter, .bpos[1] - .bsize[1],
+                      .bpos[2] - .bsize[2], .bpos[1],
+                      .bpos[2] + .bsize[2], stroke = brush(data)$color)
+                  qlineWidth(painter) = 2*brush(data)$size
+                  qdrawSegment(painter, .bpos[1], .bpos[2] - .bsize[2],
+                               .bpos[1], .bpos[2] + .bsize[2],
+                               stroke = brush(data)$color)
                 }
                 ## (re)draw brushed data points
                 brushx <- eval(arguments$x, hdata)
@@ -287,7 +301,8 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
                 .zstart <<- as.numeric(event$pos())
             }
             else {
-                .bstart <<- as.numeric(event$pos())
+                .bstart <<- as.numeric(event$pos()) # brush jumps to mouse position
+                .bsizestart <<- .bsize # brush jumps to mouse position
                 .bstart[2] <<- 0
                  ## on right click, we can resize the brush; left click: only move the
                  ## brush
@@ -301,10 +316,12 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         }
     }
 
-    mouse_release <- function(item, event) {
+    mouse_release <- function(item, event, ...) {
 
+        message("hello \n")
+        .bpos <- as.numeric(event$pos())
         if (zoom) {
-            .zstop <<- as.numeric(event$pos())
+            .zstop <<- .bpos
             handle_zoom()
         }
     }
@@ -317,24 +334,26 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         }
         pos <- event$pos()
         .bpos <<- as.numeric(pos)
-        ## simple click: don't change .brange
-        if (!all(.bpos == .bstart) && (!.bmove)) {
-            .brange <<- .bpos - .bstart
-        }
         .bpos[2] <<- 0
+        ## simple click: don't change .bsize
+        ## Resize the brush
+        if (!all(.bpos == .bstart) && (!.bmove)) {
+            # Current size, plus difference in mouse move position
+            .bsize[1] <<- .bsizestart[1] +  (.bpos[1] - .bstart[1])
+            rect <- qrect(matrix(c(.bstart[1] - .bsize[1], -.bsize[2],
+                .bstart[1] + (.bpos[1] - .bstart[1]), .bsize[2]), 2, byrow = TRUE))
+        }
+        else { # Brushing
+            rect <- qrect(matrix(c(.bstart[1] - .bsize[1], -.bsize[2],
+                .bstart[1] + (.bpos[1] - .bstart[1]), .bsize[2]), 2, byrow = TRUE))
+        }
         .new.brushed <- rep(FALSE, n)
-
-        xrange <- 0
-        yrange <- 0
-        rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
-                               .bpos + .brange + c(xrange, yrange)),
-                             2, byrow = TRUE))
 
         # Do my own detection!!
         df <- as.data.frame(data)
         x <- eval(arguments$x, df)
-        hits <- c(1:nrow(df))[x > (.bpos[1] - .brange[1] - xrange) &
-                             x < (.bpos[1] + .brange[1] + xrange)]
+        hits <- c(1:nrow(df))[x > min((.bpos[1] - .bsize[1]), .bpos[1]) &
+                             x < max((.bpos[1] - .bsize[1]), .bpos[1])]
 
         .new.brushed[hits] <- TRUE
         data$.brushed <- mode_selection(data$.brushed, .new.brushed,
@@ -559,14 +578,14 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
     datalayer <- qlayer(parent = root, paintFun = draw_points_density,
         keyPressFun = keyPressFun, mouseMoveFun = mouse_move,
-        mousePressFun = brush_mouse_press, mouseReleaseFun = mouse_release,
+        mousePressFun = brush_mouse_press, mouseReleaseFun = mouse_move, #mouse_release,
         focusInFun = function(...) { focused(data) <- TRUE },
         focusOutFun = function(...) { focused(data) <- FALSE },
         wheelFun = handle_wheel_event, limits = lims,
             cache=cache, row=1, col=1, clip=FALSE)
 
     brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
-       cache=cache, row=1, col=1, clip=FALSE)
+        cache=cache, row=1, col=1, clip=FALSE)
     
     querylayer <- qlayer(parent = root, query_draw, limits = lims,
        hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
