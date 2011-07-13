@@ -156,13 +156,16 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
                          2, byrow = TRUE))
 
     hits <- layer$locate(rect) + 1
-    if (length(hits)<1) return()
+    if (length(hits)<1) {
+      selected(data) <- FALSE
+      return()
+    }
     hitsrow <- round(hits %% nrow(data))
     hitsrow[hitsrow==0] <- nrow(data)
     hitscol <<- unique((hits-0.0000001)%/%nrow(data)+1)
-
+    
     .new.brushed[hitsrow] <- TRUE
-    data$.brushed <- mode_selection(data$.brushed, .new.brushed,
+    selected(data) <- mode_selection(selected(data), .new.brushed,
                                     mode = brush(data)$mode)
   }
 
@@ -495,10 +498,10 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
   }
 
   brush_draw <- function(layer, painter) {
-    .brushed = data$.brushed
+    .brushed <- selected(data)
     if (.brush) {
       if (!any(is.na(.bpos))) {
-        qlineWidth(painter) = brush(data)$size
+        qlineWidth(painter) <- brush(data)$size
         qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                   .bpos[1], .bpos[2], stroke = brush(data)$color)
       }
@@ -515,17 +518,17 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
         ## (re)draw brushed data points
         brushx <- hdata$tdf.x
         brushy <- hdata[,-1]
-        fill = brush(data)$color
-        stroke = brush(data)$color
+        fill <- brush(data)$color
+        stroke <- brush(data)$color
         radius <- .radius
 
         if (is.vector(brushy)){
           qdrawCircle(painter, x = brushx, y = brushy,
-                      r = radius, fill = fill, stroke = stroke)
+                      r = radius*2, fill = fill, stroke = stroke)
         } else {
           for (i in 1:ncol(brushy)){
             qdrawCircle(painter, x = brushx, y = brushy[,i],
-                        r = radius, fill = fill, stroke = stroke)
+                        r = radius*2, fill = fill, stroke = stroke)
           }
         }
       }
