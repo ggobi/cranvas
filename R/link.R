@@ -76,3 +76,35 @@ link_var = function(data) {
     attr(data, "Link")[["linkvar"]] = value
     data
 }
+
+##' Set or query the type of linking.
+##' Types of linking include hot, cold and self linking. Hot linking
+##' means other plots get updated immediately after the current plot
+##' is brushed; cold linking will not update other plots until they
+##' are on focus; self linking means all the elements in the same
+##' category as the current brushed element(s) will be brushed as
+##' well.
+##'
+##' @param data the mutaframe (typically created by
+##' \code{\link{qdata}}), with an attribute \code{Link}
+##' @return the type of linking
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples
+##' mf = qdata(iris)
+##' link_type(mf)
+##' link_type(mf) = 'self'
+##' link_type(mf) = 'cold'
+link_type = function(data) {
+    attr(data, 'Link')$type
+}
+##' @rdname link_type
+##' @usage link_type(data) <- value
+##' @param value the type of linking (possible values are \code{hot},
+##' \code{cold} and \code{self})
+##' @return set the linking type
+##' @export "link_type<-"
+`link_type<-` = function(data, value) {
+    attr(data, 'Link')$type = value
+    data
+}
