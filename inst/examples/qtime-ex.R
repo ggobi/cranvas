@@ -4,7 +4,6 @@ library(cranvas)
 data(nasa)
 nasa11 <- subset(nasa, Gridx == 1 & Gridy == 1)
 qnasa <- qdata(nasa11)
-selected(qnasa)[1] <- TRUE
 print(qtime(qnasa,TimeIndx,ts))
 print(qtime(qnasa,TimeIndx,ts,wrap=FALSE))
 print(qtime(qnasa,TimeIndx,ts,Year))
