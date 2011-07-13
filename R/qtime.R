@@ -370,9 +370,11 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
 
     xpos <- .queryPos[1]
     ypos <- .queryPos[2]
-
-    xrange <- .radius/root_layer$size$width() * diff(dataRanges[c(1, 2)])
-    yrange <- .radius/root_layer$size$height() * diff(dataRanges[c(3, 4)])
+    
+    xrange <- .radius/root_layer$size$width() *
+                  diff(dataRanges[c(1, 2)]) * ifelse(.radius<=4,8/.radius,1)
+    yrange <- .radius/root_layer$size$height() *
+                  diff(dataRanges[c(3, 4)]) * ifelse(.radius<=4,8/.radius,1)
 
     rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
                            xpos + xrange, ypos + yrange),
@@ -381,14 +383,32 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
     hits <- main_circle_layer$locate(rect) + 1
 
     ## Nothing under mouse?
-    if (length(hits) <1 ) return()
+    if (length(hits) < 1) return()
+
     hitsrow <- round(hits %% nrow(data))
     hitsrow[hitsrow==0] <- nrow(data)
     hitscol <- (hits-0.0000001)%/%nrow(data)+1
+
+    if (length(hits) > 1) {
+      hitsdist <- rep(0,length(hits))
+      for (i in 1:length(hits)){
+        hitsdist[i] <- sqrt((xpos-tdf[hitsrow[i],1])^2 +
+                            (ypos-tdf[hitsrow[i],hitscol[i]+3])^2)
+      }
+      distidx <- which(hitsdist==min(hitsdist))
+      hits <- hits[distidx]
+      hitsrow <- hitsrow[distidx]
+      hitscol <- hitscol[distidx]
+    }
     if (is.null(pd)) {hitspd <- NULL} else {hitspd <- .period}
-    info <- as.data.frame(data[hitsrow, c(.levelX, .levelY[hitscol],hitspd)])
-    ## print(info)
-    ## browser()
+    info <- as.data.frame(data[hitsrow,
+                               c(.levelX, .levelY[hitscol],hitspd)])
+
+    ## label position
+    labelxpos <- mean(tdf[hitsrow,1])
+    tmp <- hits
+    for (i in 1:length(hits)){tmp[i]=tdf[hitsrow[i],hitscol[i]+3]}
+    labelypos <- mean(tmp)
 
     ## Work out label text
     idx <- names(info)
@@ -410,14 +430,14 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
     ## adjust drawing directions when close to the boundary
     hflag <- dataRanges[2] - xpos > bgwidth
     vflag <- ypos - dataRanges[3] > bgheight
-    qdrawRect(painter, xpos, ypos,
-              xpos + ifelse(hflag, 1, -1) * bgwidth,
-              ypos + ifelse(vflag, -1, 1) * bgheight,
+    qdrawRect(painter, labelxpos, labelypos,
+              labelxpos + ifelse(hflag, 1, -1) * bgwidth,
+              labelypos + ifelse(vflag, -1, 1) * bgheight,
               stroke = rgb(1, 1, 1),
               fill = rgb(1, 1, 1, 0.9))
 
     qstrokeColor(painter) <- brush(data)$label.color
-    qdrawText(painter, infostring, xpos, ypos,
+    qdrawText(painter, infostring, labelxpos, labelypos,
               halign = ifelse(hflag, "left", "right"),
               valign = ifelse(vflag, "top", "bottom"))
 
