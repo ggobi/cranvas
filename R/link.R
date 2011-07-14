@@ -86,6 +86,8 @@ link_var = function(data) {
 `link_var<-` = function(data, value) {
     if (!(value %in% colnames(data)))
         stop(value, " is not in the column names of data")
+    if (!is.factor(data[, value]))
+        stop('currently only support linking through categorical variables (factors)')
     attr(data, "Link")[["linkvar"]] = value
     data
 }
