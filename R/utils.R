@@ -201,3 +201,33 @@ reorder_var = function(data, type = c('none', 'MDS', 'ANOVA', 'randomForest'),
 break_str = function(x, split = '[^[:alnum:]]', ...) {
     gsub(split, '\n', x, ...)
 }
+
+##' Match keys from a keyboard event.
+##' This is a simple wrapper function to test if the given keys are
+##' hit in the keyboard event.
+##'
+##' @param key a character vector of key names (see the example below)
+##' @param event the keyboard event
+##' @param logical whether to return a logical vector or an integer
+##' vector (the latter applies \code{\link[base]{which}} to the
+##' logical vector)
+##' @return \code{TRUE} for the matched keys, and \code{FALSE} for
+##' those not matched; or an integer vector of the indices of the
+##' matched keys
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @references \url{http://doc.qt.nokia.com/latest/qt.html#Key-enum}
+##' @export
+##' @examples library(qtbase)
+##' library(qtpaint)
+##' library(cranvas)
+##' key_press = function(layer, event) {
+##' print(match_key(c('A', 'F', 'PageUp', '1'), event))
+##' }
+##' s = qscene(); r = qlayer(s, keyPressFun = key_press)
+##' qplotView(scene = s)
+match_key = function(key, event, logical = TRUE) {
+    k = event$key()
+    e = attr(Qt$Qt, 'env')
+    res = sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
+    if (logical) res else which(res)
+}
