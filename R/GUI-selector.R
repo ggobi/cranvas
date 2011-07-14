@@ -47,14 +47,18 @@ record_selector = function(data, vars) {
 
     # setup the table and link the data model to it
     lst = Qt$QListView()
+    lst$setSelectionMode(Qt$QAbstractItemView$ExtendedSelection)
+    lst$setAlternatingRowColors(TRUE)
     model = qdataFrameModel(xx)
     lst$setModel(model)
     selModel = lst$selectionModel()
 
     # set up a handler to update the .brushed column when the index is
     # changed in the table
-    qconnect(lst, "clicked", function(idx,prev) {
-        selected(data) = (x %in% idx$data())
+    qconnect(selModel, "selectionChanged", function(filler1, filler2) {
+        currLvls = sapply(selModel$selectedIndexes(),
+                           function(i) i$data())
+        selected(data) = (x %in% currLvls)
     })
 
     # set up a search bar and attach an auto-completer to it that is
