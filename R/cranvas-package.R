@@ -1,7 +1,7 @@
 ##' Interactive Statistical Graphics Based on Qt.
 ##'
 ##' @importFrom qtbase Qt
-##' @importFrom qtbase qrect qfont qsize qconnect
+##' @importFrom qtbase qrect qfont qsize qconnect qdataFrameModel
 ##' @import qtpaint
 ##' @import plumbr
 ##' @import objectSignals

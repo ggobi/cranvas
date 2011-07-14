@@ -14,7 +14,7 @@ Description: Experiments with interactive graphics based on the
 Version: 0.1-0
 URL: http://github.com/ggobi/cranvas
 Depends: scales
-Suggests: productplots, gWidgetsQt
+Suggests: productplots
 Collate: 'axes.R' 'bin.R' 'brush.R' 'cranvas-package.R' 'data.R'
     'GUI-selector.R' 'interaction.R' 'link.R' 'options.R'
     'qboxplot.R' 'qdensity.R' 'qhist.R' 'qlegend.R' 'qmap.R'

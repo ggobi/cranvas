@@ -1,23 +1,22 @@
 ##' Select a subset of data through a GUI to be brushed.
-##'
-##' We use a GUI based on \pkg{gWidgetsQt} to subset the data based on
-##' the variable given. Specifically, we choose certain values of the
-##' variable (using the mouse or keyboard) and all the observations
-##' which have the same values on this variable will be brushed. This
-##' selector can link to any plots based on a mutaframe created by
-##' \code{\link{qdata}}.
+##' We use a GUI created by \pkg{qtbase} to subset the data based on a
+##' given categorical variable. Specifically, we choose certain values
+##' of the variable (using the mouse or keyboard) and all the
+##' observations which have the same values on this variable will be
+##' brushed. This selector can link to any plots based on a mutaframe
+##' created by \code{\link{qdata}}.
 ##' @param data a mutaframe created by \code{\link{qdata}} (with a
 ##' column \code{.brushed})
 ##' @param vars character or integer: the variable to be displayed in
 ##' the data selector (if not specified, the first non-numeric
 ##' variable will be used; if all columns are numeric, the first
 ##' column will be used)
-##' @return \code{NULL} (a GUI will pop up if the \pkg{gWidgetsQt}
-##' package is available)
-##' @author Yihui Xie <\url{http://yihui.name}>
+##' @return \code{NULL} (a GUI will pop up)
+##' @author Yihui Xie and Jason Crowley
 ##' @seealso \code{\link{qdata}}
 ##' @export
-##' @examples
+##' @examples library(cranvas)
+##'
 ##' ## old iris as the toy example
 ##' qiris = qdata(iris)
 ##' qparallel(data = qiris)
@@ -41,25 +40,54 @@ record_selector = function(data, vars) {
     ## vars should be of length 1
     x = data[, vars[1]]
     xx = as.data.frame(data[!duplicated(x), vars[1], drop = FALSE])
-    if (!require('gWidgetsQt')) {
-        warning("You need to install.packages('gWidgetsQt', repos = 'http://r-forge.r-project.org') after installing 'qtutils' from https://github.com/ggobi/qtutils")
-        return()
-    }
-    options(guiToolkit = 'Qt')
-    gg = ggroup(horizontal = FALSE, container = gwindow("Record Selector"))
-    gtbl = gtable(xx, multiple = TRUE, container = gg, expand = TRUE)
-    addHandlerClicked(gtbl, handler = function(h, ...) {
-        data$.brushed = (x %in% svalue(h$obj))
+
+    # instantiate the window
+    w = Qt$QWidget()
+    w$setWindowTitle("Record Selector")
+
+    # setup the table and link the data model to it
+    lst = Qt$QListView()
+    model = qdataFrameModel(xx)
+    lst$setModel(model)
+    selModel = lst$selectionModel()
+
+    # set up a handler to update the .brushed column when the index is
+    # changed in the table
+    qconnect(lst, "clicked", function(idx,prev) {
+        selected(data) = (x %in% idx$data())
     })
-    gtxt = gedit(container = gg)
-    addHandlerChanged(gtxt, handler = function(h, ...) {
-        idx = if (svalue(h$obj) != "") {
-            grep(svalue(h$obj), as.character(x), ignore.case = TRUE)
+
+    # set up a search bar and attach an auto-completer to it that is
+    # populated with the levels of the variable in question
+    le = Qt$QLineEdit()
+    comp = Qt$QCompleter(as.character(xx[,1]))
+    comp$setCaseSensitivity(Qt$Qt$CaseInsensitive)
+    le$setCompleter(comp)
+
+    # set up a handler that will update the selection in the table when
+    # return is pressed in the line edit field. clears selection if the
+    # text doesn't match a level of the variable. updates .brushed
+    qconnect(le, "returnPressed", function() {
+        idx = if (le$text != "") {
+            grep(le$text, as.character(x), ignore.case = TRUE)
         } else integer(0)
-        svalue(gtbl) = x[idx]
+
+        if(length(idx) > 1) {
+            selModel$select(model$index(which(xx == le$text)-1, 0),
+                            Qt$QItemSelectionModel$ClearAndSelect)
+        } else selModel$clear()
+
         .brushed = logical(length(x))
         .brushed[idx] = TRUE
         selected(data) = .brushed
     })
-    invisible(NULL)
+
+    # set the layout of the widgets, and attach it to the window
+    lyt = Qt$QVBoxLayout()
+    lyt$addWidget(lst)
+    lyt$addWidget(le)
+    w$setLayout(lyt)
+
+    # make the window visible
+    w$show()
 }
