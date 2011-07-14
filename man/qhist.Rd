@@ -25,9 +25,9 @@ M re-adjusts the maximum on the y-axis to 10\% above the bin count}
 \item{...}{arguments supplied to hist() or the hist layer}
 }
 \examples{## examples of qhist()
-require(ggplot2)
-require(cranvas)
-require(scales)
+library(ggplot2)
+library(cranvas)
+library(scales)
 
 data(tennis)
 qtennis <- qdata(tennis)

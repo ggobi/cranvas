@@ -25,7 +25,6 @@ Key 'r' resets data range to original scale}
 }
 \examples{# Examples for qdensity
 library(cranvas)
-library(scales)
 
 data(tennis)
 qtennis <- qdata(tennis)
@@ -35,7 +34,22 @@ print(qdensity(Second.Serve.Pts, qtennis))
 
 data(pollen)
 qpollen <- qdata(pollen)
-print(qdensity(RIDGE, qpollen))}
+print(qdensity(RIDGE, qpollen))
+
+data(flea)
+qflea <- qdata(flea)
+
+print(qdensity(tars1, qflea))
+print(qdensity(tars2, qflea))
+print(qdensity(aede1, qflea))
+print(qdensity(aede3, qflea))}
+
+
+
+
+
+
+
 
 
 

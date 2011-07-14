@@ -8,6 +8,15 @@
 }
 
 \description{Draw a time plot}
+\details{Arrow up/down: in-/de-crease size of points.
+Arrow left/right: wrap the time series when wrap=TRUE, while zoom
+in/out with the center of the last clicked dot when wrap=FALSE.
+Key '+'/'-': de-/in-crease alpha level (starts at alpha=1 by
+default).
+Key 'u'/'d': separate/mix the series groups by shifting them up
+and down.
+Key 'g': change the wrapping speed circularly in the values of
+parameter 'shift'.}
 \arguments{\item{data}{Mutaframe data to use}
 \item{time}{The variable indicating time, which is displayed on
 the horizontal axis}
@@ -28,7 +37,7 @@ are 1,7(for days a week),12(for months),24(for hours).}
 \item{xlab}{label on horizontal axis, default is name of x variable}
 \item{ylab}{label on vertical axis, default is name of y variable}
 }
-\examples{require(cranvas)
+\examples{library(cranvas)
 
 ## example 1: NASA temperature data
 data(nasa)
@@ -65,6 +74,11 @@ print(qtime(Rem, Time, conc))
 print(qtime(Remi, Time, conc, group = ID))
 print(qtime(Remi, Time, conc, group = ID, wrap = FALSE))
 
+# for categorical brushing self-link dataset by ID:
+link_var(Remi) = "ID"  # ON
+link(Remi, Remi)
+
+link_var(Remi)  # OFF
 
 ## example 4: Wages data
 data(wages)
@@ -72,6 +86,11 @@ wage <- qdata(wages[, 1:3])
 wage31 <- qdata(wages[wages$id == 31, 1:3])
 print(qtime(wage31, exper, lnw))
 print(qtime(wage, exper, lnw, group = id))}
+
+
+
+
+
 
 
 

@@ -34,7 +34,8 @@ selected(data2)[1] = FALSE  # do not brush 'setosa'
 data2
 data1
 
-
+## remove the linking
+remove_link(data1, data2, id = list(1, 1))
 
 ### (2) linking two par-coords plots: one original data, one aggregated
 data(nrcstat)

@@ -4,15 +4,17 @@
 \usage{link(...)
 
 }
-\description{Link mutaframes by a common categorical variable.}
-\details{This function links several mutaframes together by a common
+\description{
+This function links several mutaframes together by a common
 categorical variable; this linking variable can be specified with
 \code{\link{link_var}}.}
-\value{the mutaframes will be linked together by their
-linking variables (listeners added)}
+\value{the mutaframes will be linked together by their linking
+variables (listeners added), and the id's of the listeners
+attached on each mutaframe will be returned as a list.}
 \author{Yihui Xie <\url{http://yihui.name}>}
-\seealso{\code{\link{qdata}}, \code{\link{link_var}}}
-\arguments{\item{...}{the mutaframes (at least two mutaframes); the
+\seealso{\code{\link{qdata}}, \code{\link{link_var}},
+\code{\link{link_type}}, \code{\link{remove_link}}}
+\arguments{\item{...}{the mutaframes (at least two different mutaframes); the
 mutaframes are typically created by \code{\link{qdata}}}
 }
 \examples{### (1) proof of concept
@@ -52,7 +54,8 @@ selected(data2)[1] = FALSE  # do not brush 'setosa'
 data2
 data1
 
-
+## remove the linking
+remove_link(data1, data2, id = list(1, 1))
 
 ### (2) linking two par-coords plots: one original
 #   data, one aggregated
@@ -69,6 +72,7 @@ qparallel(vars = c(8, 10:19), data = qnrc)
 qparallel(data = qnrc.agg)
 
 brush(qnrc.agg, "identify") = TRUE  # turn on labels}
+
 
 
 
