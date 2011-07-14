@@ -207,7 +207,11 @@ break_str = function(x, split = '[^[:alnum:]]', ...) {
 ##' hit in the keyboard event.
 ##'
 ##' @param key a character vector of key names (see the example below)
-##' @param event the keyboard event
+##' @param event the keyboard event (if missing, the default value
+##' comes from the \code{event} argument of the parent function
+##' (\code{sys.frame(1)}), so if this function is called under a
+##' standard callback of a layer event, we can leave this argument
+##' blank)
 ##' @param logical whether to return a logical vector or an integer
 ##' vector (the latter applies \code{\link[base]{which}} to the
 ##' logical vector)
@@ -226,6 +230,7 @@ break_str = function(x, split = '[^[:alnum:]]', ...) {
 ##' s = qscene(); r = qlayer(s, keyPressFun = key_press)
 ##' qplotView(scene = s)
 match_key = function(key, event, logical = TRUE) {
+    if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
     k = event$key()
     e = attr(Qt$Qt, 'env')
     res = sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
