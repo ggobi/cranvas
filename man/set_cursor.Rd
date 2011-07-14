@@ -20,7 +20,7 @@ We can pass either the integer code or the character string to the
 \code{cursor} argument.}
 \value{NULL; the cursor of the view is set as a side effect}
 \author{Yihui Xie <\url{http://yihui.name}>}
-\references{\url{http://doc.qt.nokia.com/4.7/qt.html#CursorShape-enum}}
+\references{\url{http://doc.qt.nokia.com/latest/qt.html#CursorShape-enum}}
 \arguments{\item{view}{the view for which to change the cursor (created by
 \code{\link[qtpaint]{qplotView}})}
 \item{cursor}{an integer or a character string (see Details)}
