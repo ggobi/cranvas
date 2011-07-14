@@ -261,12 +261,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     brush_key_press = function(layer, event) {
         key = event$key()
         ## Key X: XOR; O: OR; A: AND; N: NOT
-        i = which(key == c(Qt$Qt$Key_A, Qt$Qt$Key_O, Qt$Qt$Key_X, Qt$Qt$Key_N, Qt$Qt$Key_C))
+        i = match_key(c('A', 'O', 'X', 'N', 'C'), logical = FALSE)
         if (length(i))
             b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
 
         ## change opacity of layer: + or -
-        i = which(key == c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus))
+        i = match_key(c('Plus', 'Minus'), logical = FALSE)
         if (length(i)) {
             meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
             layer.main$setOpacity(meta$alpha)
@@ -274,18 +274,18 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         }
 
         ## whether to draw min/max labels
-        if (key == Qt$Qt$Key_R) {
+        if (match_key('R')) {
             meta$draw.range = !meta$draw.range
             qupdate(layer.range)
             return()
         }
 
-        if (key == Qt$Qt$Key_Delete)
+        if (match_key('Delete'))
             visible(data) = !selected(data) & visible(data)  # make brushed obs invisible
-        if (key == Qt$Qt$Key_F5)
+        if (match_key('F5'))
             visible(data) = TRUE  # make all of them visible
 
-        i = which(key == c(Qt$Qt$Key_Left, Qt$Qt$Key_Right, Qt$Qt$Key_Down, Qt$Qt$Key_Up))
+        i = match_key(c('Left', 'Right', 'Down', 'Up'), logical = FALSE)
         if (length(i) && !any(is.na(meta$pos))) {
             if (horizontal) {
                 j = 1
@@ -342,7 +342,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     }
     brush_key_release = function(layer, event) {
         b$mode = 'none'  # set brush mode to 'none' when release the key
-        direction = which(event$key() == c(Qt$Qt$Key_PageUp, Qt$Qt$Key_PageDown))
+        direction = match_key(c('PageUp', 'PageDown'), logical = FALSE)
         if (length(direction)) {
             idx = b$history.index + c(-1, 1)[direction]
             idx = max(1, min(length(b$history.list), idx))
