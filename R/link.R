@@ -1,15 +1,16 @@
 ##' Link mutaframes by a common categorical variable.
-##'
 ##' This function links several mutaframes together by a common
 ##' categorical variable; this linking variable can be specified with
 ##' \code{\link{link_var}}.
 ##'
-##' @param ... the mutaframes (at least two mutaframes); the
+##' @param ... the mutaframes (at least two different mutaframes); the
 ##' mutaframes are typically created by \code{\link{qdata}}
-##' @return the mutaframes will be linked together by their
-##' linking variables (listeners added)
+##' @return the mutaframes will be linked together by their linking
+##' variables (listeners added), and the id's of the listeners
+##' attached on each mutaframe will be returned as a list.
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @seealso \code{\link{qdata}}, \code{\link{link_var}}
+##' @seealso \code{\link{qdata}}, \code{\link{link_var}},
+##' \code{\link{link_type}}, \code{\link{remove_link}}
 ##' @export
 ##' @example cranvas/inst/examples/link-ex.R
 link = function(...) {
@@ -24,27 +25,39 @@ link = function(...) {
         if (!(".brushed" %in% colnames(s[[k]])))
             stop("mutaframe ", k, " must have a column '.brushed'")
     }
-    for (k in 1:(n - 1)) {
+    id = vector(mode = 'list', length = n)
+    cb = combn(n, 2)
+    for (k in 1:ncol(cb)) {
         ## chain them in a circle
-        mf1 = s[[k]]
-        mf2 = s[[ifelse(k + 1 <= n, k + 1, 1)]]
+        k1 = cb[1, k]
+        k2 = cb[2, k]
+        mf1 = s[[k1]]
+        mf2 = s[[k2]]
+        if (identical(mf1, mf2)) {
+            warning(sprintf('mutaframe %d and %d are identical and will not be linked; ',
+                            k1, k2),
+                    sprintf('please set link_type(%s) <- "self"',
+                            as.character(match.call()[-1])[k1]))
+            next
+        }
         link1 = link_var(mf1)
         link2 = link_var(mf2)
-        add_listener(mf1, function(i, j) {
+        id[[k1]] = append(id[[k1]], add_listener(mf1, function(i, j) {
             if (focused(mf1)) {
                 ## mf1 changed --> query link1 --> match link2 --> change mf2$.brushed
                 ulink1 = unique(mf1[, link1][mf1$.brushed])
                 ## update mf2$.brushed according to mf1's selected categories
                 mf2$.brushed = mf2[, link2] %in% ulink1
             }
-        })
-        add_listener(mf2, function(i, j) {
+        }))
+        id[[k2]] = append(id[[k2]], add_listener(mf2, function(i, j) {
             if (focused(mf2)) {
                 ulink2 = unique(mf2[, link2][mf2$.brushed])
                 mf1$.brushed = mf1[, link1] %in% ulink2
             }
-        })
+        }))
     }
+    id
 }
 
 ##' Set or query the linking variable in a mutaframe.
