@@ -32,6 +32,11 @@ brush(qnrc, "label.color") = "black"
 
 brush(qnrc, "identify") = FALSE  # turn off identification
 
+## brush one row, and the whole category gets brushed
+link_var(qnrc) = 'Regional.Code'
+link_type(qnrc) = 'self'
+
+
 qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity",
     center = median, horizontal = FALSE, glyph = "tick")
 

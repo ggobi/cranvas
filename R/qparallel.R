@@ -370,6 +370,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         .new.brushed[hits] = TRUE
         selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
+        self_link(data)
         ## on mouse release
         if (event$button() != Qt$Qt$NoButton) {
             b$cursor = 0L  # restore to Arrow cursor
