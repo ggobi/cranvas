@@ -269,7 +269,7 @@ selected = function(data) {
 ##' @param cursor an integer or a character string (see Details)
 ##' @return NULL; the cursor of the view is set as a side effect
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @references \url{http://doc.qt.nokia.com/4.7/qt.html#CursorShape-enum}
+##' @references \url{http://doc.qt.nokia.com/latest/qt.html#CursorShape-enum}
 ##' @export
 ##' @examples
 ##' library(cranvas)
