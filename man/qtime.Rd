@@ -43,7 +43,6 @@ are 1,7(for days a week),12(for months),24(for hours).}
 data(nasa)
 nasa11 <- subset(nasa, Gridx == 1 & Gridy == 1)
 qnasa <- qdata(nasa11)
-selected(qnasa)[1] <- TRUE
 print(qtime(qnasa, TimeIndx, ts))
 print(qtime(qnasa, TimeIndx, ts, wrap = FALSE))
 print(qtime(qnasa, TimeIndx, ts, Year))
@@ -86,7 +85,6 @@ wage <- qdata(wages[, 1:3])
 wage31 <- qdata(wages[wages$id == 31, 1:3])
 print(qtime(wage31, exper, lnw))
 print(qtime(wage, exper, lnw, group = id))}
-
 
 
 

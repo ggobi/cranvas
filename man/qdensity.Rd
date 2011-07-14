@@ -8,10 +8,15 @@
 
 \description{Draw a univariate density plot, with a rug plot underneath}
 \details{arrow up/down: in-/de-crease size of points
+
 arrow -/+: de-/in-crease alpha level (starts at alpha=1 by default)
+
 arrow left/right: de-/in-crease binwidth for density
+
 Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
+
 Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
+
 Key 'r' resets data range to original scale}
 \arguments{\item{x}{which designates variable displayed on the horizontal axis}
 \item{data}{mutaframe data to use}
