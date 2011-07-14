@@ -121,3 +121,24 @@ link_type = function(data) {
     attr(data, 'Link')$type = value
     data
 }
+
+##' Remove the linking between mutaframes.
+##' This is the reverse operation to \code{\link{link}}, i.e., this
+##' function removes the linking (listeners) between mutaframes.
+##'
+##' @param ... the mutaframes from which the linking will be removed
+##' @param id a list of the id's of listeners (can be obtained as the
+##' returned value of \code{\link{link}})
+##' @return the listeners are removed
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{link}}
+##' @export
+##' @examples ## see ?link
+remove_link = function(..., id) {
+    s = list(...)
+    if (!is.list(id) || (n <- length(s)) != length(id))
+        stop('id must be a list of the same length as the number of mutaframes passed in')
+    for (i in 1:n) {
+        for (j in id[[i]]) remove_listener(s[[i]], j)
+    }
+}
