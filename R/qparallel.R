@@ -95,7 +95,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     xat = NULL, yat = NULL, xlabels = NULL, ylabels = NULL,
                     limits = NULL,
                     segx0 = NULL, segx1 = NULL, segy0 = NULL, segy1 = NULL,
-                    x0 = NULL, y0 = NULL, brush.range = c(NA, NA), identified = NULL
+                    x0 = NULL, y0 = NULL, brush.size = c(NA, NA), identified = NULL
     )
 
     data_preprocess = function() {
@@ -196,7 +196,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                              numcol = meta$numeric.col, x = data$.color))
 
     ## brush range: horizontal and vertical
-    meta$brush.range = c(meta$xr, -meta$yr)/15
+    meta$brush.size = c(meta$xr, -meta$yr)/15
 
     ## automatic box width
     if (missing(boxwex))
@@ -296,7 +296,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                 movedir = switch(i, NULL, NULL, -1, 1)
                 flipdir = switch(i, -1, 1, NULL, NULL)
             }
-            xs = which((1:meta$p) > meta$pos[j] - meta$brush.range[j] & (1:meta$p) < meta$pos[j] + meta$brush.range[j])
+            xs = which((1:meta$p) > meta$pos[j] - meta$brush.size[j] & (1:meta$p) < meta$pos[j] + meta$brush.size[j])
             if ((nxs <- length(xs))) {
                 if (!is.null(movedir)) {
                     vars0 = meta$vars
@@ -358,15 +358,15 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         cranvas_debug()
         if (b$identify) return()
         meta$pos = as.numeric(event$pos())
-        ## simple click: don't change meta$brush.range
+        ## simple click: don't change meta$brush.size
         if (!all(meta$pos == meta$start)) {
             if (!meta$brush.move) {
-                meta$brush.range = meta$brush.range + meta$pos - meta$start
+                meta$brush.size = meta$brush.size + meta$pos - meta$start
                 meta$start = meta$pos
             }
         }
         .new.brushed = rep(FALSE, meta$n)
-        rect = qrect(matrix(c(meta$pos - meta$brush.range, meta$pos), 2, byrow = TRUE))
+        rect = qrect(matrix(c(meta$pos - meta$brush.size, meta$pos), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
@@ -394,8 +394,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (!any(is.na(meta$pos))) {
             qlineWidth(painter) = b$style$size
             ##qdash(painter)=c(1,3,1,3)
-            qdrawRect(painter, meta$pos[1] - meta$brush.range[1],
-                      meta$pos[2] - meta$brush.range[2], meta$pos[1], meta$pos[2],
+            qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
+                      meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
                       stroke = b$style$color)
             qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 2 * b$style$size,
                         stroke = b$style$color, fill = b$style$color)
