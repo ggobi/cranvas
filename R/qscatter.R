@@ -173,7 +173,7 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
     brush_draw <- function(layer, painter) {
         if (.brush) {
             if (!any(is.na(.bpos))) {
-                qlineWidth(painter) = b$style$size
+                qlineWidth(painter) = b$style$linewidth
                 qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
                           .bpos[1] + .brange[1], .bpos[2] + .brange[2],
                           stroke = b$style$color)

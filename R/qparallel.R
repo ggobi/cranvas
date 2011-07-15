@@ -392,12 +392,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         cranvas_debug()
         if (b$identify) return()
         if (!any(is.na(meta$pos))) {
-            qlineWidth(painter) = b$style$size
+            qlineWidth(painter) = b$style$linewidth
             ##qdash(painter)=c(1,3,1,3)
             qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
                       meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
                       stroke = b$style$color)
-            qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 2 * b$style$size,
+            qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 2 * b$style$linewidth,
                         stroke = b$style$color, fill = b$style$color)
         }
         .visible = which(visible(data))

@@ -83,7 +83,7 @@ brushGen = setRefClass('BRUSH',
 ##' b$colorChanged$disconnect(idx)  # disconnect the event
 ##'
 ##' b$style$color = 'red'  # change the color of the brush itself to red
-##' b$style$size = 3  # the border width to 3
+##' b$style$linewidth = 3  # the border width to 3
 ##'
 ##' b$mode = 'or'  # brush mode to OR
 ##'

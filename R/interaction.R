@@ -85,7 +85,7 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     ## attach a brush to this data; we need to create the xxxChanged event in
     #   specific plots
     ## use brush(data) to access this brush
-    attr(mf, "Brush") = brushGen$new(style = list(color = "yellow", size = 2, linetype = NULL),
+    attr(mf, "Brush") = brushGen$new(style = list(color = "yellow", linewidth = 2, linetype = NULL),
         color = "yellow", color.gen = function(...) NULL, size = 2, size.gen = function(...) NULL,
         mode = "none", identify = FALSE, label.gen = function(...) {
             paste(capture.output(print(...)), collapse = '\n')
