@@ -397,7 +397,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
                       meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
                       stroke = b$style$color)
-            qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 2 * b$style$linewidth,
+            qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.5 * b$style$linewidth,
                         stroke = b$style$color, fill = b$style$color)
         }
         .visible = which(visible(data))
