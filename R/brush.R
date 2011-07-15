@@ -171,21 +171,21 @@ brush = function(data, attr) {
 ##' b = brush(qnrc)  # the brush object
 ##' b$history.list  # this list should be empty by default
 ##'
-##' brush_history(qnrc)  # store currently brushed row indices in history
-##' brush_history(qnrc, c(6, 7, 10))  # another history
+##' save_brush_history(qnrc)  # store currently brushed row indices in history
+##' save_brush_history(qnrc, c(6, 7, 10))  # another history
 ##'
 ##' b$history.list  # what happened to the brush object?
 ##'
 ##' b$persistent = TRUE  # turn on persistent brushing
 ##' b$persistent.list  # this list should be empty by default too
-##' brush_history(qnrc, c(3, 4, 6, 9))  # permanently brush other 4 rows
+##' save_brush_history(qnrc, c(3, 4, 6, 9))  # permanently brush other 4 rows
 ##'
 ##' b$persistent.list  # what happened to the brush object?
 ##' b$persistent.color
 ##' b$color
 ##' b$history.list
 ##'
-brush_history = function(data, index = selected(data)) {
+save_brush_history = function(data, index = selected(data)) {
     b = brush(data)
     if (is.logical(index)) index = which(index)
     csize = length(b$history.list) + 1

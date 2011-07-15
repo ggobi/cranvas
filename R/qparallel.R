@@ -376,7 +376,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         ## on mouse release
         if (event$button() != Qt$Qt$NoButton) {
             b$cursor = 0L  # restore to Arrow cursor
-            brush_history(data)  # store brushing history
+            save_brush_history(data)  # store brushing history
         }
         cranvas_debug()
     }
