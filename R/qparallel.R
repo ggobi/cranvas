@@ -360,11 +360,13 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         meta$pos = as.numeric(event$pos())
         ## simple click: don't change meta$brush.range
         if (!all(meta$pos == meta$start)) {
-            if (!meta$brush.move)
-                meta$brush.range = meta$pos - meta$start
-        } else return()
+            if (!meta$brush.move) {
+                meta$brush.range = meta$brush.range + meta$pos - meta$start
+                meta$start = meta$pos
+            }
+        }
         .new.brushed = rep(FALSE, meta$n)
-        rect = qrect(matrix(c(meta$pos - meta$brush.range, meta$pos + meta$brush.range), 2, byrow = TRUE))
+        rect = qrect(matrix(c(meta$pos - meta$brush.range, meta$pos), 2, byrow = TRUE))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
@@ -392,8 +394,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (!any(is.na(meta$pos))) {
             qlineWidth(painter) = b$style$size
             ##qdash(painter)=c(1,3,1,3)
-            qdrawRect(painter, meta$pos[1] - meta$brush.range[1], meta$pos[2] - meta$brush.range[2],
-                      meta$pos[1] + meta$brush.range[1], meta$pos[2] + meta$brush.range[2],
+            qdrawRect(painter, meta$pos[1] - meta$brush.range[1],
+                      meta$pos[2] - meta$brush.range[2], meta$pos[1], meta$pos[2],
                       stroke = b$style$color)
         }
         .visible = which(visible(data))
