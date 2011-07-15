@@ -196,7 +196,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                              numcol = meta$numeric.col, x = data$.color))
 
     ## brush range: horizontal and vertical
-    meta$brush.range = c(meta$xr, meta$yr)/30
+    meta$brush.range = c(meta$xr, -meta$yr)/15
 
     ## automatic box width
     if (missing(boxwex))
