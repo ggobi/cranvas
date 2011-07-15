@@ -24,11 +24,11 @@ brushGen = setRefClass('BRUSH',
 ##' The list of attributes in the brush (they can be accessed by the
 ##' \code{$} method):
 ##'
-##' \describe{\item{style}{a list containing \code{color}, \code{size}
-##' and \code{linetype} defining the style of the brush (rectangle) --
-##' not to be confused with the color and size of the brushed
-##' elements} \item{color, size}{the color and size of the brushed
-##' elements} \item{mode}{the brush mode: can be \code{'none'}
+##' \describe{\item{style}{a list containing \code{color},
+##' \code{linewidth} and \code{linetype} defining the style of the
+##' brush (rectangle) -- not to be confused with the color of the
+##' brushed elements} \item{color, size}{the color and size of the
+##' brushed elements} \item{mode}{the brush mode: can be \code{'none'}
 ##' (default), \code{'and'}, \code{'or'}, \code{'xor'}, \code{'not'}
 ##' or \code{'complement'}; see \code{\link{mode_selection}} for
 ##' details} \item{identify}{logical: \code{TRUE} (turn on the
@@ -53,12 +53,12 @@ brushGen = setRefClass('BRUSH',
 ##' @param data the mutaframe created by \code{\link{qdata}},
 ##' with an attribute \code{Brush}
 ##' @param attr the name of the brush attribute (a character scalar),
-##' e.g. \code{style} (the color, size and linetype of the brush),
-##' \code{color} (the color of the objects selected by the brush),
-##' \code{size} (the size of the selected objects, e.g. line width or
-##' size of points); if \code{attr} is missing, the whole brush object
-##' (as a reference object; see \code{\link[methods]{setRefClass}})
-##' will be returned
+##' e.g. \code{style} (the color, linewidth and linetype of the
+##' brush), \code{color} (the color of the objects selected by the
+##' brush), \code{size} (the size of the selected objects, e.g. line
+##' width or size of points); if \code{attr} is missing, the whole
+##' brush object (as a reference object; see
+##' \code{\link[methods]{setRefClass}}) will be returned
 ##' @return the brush object or the attribute of the brush; note the
 ##' brush object can be further manipulated with other methods -- see
 ##' examples below.

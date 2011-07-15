@@ -13,7 +13,11 @@ matched keys}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \references{\url{http://doc.qt.nokia.com/latest/qt.html#Key-enum}}
 \arguments{\item{key}{a character vector of key names (see the example below)}
-\item{event}{the keyboard event}
+\item{event}{the keyboard event (if missing, the default value
+comes from the \code{event} argument of the parent function
+(\code{sys.frame(1)}), so if this function is called under a
+standard callback of a layer event, we can leave this argument
+blank)}
 \item{logical}{whether to return a logical vector or an integer
 vector (the latter applies \code{\link[base]{which}} to the
 logical vector)}
