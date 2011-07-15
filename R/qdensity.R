@@ -80,6 +80,9 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     
     n <- nrow(data)
 
+    # For accessing the global brush parameters
+    b = brush(data)    # the brush attached to the data
+
     ## zooming on?
     zoom <- FALSE
     .zstart <- NULL
@@ -173,7 +176,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         # Check if in brush mode, and do brushing if so
         if (.brush) {
             if (!any(is.na(.bpos))) {
-                qlineWidth(painter) = brush(data)$size
+                qlineWidth(painter) <- b$style$linewidth
                 ##qdash(painter)=c(1,3,1,3)
                 qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2] - .bsize[2],
                     .bpos[1], .bpos[2] + .bsize[2],
@@ -189,21 +192,21 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
             if (nrow(hdata) > 0) {
                 ## draw the brush rectangle
                 if (!any(is.na(.bpos))) {
-                  qlineWidth(painter) = brush(data)$size
+                qlineWidth(painter) <- b$style$linewidth
                   ##qdash(painter)=c(1,3,1,3)
                   qdrawRect(painter, .bpos[1] - .bsize[1],
                       .bpos[2] - .bsize[2], .bpos[1],
-                      .bpos[2] + .bsize[2], stroke = brush(data)$color)
+                      .bpos[2] + .bsize[2], stroke = b$color)
                   qlineWidth(painter) = 2*brush(data)$size
                   qdrawSegment(painter, .bpos[1], .bpos[2] - .bsize[2],
                                .bpos[1], .bpos[2] + .bsize[2],
-                               stroke = brush(data)$color)
+                               stroke = b$color)
                 }
                 ## (re)draw brushed data points
                 brushx <- eval(arguments$x, hdata)
                 brushy <- rep(0, length(brushx))
-                fill <- brush(data)$color
-                stroke <- brush(data)$color
+                fill <- b$color
+                stroke <- b$color
                 radius <- .radius
 
                 qdrawCircle(painter, x = brushx, y = brushy, r = radius,
@@ -357,7 +360,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
         .new.brushed[hits] <- TRUE
         data$.brushed <- mode_selection(data$.brushed, .new.brushed,
-                                        mode = brush(data)$mode)
+                                        mode = b$mode)
     }
 
     handle_wheel_event <- function(layer, event) {
@@ -441,7 +444,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
                   ypos + ifelse(vflag, -1, 1) * bgheight,
                   stroke = rgb(1, 1, 1), fill = rgb(1, 1, 1, 0.9))
 
-        qstrokeColor(painter) <- brush(data)$label.color
+        qstrokeColor(painter) <- b$label.color
         qdrawText(painter, infostring, xpos, ypos,
                   halign = ifelse(hflag, "left", "right"),
                   valign = ifelse(vflag, "top", "bottom"))
@@ -578,7 +581,8 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
     datalayer <- qlayer(parent = root, paintFun = draw_points_density,
         keyPressFun = keyPressFun, mouseMoveFun = mouse_move,
-        mousePressFun = brush_mouse_press, mouseReleaseFun = mouse_move, #mouse_release,
+        mousePressFun = brush_mouse_press,
+        mouseReleaseFun = mouse_move, #mouse_release - doesn't work,
         focusInFun = function(...) { focused(data) <- TRUE },
         focusOutFun = function(...) { focused(data) <- FALSE },
         wheelFun = handle_wheel_event, limits = lims,

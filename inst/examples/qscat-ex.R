@@ -14,3 +14,11 @@ data(pollen)
 qpollen <- qdata(pollen)
 qscatter(RIDGE, CRACK, qpollen)
 # try zooming into the center
+
+# categorical variable linking
+data(flea)
+qflea <- qdata(flea)
+qscatter(tars1, aede1, qflea)
+
+link_var(qflea) = 'species'
+link_type(qflea) = 'self'
