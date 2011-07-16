@@ -211,3 +211,40 @@ save_brush_history = function(data, index = selected(data)) {
     }
     invisible(data)
 }
+
+##' Update the brush size in the mouse move event.
+##' The brush size is changed by the differences in two successive
+##' mouse positions.
+##'
+##' The current mouse position is obtained from \code{event$pos()}. If
+##' the brush is in the move mode (\code{meta$brush.move == TRUE};
+##' often set in a mouse click event), the brush size is updated by
+##' the differences between \code{meta$start} and \code{meta$pos}; the
+##' former is the starting position of the mouse, and the latter is
+##' the current position.
+##' @param meta the meta data containing the brush information
+##' (\code{meta$pos}, \code{meta$brush.size}, \code{meta$brush.move}
+##' and \code{meta$start})
+##' @param event the event in the callback (if missing, it will search
+##' in the parent environment \code{sys.frame(1)} which is often the
+##' callback function)
+##' @return a matrix of the coordinates of the brush rectangle, which
+##' can be passed to \code{\link[qtbase]{qrect}} and used to query the
+##' brushed elements by \code{layer$locate()}; as a side effect, the
+##' brush size is updated, unless it is only a single click or the
+##' brush is not in the move mode
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## see source code of qparallel()
+update_brush_size = function(meta, event) {
+    if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
+    meta$pos = as.numeric(event$pos())
+    ## simple click: don't change meta$brush.size
+    if (!all(meta$pos == meta$start)) {
+        if (!meta$brush.move) {
+            meta$brush.size = meta$brush.size + meta$pos - meta$start
+            meta$start = meta$pos
+        }
+    }
+    matrix(c(meta$pos - meta$brush.size, meta$pos), 2, byrow = TRUE)
+}
