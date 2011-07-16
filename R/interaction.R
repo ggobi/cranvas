@@ -61,7 +61,7 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     mf$.color = color
     mf$.fill = fill
     mf$.size = size
-    mf$.visible = TRUE
+    mf$.visible = visible
 
     ## shadow matrix for missing values
     shadowmatrix = is.na(data)
