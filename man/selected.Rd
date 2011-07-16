@@ -19,7 +19,9 @@ observations are selected or not
 \author{Yihui Xie <\url{http://yihui.name}>}
 \seealso{\code{\link{qdata}}}
 \arguments{\item{data}{the mutaframe}
-\item{value}{a logical vector of the length \code{nrow(data)}}
+\item{value}{a logical vector of the length \code{nrow(data)}, or
+a vector of integers which will be used to create a logical vector
+with \code{TRUE} corresponding to these indicies}
 }
 \examples{df = qdata(iris)
 

@@ -239,10 +239,18 @@ selected = function(data) {
 }
 ##' @rdname selected
 ##' @usage selected(data) <- value
-##' @param value a logical vector of the length \code{nrow(data)}
+##' @param value a logical vector of the length \code{nrow(data)}, or
+##' a vector of integers which will be used to create a logical vector
+##' with \code{TRUE} corresponding to these indicies
 ##' @export "selected<-"
 ##' @return sets the selected status of observations
 `selected<-` = function(data, value) {
+    ## if value is numeric indices, convert it to a logical vector
+    if (is.numeric(value)) {
+        tmp = logical(nrow(data))
+        tmp[value] = TRUE
+        value = tmp
+    }
     data$.brushed = value
     data
 }

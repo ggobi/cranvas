@@ -347,9 +347,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             idx = b$history.index + c(-1, 1)[direction]
             idx = max(1, min(length(b$history.list), idx))
             b$history.index = idx
-            .brushed = logical(meta$n)
-            .brushed[b$history.list[[idx]]] = TRUE
-            selected(data) = .brushed
+            selected(data) = b$history.list[[idx]]
         }
     }
 
