@@ -118,7 +118,10 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
 ##' }
 ##' We can hold the key while brushing: A for 'and', O for 'or', X for 'xor', N for 'not' and C for 'complement'.
 ##' @param x logical: the previous selection status
-##' @param y logical: the current selection status
+##' @param y logical: the current selection status (if \code{y} is a
+##' numeric vector, it will be converted to a logical vector of the
+##' same length with \code{x} with \code{TRUE}'s corresponding to the
+##' numeric indicies)
 ##' @param mode the selection mode string; see Details
 ##' @return a logical vector indicating whether the objects are selected
 ##' @author Yihui Xie <\url{http://yihui.name}>
@@ -134,7 +137,14 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
 ##' mode_selection(x1, x2, 'xor')
 ##' mode_selection(x1, x2, 'not')
 ##' mode_selection(x1, x2, 'complement')
+##'
+##' mode_selection(x1, c(2, 3), 'and')  # equivalent to x2
 mode_selection = function(x, y, mode = "none") {
+    if (is.numeric(y)) {
+        tmp = logical(length(x))
+        tmp[y] = TRUE
+        y = tmp
+    }
     ## a series of logical operations
     ## if mode is not specified, return y, the current status
     switch(mode, none = y, and = x & y, or = x | y, xor = xor(x, y), not = x & !y,

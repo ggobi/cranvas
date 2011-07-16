@@ -20,7 +20,10 @@ We can hold the key while brushing: A for 'and', O for 'or', X for 'xor', N for 
 \seealso{\code{\link[base]{&}}, \code{\link[base]{|}},
 \code{\link[base]{xor}}, \code{\link[base]{!}}}
 \arguments{\item{x}{logical: the previous selection status}
-\item{y}{logical: the current selection status}
+\item{y}{logical: the current selection status (if \code{y} is a
+numeric vector, it will be converted to a logical vector of the
+same length with \code{x} with \code{TRUE}'s corresponding to the
+numeric indicies)}
 \item{mode}{the selection mode string; see Details}
 }
 \examples{x1 = c(TRUE, TRUE, FALSE, FALSE)
@@ -30,7 +33,11 @@ mode_selection(x1, x2, "and")
 mode_selection(x1, x2, "or")
 mode_selection(x1, x2, "xor")
 mode_selection(x1, x2, "not")
-mode_selection(x1, x2, "complement")}
+mode_selection(x1, x2, "complement")
+
+mode_selection(x1, c(2, 3), "and")  # equivalent to x2}
+
+
 
 
 

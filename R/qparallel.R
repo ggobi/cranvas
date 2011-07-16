@@ -361,8 +361,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
-        .new.brushed[hits] = TRUE
-        selected(data) = mode_selection(selected(data), .new.brushed, mode = b$mode)
+        selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         self_link(data)
         ## on mouse release
         if (event$button() != Qt$Qt$NoButton) {
