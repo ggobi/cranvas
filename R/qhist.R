@@ -479,26 +479,23 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     }
 
     # Work out label text
-    infostring <- paste("\nbin:", section[1, "label"], sep = " ")
-    if (splitByCol != "qhist_split_column") {
-      infostring <- paste(infostring, "group:", section[1, "group"], sep = " ")
-    }
+    infostring <- paste("bin: ", section[1, "label"], sep = "")
 
     count <- section$top - section$bottom
-    infostring <- paste(infostring, "\ncount:", section[1, "count"], sep = " ")
+    infostring <- paste(infostring, "\ncount: ", count, "/", nrow(data), sep = "")
+    infostring <- paste(infostring, "\nproportion: ",
+      pretty_percent(count/nrow(data)), sep = " ")
     if (splitByCol != "qhist_split_column") {
-      val <- section[1, "\ncount"]/sum(.bars_info$data[.bars_info$data$label
+      infostring <- paste(infostring, "\ngroup: ", section[1, "group"], sep = "")
+      colcount <- sum(.bars_info$data[.bars_info$data$label
         %in% section[1, "label"], "count"])
-      if (is.null(val)) {
+      val <- count/colcount
+      #if (is.null(val)) {
         if (val != 1) {
-          infostring <- paste(infostring, "\ncolumn proportion: ",
-            pretty_percent(val), sep = "")
+          infostring <- paste(infostring, "\nbar: ",
+            pretty_percent(val), " (", count, "/", colcount, ")", sep = "")
         }
-      }
     }
-
-    infostring <- paste(infostring, "\ndata proportion:",
-      pretty_percent(section[1, "\ncount"]/nrow(data)), sep = " ")
 
     xpos = .bar_queryPos[1]
     ypos = .bar_queryPos[2]
@@ -688,8 +685,7 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
     mouseMoveFun = scales_mouse_move,
     hoverMoveFun = scales_hover, row=1, col=1)
 
-  # # update the brush layer in case of any modifications to the mutaframe
-  #if (is.mutaframe(data)) {
+  # update the brush layer in case of any modifications to the mutaframe
   func <- function(i, j=NULL) {
     switch (j, .brushed = {
       qupdate(brushing_layer)
@@ -698,11 +694,9 @@ qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
         updateBarsInfo()
         if (.yMax < max(.bars_info$data$top)) {
           .yMax <<- 1.1 * max(.bars_info$data$top)
-          #message("Data ",.yMax, "\n")
         }
         updateRanges()
         updateLims()
-        #message("Data ",.lims[1],.lims[2], .lims[3], .lims[4], "\n")
         scaleslayer$invalidateIndex()
         qupdate(.scene)
     })
