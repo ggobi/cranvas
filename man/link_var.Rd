@@ -15,12 +15,15 @@ link_var(data) <- value
 \seealso{\code{\link{qdata}}, \code{\link{link}}}
 \arguments{\item{data}{the mutaframe (typically created by
 \code{\link{qdata}}), with an attribute \code{Link}}
-\item{value}{the name of the linking variable}
+\item{value}{the name of the linking variable (or \code{NULL} to
+disable linking)}
 }
 \examples{mf = qdata(head(iris))
 link_var(mf)  # NULL
 link_var(mf) = "Species"  # linking by 'Species'
-link_var(mf)}
+link_var(mf)
+link_var(mf) = NULL  # disable linking}
+
 
 
 
