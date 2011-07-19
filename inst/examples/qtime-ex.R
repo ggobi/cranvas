@@ -26,15 +26,16 @@ require(nlme)
 Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
                           Remifentanil$ID==1,])
 Remi <- qdata(Remifentanil[complete.cases(Remifentanil),])
+Remi$ID <- factor(Remi$ID)
 print(qtime(Rem,Time,conc))
 print(qtime(Remi,Time,conc,group=ID))
 print(qtime(Remi,Time,conc,group=ID,wrap=FALSE))
 
 # for categorical brushing self-link dataset by ID:
-link_var(Remi) = "ID"   # ON
-link(Remi, Remi)
+link_var(Remi) <- "ID"   # ON
+link_type(Remi) <- "self"
 
-link_var(Remi)          # OFF
+link_var(Remi) <- NULL  # OFF
 
 ## example 4: Wages data
 data(wages)

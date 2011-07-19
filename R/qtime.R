@@ -167,6 +167,7 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
     .new.brushed[hitsrow] <- TRUE
     selected(data) <- mode_selection(selected(data), .new.brushed,
                                     mode = brush(data)$mode)
+    self_link(data)
   }
 
   key_press <- function(layer, event){
