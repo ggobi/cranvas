@@ -57,6 +57,7 @@ qtime <- function(data, time, y, period=NULL, group=NULL, wrap=TRUE,
   if (ncol(y)>1) {
     .levelY <- unlist(strsplit(substr(.levelY,3,nchar(.levelY)-1),','))
     .levelY <- gsub(" ","", .levelY)
+    for (i in 1:ncol(y)){y[,i] <- (y[,i] - min(y[,i], na.rm = TRUE))/diff(range(y[,i], na.rm = TRUE))}
   }
   if(is.null(xlab)) xlab <- .levelX
   if(is.null(ylab)) ylab <- paste(.levelY,collapse=', ')
