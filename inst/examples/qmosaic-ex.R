@@ -1,11 +1,5 @@
-require(qtbase)
-require(qtpaint)
-require(cranvas)
-
-
-require(stringr)
-require(productplots)
-require(plumbr)
+library(cranvas)
+library(productplots)
 
 data(Titanic)
 titanic <- as.data.frame(Titanic)
