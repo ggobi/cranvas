@@ -74,20 +74,23 @@ link = function(...) {
 ##' link_var(mf)  # NULL
 ##' link_var(mf) = 'Species'  # linking by 'Species'
 ##' link_var(mf)
-##'
+##' link_var(mf) = NULL  # disable linking
 link_var = function(data) {
     attr(data, "Link")[["linkvar"]]
 }
 
 ##' @rdname link_var
 ##' @usage link_var(data) <- value
-##' @param value the name of the linking variable
+##' @param value the name of the linking variable (or \code{NULL} to
+##' disable linking)
 ##' @return set the linking variable
 `link_var<-` = function(data, value) {
-    if (!(value %in% colnames(data)))
-        stop(value, " is not in the column names of data")
-    if (!is.factor(data[, value]))
-        stop('currently only support linking through categorical variables (factors)')
+    if (!is.null(value)) {
+        if (!(value %in% colnames(data)))
+            stop(value, " is not in the column names of data")
+        if (!is.factor(data[, value]))
+            stop('currently only support linking through categorical variables (factors)')
+    }
     attr(data, "Link")[["linkvar"]] = value
     data
 }
