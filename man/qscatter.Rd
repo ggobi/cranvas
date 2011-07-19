@@ -2,7 +2,7 @@
 \alias{qscatter}
 \title{Draw a scatterplot..}
 \usage{qscatter(x, y, data, aspect.ratio, main, labeled = TRUE, 
-    size = 2, alpha = 1, width = 600, height = 600, xlim, 
+    size = 4, alpha = 1, width = 600, height = 600, xlim, 
     ylim, xlab, ylab, cache = T, ...)
 
 }
@@ -45,7 +45,23 @@ print(qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile,
 data(pollen)
 qpollen <- qdata(pollen)
 qscatter(RIDGE, CRACK, qpollen)
-# try zooming into the center}
+# try zooming into the center
+
+# categorical variable linking
+data(flea)
+qflea <- qdata(flea)
+qscatter(tars1, aede1, qflea)
+
+link_var(qflea) = "species"
+link_type(qflea) = "self"}
+
+
+
+
+
+
+
+
 
 
 
