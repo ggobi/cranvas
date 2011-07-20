@@ -32,8 +32,7 @@
 ##'
 record_selector = function(vars, data) {
     if (missing(vars)) {
-        vars = names(data)[!(sapply(as.data.frame(data), class) %in% c("numeric",
-            "integer"))][1]
+        vars = names(data)[!(sapply(as.data.frame(data), is.numeric))][1]
         if (is.na(vars))
             vars = names(data)[1]
     }
