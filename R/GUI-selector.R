@@ -81,7 +81,15 @@ record_selector = function(vars, data) {
         } else selModel$clear()
         selected(data) = idx
     })
-
+    ## let the GUI respond to changes in .brushed too
+    d.idx = add_listener(data, function(i, j) {
+        if (j == '.brushed') {
+            idx = which(xx[, 1] %in% x[selected(data)])
+            if (length(idx)) selModel$select(model$index(idx - 1, 0),
+                                             Qt$QItemSelectionModel$ClearAndSelect) else
+            selModel$clear()
+        }
+    })
     # set the layout of the widgets, and attach it to the window
     lyt = Qt$QVBoxLayout()
     lyt$addWidget(lst)
