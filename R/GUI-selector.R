@@ -72,7 +72,7 @@ record_selector = function(vars, data) {
     # text doesn't match a level of the variable. updates .brushed
     qconnect(le, "returnPressed", function() {
         idx = if (le$text != "") {
-            grep(le$text, as.character(x), ignore.case = TRUE)
+            grep(le$text, as.character(xx[, 1]))
         } else integer(0)
 
         if(length(idx) > 1) {
