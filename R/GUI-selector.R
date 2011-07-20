@@ -79,10 +79,7 @@ record_selector = function(vars, data) {
             selModel$select(model$index(idx - 1, 0),
                             Qt$QItemSelectionModel$ClearAndSelect)
         } else selModel$clear()
-
-        .brushed = logical(length(x))
-        .brushed[idx] = TRUE
-        selected(data) = .brushed
+        selected(data) = idx
     })
 
     # set the layout of the widgets, and attach it to the window
