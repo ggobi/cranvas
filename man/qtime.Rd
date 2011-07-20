@@ -43,9 +43,10 @@ are 1,7(for days a week),12(for months),24(for hours).}
 data(nasa)
 nasa11 <- subset(nasa, Gridx == 1 & Gridy == 1)
 qnasa <- qdata(nasa11)
-print(qtime(qnasa, TimeIndx, ts))
+print(qtime(qnasa, TimeIndx, ts, shift = c(1, 
+    12)))
 print(qtime(qnasa, TimeIndx, ts, wrap = FALSE))
-print(qtime(qnasa, TimeIndx, ts, Year))
+print(qtime(qnasa, TimeIndx, ts, Year, shift = 1))
 print(qtime(qnasa, TimeIndx, ts, Year, wrap = FALSE))
 print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med)))
 print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med), 
@@ -59,7 +60,8 @@ print(qtime(qnasa, TimeIndx, c(ts, ps_tovs, ca_med),
 ## example 2: Norway precipitation data
 data(norwayprecip)
 nwp <- qdata(data.grid.wk)
-print(qtime(nwp, time, obs, period = year))
+print(qtime(nwp, time, obs, period = year, shift = c(1, 
+    4, 13, 26)))
 print(qtime(nwp, time, obs, period = year, wrap = FALSE))
 
 
@@ -69,15 +71,16 @@ Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
     Remifentanil$ID == 1, ])
 Remi <- qdata(Remifentanil[complete.cases(Remifentanil), 
     ])
+Remi$ID <- factor(Remi$ID)
 print(qtime(Rem, Time, conc))
 print(qtime(Remi, Time, conc, group = ID))
 print(qtime(Remi, Time, conc, group = ID, wrap = FALSE))
 
 # for categorical brushing self-link dataset by ID:
-link_var(Remi) = "ID"  # ON
-link(Remi, Remi)
+link_var(Remi) <- "ID"  # ON
+link_type(Remi) <- "self"
 
-link_var(Remi)  # OFF
+link_var(Remi) <- NULL  # OFF
 
 ## example 4: Wages data
 data(wages)
@@ -85,6 +88,7 @@ wage <- qdata(wages[, 1:3])
 wage31 <- qdata(wages[wages$id == 31, 1:3])
 print(qtime(wage31, exper, lnw))
 print(qtime(wage, exper, lnw, group = id))}
+
 
 
 
