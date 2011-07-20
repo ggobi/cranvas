@@ -16,7 +16,7 @@ rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name,
     sep = " -> ")
 qnrc$.color = "red"
 
-record_selector(qnrc, "Institution.Name")
+record_selector("Institution.Name", qnrc)
 
 qscatter(x = R.Rankings.95th.Percentile, y = R.Rankings.5th.Percentile, data = qnrc)
 qscatter(S.Rankings.95th.Percentile, S.Rankings.5th.Percentile, qnrc)

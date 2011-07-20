@@ -22,7 +22,7 @@ brush(qnrc, 'color') = 'green'
 brush(qnrc, 'color') = 'yellow'
 brush(qnrc, 'persistent') = FALSE  # transient brushing
 
-record_selector(qnrc, vars = "Institution.Name")
+record_selector("Institution.Name", qnrc)
 
 ## How to find out ISU by intersection and negation? public, midwest, large program
 
