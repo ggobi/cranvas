@@ -47,8 +47,11 @@ qboxplot(data = df)
 qparallel(~., data = df)  # brush on par-coords and you see little boxplots
 
 data(flea)
-qflea <- qdata(flea[, 1:6])
-qboxplot(. ~ species, data = flea)}
+qflea <- qdata(flea)
+qboxplot(tars1 ~ species, data = qflea)
+# qparallel(~ ., data=qflea) #This doesn't work yet,
+#   linkng a bit odd}
+
 
 
 

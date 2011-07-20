@@ -36,6 +36,9 @@ qtennis <- qdata(tennis)
 
 print(qdensity(First.Serve.Pct, qtennis))
 print(qdensity(Second.Serve.Pts, qtennis))
+print(qdensity(Serve.Speed, qtennis))
+
+record_selector("Name", qtennis)
 
 data(pollen)
 qpollen <- qdata(pollen)
@@ -48,6 +51,9 @@ print(qdensity(tars1, qflea))
 print(qdensity(tars2, qflea))
 print(qdensity(aede1, qflea))
 print(qdensity(aede3, qflea))}
+
+
+
 
 
 
