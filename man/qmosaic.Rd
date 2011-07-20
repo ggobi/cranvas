@@ -28,14 +28,8 @@ along with several row attributes}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 \item{...}{}
 }
-\examples{require(qtbase)
-require(qtpaint)
-require(cranvas)
-
-
-require(stringr)
-require(productplots)
-require(plumbr)
+\examples{library(cranvas)
+library(productplots)
 
 data(Titanic)
 titanic <- as.data.frame(Titanic)
@@ -49,12 +43,6 @@ print(qmosaic(qtitanic, Freq ~ Class, "hbar"))
 
 print(qmosaic(qtitanic, Freq ~ Sex + Age | Class, 
     mosaic()))}
-
-
-
-
-
-
 
 
 
