@@ -76,7 +76,7 @@ record_selector = function(vars, data) {
         } else integer(0)
 
         if(length(idx) > 1) {
-            selModel$select(model$index(which(xx == le$text)-1, 0),
+            selModel$select(model$index(idx - 1, 0),
                             Qt$QItemSelectionModel$ClearAndSelect)
         } else selModel$clear()
 
