@@ -90,6 +90,9 @@ record_selector = function(vars, data) {
             selModel$clear()
         }
     })
+    qconnect(w, 'destroyed', function(x) {
+        remove_listener(data, d.idx)
+    })
     # set the layout of the widgets, and attach it to the window
     lyt = Qt$QVBoxLayout()
     lyt$addWidget(lst)
