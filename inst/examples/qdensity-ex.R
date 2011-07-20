@@ -6,6 +6,9 @@ qtennis <- qdata(tennis)
 
 print(qdensity(First.Serve.Pct, qtennis))
 print(qdensity(Second.Serve.Pts, qtennis))
+print(qdensity(Serve.Speed, qtennis))
+
+record_selector(qtennis, "Name")
 
 data(pollen)
 qpollen <- qdata(pollen)
