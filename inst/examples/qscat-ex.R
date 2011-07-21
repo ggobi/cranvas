@@ -18,7 +18,12 @@ qscatter(RIDGE, CRACK, qpollen)
 # categorical variable linking
 data(flea)
 qflea <- qdata(flea)
-qscatter(tars1, aede1, qflea)
+print(qscatter(tars1, aede1, qflea))
 
 link_var(qflea) = 'species'
 link_type(qflea) = 'self'
+
+# Using species to color points
+qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()), color = dscale(flea$species, hue_pal()))
+print(qscatter(tars1, aede1, qflea))
+
