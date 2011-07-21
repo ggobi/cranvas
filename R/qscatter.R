@@ -71,7 +71,8 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
   ## move brush?
   .bmove <- TRUE
   ## brush range: horizontal and vertical
-  .brange <- c(diff(dataRanges[c(1, 2)]), diff(dataRanges[c(3, 4)]))/30
+  .bsize <- c(diff(dataRanges[c(1, 2)]), diff(dataRanges[c(3, 4)]))/10
+  .bsizestart <- .bsize # For brush resizing
 
   n <- nrow(data)
 
@@ -169,9 +170,17 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
     if (.brush) {
       if (!any(is.na(.bpos))) {
         qlineWidth(painter) = b$style$linewidth
-        qdrawRect(painter, .bpos[1] - .brange[1], .bpos[2] - .brange[2],
-              .bpos[1] + .brange[1], .bpos[2] + .brange[2],
-              stroke = b$style$color)
+#        qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2] - .bsize[2],
+#              .bpos[1] + .bsize[1], .bpos[2] + .bsize[2],
+#              stroke = b$style$color)
+        qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2] - .bsize[2],
+          .bpos[1], .bpos[2], stroke = b$style$color)
+        qdrawCircle(painter, .bpos[1], .bpos[2], # hot spot
+          r = 1.5 * b$style$linewidth,
+          stroke = b$style$color, fill = b$style$color)
+#        qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2],
+#              .bpos[1], .bpos[2] - .bsize[2],
+#              stroke = b$style$color)
       }
       hdata <- subset(as.data.frame(data), selected(data))
       if (nrow(hdata) > 0) {
@@ -265,7 +274,8 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
         .zstart <<- as.numeric(event$pos())
       }
       else {
-        .bstart <<- as.numeric(event$pos())
+        .bstart <<- as.numeric(event$pos()) # brush jumps to mouse position
+        .bsizestart <<- .bsize # brush jumps to mouse position
         ## on right click, we can resize the brush; left click: only move the
         ## brush
         if (event$button() == Qt$Qt$RightButton) {
@@ -294,18 +304,26 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
     }
     pos <- event$pos()
     .bpos <<- as.numeric(pos)
-    ## simple click: don't change .brange
+    ## simple click: don't change .bsize
+    ## Resize the brush
     if (!all(.bpos == .bstart) && (!.bmove)) {
-      .brange <<- .bpos - .bstart
+      #.bsize <<- .bpos - .bstart
+      .bsize <<- .bsizestart +  (.bpos - .bstart)
+      rect <- qrect(matrix(c(.bpos - .bsize, 
+        .bstart + (.bpos - .bstart)), 2, byrow = TRUE))
+    }
+    else { # brushing
+      xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
+      yrange <- .radius/root$size$height() * diff(dataRanges[c(3, 4)])
+
+#    rect <- qrect(matrix(c(.bpos - .bsize - c(xrange, yrange),
+#                 .bpos + .bsize + c(xrange, yrange)),
+#               2, byrow = TRUE))
+      rect <- qrect(matrix(c(.bpos - .bsize, 
+        .bstart + (.bpos - .bstart)), 2, byrow = TRUE))
     }
     .new.brushed <- rep(FALSE, n)
-    xrange <- .radius/root$size$width() * diff(dataRanges[c(1, 2)])
-    yrange <- .radius/root$size$height() * diff(dataRanges[c(3, 4)])
-
-    rect <- qrect(matrix(c(.bpos - .brange - c(xrange, yrange),
-                 .bpos + .brange + c(xrange, yrange)),
-               2, byrow = TRUE))
-    ##rect = qrect(matrix(c(.bpos - .brange, .bpos + .brange), 2,
+    ##rect = qrect(matrix(c(.bpos - .bsize, .bpos + .bsize), 2,
     ##       byrow = TRUE))
     hits <- layer$locate(rect) + 1
 
