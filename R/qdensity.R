@@ -144,9 +144,13 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         x <- eval(arguments$x, df)
         y <- rep(0, length(x))
         # Compute density function, and draw
-        dx <- density(x, bw=binwidth)
-        qlineWidth(painter) <- 3
-        qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(stroke, 1))
+        ncol <- unique(stroke)
+        for (i in 1:length(ncol)) {
+          sc <- ncol[i]
+          dx <- density(x[data$.color == sc], bw=binwidth)
+          qlineWidth(painter) <- 3
+          qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(sc, 1))
+        }
 
         # Draw points
         radius <- .radius
