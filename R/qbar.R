@@ -70,7 +70,6 @@ qbar = function(x, data, space = 0.1, main) {
         }
     }
     brush_mouse_move = function(layer, event) {
-        if (b$identify) return()
         rect = qrect(update_brush_size(meta))
         hits = layer$locate(rect) + 1
         hits = data[, meta$var] %in% levels(as.factor(data[, meta$var]))[hits]
