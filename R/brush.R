@@ -250,7 +250,7 @@ update_brush_size = function(meta, event) {
     matrix(c(meta$pos - meta$brush.size, meta$pos), 2, byrow = TRUE)
 }
 
-##' Maually brush the plot via command line.
+##' Manually brush the plot via command line.
 ##' We can brush a plot via command line rather than using the mouse.
 ##'
 ##' @param obj the plot object with an attribute \code{meta},
