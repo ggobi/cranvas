@@ -175,8 +175,7 @@ qparallel(testdata, vars = sprintf("V%d", 4:10))
 
 library(ggplot2)
 qdiamonds = qdata(diamonds, color = rgb(1, 0, 0, 0.01))
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", jitter = ~cut +
-    color + clarity)
+qparallel(data = qdiamonds, vars = 1:7, glyph = "line", jitter = c('cut', 'color', 'clarity'))
 qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
 qparallel(data = qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
 qdiamonds$.color = brewer.pal(7, "Set1")[as.integer(diamonds$color)]

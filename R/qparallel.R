@@ -112,15 +112,10 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
         meta$plot.data = na.action(meta$plot.data) # handle missing values
 
-        if (!is.null(meta$jitter)) {
-            if (class(meta$jitter) == "formula")
-                meta$jitter = attr(terms(meta$jitter, data = meta$plot.data), "term.labels")
-            if (is.numeric(meta$jitter)) meta$jitter = names(data)[meta$jitter]
-            if (is.character(meta$jitter)) {
-                meta$plot.data[, meta$jitter] =
-                    apply(meta$plot.data[, meta$jitter, drop = FALSE],
-                          2, base::jitter, amount = meta$amount)  # jittering
-            }
+        if (length(meta$jitter)) {
+            meta$plot.data[, meta$jitter] =
+                apply(meta$plot.data[, meta$jitter, drop = FALSE],
+                      2, base::jitter, amount = meta$amount)  # jittering
         }
 
         scale = switch(scale, range = function(x) {

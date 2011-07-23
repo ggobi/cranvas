@@ -273,7 +273,7 @@ library(ggplot2)
 qdiamonds = qdata(diamonds, color = rgb(1, 0, 
     0, 0.01))
 qparallel(data = qdiamonds, vars = 1:7, glyph = "line", 
-    jitter = ~cut + color + clarity)
+    jitter = c("cut", "color", "clarity"))
 qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
 qparallel(data = qdiamonds, vars = 1:7, glyph = "line", 
     order = "ANOVA")
@@ -321,7 +321,6 @@ library(animation)
 data(pollen)
 qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
 qparallel(data = qpollen)}
-
 
 
 
