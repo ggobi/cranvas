@@ -379,15 +379,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     brush_draw = function(layer, painter) {
         cranvas_debug()
         if (b$identify) return()
-        if (!any(is.na(meta$pos))) {
-            qlineWidth(painter) = b$style$linewidth
-            ##qdash(painter)=c(1,3,1,3)
-            qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
-                      meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
-                      stroke = b$style$color)
-            qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.5 * b$style$linewidth,
-                        stroke = b$style$color, fill = b$style$color)
-        }
         .visible = which(visible(data))
         if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size
@@ -409,7 +400,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             tmpy = mat2seg(meta$y, .brushed)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
-       }
+        }
+        draw_brush(painter, b, meta)
         cranvas_debug()
     }
 

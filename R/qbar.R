@@ -51,12 +51,7 @@ qbar = function(x, data, space = 0.1, main) {
             qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, c(table(tmp)),
                       stroke = NA, fill = b$color)
         }
-        qlineWidth(painter) = b$style$linewidth
-        qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
-                  meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
-                  stroke = b$style$color, fill = NA)
-        qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.5 * b$style$linewidth,
-                    stroke = b$style$color, fill = b$style$color)
+        draw_brush(painter, b, meta)
     }
     brush_mouse_press = function(layer, event) {
         meta$start = as.numeric(event$pos())
