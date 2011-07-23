@@ -76,18 +76,18 @@ qbar = function(x, data, space = 0.1, main) {
         hits = data[, meta$var] %in% levels(as.factor(data[, meta$var]))[hits]
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         self_link(data)
-        ## on mouse release
-        if (event$button() != Qt$Qt$NoButton) {
-            b$cursor = 0L  # restore to Arrow cursor
-            save_brush_history(data)  # store brushing history
-        }
+    }
+    brush_mouse_release = function(layer, event) {
+        brush_mouse_move(layer, event)
+        b$cursor = 0L  # restore to Arrow cursor
+        save_brush_history(data)  # store brushing history
     }
 
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
         qlayer(paintFun = main_draw,
-               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
+               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
                mouseMove = brush_mouse_move,
                focusInFun = function(layer, painter) {
                    focused(data) = TRUE
