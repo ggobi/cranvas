@@ -356,12 +356,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         self_link(data)
-        ## on mouse release
-        if (event$button() != Qt$Qt$NoButton) {
-            b$cursor = 0L  # restore to Arrow cursor
-            save_brush_history(data)  # store brushing history
-        }
         cranvas_debug()
+    }
+    brush_mouse_release = function(layer, event) {
+        brush_mouse_move(layer, event)
+        b$cursor = 0L  # restore to Arrow cursor
+        save_brush_history(data)  # store brushing history
     }
 
     ## convert a matrix to coordinates of segments
@@ -440,7 +440,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     layer.root = qlayer(scene)
 
     layer.main = qlayer(paintFun = main_draw,
-        mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
+        mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
         mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
         keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
         focusInFun = function(layer, painter) {
