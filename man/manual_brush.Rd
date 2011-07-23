@@ -1,6 +1,6 @@
 \name{manual_brush}
 \alias{manual_brush}
-\title{Maually brush the plot via command line}
+\title{Manually brush the plot via command line}
 \usage{manual_brush(obj, pos, pause = 0)
 
 }
