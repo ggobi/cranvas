@@ -143,6 +143,9 @@ qbar = function(x, data, space = 0.1, main) {
         set_cursor(view, b$cursor)
     })
 
+    meta$manual.brush = function(pos) {
+        brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+    }
     attr(view, 'meta') = meta
     view
 }
@@ -159,4 +162,5 @@ Bar.meta =
                                      ybottom = 'numeric', ytop = 'numeric',
                                      stroke = 'character', fill = 'character',
                                      start = 'numeric', pos = 'numeric',
-                                     brush.move = 'logical', brush.size = 'numeric')))
+                                     brush.move = 'logical', brush.size = 'numeric',
+                                     manual.brush = 'function')))

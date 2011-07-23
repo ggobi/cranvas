@@ -249,3 +249,27 @@ update_brush_size = function(meta, event) {
     }
     matrix(c(meta$pos - meta$brush.size, meta$pos), 2, byrow = TRUE)
 }
+
+##' Maually brush the plot via command line.
+##' We can brush a plot via command line rather than using the mouse.
+##'
+##' @param obj the plot object with an attribute \code{meta},
+##' e.g. returned by \code{\link{qbar}}
+##' @param pos the mouse position(s); can be a numeric vector of
+##' length 2 or a matrix of 2 columns with each row representing a
+##' mouse position
+##' @param pause the time to pause between two successive mouse
+##' positions
+##' @return \code{NULL}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @example cranvas/inst/examples/qbar-ex.R
+manual_brush = function(obj, pos, pause = 0) {
+    meta = attr(obj, 'meta')
+    if (is.null(meta)) stop("obj must have an attribute 'meta'")
+    pos = matrix(pos, ncol = 2)
+    for (i in 1:nrow(pos)) {
+        meta$manual.brush(pos[i, ])
+        Sys.sleep(pause)
+    }
+}
