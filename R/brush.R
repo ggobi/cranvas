@@ -242,7 +242,7 @@ update_brush_size = function(meta, event) {
     if (length(meta$start) == 0) meta$start = meta$pos
     ## simple click: don't change meta$brush.size
     if (!all(meta$pos == meta$start)) {
-        if (!meta$brush.move) {
+        if (length(meta$brush.move) && !meta$brush.move) {
             meta$brush.size = meta$brush.size + meta$pos - meta$start
             meta$start = meta$pos
         }
