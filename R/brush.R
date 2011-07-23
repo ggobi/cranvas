@@ -239,6 +239,7 @@ save_brush_history = function(data, index = selected(data)) {
 update_brush_size = function(meta, event) {
     if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
     meta$pos = as.numeric(event$pos())
+    if (length(meta$start) == 0) meta$start = meta$pos
     ## simple click: don't change meta$brush.size
     if (!all(meta$pos == meta$start)) {
         if (!meta$brush.move) {
