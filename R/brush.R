@@ -273,3 +273,27 @@ manual_brush = function(obj, pos, pause = 0) {
         Sys.sleep(pause)
     }
 }
+
+##' Draw the brush rectangle.
+##' Draw a rectangle with a spot according to the information in the
+##' meta data.
+##'
+##' @param painter the painter of the layer on which to draw the brush
+##' @param brush a brush object created by \code{\link{brush}} and
+##' attached to a mutaframe; the color and line width of the brush are
+##' stored in this object
+##' @param meta the meta data (has a least these two components:
+##' \code{meta$pos} and \code{meta$brush.size})
+##' @return \code{NULL}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## see the source code of, e.g., qbar() for its usage
+draw_brush = function(painter, brush, meta) {
+    if (length(meta$pos) == 0) return()
+    qlineWidth(painter) = brush$style$linewidth
+    qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
+              meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
+              stroke = brush$style$color, fill = NA)
+    qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.5 * brush$style$linewidth,
+                stroke = brush$style$color, fill = brush$style$color)
+}
