@@ -1,16 +1,20 @@
-\name{qbar}
-\alias{qbar}
-\title{Create a bar plot}
-\usage{qbar(x, data, space = 0.1, main)
+\name{manual_brush}
+\alias{manual_brush}
+\title{Maually brush the plot via command line}
+\usage{manual_brush(obj, pos, pause = 0)
 
 }
-\description{Create a bar plot.}
-\value{A bar plot}
+\description{
+We can brush a plot via command line rather than using the mouse.}
+\value{\code{NULL}}
 \author{Yihui Xie <\url{http://yihui.name}>}
-\arguments{\item{x}{a variable name}
-\item{data}{a mutaframe created by \code{\link{qdata}}}
-\item{space}{the space between bars proportional to the width of bars}
-\item{main}{the main title}
+\arguments{\item{obj}{the plot object with an attribute \code{meta},
+e.g. returned by \code{\link{qbar}}}
+\item{pos}{the mouse position(s); can be a numeric vector of
+length 2 or a matrix of 2 columns with each row representing a
+mouse position}
+\item{pause}{the time to pause between two successive mouse
+positions}
 }
 \examples{library(cranvas)
 data(nrcstat)
