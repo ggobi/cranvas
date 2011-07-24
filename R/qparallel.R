@@ -343,7 +343,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     brush_mouse_move = function(layer, event) {
         cranvas_debug()
         if (b$identify) return()
-        rect = qrect(update_brush_size(meta))
+        rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
