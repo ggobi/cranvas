@@ -212,12 +212,8 @@ break_str = function(x, split = '[^[:alnum:]]', ...) {
 ##' (\code{sys.frame(1)}), so if this function is called under a
 ##' standard callback of a layer event, we can leave this argument
 ##' blank)
-##' @param logical whether to return a logical vector or an integer
-##' vector (the latter applies \code{\link[base]{which}} to the
-##' logical vector)
 ##' @return \code{TRUE} for the matched keys, and \code{FALSE} for
-##' those not matched; or an integer vector of the indices of the
-##' matched keys
+##' those not matched
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @references \url{http://doc.qt.nokia.com/latest/qt.html#Key-enum}
 ##' @export
@@ -229,10 +225,9 @@ break_str = function(x, split = '[^[:alnum:]]', ...) {
 ##' }
 ##' s = qscene(); r = qlayer(s, keyPressFun = key_press)
 ##' qplotView(scene = s)
-match_key = function(key, event, logical = TRUE) {
+match_key = function(key, event) {
     if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
     k = event$key()
     e = attr(Qt$Qt, 'env')
-    res = sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
-    if (logical) res else which(res)
+    sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
 }

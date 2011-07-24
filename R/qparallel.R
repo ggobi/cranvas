@@ -255,12 +255,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     brush_key_press = function(layer, event) {
         key = event$key()
         ## Key X: XOR; O: OR; A: AND; N: NOT
-        i = match_key(c('A', 'O', 'X', 'N', 'C'), logical = FALSE)
+        i = which(match_key(c('A', 'O', 'X', 'N', 'C')))
         if (length(i))
             b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
 
         ## change opacity of layer: + or -
-        i = match_key(c('Plus', 'Minus'), logical = FALSE)
+        i = which(match_key(c('Plus', 'Minus')))
         if (length(i)) {
             meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
             layer.main$setOpacity(meta$alpha)
@@ -279,8 +279,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (match_key('F5'))
             visible(data) = TRUE  # make all of them visible
 
-        i = match_key(c('Left', 'Right', 'Down', 'Up'), logical = FALSE)
         if (length(i) && !any(is.na(meta$pos))) {
+        i = which(match_key(c('Left', 'Right', 'Down', 'Up')))
             if (horizontal) {
                 j = 1
                 movedir = switch(i, -1, 1, NULL, NULL)
