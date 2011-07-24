@@ -25,10 +25,14 @@ qbar = function(x, data, space = 0.1, main) {
         meta$ylabels = as.character(meta$yat)
         meta$xlab = meta$var
         meta$ylab = ''
+    }
+    compute_colors = function() {
+        tmp = data[, meta$var]
         meta$stroke = tapply(data$.color, tmp, `[`, 1)
         meta$fill = tapply(data$.fill, tmp, `[`, 1)
     }
     compute_coords()
+    compute_colors()
     ## bars (rectangles)
     compute_bars = function() {
         w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
@@ -123,8 +127,12 @@ qbar = function(x, data, space = 0.1, main) {
 
     d.idx = add_listener(data, function(i, j) {
         switch(j, .brushed = qupdate(layer.brush),
-               .color = qupdate(layer.main), {
+               .color = {
+                   compute_colors()
+                   qupdate(layer.main)
+               }, {
                    compute_coords()
+                   compute_colors()
                    compute_bars()
                    qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
                    qupdate(layer.main)
