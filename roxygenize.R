@@ -33,7 +33,7 @@ unlink("man", recursive = TRUE)
 owd = setwd("..")
 
 library(Rd2roxygen)
-options(width = 75)
+options(width = 75, replace.assign = TRUE)
 
 ## run roxygen and several cleaning up steps
 try(rab("cranvas", "cranvas", install = TRUE, copy.package = FALSE))
