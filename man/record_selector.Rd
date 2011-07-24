@@ -11,6 +11,14 @@ of the variable (using the mouse or keyboard) and all the
 observations which have the same values on this variable will be
 brushed. This selector can link to any plots based on a mutaframe
 created by \code{\link{qdata}}.}
+\details{The GUI supports multiple selections when we hold the Shift or
+Ctrl key. If the character string in the text input box matches
+with multiple items in the list, all of them will be selected.
+
+When we select items in the list, usually a plot based on the same
+data will get brushed accordingly. On the other hand, when we
+click on a plot, the corresponding items in the list will be
+selected as well.}
 \value{\code{NULL} (a GUI will pop up)}
 \author{Yihui Xie and Jason Crowley}
 \seealso{\code{\link{qdata}}}

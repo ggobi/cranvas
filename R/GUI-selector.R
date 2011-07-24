@@ -5,6 +5,15 @@
 ##' observations which have the same values on this variable will be
 ##' brushed. This selector can link to any plots based on a mutaframe
 ##' created by \code{\link{qdata}}.
+##'
+##' The GUI supports multiple selections when we hold the Shift or
+##' Ctrl key. If the character string in the text input box matches
+##' with multiple items in the list, all of them will be selected.
+##'
+##' When we select items in the list, usually a plot based on the same
+##' data will get brushed accordingly. On the other hand, when we
+##' click on a plot, the corresponding items in the list will be
+##' selected as well.
 ##' @param data a mutaframe created by \code{\link{qdata}} (with a
 ##' column \code{.brushed})
 ##' @param vars character or integer: the variable to be displayed in
