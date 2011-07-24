@@ -100,12 +100,12 @@ qbar = function(x, data, space = 0.1, main) {
                    focused(data) = FALSE
                }, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
-    layer.title = qmtext(data = meta, side = 3, text = main, sister = layer.main)
-    layer.xlab = qmtext(data = meta, side = 1, text = meta$xlab, sister = layer.main)
-    layer.ylab = qmtext(data = meta, side = 2, text = meta$ylab, sister = layer.main)
-    layer.xaxis = qaxis(data = meta, side = 1, sister = layer.main)
-    layer.yaxis = qaxis(data = meta, side = 2, sister = layer.main)
-    layer.grid = qgrid(data = meta, sister = layer.main, minor = 'y')
+    layer.title = qmtext(meta = meta, side = 3, text = main, sister = layer.main)
+    layer.xlab = qmtext(meta = meta, side = 1, text = meta$xlab, sister = layer.main)
+    layer.ylab = qmtext(meta = meta, side = 2, text = meta$ylab, sister = layer.main)
+    layer.xaxis = qaxis(meta = meta, side = 1, sister = layer.main)
+    layer.yaxis = qaxis(meta = meta, side = 2, sister = layer.main)
+    layer.grid = qgrid(meta = meta, sister = layer.main, minor = 'y')
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab

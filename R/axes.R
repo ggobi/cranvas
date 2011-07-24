@@ -5,7 +5,7 @@
 ##' means creating an independent layer with no parents, but it can be
 ##' added to a parent layer using the approach \code{parent[i, j] <-
 ##' child_layer})
-##' @param data \code{NULL} means to use \code{at} and \code{labels},
+##' @param meta \code{NULL} means to use \code{at} and \code{labels},
 ##' otherwise it should be a list containing child elements
 ##' \code{xat}, \code{yat}, \code{xlabels} and \code{ylabels}, and it
 ##' will override the arguments \code{at} and \code{labels}
@@ -40,11 +40,11 @@
 ##'
 ##' r[2, 1] = qaxis(side = 1, at = c(0, .1, .3, .7, .8), sister = r[1, 1]) # x-axis
 ##' r[1, 0] = qaxis(side = 2, at = c(0.2, .5, .6, .7, .9), sister = r[1, 1]) # y-axis
-##' r[0, 1] = qaxis(side = 3, data = list(xat = c(.1, .3, .7), xlabels = c('a', 'b', 'c')),
+##' r[0, 1] = qaxis(side = 3, meta = list(xat = c(.1, .3, .7), xlabels = c('a', 'b', 'c')),
 ##' sister = r[1, 1]) # top x-axis
 ##' print(qplotView(scene = s)) # default layout is ugly; tune in r$gridLayout()
 ##'
-qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
+qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL,
                  sister = NULL, ...) {
     if (!is.null(sister)) {
         lims = as.matrix(sister$limits())
@@ -52,11 +52,11 @@ qaxis = function(parent = NULL, data = NULL, side = 1, at = NULL, labels = NULL,
     }
     draw_axis = function(layer, painter) {
         if (is.null(at)) {
-            at = if (side%%2) data$xat else data$yat
+            at = if (side%%2) meta$xat else meta$yat
         }
         if (is.null(labels)) {
-            labels = if (!is.null(data)) {
-                if (side%%2) data$xlabels else data$ylabels
+            labels = if (!is.null(meta)) {
+                if (side%%2) meta$xlabels else meta$ylabels
             }
             if (is.null(labels)) labels = format(at)
         }
@@ -126,7 +126,7 @@ axis_loc = function(x) {
 ##' means creating an independent layer with no parents, but it can be
 ##' added to a parent layer using the approach \code{parent[i, j] <-
 ##' child_layer})
-##' @param data \code{NULL} means to use \code{xat}, \code{yat},
+##' @param meta \code{NULL} means to use \code{xat}, \code{yat},
 ##' otherwise it should be a list containing child elements \code{xat}
 ##' and \code{yat}, and it will override the next two arguments
 ##' @param xat locations to draw vertical grid lines
@@ -160,7 +160,7 @@ axis_loc = function(x) {
 ##' r[1, 1] = m
 ##' print(qplotView(scene = s))
 ##'
-qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
+qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
                  sister = NULL, ...) {
     .bgcolor = "grey90"  # background color
     minor_at = function(at, lim) {
@@ -181,9 +181,9 @@ qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
         qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor,
             fill = .bgcolor)
         qlineWidth(painter) = 2
-        if (!is.null(data)) {
-            xat = data$xat
-            yat = data$yat
+        if (!is.null(meta)) {
+            xat = meta$xat
+            yat = meta$yat
         }
         qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
         qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
@@ -219,7 +219,7 @@ qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
 ##' means creating an independent layer with no parents, but it can be
 ##' added to a parent layer using the approach \code{parent[i, j] <-
 ##' child_layer})
-##' @param data \code{NULL} means to use \code{x} and \code{y}
+##' @param meta \code{NULL} means to use \code{x} and \code{y}
 ##' directly, otherwise it should contain a child element named
 ##' \code{limits} which is a matrix and defines the limits of the main
 ##' plot region (in the form \code{matrix(c(x0, x1, y0, y1), 2)});
@@ -262,7 +262,7 @@ qgrid = function(parent = NULL, data = NULL, xat, yat, xlim, ylim, minor = 'xy',
 ##' r[1, 2] = m4
 ##' print(qplotView(scene = s))
 ##'
-qmtext = function(parent = NULL, data = NULL, side = 1, text = '', x = NULL, y = NULL,
+qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = NULL, y = NULL,
                   cex = 1, sister = NULL, ...) {
     if (!is.null(sister)) {
         lims = as.matrix(sister$limits())
@@ -271,8 +271,8 @@ qmtext = function(parent = NULL, data = NULL, side = 1, text = '', x = NULL, y =
         lims = qrect(if (side%%2) cbind(lims[, 1], 0:1) else cbind(0:1, lims[, 2]))
     }
     draw_text = function(layer, painter) {
-        if (!is.null(data)) {
-            at = colMeans(data$limits)
+        if (!is.null(meta)) {
+            at = colMeans(meta$limits)
             x = at[1]; y = at[2]
         }
         if (side%%2) y <- 0.5 else x <- 0.5

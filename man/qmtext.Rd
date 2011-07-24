@@ -1,7 +1,7 @@
 \name{qmtext}
 \alias{qmtext}
 \title{Create a margin text layer}
-\usage{qmtext(parent, data, side = 1, text = "", x, y, 
+\usage{qmtext(parent, meta, side = 1, text = "", x, y, 
     cex = 1, sister, ...)
 
 }
@@ -21,7 +21,7 @@ e.g., the left or right side will make the text vertical.}
 means creating an independent layer with no parents, but it can be
 added to a parent layer using the approach \code{parent[i, j] <-
 child_layer})}
-\item{data}{\code{NULL} means to use \code{x} and \code{y}
+\item{meta}{\code{NULL} means to use \code{x} and \code{y}
 directly, otherwise it should contain a child element named
 \code{limits} which is a matrix and defines the limits of the main
 plot region (in the form \code{matrix(c(x0, x1, y0, y1), 2)});

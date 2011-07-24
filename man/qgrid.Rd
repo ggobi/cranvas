@@ -1,7 +1,7 @@
 \name{qgrid}
 \alias{qgrid}
 \title{Create a background grid layer}
-\usage{qgrid(parent, data, xat, yat, xlim, ylim, minor = "xy", 
+\usage{qgrid(parent, meta, xat, yat, xlim, ylim, minor = "xy", 
     sister, ...)
 
 }
@@ -15,7 +15,7 @@ axis tick marks. Minor grid lines are optional and thinner.}
 means creating an independent layer with no parents, but it can be
 added to a parent layer using the approach \code{parent[i, j] <-
 child_layer})}
-\item{data}{\code{NULL} means to use \code{xat}, \code{yat},
+\item{meta}{\code{NULL} means to use \code{xat}, \code{yat},
 otherwise it should be a list containing child elements \code{xat}
 and \code{yat}, and it will override the next two arguments}
 \item{xat}{locations to draw vertical grid lines}

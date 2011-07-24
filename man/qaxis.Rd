@@ -1,7 +1,7 @@
 \name{qaxis}
 \alias{qaxis}
 \title{Create an axis layer}
-\usage{qaxis(parent, data, side = 1, at, labels, sister, 
+\usage{qaxis(parent, meta, side = 1, at, labels, sister, 
     ...)
 
 }
@@ -17,7 +17,7 @@ horizontal limit of y-axis is [0, 1].}
 means creating an independent layer with no parents, but it can be
 added to a parent layer using the approach \code{parent[i, j] <-
 child_layer})}
-\item{data}{\code{NULL} means to use \code{at} and \code{labels},
+\item{meta}{\code{NULL} means to use \code{at} and \code{labels},
 otherwise it should be a list containing child elements
 \code{xat}, \code{yat}, \code{xlabels} and \code{ylabels}, and it
 will override the arguments \code{at} and \code{labels}}
@@ -48,7 +48,7 @@ r[2, 1] <- qaxis(side = 1, at = c(0, 0.1, 0.3,
     0.7, 0.8), sister = r[1, 1])  # x-axis
 r[1, 0] <- qaxis(side = 2, at = c(0.2, 0.5, 0.6, 
     0.7, 0.9), sister = r[1, 1])  # y-axis
-r[0, 1] <- qaxis(side = 3, data = list(xat = c(0.1, 
+r[0, 1] <- qaxis(side = 3, meta = list(xat = c(0.1, 
     0.3, 0.7), xlabels = c("a", "b", "c")), sister = r[1, 
     1])  # top x-axis
 print(qplotView(scene = s))  # default layout is ugly; tune in r$gridLayout()}
