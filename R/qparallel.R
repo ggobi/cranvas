@@ -253,32 +253,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
     ## monitor keypress event
     brush_key_press = function(layer, event) {
-        key = event$key()
-        ## Key X: XOR; O: OR; A: AND; N: NOT
-        i = which(match_key(c('A', 'O', 'X', 'N', 'C')))
-        if (length(i))
-            b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
-
-        ## change opacity of layer: + or -
-        i = which(match_key(c('Plus', 'Minus')))
-        if (length(i)) {
-            meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
-            layer.main$setOpacity(meta$alpha)
-            qupdate(layer.main)
-        }
-
+        ## common key press processings
+        common_key_press(layer, event, data, meta)
         ## whether to draw min/max labels
         if (match_key('R')) {
             meta$draw.range = !meta$draw.range
             qupdate(layer.range)
             return()
         }
-
-        if (match_key('Delete'))
-            visible(data) = !selected(data) & visible(data)  # make brushed obs invisible
-        if (match_key('F5'))
-            visible(data) = TRUE  # make all of them visible
-
         i = which(match_key(c('Left', 'Right', 'Down', 'Up')))
         if (length(i) && length(meta$pos)) {
             if (horizontal) {
@@ -335,14 +317,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         ## data range labels
     }
     brush_key_release = function(layer, event) {
-        b$mode = 'none'  # set brush mode to 'none' when release the key
-        direction = match_key(c('PageUp', 'PageDown'), logical = FALSE)
-        if (length(direction)) {
-            idx = b$history.index + c(-1, 1)[direction]
-            idx = max(1, min(length(b$history.list), idx))
-            b$history.index = idx
-            selected(data) = b$history.list[[idx]]
-        }
+        common_key_release(layer, event, data, meta)
     }
 
     ## identify segments being brushed when the mouse is moving

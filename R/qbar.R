@@ -81,13 +81,19 @@ qbar = function(x, data, space = 0.1, main) {
         b$cursor = 0L  # restore to Arrow cursor
         save_brush_history(data)  # store brushing history
     }
-
+    key_press = function(layer, event) {
+        common_key_press(layer, event, data, meta)
+    }
+    key_release = function(layer, event) {
+        common_key_release(layer, event, data, meta)
+    }
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
         qlayer(paintFun = main_draw,
                mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
                mouseMove = brush_mouse_move,
+               keyPressFun = key_press, keyReleaseFun = key_release,
                focusInFun = function(layer, painter) {
                    focused(data) = TRUE
                }, focusOutFun = function(layer, painter) {
