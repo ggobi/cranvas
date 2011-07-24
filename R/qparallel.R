@@ -86,17 +86,10 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         stop("parallel coordinate plots need at least 2 variables!")
 
     ## meta data used to store useful information
-    meta = mutalist(pos = c(NA, NA), start = c(NA, NA), brush.move = TRUE, alpha = alpha,
+    meta = Parallel.meta$new(brush.move = TRUE, alpha = alpha,
                     main = main, vars = vars, glyph = match.arg(glyph),
                     order = match.arg(order), draw.range = draw.range,
-                    plot.data = NULL, numeric.col = NULL, p = NULL, n = NULL,
-                    jitter = jitter, amount = amount,
-                    x = NULL, y = NULL, xr = NULL, yr = NULL, names = names,
-                    xat = NULL, yat = NULL, xlabels = NULL, ylabels = NULL,
-                    limits = NULL,
-                    segx0 = NULL, segx1 = NULL, segy0 = NULL, segy1 = NULL,
-                    x0 = NULL, y0 = NULL, brush.size = c(NA, NA), identified = NULL
-    )
+                    jitter = jitter, amount = amount, names = names)
 
     data_preprocess = function() {
         tmp = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
@@ -521,6 +514,24 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         set_cursor(view, b$cursor)
     })
     ## more attributes to come
+    meta$manual.brush = function(pos) {
+        brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+    }
 
     view
 }
+
+Parallel.meta =
+    setRefClass("Parallel_meta",
+                fields = signalingFields(list(
+                pos = 'numeric', start = 'numeric', brush.move = 'logical',
+                alpha = 'numeric', main = 'character', vars = 'character',
+                glyph = 'character', order = 'character', draw.range = 'logical',
+                plot.data = 'matrix', numeric.col = 'logical', p = 'numeric', n = 'numeric',
+                jitter = 'character', amount = 'numeric', x = 'matrix', y = 'matrix',
+                xr = 'numeric', yr = 'numeric', names = 'character',
+                xat = 'numeric', yat = 'numeric',
+                xlabels = 'character', ylabels = 'character', limits = 'matrix',
+                segx0 = 'numeric', segx1 = 'numeric', segy0 = 'numeric', segy1 = 'numeric',
+                x0 = 'numeric', y0 = 'numeric', brush.size = 'numeric',
+                identified = 'numeric', manual.brush = 'function')))
