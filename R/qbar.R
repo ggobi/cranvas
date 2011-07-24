@@ -12,7 +12,8 @@
 qbar = function(x, data, space = 0.1, main) {
     b = brush(data)
     meta =
-        Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space)
+        Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
+                     alpha = 1)
     if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
     compute_coords = function() {
         tmp = data[, meta$var]
@@ -147,7 +148,7 @@ qbar = function(x, data, space = 0.1, main) {
 
 Bar.meta =
     setRefClass("Bar_meta", fields =
-                signalingFields(list(var = 'character',
+                signalingFields(list(var = 'character', alpha = 'numeric',
                                      x = 'numeric', y = 'numeric',
                                      xat = 'numeric', yat = 'numeric',
                                      xlab = 'character', ylab = 'character',
