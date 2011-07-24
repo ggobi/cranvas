@@ -231,3 +231,57 @@ match_key = function(key, event) {
     e = attr(Qt$Qt, 'env')
     sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
 }
+
+##' Some common processings in the key press and release events.
+##' The key press and release events often involve with setting the
+##' selection mode of the \code{\link{brush}}, the alpha transparency,
+##' and deleting selected elements, and so on. These functions
+##' implement these common processes.
+##'
+##' The keys A, O, X, N and C corresponds to the selection mode AND,
+##' OR, XOR, NOT and COMPLEMENT respectively. Plus (+) and Minus (-)
+##' can increase or decrease the alpha transparency exponentially. The
+##' key Delete will make the selected elements invisible, and F5 makes
+##' all the elements visible.
+##' @rdname common_key_event
+##' @param layer the layer argument in the event callback
+##' @param event the event argument in the event callback
+##' @param data the data created by \code{\link{qdata}}
+##' @param meta the meta data for a plot
+##' @return \code{NULL}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{brush}}
+##' @export
+##' @examples ## see the source code of qbar() or qparallel()
+common_key_press = function(layer, event, data, meta) {
+    if (length(i <- which(match_key(c('A', 'O', 'X', 'N', 'C'))))) {
+        b = brush(data)
+        b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
+    } else if (length(i <- which(match_key(c('Plus', 'Minus'))))) {
+        meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
+        data$.color = alpha(data$.color, meta$alpha)
+        data$.fill = alpha(data$.fill, meta$alpha)
+    } else if (match_key('Delete'))
+        visible(data) = !selected(data) & visible(data) else if (match_key('F5'))
+            visible(data) = TRUE
+}
+##' Some common processings in the key release event.
+##'
+##' In a key release event, we set the selection mode to
+##' \code{'none'}. If PageUp or PageDown was pressed, we show the
+##' brush history.
+##'
+##' @rdname common_key_event
+##' @return \code{NULL}
+##' @export
+common_key_release = function(layer, event, data, meta) {
+    b = brush(data)
+    b$mode = 'none'    # set brush mode to 'none' when release the key
+    direction = which(match_key(c('PageUp', 'PageDown')))
+    if (length(direction)) {
+        idx = b$history.index + c(-1, 1)[direction]
+        idx = max(1, min(length(b$history.list), idx))
+        b$history.index = idx
+        selected(data) = b$history.list[[idx]]
+    }
+}
