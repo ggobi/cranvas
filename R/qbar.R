@@ -16,7 +16,7 @@ qbar = function(x, data, space = 0.1, main) {
                      alpha = 1)
     if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
     compute_coords = function() {
-        tmp = data[, meta$var]
+        tmp = data[visible(data), meta$var]
         tmp = as.factor(tmp)
         meta$y = c(table(tmp))
         meta$xat = meta$x = seq_along(meta$y)
@@ -51,7 +51,7 @@ qbar = function(x, data, space = 0.1, main) {
     brush_draw = function(layer, painter) {
         if (b$identify) return()
         if (any(is.na(meta$pos))) return()
-        if (any(idx <- selected(data))) {
+        if (any(idx <- selected(data) & visible(data))) {
             tmp = as.factor(data[idx, meta$var])
             qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, c(table(tmp)),
                       stroke = NA, fill = b$color)
