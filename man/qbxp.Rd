@@ -29,30 +29,30 @@ library(qtbase)
 library(qtpaint)
 library(plumbr)
 
-s = qscene()
-r = qlayer(s)
-x = as.data.frame(matrix(rnorm(100), 20))
-m = qlayer(paintFun = function(layer, painter) {
+s <- qscene()
+r <- qlayer(s)
+x <- as.data.frame(matrix(rnorm(100), 20))
+m <- qlayer(paintFun = function(layer, painter) {
     qdrawCircle(painter, as.vector(col(x)), as.vector(as.matrix(x)), 
         r = 2, stroke = "gray")
 }, limits = qrect(matrix(c(0, 6, range(x)), 2)))  # main layer
-b = qbxp(vars = c("V1", "V3", "V5"), data = x, 
+b <- qbxp(vars = c("V1", "V3", "V5"), data = x, 
     at = c(1, 3, 5), width = 1, sister = m)
-r[1, 1] = b
-r[1, 1] = m
+r[1, 1] <- b
+r[1, 1] <- m
 print(qplotView(scene = s))
 
 ## when the data argument is a list
-s = qscene()
-r = qlayer(s)
-m = qlayer(paintFun = function(layer, painter) {
+s <- qscene()
+r <- qlayer(s)
+m <- qlayer(paintFun = function(layer, painter) {
     qdrawCircle(painter, as.vector(col(x)), as.vector(as.matrix(x)), 
         r = 2, stroke = "gray")
 }, limits = qrect(matrix(c(0, 6, range(x)), 2)))  # main layer
-b = qbxp(data = list(plot.data = x, numeric.col = rep(TRUE, 
+b <- qbxp(data = list(plot.data = x, numeric.col = rep(TRUE, 
     5)), width = 0.6, sister = m)
-r[1, 1] = b
-r[1, 1] = m
+r[1, 1] <- b
+r[1, 1] <- m
 print(qplotView(scene = s))}
 
 

@@ -22,11 +22,11 @@ observations
 \arguments{\item{data}{the mutaframe}
 \item{value}{a logical vector of the length \code{nrow(data)}}
 }
-\examples{df = qdata(iris)
+\examples{df <- qdata(iris)
 
 visible(df)
 
-visible(df) = rep(c(TRUE, FALSE), c(100, 50))  # hide the last 50 obs
+visible(df) <- rep(c(TRUE, FALSE), c(100, 50))  # hide the last 50 obs
 
 visible(df)}
 

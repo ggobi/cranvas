@@ -46,8 +46,8 @@ qcrimes <- qdata(crimes)
 print(qparallel(data = qcrimes))
 
 # now link map and crimes data set
-link_var(qcrimes) = "State"
-link_var(qstates) = "region"
+link_var(qcrimes) <- "State"
+link_var(qstates) <- "region"
 
 link(qcrimes, qstates)
 print(qscatter(Population, Robbery, qcrimes))

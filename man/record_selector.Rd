@@ -24,13 +24,13 @@ column will be used)}
 \examples{library(cranvas)
 
 ## old iris as the toy example
-qiris = qdata(iris)
+qiris <- qdata(iris)
 qparallel(data = qiris)
 record_selector(data = qiris)
 
 ## NRC rankings
 data(nrcstat)
-qnrc = qdata(nrcstat)
+qnrc <- qdata(nrcstat)
 qparallel(vars = 10:13, data = qnrc, main = "Overview of Rankings", 
     horizontal = FALSE)
 record_selector("Institution.Name", qnrc)

@@ -25,11 +25,11 @@ logical vector)}
 \examples{library(qtbase)
 library(qtpaint)
 library(cranvas)
-key_press = function(layer, event) {
+key_press <- function(layer, event) {
     print(match_key(c("A", "F", "PageUp", "1"), event))
 }
-s = qscene()
-r = qlayer(s, keyPressFun = key_press)
+s <- qscene()
+r <- qlayer(s, keyPressFun = key_press)
 qplotView(scene = s)}
 
 

@@ -31,7 +31,7 @@ screen width}
 }
 \examples{library(cranvas)
 
-df = matrix(rnorm(1000), 200)
+df <- matrix(rnorm(1000), 200)
 colnames(df) <- c("V1", "V2", "V3", "V4", "V5")
 qboxplot(df)
 qboxplot(df, horizontal = TRUE)
@@ -40,7 +40,7 @@ qboxplot(df, width = 0.1 * sample(5))  # different widths
 qboxplot(rnorm(100))
 qboxplot(Sepal.Length ~ Species, data = iris)
 
-df = qdata(round(data.frame(x = rnorm(100), y = runif(100), 
+df <- qdata(round(data.frame(x = rnorm(100), y = runif(100), 
     z = rbeta(100, 1, 0.8)), 2))
 
 qboxplot(data = df)

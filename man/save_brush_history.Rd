@@ -46,11 +46,11 @@ rows are brushed}
 }
 \examples{library(cranvas)
 data(nrcstat)
-qnrc = qdata(nrcstat)
+qnrc <- qdata(nrcstat)
 selected(qnrc)  # all FALSE by default
-selected(qnrc)[1:5] = TRUE  # brush first 5 rows
+selected(qnrc)[1:5] <- TRUE  # brush first 5 rows
 
-b = brush(qnrc)  # the brush object
+b <- brush(qnrc)  # the brush object
 b$history.list  # this list should be empty by default
 
 save_brush_history(qnrc)  # store currently brushed row indices in history
@@ -58,7 +58,7 @@ save_brush_history(qnrc, c(6, 7, 10))  # another history
 
 b$history.list  # what happened to the brush object?
 
-b$persistent = TRUE  # turn on persistent brushing
+b$persistent <- TRUE  # turn on persistent brushing
 b$persistent.list  # this list should be empty by default too
 save_brush_history(qnrc, c(3, 4, 6, 9))  # permanently brush other 4 rows
 

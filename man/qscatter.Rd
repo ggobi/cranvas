@@ -35,7 +35,7 @@ data(nrcstat)
 nrcstat[, 26] <- -nrcstat[, 26]
 colnames(nrcstat)[26] <- "Neg.Median.Time.to.Degree"
 
-qnrc = qdata(nrcstat)
+qnrc <- qdata(nrcstat)
 
 print(qscatter(R.Rankings.5th.Percentile, R.Rankings.95th.Percentile, 
     qnrc))
@@ -52,8 +52,8 @@ data(flea)
 qflea <- qdata(flea)
 print(qscatter(tars1, aede1, qflea))
 
-link_var(qflea) = "species"
-link_type(qflea) = "self"
+link_var(qflea) <- "species"
+link_type(qflea) <- "self"
 
 # Using species to color points
 qflea <- qdata(flea, fill = dscale(flea$species, 
