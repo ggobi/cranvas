@@ -65,9 +65,10 @@ qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", boxplot = TR
 iris.col = brewer.pal(3, "Set1")[as.integer(iris$Species)]
 qiris = qdata(iris, brushed = FALSE, color = iris.col)
 
-qparallel(data = qiris)
-qparallel(data = qiris, scale = "I")
-qparallel(data = qiris, scale = "var")
+qparallel(data = qiris, main = 'scale columns individually to [0, 1]')
+qparallel(data = qiris, scale = "I", main = 'unscaled data')
+qparallel(data = qiris, scale = "var", main = 'mean 0 variance 1')
+qparallel(1:4, data = qiris, scale = "global", main = 'scale globally to [0, 1]')
 
 # try other standardizing methods
 st2 = function(x) ((x - min(x))/(max(x) - min(x)))^2

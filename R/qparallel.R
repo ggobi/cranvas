@@ -33,9 +33,13 @@
 ##' names start with a dot will be used
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
-##' @param scale standardizing method - 'range' --> [0, 1], 'I' --> do
-##' nothing, 'var' --> mean 0 var 1, 'custom_function_name' --> use
-##' your own function (see examples.R)
+##' @param scale data standardizing method; possible values are
+##' \code{'range'} (scale columns individually to [0, 1]), \code{'I'}
+##' (do not transform; use original values), \code{'var'} (make each
+##' column of mean 0 var 1), and \code{'global'} (scale all the
+##' columns to [0, 1] using global minimum and maximum); other
+##' character strings here means to use custom functions (see examples
+##' below)
 ##' @param names the variable labels to use in the plot (by default,
 ##' they are the variable names with non-alphanumeric characters
 ##' replaced by line breaks \code{'\n'})
@@ -59,7 +63,7 @@
 ##' @param alpha the opacity value
 ##' @param draw.range whether to draw the range values (min and max
 ##' for each variable)
-##' @return NULL
+##' @return a plot object with attributes
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example cranvas/inst/examples/qparallel-ex.R

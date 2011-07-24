@@ -40,7 +40,7 @@ arrow keys are used to adjust the order of the variables and flip
 the values of variables (like a mirror reflection). \code{PageUp}
 and \code{PageDown} can be used to go back and forth in the brush
 history.}
-\value{NULL}
+\value{a plot object with attributes}
 \author{Yihui Xie <\url{http://yihui.name}>}
 \arguments{\item{vars}{variables to show; can be a character vector (column
 names), an integer vector (column indices) or a formula like '~ x1
@@ -49,9 +49,13 @@ names), an integer vector (column indices) or a formula like '~ x1
 names start with a dot will be used}
 \item{data}{a mutaframe which is typically built upon a data frame
 along with several row attributes}
-\item{scale}{standardizing method - 'range' --> [0, 1], 'I' --> do
-nothing, 'var' --> mean 0 var 1, 'custom_function_name' --> use
-your own function (see examples.R)}
+\item{scale}{data standardizing method; possible values are
+\code{'range'} (scale columns individually to [0, 1]), \code{'I'}
+(do not transform; use original values), \code{'var'} (make each
+column of mean 0 var 1), and \code{'global'} (scale all the
+columns to [0, 1] using global minimum and maximum); other
+character strings here means to use custom functions (see examples
+below)}
 \item{names}{the variable labels to use in the plot (by default,
 they are the variable names with non-alphanumeric characters
 replaced by line breaks \code{'\n'})}
@@ -150,9 +154,11 @@ qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings",
 iris.col <- brewer.pal(3, "Set1")[as.integer(iris$Species)]
 qiris <- qdata(iris, brushed = FALSE, color = iris.col)
 
-qparallel(data = qiris)
-qparallel(data = qiris, scale = "I")
-qparallel(data = qiris, scale = "var")
+qparallel(data = qiris, main = "scale columns individually to [0, 1]")
+qparallel(data = qiris, scale = "I", main = "unscaled data")
+qparallel(data = qiris, scale = "var", main = "mean 0 variance 1")
+qparallel(1:4, data = qiris, scale = "global", 
+    main = "scale globally to [0, 1]")
 
 # try other standardizing methods
 st2 <- function(x) ((x - min(x))/(max(x) - min(x)))^2
@@ -322,6 +328,7 @@ data(pollen)
 qpollen <- qdata(pollen, color = rgb(0, 0, 1, 
     0.01))
 qparallel(data = qpollen)}
+
 
 
 
