@@ -279,8 +279,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (match_key('F5'))
             visible(data) = TRUE  # make all of them visible
 
-        if (length(i) && !any(is.na(meta$pos))) {
         i = which(match_key(c('Left', 'Right', 'Down', 'Up')))
+        if (length(i) && length(meta$pos)) {
             if (horizontal) {
                 j = 1
                 movedir = switch(i, -1, 1, NULL, NULL)
