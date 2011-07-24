@@ -99,14 +99,14 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     )
 
     data_preprocess = function() {
-        meta$plot.data = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
-        meta$plot.data = .rm.cons.col(meta$plot.data)  # remove constant columns
-        if (length(meta$vars <- names(meta$plot.data)) <= 1)
+        tmp = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
+        tmp = .rm.cons.col(tmp)  # remove constant columns
+        if (length(meta$vars <- names(tmp)) <= 1)
             stop('there are less than 2 variables in the data')
         ## which columns are numeric? we don't want boxplots for non-numeric vars
-        meta$numeric.col = sapply(meta$plot.data, is.numeric)
+        meta$numeric.col = sapply(tmp, is.numeric)
 
-        meta$plot.data = sapply(meta$plot.data, as.numeric)
+        meta$plot.data = sapply(tmp, as.numeric)
         meta$p = ncol(meta$plot.data)
         meta$n = nrow(meta$plot.data)
 
