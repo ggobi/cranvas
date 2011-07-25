@@ -1,11 +1,11 @@
 ##' Create a legend layer.
-##' This function creates a legend layer 
+##' This function creates a legend layer
 ##' @param parent the parent layer (default to be \code{NULL}, which
 ##' means creating an independent layer with no parents, but it can be
 ##' added to a parent layer using the approach \code{parent[i, j] <-
 ##' child_layer})
-##' @param data \code{NULL} means to use \code{scale} 
-##' @param vertical (default is \code{TRUE}) 
+##' @param data \code{NULL} means to use \code{scale}
+##' @param vertical (default is \code{TRUE})
 ##' @param sister a sister layer beside or below which to draw the legend layer;
 ##' the limits of this layer will be used for the legend layer
 ##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
