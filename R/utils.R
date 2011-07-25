@@ -285,3 +285,25 @@ common_key_release = function(layer, event, data, meta) {
         selected(data) = b$history.list[[idx]]
     }
 }
+
+##' Sync layer limits.
+##' The limits information is stored in the meta data as
+##' \code{meta$limits}, of which this function makes use to sync the
+##' limits of layers.
+##'
+##' @param meta the meta data contains a matrix of limits in
+##' \code{meta$limits}
+##' @param ... an arbitrary number of layers
+##' @return \code{NULL} (an event is attached on \code{meta$limits} so
+##' that whenever the limits are changed, the layers will be updated
+##' using the new limits)
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## sync_limits(meta, layer1, layer2, layer3)
+sync_limits = function(meta, ...) {
+    l = list(...)
+    meta$limitsChanged$connect(function() {
+        r = qrect(meta$limits)
+        sapply(l, function(x) x$setLimits(r))
+    })
+}
