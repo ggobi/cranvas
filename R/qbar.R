@@ -15,6 +15,7 @@ qbar = function(x, data, space = 0.1, main) {
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
                      alpha = 1)
     if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
+    meta$main = main
     compute_coords = function() {
         tmp = data[visible(data), meta$var]
         tmp = as.factor(tmp)
