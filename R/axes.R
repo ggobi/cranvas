@@ -91,7 +91,7 @@ qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL,
     }
     if (!('limits' %in% names(list(...))) && !is.null(meta)) {
         l = qlayer(parent, paintFun = draw_axis, limits = gen_limits(), ...)
-        if (inherits(meta, "refObjectGenerator"))
+        if (is.environment(meta))
             meta$limitsChanged$connect(function() l$setLimits(gen_limits()))
         l
     } else qlayer(parent, paintFun = draw_axis, ...)
@@ -205,7 +205,7 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
     }
     if (!('limits' %in% names(list(...))) && !is.null(meta)) {
         l = qlayer(parent, paintFun = draw_grid, limits = qrect(meta$limits), ...)
-        if (inherits(meta, "refObjectGenerator"))
+        if (is.environment(meta))
             meta$limitsChanged$connect(function() l$setLimits(qrect(meta$limits)))
         l
     } else qlayer(parent, paintFun = draw_grid, ...)
@@ -297,7 +297,7 @@ qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = NULL, y =
     }
     if (!('limits' %in% names(list(...))) && !is.null(meta)) {
         l = qlayer(parent, paintFun = draw_text, limits = lims, ...)
-        if (inherits(meta, "refObjectGenerator"))
+        if (is.environment(meta))
             meta$limitsChanged$connect(function()
                                        l$setLimits(qrect(if (side%%2)
                                                          cbind(meta$limits[, 1], 0:1) else
