@@ -1,5 +1,4 @@
 library(cranvas)
-library(scales)
 
 data(nrcstat)
 nrcstat[,26]<- -nrcstat[,26]
