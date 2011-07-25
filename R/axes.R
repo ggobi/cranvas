@@ -225,15 +225,8 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
 ##' means creating an independent layer with no parents, but it can be
 ##' added to a parent layer using the approach \code{parent[i, j] <-
 ##' child_layer})
-##' @param meta \code{NULL} means to use \code{x} and \code{y}
-##' directly, otherwise it should contain a child element named
-##' \code{limits} which is a matrix and defines the limits of the main
-##' plot region (in the form \code{matrix(c(x0, x1, y0, y1), 2)});
-##' this matrix will be used to calculate the appropriate coordinates
-##' to draw the text so that the text is in the center of the layer;
-##' this argument will override \code{x} and \code{y} if provided;
-##' furthermore, the limits of the layer will use \code{meta$limits}
-##' as well
+##' @param meta \code{NULL} means to use \code{text} directly,
+##' otherwise it can override \code{text}
 ##' @param side which side to draw the text (following the convention
 ##' of R base graphics); e.g. \code{side = 3} can be used to create
 ##' the title layer
@@ -247,10 +240,8 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
 ##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
 ##' @return a layer object
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @note If \code{meta} is not \code{NULL}, it is supposed to be a
-##' reference object, and an event will be attached on
-##' \code{meta$limits} so that the limits of the text layer will sync
-##' with \code{meta$limits} dynamically.
+##' @note The limits of the text layer is [0, 1] both horizontally and
+##' vertically by default.
 ##' @export
 ##' @seealso \code{\link[graphics]{mtext}}, \code{\link[qtpaint]{qlayer}}
 ##' @examples library(cranvas)
@@ -259,15 +250,14 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
 ##'
 ##' s = qscene()
 ##' r = qlayer(s)  # root layer
-##' l = qrect(matrix(c(0, 1, 0, 1), 2))
 ##' m = qlayer(paintFun = function(layer, painter) {
 ##'     qdrawCircle(painter, runif(1000), runif(1000), r = 2)
 ##'     qdrawRect(painter, 0, 0, 1, 1)
-##' }, limits = l) # main layer
-##' m1 = qmtext(text = 'x axis title!', side = 1, x = .5, y = .5, limits = l)
-##' m2 = qmtext(text = 'y axis title!', side = 2, x = .5, y = .5, limits = l)
-##' m3 = qmtext(text = 'THE MAIN TITLE', side = 3, x = .5, y = .5, limits = l)
-##' m4 = qmtext(text = 'text on the right margin', side = 4, x = .5, y = .5, limits = l)
+##' }, limits = qrect(matrix(c(0, 1, 0, 1), 2))) # main layer
+##' m1 = qmtext(text = 'x axis title!', side = 1)
+##' m2 = qmtext(text = 'y axis title!', side = 2)
+##' m3 = qmtext(text = 'THE MAIN TITLE', side = 3)
+##' m4 = qmtext(text = 'text on the right margin', side = 4)
 ##' ## note how to arrange these layers appropriately in the margin
 ##' r[1, 1] = m
 ##' r[2, 1] = m1
@@ -276,34 +266,19 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
 ##' r[1, 2] = m4
 ##' print(qplotView(scene = s))
 ##'
-qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = NULL, y = NULL,
+qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = 0.5, y = 0.5,
                   cex = 1, ...) {
-    if (!is.null(meta)) {
-        lims = meta$limits
-        at = colMeans(lims)
-        x = at[1]; y = at[2]
-        lims = qrect(if (side%%2) cbind(lims[, 1], 0:1) else cbind(0:1, lims[, 2]))
-    }
     draw_text = function(layer, painter) {
         if (!is.null(meta)) {
-            at = colMeans(meta$limits)
-            x = at[1]; y = at[2]
             if (side == 1) text = meta$xlab
             if (side == 2) text = meta$ylab
             if (side == 3) text = meta$main
         }
-        if (side%%2) y <- 0.5 else x <- 0.5
         qdrawText(painter, text, x, y, rot = c(0, 90, 0, 90)[side], cex = cex)
     }
-    if (!('limits' %in% names(list(...))) && !is.null(meta)) {
-        l = qlayer(parent, paintFun = draw_text, limits = lims, ...)
-        if (is.environment(meta))
-            meta$limitsChanged$connect(function()
-                                       l$setLimits(qrect(if (side%%2)
-                                                         cbind(meta$limits[, 1], 0:1) else
-                                                         cbind(0:1, meta$limits[, 2]))))
-        l
-    } else qlayer(parent, paintFun = draw_text, ...)
+    if (!('limits' %in% names(list(...))))
+        qlayer(parent, paintFun = draw_text, limits = qrect(c(0, 1), c(0, 1)), ...) else
+    qlayer(parent, paintFun = draw_text, ...)
 }
 
 #' draw grid with qt
