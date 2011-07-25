@@ -6,20 +6,13 @@
 ##' child_layer})
 ##' @param data \code{NULL} means to use \code{scale}
 ##' @param vertical (default is \code{TRUE})
-##' @param sister a sister layer beside or below which to draw the legend layer;
-##' the limits of this layer will be used for the legend layer
 ##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
 ##' @return a layer object
 ##' @author Heike Hofmann
 ##' @export
-qlegend = function(parent = NULL, data = NULL, vertical = TRUE,
-                 sister = NULL, ...) {
-#    if (!is.null(sister)) {
-#        lims = as.matrix(sister$limits())
-#        lims = qrect(if (vertical) cbind(lims[, 1], 0:1) else cbind(0:1, lims[, 2]))
-#    }
+qlegend = function(parent = NULL, data = NULL, vertical = TRUE, ...) {
     lims <- qrect(c(0,1),c(0,1))
- 
+
     draw_legend = function(layer, painter) {
         scale <- attr(data,"col.scale")
         if (is.null(scale)) return (NULL)
@@ -57,9 +50,6 @@ qlegend = function(parent = NULL, data = NULL, vertical = TRUE,
 
 
     }
-#    if (!('limits' %in% names(list(...))) && !is.null(sister))
-        qlayer(parent, paintFun = draw_legend, limits = lims, ...) 
-#        else
-#    qlayer(parent, paintFun = draw_legend, ...)
+        qlayer(parent, paintFun = draw_legend, limits = lims, ...)
 }
 
