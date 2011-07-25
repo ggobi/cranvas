@@ -5,15 +5,17 @@
 ##' @param data a mutaframe created by \code{\link{qdata}}
 ##' @param space the space between bars proportional to the width of bars
 ##' @param main the main title
+##' @param horizontal \code{TRUE} to draw a horizontal plot or
+##' \code{FALSE} (vertical)
 ##' @return A bar plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example cranvas/inst/examples/qbar-ex.R
-qbar = function(x, data, space = 0.1, main) {
+qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
     b = brush(data)
     meta =
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
-                     alpha = 1)
+                     alpha = 1, horizontal = horizontal)
     if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
     meta$main = main
     compute_coords = function() {
@@ -34,6 +36,16 @@ qbar = function(x, data, space = 0.1, main) {
     }
     compute_coords()
     compute_colors()
+    flip_coords = function() {
+        if (!meta$horizontal) return()
+        tmp = meta$x; meta$x = meta$y; meta$y = tmp;
+        tmp = meta$xat; meta$xat = meta$yat; meta$yat = tmp;
+        tmp = meta$xlabels; meta$xlabels = meta$ylabels; meta$ylabels = tmp;
+        tmp = meta$xlab; meta$xlab = meta$ylab; meta$ylab = tmp;
+        tmp = meta$xleft; meta$xleft = meta$ybottom; meta$ybottom = tmp;
+        tmp = meta$xright; meta$xright = meta$ytop; meta$ytop = tmp;
+        meta$limits = meta$limits[, 2:1]
+    }
     ## bars (rectangles)
     compute_bars = function() {
         w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
@@ -42,6 +54,7 @@ qbar = function(x, data, space = 0.1, main) {
         meta$limits =
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
+        flip_coords()
     }
     compute_bars()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
@@ -54,6 +67,9 @@ qbar = function(x, data, space = 0.1, main) {
         if (any(is.na(meta$pos))) return()
         if (any(idx <- selected(data) & visible(data))) {
             tmp = as.factor(data[idx, meta$var])
+            if (meta$horizontal)
+                qdrawRect(painter, meta$xleft, meta$ybottom, c(table(tmp)), meta$ytop,
+                          stroke = NA, fill = b$color) else
             qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, c(table(tmp)),
                       stroke = NA, fill = b$color)
         }
@@ -106,7 +122,7 @@ qbar = function(x, data, space = 0.1, main) {
     layer.ylab = qmtext(meta = meta, side = 2)
     layer.xaxis = qaxis(meta = meta, side = 1)
     layer.yaxis = qaxis(meta = meta, side = 2)
-    layer.grid = qgrid(meta = meta, minor = 'y')
+    layer.grid = qgrid(meta = meta, minor = ifelse(meta$horizontal, 'x', 'y'))
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab
@@ -174,4 +190,4 @@ Bar.meta =
                                      stroke = 'character', fill = 'character',
                                      start = 'numeric', pos = 'numeric',
                                      brush.move = 'logical', brush.size = 'numeric',
-                                     manual.brush = 'function')))
+                                     manual.brush = 'function', horizontal = 'logical')))

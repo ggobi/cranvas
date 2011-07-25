@@ -4,3 +4,5 @@ qnrc = qdata(nrcstat, fill = dscale(nrcstat$Regional.Code, hue_pal()), color = d
 qbar(Regional.Code, qnrc)
 qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
     horizontal = FALSE, boxplot = TRUE)
+
+qbar(Regional.Code, qnrc, horizontal = TRUE)  # horizontal plot
