@@ -26,8 +26,8 @@ same length with \code{x} with \code{TRUE}'s corresponding to the
 numeric indicies)}
 \item{mode}{the selection mode string; see Details}
 }
-\examples{x1 = c(TRUE, TRUE, FALSE, FALSE)
-x2 = c(FALSE, TRUE, TRUE, FALSE)
+\examples{x1 <- c(TRUE, TRUE, FALSE, FALSE)
+x2 <- c(FALSE, TRUE, TRUE, FALSE)
 mode_selection(x1, x2, "none")
 mode_selection(x1, x2, "and")
 mode_selection(x1, x2, "or")

@@ -27,9 +27,9 @@ We can pass either the integer code or the character string to the
 }
 \examples{library(cranvas)
 library(qtpaint)
-scene = qscene()
+scene <- qscene()
 qlayer(scene)
-v = qplotView(scene = scene)
+v <- qplotView(scene = scene)
 print(v)
 
 set_cursor(v, "WaitCursor")

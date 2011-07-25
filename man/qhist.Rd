@@ -61,8 +61,8 @@ print(qhist(aede1, qflea))
 print(qhist(tars1, qflea, splitByCol = "species"))
 print(qhist(aede1, qflea, splitByCol = "species"))
 
-link_var(qflea) = "species"
-link_type(qflea) = "self"}
+link_var(qflea) <- "species"
+link_type(qflea) <- "self"}
 
 
 

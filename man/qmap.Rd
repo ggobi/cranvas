@@ -21,42 +21,36 @@ along with several row attributes}
 \item{main}{window title, by default 'Map of <data set>'}
 \item{...}{}
 }
-\examples{library(qtbase)
-library(qtpaint)
-library(cranvas)
-library(plumbr)
+\examples{library(cranvas)
 library(maps)
 library(ggplot2)
 
 states <- map_data("state")
+states$region <- factor(states$region)
 qstates <- qdata(states)
 
 qstates$.color <- sample(c("red", "blue"), nrow(states), 
     replace = TRUE)
-qmap(qstates, long, lat, group, region)
+print(qmap(qstates, long, lat, group, region))
 
 # recolor
 qstates$.color <- sample(c("red", "blue"), nrow(states), 
     replace = TRUE)
 
-
 #######################
 
 data(crimes)
-crimes$State <- tolower(crimes$State)
+crimes$State <- factor(tolower(crimes$State))
 
 qcrimes <- qdata(crimes)
 print(qparallel(data = qcrimes))
 
 # now link map and crimes data set
-link_var(qcrimes) = "State"
-link_var(qstates) = "region"
+link_var(qcrimes) <- "State"
+link_var(qstates) <- "region"
 
 link(qcrimes, qstates)
-qscatter(Population, Robbery, qcrimes)
-
-
-
+print(qscatter(Population, Robbery, qcrimes))
 
 # Choropleth maps
 setMapColorByLabel(qstates, qcrimes, Robbery/Population, 
@@ -96,12 +90,6 @@ library(profr)
 
 #res <- profr(print(qmap(qworld, long, lat, group,
 #   label=id)))}
-
-
-
-
-
-
 
 
 

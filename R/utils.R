@@ -212,12 +212,8 @@ break_str = function(x, split = '[^[:alnum:]]', ...) {
 ##' (\code{sys.frame(1)}), so if this function is called under a
 ##' standard callback of a layer event, we can leave this argument
 ##' blank)
-##' @param logical whether to return a logical vector or an integer
-##' vector (the latter applies \code{\link[base]{which}} to the
-##' logical vector)
 ##' @return \code{TRUE} for the matched keys, and \code{FALSE} for
-##' those not matched; or an integer vector of the indices of the
-##' matched keys
+##' those not matched
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @references \url{http://doc.qt.nokia.com/latest/qt.html#Key-enum}
 ##' @export
@@ -229,10 +225,85 @@ break_str = function(x, split = '[^[:alnum:]]', ...) {
 ##' }
 ##' s = qscene(); r = qlayer(s, keyPressFun = key_press)
 ##' qplotView(scene = s)
-match_key = function(key, event, logical = TRUE) {
+match_key = function(key, event) {
     if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
     k = event$key()
     e = attr(Qt$Qt, 'env')
-    res = sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
-    if (logical) res else which(res)
+    sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
+}
+
+##' Some common processings in the key press and release events.
+##' The key press and release events often involve with setting the
+##' selection mode of the \code{\link{brush}}, the alpha transparency,
+##' and deleting selected elements, and so on. These functions
+##' implement these common processes.
+##'
+##' The keys A, O, X, N and C corresponds to the selection mode AND,
+##' OR, XOR, NOT and COMPLEMENT respectively. Plus (+) and Minus (-)
+##' can increase or decrease the alpha transparency exponentially. The
+##' key Delete will make the selected elements invisible, and F5 makes
+##' all the elements visible.
+##' @rdname common_key_event
+##' @param layer the layer argument in the event callback
+##' @param event the event argument in the event callback
+##' @param data the data created by \code{\link{qdata}}
+##' @param meta the meta data for a plot
+##' @return \code{NULL}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @seealso \code{\link{brush}}
+##' @export
+##' @examples ## see the source code of qbar() or qparallel()
+common_key_press = function(layer, event, data, meta) {
+    if (length(i <- which(match_key(c('A', 'O', 'X', 'N', 'C'))))) {
+        b = brush(data)
+        b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
+    } else if (length(i <- which(match_key(c('Plus', 'Minus'))))) {
+        meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
+        data$.color = alpha(data$.color, meta$alpha)
+        data$.fill = alpha(data$.fill, meta$alpha)
+    } else if (match_key('Delete'))
+        visible(data) = !selected(data) & visible(data) else if (match_key('F5'))
+            visible(data) = TRUE
+}
+##' Some common processings in the key release event.
+##'
+##' In a key release event, we set the selection mode to
+##' \code{'none'}. If PageUp or PageDown was pressed, we show the
+##' brush history.
+##'
+##' @rdname common_key_event
+##' @return \code{NULL}
+##' @export
+common_key_release = function(layer, event, data, meta) {
+    b = brush(data)
+    b$mode = 'none'    # set brush mode to 'none' when release the key
+    direction = which(match_key(c('PageUp', 'PageDown')))
+    if (length(direction)) {
+        idx = b$history.index + c(-1, 1)[direction]
+        idx = max(1, min(length(b$history.list), idx))
+        b$history.index = idx
+        selected(data) = b$history.list[[idx]]
+    }
+}
+
+##' Sync layer limits.
+##' The limits information is stored in the meta data as
+##' \code{meta$limits}, of which this function makes use to sync the
+##' limits of layers.
+##'
+##' @param meta the meta data contains a matrix of limits in
+##' \code{meta$limits}
+##' @param ... an arbitrary number of layers
+##' @return \code{NULL} (an event is attached on \code{meta$limits} so
+##' that whenever the limits are changed, the layers will be updated
+##' using the new limits)
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## sync_limits(meta, layer1, layer2, layer3)
+sync_limits = function(meta, ...) {
+    l = list(...)
+    meta$limitsChanged$connect(function() {
+        r = qrect(meta$limits)
+        sapply(l, function(x) x$setLimits(r))
+    })
 }

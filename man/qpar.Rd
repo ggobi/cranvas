@@ -12,7 +12,7 @@ This function can set or query the graphical parameters in the
 \seealso{\code{\link[graphics]{par}}}
 \arguments{\item{...}{options of the form \code{tag = value}}
 }
-\examples{op = qpar()
+\examples{op <- qpar()
 qpar(mar = 0.05)  # the degree to extend the plot margin (inner margin)
 qpar(op)  # restore}
 

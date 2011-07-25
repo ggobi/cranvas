@@ -33,9 +33,13 @@
 ##' names start with a dot will be used
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
-##' @param scale standardizing method - 'range' --> [0, 1], 'I' --> do
-##' nothing, 'var' --> mean 0 var 1, 'custom_function_name' --> use
-##' your own function (see examples.R)
+##' @param scale data standardizing method; possible values are
+##' \code{'range'} (scale columns individually to [0, 1]), \code{'I'}
+##' (do not transform; use original values), \code{'var'} (make each
+##' column of mean 0 var 1), and \code{'global'} (scale all the
+##' columns to [0, 1] using global minimum and maximum); other
+##' character strings here means to use custom functions (see examples
+##' below)
 ##' @param names the variable labels to use in the plot (by default,
 ##' they are the variable names with non-alphanumeric characters
 ##' replaced by line breaks \code{'\n'})
@@ -59,7 +63,7 @@
 ##' @param alpha the opacity value
 ##' @param draw.range whether to draw the range values (min and max
 ##' for each variable)
-##' @return NULL
+##' @return a plot object with attributes
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example cranvas/inst/examples/qparallel-ex.R
@@ -86,47 +90,37 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         stop("parallel coordinate plots need at least 2 variables!")
 
     ## meta data used to store useful information
-    meta = mutalist(pos = c(NA, NA), start = c(NA, NA), brush.move = TRUE, alpha = alpha,
+    meta = Parallel.meta$new(brush.move = TRUE, alpha = alpha,
                     main = main, vars = vars, glyph = match.arg(glyph),
                     order = match.arg(order), draw.range = draw.range,
-                    plot.data = NULL, numeric.col = NULL, p = NULL, n = NULL,
-                    jitter = jitter, amount = amount,
-                    x = NULL, y = NULL, xr = NULL, yr = NULL, names = names,
-                    xat = NULL, yat = NULL, xlabels = NULL, ylabels = NULL,
-                    limits = NULL,
-                    segx0 = NULL, segx1 = NULL, segy0 = NULL, segy1 = NULL,
-                    x0 = NULL, y0 = NULL, brush.size = c(NA, NA), identified = NULL
-    )
+                    jitter = jitter, amount = amount, names = names)
 
     data_preprocess = function() {
-        meta$plot.data = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
-        meta$plot.data = .rm.cons.col(meta$plot.data)  # remove constant columns
-        if (length(meta$vars <- names(meta$plot.data)) <= 1)
+        tmp = as.data.frame(data[, meta$vars], stringsAsFactors = TRUE)
+        tmp = .rm.cons.col(tmp)  # remove constant columns
+        if (length(meta$vars <- names(tmp)) <= 1)
             stop('there are less than 2 variables in the data')
         ## which columns are numeric? we don't want boxplots for non-numeric vars
-        meta$numeric.col = sapply(meta$plot.data, is.numeric)
+        meta$numeric.col = sapply(tmp, is.numeric)
 
-        meta$plot.data = sapply(meta$plot.data, as.numeric)
+        meta$plot.data = sapply(tmp, as.numeric)
         meta$p = ncol(meta$plot.data)
         meta$n = nrow(meta$plot.data)
 
         meta$plot.data = na.action(meta$plot.data) # handle missing values
 
-        if (!is.null(meta$jitter)) {
-            if (class(meta$jitter) == "formula")
-                meta$jitter = attr(terms(meta$jitter, data = meta$plot.data), "term.labels")
-            if (is.numeric(meta$jitter)) meta$jitter = names(data)[meta$jitter]
-            if (is.character(meta$jitter)) {
-                meta$plot.data[, meta$jitter] =
-                    apply(meta$plot.data[, meta$jitter, drop = FALSE],
-                          2, base::jitter, amount = meta$amount)  # jittering
-            }
+        if (length(meta$jitter)) {
+            meta$plot.data[, meta$jitter] =
+                apply(meta$plot.data[, meta$jitter, drop = FALSE],
+                      2, base::jitter, amount = meta$amount)  # jittering
         }
 
         scale = switch(scale, range = function(x) {
             xna = x[!is.na(x)]
             (x - min(xna))/(max(xna) - min(xna))
-        }, var = base::scale, I = identity, get(scale))
+        }, var = base::scale, I = identity, global = function(x) {
+            (x - min(meta$plot.data))/diff(range(meta$plot.data, na.rm = TRUE))
+        }, get(scale))
         meta$plot.data = apply(meta$plot.data, 2, scale)  # standardizing
 
         if (!is.null(center)){
@@ -259,34 +253,16 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
     ## monitor keypress event
     brush_key_press = function(layer, event) {
-        key = event$key()
-        ## Key X: XOR; O: OR; A: AND; N: NOT
-        i = match_key(c('A', 'O', 'X', 'N', 'C'), logical = FALSE)
-        if (length(i))
-            b$mode = c('and', 'or', 'xor', 'not', 'complement')[i]
-
-        ## change opacity of layer: + or -
-        i = match_key(c('Plus', 'Minus'), logical = FALSE)
-        if (length(i)) {
-            meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
-            layer.main$setOpacity(meta$alpha)
-            qupdate(layer.main)
-        }
-
+        ## common key press processings
+        common_key_press(layer, event, data, meta)
         ## whether to draw min/max labels
         if (match_key('R')) {
             meta$draw.range = !meta$draw.range
             qupdate(layer.range)
             return()
         }
-
-        if (match_key('Delete'))
-            visible(data) = !selected(data) & visible(data)  # make brushed obs invisible
-        if (match_key('F5'))
-            visible(data) = TRUE  # make all of them visible
-
-        i = match_key(c('Left', 'Right', 'Down', 'Up'), logical = FALSE)
-        if (length(i) && !any(is.na(meta$pos))) {
+        i = which(match_key(c('Left', 'Right', 'Down', 'Up')))
+        if (length(i) && length(meta$pos)) {
             if (horizontal) {
                 j = 1
                 movedir = switch(i, -1, 1, NULL, NULL)
@@ -316,9 +292,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                         layer.main$invalidateIndex()
                         qupdate(layer.main)
                         qupdate(layer.brush)
-                        if (boxplot) {
-                            qupdate(layer.boxplot)
-                        }
+                        qupdate(layer.boxplot)
                     }
                 }
                 if (!is.null(flipdir)) {
@@ -332,41 +306,32 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     layer.main$invalidateIndex()
                     qupdate(layer.main)
                     qupdate(layer.brush)
-                    if (boxplot) {
-                        qupdate(layer.boxplot)
-                    }
+                    qupdate(layer.boxplot)
                 }
             }
         }
         ## data range labels
     }
     brush_key_release = function(layer, event) {
-        b$mode = 'none'  # set brush mode to 'none' when release the key
-        direction = match_key(c('PageUp', 'PageDown'), logical = FALSE)
-        if (length(direction)) {
-            idx = b$history.index + c(-1, 1)[direction]
-            idx = max(1, min(length(b$history.list), idx))
-            b$history.index = idx
-            selected(data) = b$history.list[[idx]]
-        }
+        common_key_release(layer, event, data, meta)
     }
 
     ## identify segments being brushed when the mouse is moving
     brush_mouse_move = function(layer, event) {
         cranvas_debug()
         if (b$identify) return()
-        rect = qrect(update_brush_size(meta))
+        rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         self_link(data)
-        ## on mouse release
-        if (event$button() != Qt$Qt$NoButton) {
-            b$cursor = 0L  # restore to Arrow cursor
-            save_brush_history(data)  # store brushing history
-        }
         cranvas_debug()
+    }
+    brush_mouse_release = function(layer, event) {
+        brush_mouse_move(layer, event)
+        b$cursor = 0L  # restore to Arrow cursor
+        save_brush_history(data)  # store brushing history
     }
 
     ## convert a matrix to coordinates of segments
@@ -379,15 +344,6 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     brush_draw = function(layer, painter) {
         cranvas_debug()
         if (b$identify) return()
-        if (!any(is.na(meta$pos))) {
-            qlineWidth(painter) = b$style$linewidth
-            ##qdash(painter)=c(1,3,1,3)
-            qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
-                      meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
-                      stroke = b$style$color)
-            qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.5 * b$style$linewidth,
-                        stroke = b$style$color, fill = b$style$color)
-        }
         .visible = which(visible(data))
         if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size
@@ -409,7 +365,8 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             tmpy = mat2seg(meta$y, .brushed)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
-       }
+        }
+        draw_brush(painter, b, meta)
         cranvas_debug()
     }
 
@@ -453,7 +410,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     layer.root = qlayer(scene)
 
     layer.main = qlayer(paintFun = main_draw,
-        mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
+        mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
         mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
         keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
         focusInFun = function(layer, painter) {
@@ -466,22 +423,22 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     layer.range = qlayer(paintFun = range_draw, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-    layer.title = qmtext(data = meta, side = 3, text = main, sister = layer.main)
-    layer.xaxis = qaxis(data = meta, side = 1, sister = layer.main)
-    layer.yaxis = qaxis(data = meta, side = 2, sister = layer.main)
-    layer.grid = qgrid(data = meta, sister = layer.main,
-                       minor = ifelse(horizontal, 'y', 'x'))
+    layer.title = qmtext(meta = meta, side = 3)
+    layer.xaxis = qaxis(meta = meta, side = 1)
+    layer.yaxis = qaxis(meta = meta, side = 2)
+    layer.grid = qgrid(meta = meta, minor = ifelse(horizontal, 'y', 'x'))
     layer.legend = qlayer()  # legend layer (currently only acts as place holder)
 
     layer.root[0, 1] = layer.title
     layer.root[2, 1] = layer.xaxis
     layer.root[1, 0] = layer.yaxis
     layer.root[1, 1] = layer.grid
-    if (boxplot) {
-        layer.boxplot = qbxp(data = meta, width = boxwex, horizontal = !horizontal,
-                             sister = layer.main)
-        layer.root[1, 1] = layer.boxplot
-    }
+
+    layer.boxplot = if (boxplot) {
+        qbxp(data = meta, width = boxwex, horizontal = !horizontal, sister = layer.main)
+    } else qlayer()
+    layer.root[1, 1] = layer.boxplot
+
     layer.root[1, 1] = layer.main
     layer.root[1, 1] = layer.range
     layer.root[1, 1] = layer.brush
@@ -498,9 +455,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                    qupdate(layer.xaxis)
                    qupdate(layer.yaxis)
                    qupdate(layer.main)
-                   if (boxplot) {
-                       qupdate(layer.boxplot)
-                   }
+                   qupdate(layer.boxplot)
                })
     })
 
@@ -534,6 +489,25 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         set_cursor(view, b$cursor)
     })
     ## more attributes to come
+    sync_limits(meta, layer.main, layer.brush, layer.identify, layer.range, layer.boxplot)
+    meta$manual.brush = function(pos) {
+        brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+    }
 
     view
 }
+
+Parallel.meta =
+    setRefClass("Parallel_meta",
+                fields = signalingFields(list(
+                pos = 'numeric', start = 'numeric', brush.move = 'logical',
+                alpha = 'numeric', main = 'character', vars = 'character',
+                glyph = 'character', order = 'character', draw.range = 'logical',
+                plot.data = 'matrix', numeric.col = 'logical', p = 'numeric', n = 'numeric',
+                jitter = 'character', amount = 'numeric', x = 'matrix', y = 'matrix',
+                xr = 'numeric', yr = 'numeric', names = 'character',
+                xat = 'numeric', yat = 'numeric',
+                xlabels = 'character', ylabels = 'character', limits = 'matrix',
+                segx0 = 'numeric', segx1 = 'numeric', segy0 = 'numeric', segy1 = 'numeric',
+                x0 = 'numeric', y0 = 'numeric', brush.size = 'numeric',
+                identified = 'numeric', manual.brush = 'function')))

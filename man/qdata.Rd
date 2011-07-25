@@ -31,24 +31,24 @@ brushed (default all \code{FALSE})}
 \item{visible}{a logical vector indicating whether the rows are
 visible (default all \code{TRUE})}
 }
-\examples{iris0 = qdata(iris, color = "red", brushed = FALSE)
+\examples{iris0 <- qdata(iris, color = "red", brushed = FALSE)
 ## thicker line for brushed elements
-brush(iris0, "size") = 3
+brush(iris0, "size") <- 3
 qparallel(iris0)
 ## random colors
-iris0$.color = sample(1:8, nrow(iris), replace = TRUE)
+iris0$.color <- sample(1:8, nrow(iris), replace = TRUE)
 ## change the colors to green
-iris0$.color = "green"
+iris0$.color <- "green"
 ## 'brushing' by command line
 for (i in 1:10) {
-    selected(iris0) = sample(c(TRUE, FALSE), nrow(iris), 
+    selected(iris0) <- sample(c(TRUE, FALSE), nrow(iris), 
         replace = TRUE)
     Sys.sleep(1)
 }
 ## change the brush color to green
-brush(iris0, "color") = "green"
+brush(iris0, "color") <- "green"
 ## change brushed lines to black
-brush(iris0, "color") = "black"}
+brush(iris0, "color") <- "black"}
 
 
 

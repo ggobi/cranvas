@@ -21,11 +21,11 @@ mutaframe is on focus or not
 \arguments{\item{data}{the mutaframe}
 \item{value}{a logical value: whether on focus or not}
 }
-\examples{mf = qdata(head(iris))
+\examples{mf <- qdata(head(iris))
 
 focused(mf)
 
-focused(mf) = TRUE}
+focused(mf) <- TRUE}
 
 
 

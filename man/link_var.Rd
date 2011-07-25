@@ -18,11 +18,11 @@ link_var(data) <- value
 \item{value}{the name of the linking variable (or \code{NULL} to
 disable linking)}
 }
-\examples{mf = qdata(head(iris))
+\examples{mf <- qdata(head(iris))
 link_var(mf)  # NULL
-link_var(mf) = "Species"  # linking by 'Species'
+link_var(mf) <- "Species"  # linking by 'Species'
 link_var(mf)
-link_var(mf) = NULL  # disable linking}
+link_var(mf) <- NULL  # disable linking}
 
 
 

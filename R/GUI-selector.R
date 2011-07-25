@@ -5,6 +5,15 @@
 ##' observations which have the same values on this variable will be
 ##' brushed. This selector can link to any plots based on a mutaframe
 ##' created by \code{\link{qdata}}.
+##'
+##' The GUI supports multiple selections when we hold the Shift or
+##' Ctrl key. If the character string in the text input box matches
+##' with multiple items in the list, all of them will be selected.
+##'
+##' When we select items in the list, usually a plot based on the same
+##' data will get brushed accordingly. On the other hand, when we
+##' click on a plot, the corresponding items in the list will be
+##' selected as well.
 ##' @param data a mutaframe created by \code{\link{qdata}} (with a
 ##' column \code{.brushed})
 ##' @param vars character or integer: the variable to be displayed in
@@ -55,6 +64,7 @@ record_selector = function(vars, data) {
     # set up a handler to update the .brushed column when the index is
     # changed in the table
     qconnect(selModel, "selectionChanged", function(filler1, filler2) {
+        if (focused(data)) return()
         currLvls = sapply(selModel$selectedIndexes(),
                            function(i) i$data())
         selected(data) = (x %in% currLvls)
@@ -67,6 +77,16 @@ record_selector = function(vars, data) {
     comp$setCaseSensitivity(Qt$Qt$CaseInsensitive)
     le$setCompleter(comp)
 
+    select_items = function(idx) {
+            sel <- Qt$QItemSelection(model$index(idx[1],0), model$index(idx[1],0))
+            if ((n <- length(idx)) > 1) {
+                for (i in 2:n) {
+                    sel$select(model$index(idx[i],0),model$index(idx[i],0))
+                    sel$select(model$index(idx[i],0),model$index(idx[i],0))
+                }
+            }
+            selModel$select(sel,Qt$QItemSelectionModel$ClearAndSelect)
+    }
     # set up a handler that will update the selection in the table when
     # return is pressed in the line edit field. clears selection if the
     # text doesn't match a level of the variable. updates .brushed
@@ -75,19 +95,17 @@ record_selector = function(vars, data) {
             grep(le$text, as.character(xx[, 1]))
         } else integer(0)
 
-        if(length(idx) > 1) {
-            selModel$select(model$index(idx - 1, 0),
-                            Qt$QItemSelectionModel$ClearAndSelect)
-        } else selModel$clear()
-        selected(data) = idx
+        if(length(idx) > 1) select_items(idx-1) else selModel$clear()
     })
     ## let the GUI respond to changes in .brushed too
     d.idx = add_listener(data, function(i, j) {
+        if (!focused(data)) return()
         if (j == '.brushed') {
             idx = which(xx[, 1] %in% x[selected(data)])
-            if (length(idx)) selModel$select(model$index(idx - 1, 0),
-                                             Qt$QItemSelectionModel$ClearAndSelect) else
-            selModel$clear()
+            if (length(idx)) {
+                select_items(idx-1)
+                lst$scrollTo(model$index(idx[1], 0), Qt$QAbstractItemView$EnsureVisible)
+            } else selModel$clear()
         }
     })
     qconnect(w, 'destroyed', function(x) {

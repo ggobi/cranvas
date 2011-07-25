@@ -14,7 +14,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 		 scale$name <- deparse(arguments$label)
 
 	 colors <- scale$map(label)
-	 link <- unique(qdata[,link_var(qdata)])
+	 link <- as.character(unique(qdata[,link_var(qdata)]))
 	 lcolor <- rep(NA, nrow(qmap))
 	 for (i in 1:length(link)) {
 			j <- which(qmap[,link_var(qmap)] == link[i])
@@ -339,7 +339,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
         },
         wheelFun = handle_wheel_event,
         clip = FALSE)
-    legendlayer = qlegend(parent=NULL, data=data, vertical=TRUE, sister=bglayer)
+    legendlayer = qlegend(parent=NULL, data=data, vertical=TRUE)
     brushing_layer = qlayer(root_layer, brushing_draw, mousePressFun = brushing_mouse_press,
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
         keyPressFun = keyPressFun, limits = lims, clip = FALSE)

@@ -14,12 +14,12 @@ brushed elements.}
 \seealso{\code{\link{link_var}}, \code{\link{link_type}}}
 \arguments{\item{data}{a mutaframe created by \code{\link{qdata}}}
 }
-\examples{mf = qdata(iris)
-selected(mf)[1] = TRUE  # brush the 1st row
+\examples{mf <- qdata(iris)
+selected(mf)[1] <- TRUE  # brush the 1st row
 selected(mf)
 
-link_var(mf) = "Species"
-link_type(mf) = "self"
+link_var(mf) <- "Species"
+link_type(mf) <- "self"
 self_link(mf)
 selected(mf)}
 

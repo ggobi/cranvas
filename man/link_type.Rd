@@ -23,10 +23,10 @@ well.}
 \item{value}{the type of linking (possible values are \code{hot},
 \code{cold} and \code{self})}
 }
-\examples{mf = qdata(iris)
+\examples{mf <- qdata(iris)
 link_type(mf)
-link_type(mf) = "self"
-link_type(mf) = "cold"}
+link_type(mf) <- "self"
+link_type(mf) <- "cold"}
 
 
 

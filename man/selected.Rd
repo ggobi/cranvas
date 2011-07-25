@@ -23,11 +23,11 @@ observations are selected or not
 a vector of integers which will be used to create a logical vector
 with \code{TRUE} corresponding to these indicies}
 }
-\examples{df = qdata(iris)
+\examples{df <- qdata(iris)
 
 selected(df)
 
-selected(df) = rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
+selected(df) <- rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
 
 selected(df)}
 

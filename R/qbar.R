@@ -1,21 +1,28 @@
 ##' Create a bar plot.
 ##'
-##'
+##' Key events are documented in \code{\link{common_key_press}} and
+##' \code{\link{common_key_release}}. Mouse events mainly include
+##' brushing; as usual, left click to move the brush, and right click
+##' to resize the brush.
 ##' @param x a variable name
 ##' @param data a mutaframe created by \code{\link{qdata}}
 ##' @param space the space between bars proportional to the width of bars
 ##' @param main the main title
+##' @param horizontal \code{TRUE} to draw a horizontal plot or
+##' \code{FALSE} (vertical)
 ##' @return A bar plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example cranvas/inst/examples/qbar-ex.R
-qbar = function(x, data, space = 0.1, main) {
+qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
     b = brush(data)
     meta =
-        Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space)
+        Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
+                     alpha = 1, horizontal = horizontal)
     if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
+    meta$main = main
     compute_coords = function() {
-        tmp = data[, meta$var]
+        tmp = data[visible(data), meta$var]
         tmp = as.factor(tmp)
         meta$y = c(table(tmp))
         meta$xat = meta$x = seq_along(meta$y)
@@ -24,10 +31,24 @@ qbar = function(x, data, space = 0.1, main) {
         meta$ylabels = as.character(meta$yat)
         meta$xlab = meta$var
         meta$ylab = ''
+    }
+    compute_colors = function() {
+        tmp = data[, meta$var]
         meta$stroke = tapply(data$.color, tmp, `[`, 1)
         meta$fill = tapply(data$.fill, tmp, `[`, 1)
     }
     compute_coords()
+    compute_colors()
+    flip_coords = function() {
+        if (!meta$horizontal) return()
+        tmp = meta$x; meta$x = meta$y; meta$y = tmp;
+        tmp = meta$xat; meta$xat = meta$yat; meta$yat = tmp;
+        tmp = meta$xlabels; meta$xlabels = meta$ylabels; meta$ylabels = tmp;
+        tmp = meta$xlab; meta$xlab = meta$ylab; meta$ylab = tmp;
+        tmp = meta$xleft; meta$xleft = meta$ybottom; meta$ybottom = tmp;
+        tmp = meta$xright; meta$xright = meta$ytop; meta$ytop = tmp;
+        meta$limits = meta$limits[, 2:1]
+    }
     ## bars (rectangles)
     compute_bars = function() {
         w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
@@ -36,6 +57,7 @@ qbar = function(x, data, space = 0.1, main) {
         meta$limits =
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
+        flip_coords()
     }
     compute_bars()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
@@ -46,17 +68,15 @@ qbar = function(x, data, space = 0.1, main) {
     brush_draw = function(layer, painter) {
         if (b$identify) return()
         if (any(is.na(meta$pos))) return()
-        qlineWidth(painter) = b$style$linewidth
-        qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
-                  meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
-                  stroke = b$style$color)
-        qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.5 * b$style$linewidth,
-                    stroke = b$style$color, fill = b$style$color)
-        if (!any(idx <- selected(data))) return()
-        tmp = as.factor(data[idx, meta$var])
-        qlineWidth(painter) = 0L
-        qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, c(table(tmp)),
-                  fill = b$color)
+        if (any(idx <- selected(data) & visible(data))) {
+            tmp = as.factor(data[idx, meta$var])
+            if (meta$horizontal)
+                qdrawRect(painter, meta$xleft, meta$ybottom, c(table(tmp)), meta$ytop,
+                          stroke = NA, fill = b$color) else
+            qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, c(table(tmp)),
+                      stroke = NA, fill = b$color)
+        }
+        draw_brush(painter, b, meta)
     }
     brush_mouse_press = function(layer, event) {
         meta$start = as.numeric(event$pos())
@@ -70,37 +90,42 @@ qbar = function(x, data, space = 0.1, main) {
         }
     }
     brush_mouse_move = function(layer, event) {
-        if (b$identify) return()
-        rect = qrect(update_brush_size(meta))
+        rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
         hits = data[, meta$var] %in% levels(as.factor(data[, meta$var]))[hits]
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         self_link(data)
-        ## on mouse release
-        if (event$button() != Qt$Qt$NoButton) {
-            b$cursor = 0L  # restore to Arrow cursor
-            save_brush_history(data)  # store brushing history
-        }
     }
-
+    brush_mouse_release = function(layer, event) {
+        brush_mouse_move(layer, event)
+        b$cursor = 0L  # restore to Arrow cursor
+        save_brush_history(data)  # store brushing history
+    }
+    key_press = function(layer, event) {
+        common_key_press(layer, event, data, meta)
+    }
+    key_release = function(layer, event) {
+        common_key_release(layer, event, data, meta)
+    }
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
         qlayer(paintFun = main_draw,
-               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_move,
+               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
                mouseMove = brush_mouse_move,
+               keyPressFun = key_press, keyReleaseFun = key_release,
                focusInFun = function(layer, painter) {
                    focused(data) = TRUE
                }, focusOutFun = function(layer, painter) {
                    focused(data) = FALSE
                }, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
-    layer.title = qmtext(data = meta, side = 3, text = main, sister = layer.main)
-    layer.xlab = qmtext(data = meta, side = 1, text = meta$xlab, sister = layer.main)
-    layer.ylab = qmtext(data = meta, side = 2, text = meta$ylab, sister = layer.main)
-    layer.xaxis = qaxis(data = meta, side = 1, sister = layer.main)
-    layer.yaxis = qaxis(data = meta, side = 2, sister = layer.main)
-    layer.grid = qgrid(data = meta, sister = layer.main, minor = 'y')
+    layer.title = qmtext(meta = meta, side = 3)
+    layer.xlab = qmtext(meta = meta, side = 1)
+    layer.ylab = qmtext(meta = meta, side = 2)
+    layer.xaxis = qaxis(meta = meta, side = 1)
+    layer.yaxis = qaxis(meta = meta, side = 2)
+    layer.grid = qgrid(meta = meta, minor = ifelse(meta$horizontal, 'x', 'y'))
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab
@@ -128,8 +153,12 @@ qbar = function(x, data, space = 0.1, main) {
 
     d.idx = add_listener(data, function(i, j) {
         switch(j, .brushed = qupdate(layer.brush),
-               .color = qupdate(layer.main), {
+               .color = {
+                   compute_colors()
+                   qupdate(layer.main)
+               }, {
                    compute_coords()
+                   compute_colors()
                    compute_bars()
                    qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
                    qupdate(layer.main)
@@ -143,21 +172,25 @@ qbar = function(x, data, space = 0.1, main) {
     b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
     })
-
+    sync_limits(meta, layer.main, layer.brush)  # sync limits of main & brush layers
+    meta$manual.brush = function(pos) {
+        brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+    }
     attr(view, 'meta') = meta
     view
 }
 
 Bar.meta =
     setRefClass("Bar_meta", fields =
-                signalingFields(list(var = 'character',
+                signalingFields(list(var = 'character', alpha = 'numeric',
                                      x = 'numeric', y = 'numeric',
                                      xat = 'numeric', yat = 'numeric',
                                      xlab = 'character', ylab = 'character',
                                      xlabels = 'character', ylabels = 'character',
-                                     space = 'numeric',
+                                     space = 'numeric', limits = 'matrix',
                                      xleft = 'numeric', xright = 'numeric',
                                      ybottom = 'numeric', ytop = 'numeric',
                                      stroke = 'character', fill = 'character',
                                      start = 'numeric', pos = 'numeric',
-                                     brush.move = 'logical', brush.size = 'numeric')))
+                                     brush.move = 'logical', brush.size = 'numeric',
+                                     manual.brush = 'function', horizontal = 'logical')))

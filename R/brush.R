@@ -239,12 +239,61 @@ save_brush_history = function(data, index = selected(data)) {
 update_brush_size = function(meta, event) {
     if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
     meta$pos = as.numeric(event$pos())
+    if (length(meta$start) == 0) meta$start = meta$pos
     ## simple click: don't change meta$brush.size
     if (!all(meta$pos == meta$start)) {
-        if (!meta$brush.move) {
+        if (length(meta$brush.move) && !meta$brush.move) {
             meta$brush.size = meta$brush.size + meta$pos - meta$start
             meta$start = meta$pos
         }
     }
     matrix(c(meta$pos - meta$brush.size, meta$pos), 2, byrow = TRUE)
+}
+
+##' Manually brush the plot via command line.
+##' We can brush a plot via command line rather than using the mouse.
+##'
+##' @param obj the plot object with an attribute \code{meta},
+##' e.g. returned by \code{\link{qbar}}
+##' @param pos the mouse position(s); can be a numeric vector of
+##' length 2 or a matrix of 2 columns with each row representing a
+##' mouse position
+##' @param pause the time to pause between two successive mouse
+##' positions
+##' @return \code{NULL}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @example cranvas/inst/examples/manual_brush.R
+manual_brush = function(obj, pos, pause = 0) {
+    meta = attr(obj, 'meta')
+    if (is.null(meta)) stop("obj must have an attribute 'meta'")
+    pos = matrix(pos, ncol = 2)
+    for (i in 1:nrow(pos)) {
+        meta$manual.brush(pos[i, ])
+        Sys.sleep(pause)
+    }
+}
+
+##' Draw the brush rectangle.
+##' Draw a rectangle with a spot according to the information in the
+##' meta data.
+##'
+##' @param painter the painter of the layer on which to draw the brush
+##' @param brush a brush object created by \code{\link{brush}} and
+##' attached to a mutaframe; the color and line width of the brush are
+##' stored in this object
+##' @param meta the meta data (has a least these two components:
+##' \code{meta$pos} and \code{meta$brush.size})
+##' @return \code{NULL}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## see the source code of, e.g., qbar() for its usage
+draw_brush = function(painter, brush, meta) {
+    if (length(meta$pos) == 0) return()
+    qlineWidth(painter) = brush$style$linewidth
+    qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
+              meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
+              stroke = brush$style$color, fill = NA)
+    qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.5 * brush$style$linewidth,
+                stroke = brush$style$color, fill = brush$style$color)
 }

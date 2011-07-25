@@ -324,15 +324,16 @@ qmval <- function(data, vars, main, varmax = 20, ...) {
     bglayer = qgrid(xat = axis_loc(dataRanges[1:2]),
                     yat = seq(0.5/p, 1, 1/p),
                     xlim = dataRanges[1:2], ylim = dataRanges[3:4], minor = 'x',
-                    sister = datalayer)
-    xaxislayer = qaxis(side = 1, at = axis_loc(c(0, 1)), sister = datalayer)
+                    limits = lims)
+    xaxislayer =
+        qaxis(side = 1, at = axis_loc(c(0, 1)), limits = qrect(cbind(dataRanges[, 1], 0:1)))
     brushing_layer = qlayer(paintFun = brushing_draw, mousePressFun = brushing_mouse_press,
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
         limits = lims)
     querylayer = qlayer(paintFun = query_draw, hoverMoveFun = query_hover,
                         hoverLeaveFun = query_hover_leave, limits = lims)
     legendlayer = qlayer(paintFun = legend_draw, limits = lims)
-    titlelayer = qmtext(side = 3, text = main, sister = datalayer)
+    titlelayer = qmtext(side = 3, text = main)
 
     rootlayer[1, 1] = bglayer
     rootlayer[1, 1] = datalayer

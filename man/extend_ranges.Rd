@@ -17,7 +17,7 @@ columns}
 \examples{extend_ranges(c(0, 1))
 extend_ranges(1:10)
 
-m = matrix(c(c(1, 10), c(5, 8)), nrow = 2)
+m <- matrix(c(c(1, 10), c(5, 8)), nrow = 2)
 extend_ranges(m)
 extend_ranges(m, c(0.1, 0.2))}
 
