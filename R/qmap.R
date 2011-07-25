@@ -339,7 +339,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
         },
         wheelFun = handle_wheel_event,
         clip = FALSE)
-    legendlayer = qlegend(parent=NULL, data=data, vertical=TRUE, sister=bglayer)
+    legendlayer = qlegend(parent=NULL, data=data, vertical=TRUE)
     brushing_layer = qlayer(root_layer, brushing_draw, mousePressFun = brushing_mouse_press,
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
         keyPressFun = keyPressFun, limits = lims, clip = FALSE)
