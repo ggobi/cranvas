@@ -14,7 +14,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 		 scale$name <- deparse(arguments$label)
 
 	 colors <- scale$map(label)
-	 link <- unique(qdata[,link_var(qdata)])
+	 link <- as.character(unique(qdata[,link_var(qdata)]))
 	 lcolor <- rep(NA, nrow(qmap))
 	 for (i in 1:length(link)) {
 			j <- which(qmap[,link_var(qmap)] == link[i])
