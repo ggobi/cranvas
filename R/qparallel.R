@@ -495,6 +495,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         set_cursor(view, b$cursor)
     })
     ## more attributes to come
+    sync_limits(meta, layer.main, layer.brush, layer.identify, layer.range)
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
