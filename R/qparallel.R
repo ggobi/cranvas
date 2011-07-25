@@ -423,11 +423,10 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     layer.range = qlayer(paintFun = range_draw, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-    layer.title = qmtext(meta = meta, side = 3, text = main, sister = layer.main)
-    layer.xaxis = qaxis(meta = meta, side = 1, sister = layer.main)
-    layer.yaxis = qaxis(meta = meta, side = 2, sister = layer.main)
-    layer.grid = qgrid(meta = meta, sister = layer.main,
-                       minor = ifelse(horizontal, 'y', 'x'))
+    layer.title = qmtext(meta = meta, side = 3)
+    layer.xaxis = qaxis(meta = meta, side = 1)
+    layer.yaxis = qaxis(meta = meta, side = 2)
+    layer.grid = qgrid(meta = meta, minor = ifelse(horizontal, 'y', 'x'))
     layer.legend = qlayer()  # legend layer (currently only acts as place holder)
 
     layer.root[0, 1] = layer.title
