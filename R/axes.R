@@ -181,7 +181,7 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
     }
     draw_grid = function(layer, painter) {
         if (!is.null(meta)) {
-            lims = as.matrix(meta$limits)
+            lims = meta$limits
             xlim = lims[, 1]; ylim = lims[, 2]
             xat = meta$xat; yat = meta$yat
         }
