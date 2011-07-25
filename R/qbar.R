@@ -152,7 +152,7 @@ qbar = function(x, data, space = 0.1, main) {
     b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
     })
-
+    sync_limits(meta, layer.main, layer.brush)  # sync limits of main & brush layers
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
@@ -167,7 +167,7 @@ Bar.meta =
                                      xat = 'numeric', yat = 'numeric',
                                      xlab = 'character', ylab = 'character',
                                      xlabels = 'character', ylabels = 'character',
-                                     space = 'numeric',
+                                     space = 'numeric', limits = 'matrix',
                                      xleft = 'numeric', xright = 'numeric',
                                      ybottom = 'numeric', ytop = 'numeric',
                                      stroke = 'character', fill = 'character',
