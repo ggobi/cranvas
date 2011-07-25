@@ -292,9 +292,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                         layer.main$invalidateIndex()
                         qupdate(layer.main)
                         qupdate(layer.brush)
-                        if (boxplot) {
-                            qupdate(layer.boxplot)
-                        }
+                        qupdate(layer.boxplot)
                     }
                 }
                 if (!is.null(flipdir)) {
@@ -308,9 +306,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                     layer.main$invalidateIndex()
                     qupdate(layer.main)
                     qupdate(layer.brush)
-                    if (boxplot) {
-                        qupdate(layer.boxplot)
-                    }
+                    qupdate(layer.boxplot)
                 }
             }
         }
@@ -438,11 +434,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
     layer.root[2, 1] = layer.xaxis
     layer.root[1, 0] = layer.yaxis
     layer.root[1, 1] = layer.grid
-    if (boxplot) {
-        layer.boxplot = qbxp(data = meta, width = boxwex, horizontal = !horizontal,
-                             sister = layer.main)
-        layer.root[1, 1] = layer.boxplot
-    }
+
+    layer.boxplot = if (boxplot) {
+        qbxp(data = meta, width = boxwex, horizontal = !horizontal, sister = layer.main)
+    } else qlayer()
+    layer.root[1, 1] = layer.boxplot
+
     layer.root[1, 1] = layer.main
     layer.root[1, 1] = layer.range
     layer.root[1, 1] = layer.brush
@@ -459,9 +456,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
                    qupdate(layer.xaxis)
                    qupdate(layer.yaxis)
                    qupdate(layer.main)
-                   if (boxplot) {
-                       qupdate(layer.boxplot)
-                   }
+                   qupdate(layer.boxplot)
                })
     })
 
