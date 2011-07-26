@@ -184,8 +184,8 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         ##qdash(painter)=c(1,3,1,3)
         qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2] - .bsize[2],
           .bpos[1], .bpos[2] + .bsize[2],
-          stroke = brush(data)$color)
-          qlineWidth(painter) = 2*brush(data)$size
+          stroke <- brush(data)$color)
+          qlineWidth(painter) <- 2*brush(data)$size
           qdrawSegment(painter, .bpos[1], .bpos[2] - .bsize[2],
                  .bpos[1], .bpos[2] + .bsize[2],
                  stroke = brush(data)$color)
@@ -206,6 +206,14 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
                  .bpos[1], .bpos[2] + .bsize[2],
                  stroke = b$color)
         }
+
+        # Compute density function, and draw
+        stroke <- brush(data)$color
+        qlineWidth(painter) <- 2*brush(data)$size
+        dx <- density(eval(arguments$x, hdata), bw=binwidth)
+        qlineWidth(painter) <- 3
+        qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(stroke, 1))
+
         ## (re)draw brushed data points
         brushx <- eval(arguments$x, hdata)
         brushy <- rep(0, length(brushx))
@@ -324,7 +332,6 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
   mouse_release <- function(item, event, ...) {
 
-    message("hello \n")
     .bpos <- as.numeric(event$pos())
     if (zoom) {
       .zstop <<- .bpos
