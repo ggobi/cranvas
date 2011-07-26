@@ -3,6 +3,10 @@
 ##' Arrow up/down: in-/de-crease size of points.
 ##' Arrow left/right: wrap the time series when wrap=TRUE, while zoom
 ##' in/out with the center of the last clicked dot when wrap=FALSE.
+##' Shift + right: when wrap=TRUE, the time series will be folded
+##' directly to the width of maximal value in argument shift.
+##' Shift + left: time series will be backed to the original xaxis
+##' position, no matter wrap is TRUE or FALSE.
 ##' Key '+'/'-': de-/in-crease alpha level (starts at alpha=1 by
 ##' default).
 ##' Key 'u'/'d': separate/mix the series groups by shifting them up
@@ -175,6 +179,18 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       ## arrow right
 
       if (wrap) {
+        if (event$modifiers() == Qt$Qt$ShiftModifier) {
+          zoombound <- max(meta$wrap.shift)
+          if (zoombound<3) zoombound <- 3
+          meta$xtmp <- meta$time %% zoombound
+          meta$wrap.group <- ceiling(meta$time/zoombound)
+          if (sum(meta$xtmp==0)){
+            meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
+            meta$xtmp[meta$xtmp==0] <- zoombound
+          }
+          meta$datarange[1:2] <- extend_ranges(meta$xtmp)
+          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+        } else {
         zoombound <- crt_range-meta$wrap.shift[1]
         if (meta$wrap.shift[1]==1 & zoombound<3){
           zoombound <- 3
@@ -190,6 +206,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         }
         meta$datarange[1:2] <- extend_ranges(meta$xtmp)
         meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+        }
       } else {
         meta$zoomsize <- meta$zoomsize-2
         if (meta$zoomsize < 2) meta$zoomsize <- 2
@@ -212,7 +229,14 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       query_layer$setLimits(meta$lims)
     } else if (event$key()==Qt$Qt$Key_Left){
       ## arrow left
-
+      
+      if (event$modifiers() == Qt$Qt$ShiftModifier) {
+          meta$xtmp <- meta$time
+          meta$wrap.group <- 1
+          meta$zoomsize <- diff(range(meta$xtmp, na.rm = TRUE))
+          meta$datarange[1:2] <- extend_ranges(meta$xtmp)
+          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+      } else {
       if (wrap) {
         zoombound <- crt_range+meta$wrap.shift[1]
         if (zoombound>(meta$zoomsize+min(meta$time,na.rm=TRUE))) {
@@ -238,7 +262,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           }
         }
         meta$datarange[1:2] <- extend_ranges(meta$xtmp)
-        meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+        meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])        
       } else {
         meta$zoomsize <- meta$zoomsize+2
         if (meta$zoomsize > 2*diff(range(meta$time,na.rm=TRUE))) {
@@ -252,7 +276,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         meta$xtmp <- meta$time
         meta$xtmp[meta$time<tmpXzoom[1]]=NA
         meta$xtmp[meta$time>tmpXzoom[2]]=NA
-      }
+      }}
       qupdate(bg_layer)
       bg_layer$setLimits(meta$lims)
       qupdate(xaxis_layer)
@@ -261,6 +285,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       main_line_layer$setLimits(meta$lims)
       brush_layer$setLimits(meta$lims)
       query_layer$setLimits(meta$lims)
+
     } else if (!is.null(meta$group) & length(meta$group)>0) {
       if (event$key() == Qt$Qt$Key_U) {
         ## Key U (for Up)
