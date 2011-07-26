@@ -11,9 +11,8 @@
 ##' parameter 'shift'.
 ##' @param time The variable indicating time, which is displayed on
 ##' the horizontal axis
-##' @param y The variable(s) displayed on the vertical axis. It could 
-##' be a single variable name or a vector of names present in the data.
-##' See example 1.
+##' @param y The variable(s) displayed on the vertical axis. It must 
+##' be a formula with only right hand side at the moment. See examples.
 ##' @param data Mutaframe data to use
 ##' @param period The variable to group the time series. Better to be
 ##' 'year','month', or other time resolutions. Default to be
