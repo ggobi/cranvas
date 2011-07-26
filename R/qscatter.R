@@ -187,7 +187,7 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
         ## (re)draw brushed data points
         brushx <- eval(arguments$x, hdata)
         brushy <- eval(arguments$y, hdata)
-        qdrawCircle(painter, x = brushx, y = brushy, r = .radius,
+        qdrawCircle(painter, x = brushx, y = brushy, r = .radius*2,
               fill = b$color, stroke = b$color)
       }
     }

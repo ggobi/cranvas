@@ -45,7 +45,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
   if (is.null(xlim))
     xlim <- range(x, na.rm=T)
   if (is.null(ylim))
-    ylim <- c(0, max(density(x, bw=(xlim[2]-xlim[1])/50)$y))
+    ylim <- c(0, max(density(x, bw=(xlim[2]-xlim[1])/75)$y))
 
   # Initalize binwidth to default for the density function
   if (is.null(binwidth))
@@ -219,7 +219,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
         brushy <- rep(0, length(brushx))
         fill <- b$color
         stroke <- b$color
-        radius <- .radius
+        radius <- .radius*2
 
         qdrawCircle(painter, x = brushx, y = brushy, r = radius,
           fill = fill, stroke = stroke)
