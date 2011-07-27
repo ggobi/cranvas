@@ -327,8 +327,8 @@ qmap <- function(data, longitude, latitude, group, label = group,
     scene = qscene()
     root_layer = qlayer(scene)
 
-    bglayer = qlayer(root_layer, coords, limits = lims, clip = FALSE)
-    datalayer = qlayer(root_layer, draw, limits = lims,
+    bglayer = qlayer(NULL, coords, limits = lims, clip = FALSE)
+    datalayer = qlayer(NULL, draw, limits = lims,
         focusInFun = function(...) {
           print("focus map on")
           focused(data) <- TRUE
@@ -340,14 +340,17 @@ qmap <- function(data, longitude, latitude, group, label = group,
         wheelFun = handle_wheel_event,
         clip = FALSE)
     legendlayer = qlegend(parent=NULL, data=data, vertical=TRUE)
-    brushing_layer = qlayer(root_layer, brushing_draw, mousePressFun = brushing_mouse_press,
+    brushing_layer = qlayer(NULL, brushing_draw, mousePressFun = brushing_mouse_press,
         mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
         keyPressFun = keyPressFun, limits = lims, clip = FALSE)
-    querylayer = qlayer(root_layer, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
+    querylayer = qlayer(NULL, query_draw, hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
         limits = lims, clip = FALSE)
 
-
-  root_layer[0,1] <- legendlayer
+  root_layer[1,0] <- bglayer
+  root_layer[1,0] <- datalayer
+  root_layer[1,0] <- brushing_layer
+  root_layer[1,0] <- querylayer
+  root_layer[1,1] <- legendlayer
 
     ## update the brush layer in case of any modifications to the mutaframe
     d.idx = add_listener(data, function(i, j) {
