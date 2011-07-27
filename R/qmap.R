@@ -42,7 +42,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 ##' @export
 ##' @example cranvas/inst/examples/qmap-ex.R
 qmap <- function(data, longitude, latitude, group, label = group,
-    main = NULL, width=600, height=600, ...) {
+    main = NULL, ...) {
 
     ## check if an attribute exist
     #  browser()
@@ -385,8 +385,10 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
    layout = root_layer$gridLayout()
 # map area
-    layout$setRowPreferredHeight(0, height)
-    layout$setColumnPreferredWidth(0, width)
+    layout$setRowPreferredHeight(0, 10)
+    layout$setRowStretchFactor(0, 0)
+    layout$setRowPreferredHeight(1, 500)
+    layout$setColumnPreferredWidth(1, 500)
 # legend area
     layout$setColumnPreferredWidth(1,100)
     layout$setColumnStretchFactor(1, 0)
