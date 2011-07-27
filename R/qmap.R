@@ -75,11 +75,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
     # this space depends on the labels needed on the left
     # find out about these first:
 
-
-    windowRanges <- make_window_ranges(dataRanges, "", "", ytickmarks = FALSE, main = .df.title)
-
-    lims <- qrect(windowRanges[c(1, 2)], windowRanges[c(3, 4)])
-
+    lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
 
     draw <- function(item, painter, exposed) {
 
@@ -294,8 +290,8 @@ qmap <- function(data, longitude, latitude, group, label = group,
 				bgheight = qstrHeight(painter, infostring)
 
 				## adjust drawing directions when close to the boundary
-				hflag = windowRanges[2] - xpos > bgwidth
-				vflag = ypos - windowRanges[3] > bgheight
+				hflag = dataRanges[2] - xpos > bgwidth
+				vflag = ypos - dataRanges[3] > bgheight
 				qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos +
 						ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.95), fill = rgb(1,
 						1, 1, 0.95))
