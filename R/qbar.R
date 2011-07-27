@@ -41,12 +41,12 @@ qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
     compute_colors()
     flip_coords = function() {
         if (!meta$horizontal) return()
-        tmp = meta$x; meta$x = meta$y; meta$y = tmp;
-        tmp = meta$xat; meta$xat = meta$yat; meta$yat = tmp;
-        tmp = meta$xlabels; meta$xlabels = meta$ylabels; meta$ylabels = tmp;
-        tmp = meta$xlab; meta$xlab = meta$ylab; meta$ylab = tmp;
-        tmp = meta$xleft; meta$xleft = meta$ybottom; meta$ybottom = tmp;
-        tmp = meta$xright; meta$xright = meta$ytop; meta$ytop = tmp;
+        switch_value('x', 'y', meta)
+        switch_value('xat', 'yat', meta)
+        switch_value('xlabels', 'ylabels', meta)
+        switch_value('xlab', 'ylab', meta)
+        switch_value('xleft', 'ybottom', meta)
+        switch_value('xright', 'ytop', meta)
         meta$limits = meta$limits[, 2:1]
     }
     ## bars (rectangles)
