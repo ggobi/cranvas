@@ -29,7 +29,6 @@ Key 'r' resets data range to original scale}
 \item{cache}{boolean to turn cache on for layers, defaults to TRUE}
 }
 \examples{library(cranvas)
-library(scales)
 
 data(nrcstat)
 nrcstat[, 26] <- -nrcstat[, 26]
@@ -59,7 +58,6 @@ link_type(qflea) <- "self"
 qflea <- qdata(flea, fill = dscale(flea$species, 
     hue_pal()), color = dscale(flea$species, hue_pal()))
 print(qscatter(tars1, aede1, qflea))}
-
 
 
 

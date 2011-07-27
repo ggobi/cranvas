@@ -2,10 +2,9 @@
 \alias{qmap}
 \title{Interactive Maps}
 \usage{qmap(data, longitude, latitude, group, label = group, 
-    main, width = 600, height = 600, ...)
+    main, ...)
 
 }
-
 \description{
 Create an interactive map from qdata}
 \details{mouse wheel events are translated to focal zoom
