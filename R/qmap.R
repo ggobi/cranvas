@@ -93,7 +93,6 @@ qmap <- function(data, longitude, latitude, group, label = group,
 #	print("draw legend")
 
 
- 				add_title_fun(painter, dataRanges, title = .df.title)
     }
 
     # Brushing -----------------------------------------------------------------
@@ -350,6 +349,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
   root_layer[1,0] <- datalayer
   root_layer[1,0] <- brushing_layer
   root_layer[1,0] <- querylayer
+  root_layer[0,0] <- qmtext(side = 3, text = .df.title)
   root_layer[1,1] <- legendlayer
 
     ## update the brush layer in case of any modifications to the mutaframe
