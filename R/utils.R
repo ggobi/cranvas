@@ -307,3 +307,29 @@ sync_limits = function(meta, ...) {
         sapply(l, function(x) x$setLimits(r))
     })
 }
+
+##' Switch the values of two variables.
+##'
+##' The values of two variables \code{a} and \code{b} are switched in
+##' an environment \code{envir}.
+##'
+##' This function can make it a little bit easier when a plot can be
+##' drawn vertically and horizontally, in which case we only need to
+##' switch some attributes in the x-axis and y-axis, and the code for
+##' actual drawing is not affected. The bar plot is such an example.
+##' @param a the name of the first variable (character)
+##' @param b the name of the second variable (character)
+##' @param envir the environment of the variables \code{a} and \code{b}
+##' @return \code{NULL}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @seealso \code{\link[base]{get}}, \code{\link[base]{assign}}
+##' @examples x1 = 4:9; x2 = letters
+##' switch_value('x1', 'x2')
+##' x1; x2
+switch_value = function(a, b, envir = .GlobalEnv) {
+    tmp = get(a, envir = envir)
+    assign(a, get(b, envir = envir), envir = envir)
+    assign(b, tmp, envir = envir)
+    invisible(NULL)
+}
