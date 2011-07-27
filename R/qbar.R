@@ -57,9 +57,9 @@ qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
         meta$limits =
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
-        flip_coords()
     }
     compute_bars()
+    flip_coords()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
     main_draw = function(layer, painter) {
         qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
@@ -157,9 +157,7 @@ qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
                    compute_colors()
                    qupdate(layer.main)
                }, {
-                   compute_coords()
-                   compute_colors()
-                   compute_bars()
+                   compute_coords(); compute_colors(); compute_bars(); flip_coords()
                    qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
                    qupdate(layer.main)
                })
