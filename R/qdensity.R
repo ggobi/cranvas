@@ -371,6 +371,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     .new.brushed[hits] <- TRUE
     data$.brushed <- mode_selection(data$.brushed, .new.brushed,
       mode = b$mode)
+    self_link(data)
   }
 
   handle_wheel_event <- function(layer, event) {

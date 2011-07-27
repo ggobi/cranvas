@@ -296,7 +296,7 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
     }
   }
 
-  identify_mouse_move <- function(layer, event) {
+  mouse_move <- function(layer, event) {
     if (zoom) {
       .zstop <<- as.numeric(event$pos())
       qupdate(querylayer)
@@ -330,6 +330,7 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
     .new.brushed[hits] <- TRUE
     selected(data) <- mode_selection(selected(data), .new.brushed,
                     mode = b$mode)
+    self_link(data)
   }
 
   handle_wheel_event <- function(layer, event) {
@@ -453,7 +454,7 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
 
   datalayer <- qlayer(parent = root, paintFun = scatter.all,
     keyPressFun = keyPressFun,
-    mouseMoveFun = identify_mouse_move,
+    mouseMoveFun = mouse_move,
     mousePressFun = brush_mouse_press,
     mouseReleaseFun = mouse_release,
     focusInFun = function(...) {
