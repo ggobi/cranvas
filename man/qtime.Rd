@@ -1,63 +1,88 @@
 \name{qtime}
 \alias{qtime}
-\title{Draw a time plot..}
-\usage{qtime(time, y, data, period, group, wrap = TRUE, 
-    shift = c(1, 7, 12, 24), size = 2, alpha = 1, asp, main, 
-    xlab, ylab, ...)
-
+\title{Draw a time plot}
+\usage{
+  qtime(time, y, data, period = NULL, group = NULL, wrap =
+  TRUE, shift = c(1, 7, 12, 24), size = 2, alpha = 1, asp =
+  NULL, main = NULL, xlab = NULL, ylab = NULL, ...)
 }
+\arguments{
+  \item{time}{The variable indicating time, which is
+  displayed on the horizontal axis}
 
-\description{Draw a time plot}
-\details{Arrow up/down: in-/de-crease size of points.
-Arrow left/right: wrap the time series when wrap=TRUE, while zoom
-in/out with the center of the last clicked dot when wrap=FALSE.
-Key '+'/'-': de-/in-crease alpha level (starts at alpha=1 by
-default).
-Key 'u'/'d': separate/mix the series groups by shifting them up
-and down.
-Key 'g': change the wrapping speed circularly in the values of
-parameter 'shift'.}
-\arguments{\item{time}{The variable indicating time, which is displayed on
-the horizontal axis}
-\item{y}{The variable(s) displayed on the vertical axis. It must 
-be a formula with only right hand side at the moment. See examples.}
-\item{data}{Mutaframe data to use}
-\item{period}{The variable to group the time series. Better to be
-'year','month', or other time resolutions. Default to be
-null. When it is not null, the key U and D can be hit to separate
-the groups or overlap them together to watch the patterns.}
-\item{group}{Similar to period, but is used for longitudinal data grouping.}
-\item{wrap}{The switch for wrapping or not when zooming in/out by
-hitting right arrow or left arrow. Default to be TRUE.}
-\item{shift}{Wrapping speed selector. The default possible speeds
-are 1,7(for days a week),12(for months),24(for hours).}
-\item{size}{Point size, default to be 2.}
-\item{alpha}{Transparency level, 1=completely opaque, default to be 1.}
-\item{asp}{Ratio between width and height of the plot.}
-\item{main}{main title for the plot.}
-\item{xlab}{label on horizontal axis, default is name of x variable}
-\item{ylab}{label on vertical axis, default is name of y variable}
+  \item{y}{The variable(s) displayed on the vertical axis.
+  It must be a formula with only right hand side at the
+  moment. See examples.}
+
+  \item{data}{Mutaframe data to use}
+
+  \item{period}{The variable to group the time series.
+  Better to be 'year','month', or other time resolutions.
+  Default to be null. When it is not null, the key U and D
+  can be hit to separate the groups or overlap them
+  together to watch the patterns.}
+
+  \item{group}{Similar to period, but is used for
+  longitudinal data grouping.}
+
+  \item{wrap}{The switch for wrapping or not when zooming
+  in/out by hitting right arrow or left arrow. Default to
+  be TRUE.}
+
+  \item{shift}{Wrapping speed selector. The default
+  possible speeds are 1,7(for days a week),12(for
+  months),24(for hours).}
+
+  \item{size}{Point size, default to be 2.}
+
+  \item{alpha}{Transparency level, 1=completely opaque,
+  default to be 1.}
+
+  \item{asp}{Ratio between width and height of the plot.}
+
+  \item{main}{main title for the plot.}
+
+  \item{xlab}{label on horizontal axis, default is name of
+  x variable}
+
+  \item{ylab}{label on vertical axis, default is name of y
+  variable}
 }
-\examples{library(cranvas)
+\description{
+  Draw a time-series plot.
+}
+\details{
+  Arrow up/down: in-/de-crease size of points. Arrow
+  left/right: wrap the time series when wrap=TRUE, while
+  zoom in/out with the center of the last clicked dot when
+  wrap=FALSE. Shift + right: when wrap=TRUE, the time
+  series will be folded directly to the width of maximal
+  value in argument shift. Shift + left: time series will
+  be backed to the original xaxis position, no matter wrap
+  is TRUE or FALSE. Key '+'/'-': de-/in-crease alpha level
+  (starts at alpha=1 by default). Key 'u'/'d': separate/mix
+  the series groups by shifting them up and down. Key 'g':
+  change the wrapping speed circularly in the values of
+  parameter 'shift'.
+}
+\examples{
+library(cranvas)
 
 ## example 1: NASA temperature data
 data(nasa)
-nasa11 <- subset(nasa, Gridx == 22 & Gridy == 
-    21)
+nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 qnasa <- qdata(nasa11)
-print(qtime(TimeIndx, ~ts, qnasa, shift = c(1, 
-    12)))
+print(qtime(TimeIndx, ~ts, qnasa, shift = c(1, 12)))
 print(qtime(TimeIndx, ~ts, qnasa, wrap = FALSE))
 print(qtime(TimeIndx, ~ts, qnasa, Year, shift = 1))
 print(qtime(TimeIndx, ~ts, qnasa, Year, wrap = FALSE))
-print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, 
-    qnasa))
-print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, 
-    qnasa, wrap = FALSE))
-print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, 
-    qnasa, Year))
-print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, 
-    qnasa, Year, wrap = FALSE))
+print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, qnasa))
+print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, qnasa, 
+    wrap = FALSE))
+print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, qnasa, 
+    Year))
+print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, qnasa, 
+    Year, wrap = FALSE))
 
 
 ## example 2: Norway precipitation data
@@ -93,51 +118,6 @@ print(qtime(exper, ~lnw, wage, group = id))
 wage$id <- as.factor(wage$id)
 link_var(wage) <- "id"  # ON
 link_type(wage) <- "self"
-link_var(wage) <- NULL  # OFF}
+link_var(wage) <- NULL  # OFF
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}

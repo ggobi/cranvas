@@ -1,17 +1,23 @@
 \name{qmval}
 \alias{qmval}
 \title{Interactive Missing Value Plot}
-\usage{qmval(data, vars, main, varmax = 20, ...)
+\usage{
+  qmval(data, vars, main, varmax = 20, ...)
+}
+\arguments{
+  \item{data}{a mutaframe which is typically built upon a
+  data frame along with several row attributes}
 
+  \item{...}{}
 }
-\description{Interactive Missing Value Plot.}
-\value{NULL}
-\author{Heike Hofmann}
-\arguments{\item{data}{a mutaframe which is typically built upon a data frame
-along with several row attributes}
-\item{...}{}
+\value{
+  NULL
 }
-\examples{require(plyr)
+\description{
+  An interactive missing value plot.
+}
+\examples{
+require(plyr)
 library(cranvas)
 
 # BRFSS data
@@ -24,17 +30,8 @@ qparallel(qbrfss, vars = 1:3)
 data(tao)
 qtao <- qdata(tao)
 qmval(qtao)
-qscatter(longitude, latitude, qtao)}
-
-
-
-
-
-
-
-
-
-
-
-
-
+qscatter(longitude, latitude, qtao)
+}
+\author{
+  Heike Hofmann
+}

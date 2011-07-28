@@ -1,23 +1,27 @@
 \name{link}
 \alias{link}
 \title{Link mutaframes by a common categorical variable}
-\usage{link(...)
-
+\usage{
+  link(...)
+}
+\arguments{
+  \item{...}{the mutaframes (at least two different
+  mutaframes); the mutaframes are typically created by
+  \code{\link{qdata}}}
+}
+\value{
+  the mutaframes will be linked together by their linking
+  variables (listeners added), and the id's of the
+  listeners attached on each mutaframe will be returned as
+  a list.
 }
 \description{
-This function links several mutaframes together by a common
-categorical variable; this linking variable can be specified with
-\code{\link{link_var}}.}
-\value{the mutaframes will be linked together by their linking
-variables (listeners added), and the id's of the listeners
-attached on each mutaframe will be returned as a list.}
-\author{Yihui Xie <\url{http://yihui.name}>}
-\seealso{\code{\link{qdata}}, \code{\link{link_var}},
-\code{\link{link_type}}, \code{\link{remove_link}}}
-\arguments{\item{...}{the mutaframes (at least two different mutaframes); the
-mutaframes are typically created by \code{\link{qdata}}}
+  This function links several mutaframes together by a
+  common categorical variable; this linking variable can be
+  specified with \code{\link{link_var}}.
 }
-\examples{### (1) proof of concept
+\examples{
+### (1) proof of concept
 library(cranvas)
 
 ## link the original data with a frequency table
@@ -57,8 +61,8 @@ data1
 ## remove the linking
 remove_link(data1, data2, id = list(1, 1))
 
-### (2) linking two par-coords plots: one original
-#   data, one aggregated
+### (2) linking two par-coords plots: one original data,
+#   one aggregated
 data(nrcstat)
 nrcstat.agg <- aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code), 
     function(x) round(mean(x), 1))
@@ -71,56 +75,12 @@ link(qnrc, qnrc.agg)
 qparallel(vars = c(8, 10:19), data = qnrc)
 qparallel(data = qnrc.agg)
 
-brush(qnrc.agg, "identify") <- TRUE  # turn on labels}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+brush(qnrc.agg, "identify") <- TRUE  # turn on labels
+}
+\author{
+  Yihui Xie <\url{http://yihui.name}>
+}
+\seealso{
+  \code{\link{qdata}}, \code{\link{link_var}},
+  \code{\link{link_type}}, \code{\link{remove_link}}
+}

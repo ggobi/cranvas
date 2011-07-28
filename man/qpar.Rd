@@ -1,19 +1,27 @@
 \name{qpar}
 \alias{qpar}
 \title{Graphical parameters in cranvas}
-\usage{qpar(...)
-
+\usage{
+  qpar(...)
+}
+\arguments{
+  \item{...}{options of the form \code{tag = value}}
+}
+\value{
+  the current list of parameters or set new options
 }
 \description{
-This function can set or query the graphical parameters in the
-\code{cranvas} package.}
-\value{the current list of parameters or set new options}
-\author{Yihui Xie <\url{http://yihui.name}>}
-\seealso{\code{\link[graphics]{par}}}
-\arguments{\item{...}{options of the form \code{tag = value}}
+  This function can set or query the graphical parameters
+  in the \code{cranvas} package.
 }
-\examples{op <- qpar()
+\examples{
+op <- qpar()
 qpar(mar = 0.05)  # the degree to extend the plot margin (inner margin)
-qpar(op)  # restore}
-
-
+qpar(op)  # restore
+}
+\author{
+  Yihui Xie <\url{http://yihui.name}>
+}
+\seealso{
+  \code{\link[graphics]{par}}
+}

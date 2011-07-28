@@ -26,7 +26,7 @@ if (NROW(old.packages(repos = 'http://cran.r-project.org')) && (!interactive() |
 if (!require("devtools")) install.packages("devtools", repos = "http://cran.r-project.org")
 if (!require("formatR")) install.packages("formatR", repos = "http://cran.r-project.org")
 
-if (!grepl('roxygen2', packageDescription('Rd2roxygen', fields = 'Depends')) {
+if (!grepl('roxygen2', packageDescription('Rd2roxygen', fields = 'Depends'))) {
     library(devtools)
     install_github('roxygen2', 'klutometis')
     install_github('Rd2roxygen', 'yihui')

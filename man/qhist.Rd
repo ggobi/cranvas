@@ -1,30 +1,40 @@
 \name{qhist}
 \alias{qhist}
-\title{Create a hist plot..}
-\usage{qhist(x, data, splitByCol = -1, horizontal = FALSE, 
-    position = "none", main, name, ash = FALSE, start, nbins = round(sqrt(nrow(data)), 
-        0), binwidth, bin_algo_str, xlim, ylim, cache = TRUE, 
-    ...)
-
+\title{Create a hist plot}
+\usage{
+  qhist(x, data, splitByCol = -1, horizontal = FALSE,
+  position = "none", main = NULL, name = NULL, ash = FALSE,
+  start = NULL, nbins = round(sqrt(nrow(data)), 0),
+  binwidth = NULL, bin_algo_str = NULL, xlim = NULL, ylim =
+  NULL, cache = TRUE, ...)
 }
+\arguments{
+  \item{data}{mutaframe to use}
 
+  \item{x}{variable to plot}
 
-\description{Create a hist plot
-Create a hist plot from 1-D numeric data}
-\details{keystroke Interactions:
-right/left arrow shift anchors;
-up/down arrow increase/decrease bin size;
-M re-adjusts the maximum on the y-axis to 10\% above the bin count}
-\author{Barret Schloerke, Di Cook, Heike Hofmann}
-\keyword{hplot}
-\arguments{\item{data}{mutaframe to use}
-\item{x}{variable to plot}
-\item{horizontal}{boolean to decide if the bars are horizontal or vertical}
-\item{xlim}{= c(min, max) user specifed data range for the x axis, by default range(x)}
-\item{ylim}{= c(min, max) user specifed data range for the y axis, by default range(y)}
-\item{...}{arguments supplied to hist() or the hist layer}
+  \item{horizontal}{boolean to decide if the bars are
+  horizontal or vertical}
+
+  \item{xlim}{= c(min, max) user specifed data range for
+  the x axis, by default range(x)}
+
+  \item{ylim}{= c(min, max) user specifed data range for
+  the y axis, by default range(y)}
+
+  \item{...}{arguments supplied to hist() or the hist
+  layer}
 }
-\examples{## examples of qhist()
+\description{
+  Create a hist plot from 1-D numeric data
+}
+\details{
+  keystroke Interactions: right/left arrow shift anchors;
+  up/down arrow increase/decrease bin size; M re-adjusts
+  the maximum on the y-axis to 10% above the bin count
+}
+\examples{
+## examples of qhist()
 library(ggplot2)
 library(cranvas)
 library(scales)
@@ -62,36 +72,9 @@ print(qhist(tars1, qflea, splitByCol = "species"))
 print(qhist(aede1, qflea, splitByCol = "species"))
 
 link_var(qflea) <- "species"
-link_type(qflea) <- "self"}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+link_type(qflea) <- "self"
+}
+\author{
+  Barret Schloerke, Di Cook, Heike Hofmann
+}
+\keyword{hplot}

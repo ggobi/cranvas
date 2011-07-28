@@ -1,4 +1,5 @@
 #' This is not a display method, but a method for adding 
+#' @noRd
 tourr <- function() {
   
   

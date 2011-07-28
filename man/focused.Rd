@@ -1,33 +1,38 @@
 \name{focused}
 \alias{focused}
+\alias{focused<-}
 \title{Set or query the focus status}
-\usage{focused(data)
-focused(data) <- value
-}
-\description{Set or query the focus status.}
-\details{\code{focused}: The plot on top of all the rest of plots is on focus, and the
-corresponding mutaframe is said to be on focus too.
+\usage{
+  focused(data)
 
+  focused(data) <- value
 }
-\value{\code{focused}: a logical value: whether the plot corresponding to this
-mutaframe is on focus or not
+\arguments{
+  \item{data}{the mutaframe}
 
-\code{focused<-}: \code{NULL}; the status of focus is changed to \code{value}
-
-
+  \item{value}{a logical value: whether on focus or not}
 }
-\author{Yihui Xie <\url{http://yihui.name}>}
-\seealso{\code{\link{qdata}}}
-\arguments{\item{data}{the mutaframe}
-\item{value}{a logical value: whether on focus or not}
+\value{
+  a logical value: whether the plot corresponding to this
+  mutaframe is on focus or not
+
+  \code{NULL}; the status of focus is changed to
+  \code{value}
 }
-\examples{mf <- qdata(head(iris))
+\description{
+  The plot on top of all the rest of plots is on focus, and
+  the corresponding mutaframe is said to be on focus too.
+}
+\examples{
+mf <- qdata(head(iris))
 
 focused(mf)
 
-focused(mf) <- TRUE}
-
-
-
-
-\alias{focused<-}
+focused(mf) <- TRUE
+}
+\author{
+  Yihui Xie <\url{http://yihui.name}>
+}
+\seealso{
+  \code{\link{qdata}}
+}

@@ -1,26 +1,37 @@
 \name{qmap}
 \alias{qmap}
 \title{Interactive Maps}
-\usage{qmap(data, longitude, latitude, group, label = group, 
-    main, ...)
+\usage{
+  qmap(data, longitude, latitude, group, label = group,
+  main = NULL, ...)
+}
+\arguments{
+  \item{data}{a mutaframe which is typically built upon a
+  data frame along with several row attributes}
 
+  \item{latitude}{spatial x variable}
+
+  \item{longitude}{spatial y variable}
+
+  \item{group}{grouping variable for polygons}
+
+  \item{main}{window title, by default 'Map of <data set>'}
+
+  \item{...}{}
+}
+\value{
+  NULL
 }
 \description{
-Create an interactive map from qdata}
-\details{mouse wheel events are translated to focal zoom
-
-'R' resets maps to original scale after zoom}
-\value{NULL}
-\author{Heike Hofmann}
-\arguments{\item{data}{a mutaframe which is typically built upon a data frame
-along with several row attributes}
-\item{latitude}{spatial x variable}
-\item{longitude}{spatial y variable}
-\item{group}{grouping variable for polygons}
-\item{main}{window title, by default 'Map of <data set>'}
-\item{...}{}
+  Create an interactive map from qdata.
 }
-\examples{library(cranvas)
+\details{
+  mouse wheel events are translated to focal zoom
+
+  'R' resets maps to original scale after zoom
+}
+\examples{
+library(cranvas)
 library(maps)
 library(ggplot2)
 
@@ -56,8 +67,8 @@ setMapColorByLabel(qstates, qcrimes, Robbery/Population,
     scale_colour_gradient())
 
 # change to different choropleth map:
-setMapColorByLabel(qstates, qcrimes, log(1e+05 * 
-    Robbery/Population + 1), scale_colour_gradient2())
+setMapColorByLabel(qstates, qcrimes, log(1e+05 * Robbery/Population + 
+    1), scale_colour_gradient2())
 
 ##############
 
@@ -88,67 +99,8 @@ qmap(qworld, long, lat, group, label = id)
 library(profr)
 
 #res <- profr(print(qmap(qworld, long, lat, group,
-#   label=id)))}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#   label=id)))
+}
+\author{
+  Heike Hofmann
+}

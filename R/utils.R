@@ -182,7 +182,7 @@ reorder_var = function(data, type = c('none', 'MDS', 'ANOVA', 'randomForest'),
     vars
 }
 
-##' Insert line breaks into character strings.
+##' Insert line breaks into character strings
 ##'
 ##' By default, all the non-alphanumeric characters are replaced by
 ##' \code{'\n'}, which can be useful when plotting long axis labels,

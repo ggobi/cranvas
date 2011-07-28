@@ -1,30 +1,37 @@
 \name{link_var}
 \alias{link_var}
-\title{Set or query the linking variable in a mutaframe}
-\usage{link_var(data)
-link_var(data) <- value
-}
-\description{Set or query the linking variable in a mutaframe.}
-\value{\code{link_var}: the name of the linking variable
+\alias{link_var<-}
+\title{Set or query the linking variable in a mutaframe.}
+\usage{
+  link_var(data)
 
-\code{link_var<-}: set the linking variable
-
-
+  link_var(data) <- value
 }
-\author{Yihui Xie <\url{http://yihui.name}>}
-\seealso{\code{\link{qdata}}, \code{\link{link}}}
-\arguments{\item{data}{the mutaframe (typically created by
-\code{\link{qdata}}), with an attribute \code{Link}}
-\item{value}{the name of the linking variable (or \code{NULL} to
-disable linking)}
+\arguments{
+  \item{data}{the mutaframe (typically created by
+  \code{\link{qdata}}), with an attribute \code{Link}}
+
+  \item{value}{the name of the linking variable (or
+  \code{NULL} to disable linking)}
 }
-\examples{mf <- qdata(head(iris))
+\value{
+  the name of the linking variable
+
+  set the linking variable
+}
+\description{
+  Set or query the linking variable in a mutaframe.
+}
+\examples{
+mf <- qdata(head(iris))
 link_var(mf)  # NULL
 link_var(mf) <- "Species"  # linking by 'Species'
 link_var(mf)
-link_var(mf) <- NULL  # disable linking}
-
-
-
-
-\alias{link_var<-}
+link_var(mf) <- NULL  # disable linking
+}
+\author{
+  Yihui Xie <\url{http://yihui.name}>
+}
+\seealso{
+  \code{\link{qdata}}, \code{\link{link}}
+}

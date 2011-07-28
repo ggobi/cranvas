@@ -1,34 +1,60 @@
 \name{qdensity}
 \alias{qdensity}
-\title{Draw a univariate density plot, with a rug plot underneath..}
-\usage{qdensity(x, data, main, binwidth, size = 4, alpha = 0.5, 
-    xlim, ylim, xlab, ylab, cache = T, ...)
-
+\title{Draw a univariate density plot}
+\usage{
+  qdensity(x, data, main = NULL, binwidth = NULL, size = 4,
+  alpha = 0.5, xlim = NULL, ylim = NULL, xlab = NULL, ylab
+  = NULL, cache = T, ...)
 }
+\arguments{
+  \item{x}{which designates variable displayed on the
+  horizontal axis}
 
-\description{Draw a univariate density plot, with a rug plot underneath}
-\details{arrow up/down: in-/de-crease size of points
+  \item{data}{mutaframe data to use}
 
-arrow -/+: de-/in-crease alpha level (starts at alpha=1 by default)
+  \item{size}{point size}
 
-arrow left/right: de-/in-crease binwidth for density
+  \item{alpha}{transparency level, 1=completely opaque}
 
-Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
+  \item{xlim}{= c(min, max) user specifed data range for
+  the x axis, by default range(x)}
 
-Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
+  \item{ylim}{= c(min, max) user specifed data range for
+  the y axis, by default range(y)}
 
-Key 'r' resets data range to original scale}
-\arguments{\item{x}{which designates variable displayed on the horizontal axis}
-\item{data}{mutaframe data to use}
-\item{size}{point size}
-\item{alpha}{transparency level, 1=completely opaque}
-\item{xlim}{= c(min, max) user specifed data range for the x axis, by default range(x)}
-\item{ylim}{= c(min, max) user specifed data range for the y axis, by default range(y)}
-\item{xlab}{label on horizontal axis, default is name of x variable}
-\item{ylab}{label on vertical axis, default is name of y variable}
-\item{cache}{boolean to turn cache on for layers, defaults to TRUE}
+  \item{xlab}{label on horizontal axis, default is name of
+  x variable}
+
+  \item{ylab}{label on vertical axis, default is name of y
+  variable}
+
+  \item{cache}{boolean to turn cache on for layers,
+  defaults to TRUE}
 }
-\examples{# Examples for qdensity
+\description{
+  Draw a univariate density plot, with a rug plot
+  underneath.
+}
+\details{
+  arrow up/down: in-/de-crease size of points
+
+  arrow -/+: de-/in-crease alpha level (starts at alpha=1
+  by default)
+
+  arrow left/right: de-/in-crease binwidth for density
+
+  Key 'z' toggle zoom on/off (default is off): mouse click
+  & drag will specify a zoom window, reset to default
+  window by click/no drag
+
+  Key 'x' toggle focal zoom on/off (default is off): mouse
+  click & drag will specify a zoom window, zoom out by
+  pressing shift key
+
+  Key 'r' resets data range to original scale
+}
+\examples{
+# Examples for qdensity
 library(cranvas)
 
 ####
@@ -56,35 +82,7 @@ print(qdensity(aede1, qflea))
 print(qdensity(aede3, qflea))
 
 #### test colors
-qflea <- qdata(flea, fill = dscale(flea$species, 
-    hue_pal()), color = dscale(flea$species, hue_pal()))
-print(qdensity(tars1, qflea))}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()), 
+    color = dscale(flea$species, hue_pal()))
+print(qdensity(tars1, qflea))
+}
