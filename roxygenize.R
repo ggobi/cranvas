@@ -16,7 +16,7 @@ if (!("cranvas" %in% list.files("../"))) stop("the cranvas package not found und
     normalizePath(file.path(getwd(), "..")))
 
 ## update git as well; someone wants to be really lazy
-if ("update" %in% commandArgs(TRUE)) system("git pull")
+if ("update" %in% commandArgs(TRUE)) system("git pull --rebase")
 
 if (NROW(old.packages(repos = 'http://cran.r-project.org')) && (!interactive() ||
     select.list(c('Yes', 'No'), title = 'Update old R packages?', preselect = 'Yes') == 'Yes')) {
