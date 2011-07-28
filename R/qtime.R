@@ -13,6 +13,8 @@
 ##' default).
 ##' Key 'u'/'d': separate/mix the series groups by shifting them up
 ##' and down.
+##' Shift + 'u'/'d': for multivariate y's, separate/mix them by shifting
+##' up and down.
 ##' Key 'g': change the wrapping speed circularly in the values of
 ##' parameter 'shift'.
 ##' @param time The variable indicating time, which is displayed on
