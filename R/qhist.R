@@ -13,7 +13,7 @@
 #' @param ... arguments supplied to hist() or the hist layer
 #' @author Barret Schloerke, Di Cook, Heike Hofmann
 #' @keywords hplot
-#' @example cranvas/inst/examples/qhist-ex.R
+#' @example inst/examples/qhist-ex.R
 qhist <- function(x, data, splitByCol = -1, horizontal = FALSE,
   position = "none",
   main = NULL, name = NULL, ash = FALSE, start = NULL,

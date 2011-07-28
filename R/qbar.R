@@ -13,7 +13,7 @@
 ##' @return A bar plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
-##' @example cranvas/inst/examples/qbar-ex.R
+##' @example inst/examples/qbar-ex.R
 qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
     b = brush(data)
     meta =

@@ -23,7 +23,7 @@
 ##' @param horizontal horizontal or vertical boxplots
 ##' @return NULL
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @example cranvas/inst/examples/qboxplot-ex.R
+##' @example inst/examples/qboxplot-ex.R
 ##' @export
 qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
     if (missing(data)) {

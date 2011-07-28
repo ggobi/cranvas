@@ -66,7 +66,7 @@
 ##' @return a plot object with attributes
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
-##' @example cranvas/inst/examples/qparallel-ex.R
+##' @example inst/examples/qparallel-ex.R
 qparallel = function(vars, data, scale = "range", names = break_str(vars),
     na.action = na.impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,

@@ -12,7 +12,7 @@
 ##' @seealso \code{\link{qdata}}, \code{\link{link_var}},
 ##' \code{\link{link_type}}, \code{\link{remove_link}}
 ##' @export
-##' @example cranvas/inst/examples/link-ex.R
+##' @example inst/examples/link-ex.R
 link = function(...) {
     s = list(...)
     if ((n <- length(s)) < 2)

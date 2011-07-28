@@ -19,7 +19,7 @@
 #' @param xlab label on horizontal axis, default is name of x variable
 #' @param ylab label on vertical axis, default is name of y variable
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
-#' @example cranvas/inst/examples/qscat-ex.R
+#' @example inst/examples/qscat-ex.R
 qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
   labeled = TRUE, size = 4, alpha = 1, width=600, height=600,  xlim=NULL,
   ylim=NULL, xlab=NULL, ylab=NULL, cache = T, ...)

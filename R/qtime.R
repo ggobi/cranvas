@@ -33,7 +33,7 @@
 ##' @param main main title for the plot.
 ##' @param xlab label on horizontal axis, default is name of x variable
 ##' @param ylab label on vertical axis, default is name of y variable
-##' @example cranvas/inst/examples/qtime-ex.R
+##' @example inst/examples/qtime-ex.R
 
 
 qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,

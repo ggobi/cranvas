@@ -263,7 +263,7 @@ update_brush_size = function(meta, event) {
 ##' @return \code{NULL}
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
-##' @example cranvas/inst/examples/manual_brush.R
+##' @example inst/examples/manual_brush.R
 manual_brush = function(obj, pos, pause = 0) {
     meta = attr(obj, 'meta')
     if (is.null(meta)) stop("obj must have an attribute 'meta'")

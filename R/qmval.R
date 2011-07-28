@@ -38,7 +38,7 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
-##' @example cranvas/inst/examples/qmval-ex.R
+##' @example inst/examples/qmval-ex.R
 qmval <- function(data, vars, main, varmax = 20, ...) {
     ## check if an attribute exist
     #  browser()
