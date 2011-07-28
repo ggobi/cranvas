@@ -18,6 +18,7 @@ tourr <- function() {
 #' # qhist(qflea, "tour_1")
 #' flea_tour$start()
 #' flea_tour$pause()
+#' @noRd
 
 Tourr <- setRefClass("Tourr", 
   c("dest", "src", "tour_path", "tour", "aps", "paused", "timer", "last_time")
