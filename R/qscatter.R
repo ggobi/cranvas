@@ -1,5 +1,7 @@
 #' Draw a scatterplot
 #'
+#' Draw a scatterplot with interactions.
+#'
 #' arrow up/down: in-/de-crease size of points
 #' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
 #' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag

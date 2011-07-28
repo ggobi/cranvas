@@ -1,4 +1,4 @@
-##' Create a bar plot.
+##' Create a bar plot
 ##'
 ##' Key events are documented in \code{\link{common_key_press}} and
 ##' \code{\link{common_key_release}}. Mouse events mainly include

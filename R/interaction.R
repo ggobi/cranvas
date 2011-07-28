@@ -1,4 +1,4 @@
-##' Create a mutaframe from data with attributes for interaction.
+##' Create a mutaframe from data with attributes for interaction
 ##'
 ##' This function will first check if the names of some predefined row
 ##' attributes (e.g. \code{.color}, \code{.brushed}) exist in the
@@ -105,7 +105,9 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
 }
 
 
-##' Logical operations under different selection mode.
+##' Logical operations under different selection mode
+##'
+##' A selection mode is essentially a logical operation like AND, OR, and XOR, etc.
 ##'
 ##' There are five selection modes:
 ##' \describe{
@@ -152,7 +154,7 @@ mode_selection = function(x, y, mode = "none") {
 }
 
 
-##' Set or query the focus status.
+##' Set or query the focus status
 ##'
 ##' The plot on top of all the rest of plots is on focus, and the
 ##' corresponding mutaframe is said to be on focus too.
@@ -183,7 +185,7 @@ focused = function(data) {
     data
 }
 
-##' Set or query the visibility of observations.
+##' Set or query the visibility of observations
 ##'
 ##' There is a column \code{.visible} to control the visibility of
 ##' observations. This can be useful for ``deleting'' certain
@@ -215,7 +217,7 @@ visible = function(data) {
     data
 }
 
-##' Set or query the selected (brushed) observations.
+##' Set or query the selected (brushed) observations
 ##'
 ##' The column \code{.brushed} controls which observations are being
 ##' brushed (i.e. those \code{TRUE}'s are selected).
@@ -266,7 +268,9 @@ selected = function(data) {
     "DragMoveCursor", "DragCopyCursor", "DragLinkCursor",
     "BitmapCursor"))
 
-##' Set the cursor of a view.
+##' Set the cursor of a view
+##'
+##' Change the shape of cursor on a view.
 ##'
 ##' All possible cursor types with the corresponding integer code are:
 ##'

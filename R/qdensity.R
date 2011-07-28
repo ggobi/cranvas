@@ -1,4 +1,6 @@
-#' Draw a univariate density plot, with a rug plot underneath
+#' Draw a univariate density plot
+#'
+#' Draw a univariate density plot, with a rug plot underneath.
 #'
 #' arrow up/down: in-/de-crease size of points
 #'

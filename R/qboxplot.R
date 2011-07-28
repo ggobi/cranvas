@@ -1,4 +1,5 @@
-##' Boxplots for variables in the data or a continuous variable vs a categorical variable.
+##' Boxplots for variables in the data or a continuous variable vs a categorical variable
+##'
 ##' This function can draw side-by-side boxplots for all the variables
 ##' in a data frame or boxplots for a continous variable vs a
 ##' categorical variable.

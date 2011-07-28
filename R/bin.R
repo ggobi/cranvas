@@ -26,6 +26,7 @@ make_dodge_pos <- function(breaks, n) {
 
 
 #' Fill and Stroke by Color
+#'
 #' Set the fill and stroke by the color if they are already not defined
 #'
 #' @param color color to be used for (possibly) both the fill and stroke
@@ -51,6 +52,7 @@ fill_and_stroke <- function(color = NULL, fill = NULL, stroke = NULL) {
 }
 
 #' Divide by maximum.
+#'
 #' Divides a vector by a maximum value of a vector
 #'
 #' @param val value to be scaled

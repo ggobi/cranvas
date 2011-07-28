@@ -1,4 +1,5 @@
 #' Create a hist plot
+#'
 #' Create a hist plot from 1-D numeric data
 #'
 #' keystroke Interactions:

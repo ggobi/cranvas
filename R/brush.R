@@ -19,7 +19,10 @@ brushGen = setRefClass('BRUSH',
               ))
 
 
-##' Set or query the brush attributes.
+##' Set or query the brush attributes
+##'
+##' The brush object in \pkg{cranvas} is essentially an environment,
+##' and we can manipulate objects in this environment.
 ##'
 ##' The list of attributes in the brush (they can be accessed by the
 ##' \code{$} method):
@@ -121,7 +124,8 @@ brush = function(data, attr) {
     data
 }
 
-##' Create the brush history.
+##' Create the brush history
+##'
 ##' Given the indices of the brushed elements, this function stores
 ##' these indices in the \code{\link{brush}} object and changes the
 ##' colors of graphical elements permanently (via changing the
@@ -212,7 +216,8 @@ save_brush_history = function(data, index = selected(data)) {
     invisible(data)
 }
 
-##' Update the brush size in the mouse move event.
+##' Update the brush size in the mouse move event
+##'
 ##' The brush size is changed by the differences in two successive
 ##' mouse positions.
 ##'
@@ -250,7 +255,8 @@ update_brush_size = function(meta, event) {
     matrix(c(meta$pos - meta$brush.size, meta$pos), 2, byrow = TRUE)
 }
 
-##' Manually brush the plot via command line.
+##' Manually brush the plot via command line
+##'
 ##' We can brush a plot via command line rather than using the mouse.
 ##'
 ##' @param obj the plot object with an attribute \code{meta},
@@ -274,7 +280,8 @@ manual_brush = function(obj, pos, pause = 0) {
     }
 }
 
-##' Draw the brush rectangle.
+##' Draw the brush rectangle
+##'
 ##' Draw a rectangle with a spot according to the information in the
 ##' meta data.
 ##'

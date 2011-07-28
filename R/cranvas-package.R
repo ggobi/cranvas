@@ -1,4 +1,4 @@
-##' Interactive Statistical Graphics Based on Qt.
+##' Interactive Statistical Graphics Based on Qt
 ##'
 ##' @importFrom qtbase Qt
 ##' @importFrom qtbase qrect qfont qsize qconnect qdataFrameModel
@@ -10,7 +10,8 @@
 ##' @docType package
 NULL
 
-##' NRC Rankings Data for the Statistics Departments in US.
+##' NRC Rankings Data for the Statistics Departments in US
+##'
 ##' This data contains the NRC rankings for all the statistics departments in US.
 ##'
 ##' @name nrcstat

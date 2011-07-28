@@ -30,7 +30,9 @@ scale_color <- function(colour, value = colour, na.color = 0) {
 }
 
 
-##' Interactive Missing Value Plot.
+##' Interactive Missing Value Plot
+##'
+##' An interactive missing value plot.
 ##'
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes

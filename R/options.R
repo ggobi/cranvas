@@ -2,7 +2,8 @@
 .cranvasEnv = new.env()
 
 
-##' Graphical parameters in cranvas.
+##' Graphical parameters in cranvas
+##'
 ##' This function can set or query the graphical parameters in the
 ##' \code{cranvas} package.
 ##'

@@ -1,4 +1,5 @@
-##' Select a subset of data through a GUI to be brushed.
+##' Select a subset of data through a GUI to be brushed
+##'
 ##' We use a GUI created by \pkg{qtbase} to subset the data based on a
 ##' given categorical variable. Specifically, we choose certain values
 ##' of the variable (using the mouse or keyboard) and all the

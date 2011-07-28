@@ -1,4 +1,4 @@
-##' Data Imputation.
+##' Data Imputation
 ##'
 ##' Impute data by various methods.
 ##' @param x the numeric data matrix
@@ -19,7 +19,7 @@ na.impute = function(x, method = "below.min") {
 }
 
 
-##' Give a column-wise scalar summary of the data frame or matrix.
+##' Give a column-wise scalar summary of the data frame or matrix
 ##'
 ##' For numeric columns, the function specified by \code{fun} will be applied
 ##' (\code{median()} by default); for other types of columns, the mode will be

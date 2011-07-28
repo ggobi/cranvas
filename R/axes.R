@@ -1,4 +1,5 @@
-##' Create an axis layer.
+##' Create an axis layer
+##'
 ##' This function creates an axis layer which contains tick marks and
 ##' labels at given locations.
 ##' @param parent the parent layer (default to be \code{NULL}, which
@@ -97,7 +98,8 @@ qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL,
     } else qlayer(parent, paintFun = draw_axis, ...)
 }
 
-##' Calculate pretty locations of axis tick marks.
+##' Calculate pretty locations of axis tick marks
+##'
 ##' The pretty locations are calculated by the function
 ##' \code{\link[base]{pretty}}, but the locations that exceed the
 ##' range of the data are removed. A special case is the factor: the
@@ -122,7 +124,8 @@ axis_loc = function(x) {
     at[at <= max(x) & at >= min(x)]
 }
 
-##' Create a background grid layer.
+##' Create a background grid layer
+##'
 ##' A layer with gray background and white grid lines corresponding to
 ##' axis tick marks. Minor grid lines are optional and thinner.
 ##'
@@ -211,7 +214,8 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
     } else qlayer(parent, paintFun = draw_grid, ...)
 }
 
-##' Create a margin text layer.
+##' Create a margin text layer
+##'
 ##' This function is similar to \code{\link[graphics]{mtext}}, which
 ##' draws text into the margin of a plot. A slight difference is this
 ##' function creates a layer which can be put anywhere in the layout.
@@ -282,7 +286,9 @@ qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = 0.5, y = 
 }
 
 #' draw grid with qt
+#'
 #' draws the grid at given positions
+#'
 #' can be used as part of a recall function to update a particular layer
 #'
 #' @param plotObj Qt plot object to have the layer added to
@@ -353,7 +359,9 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
 }
 
 #' draw x axes with qt
+#'
 #' draws the x axes with the labels and label positions given
+#'
 #' can be used as part of a recall function to update a particular layer
 #'
 #' @param plotObj Qt plot object to have the layer added to
@@ -396,7 +404,9 @@ draw_x_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
 }
 
 #' draw y axes with qt
+#'
 #' draws the y axes with the labels and label positions given
+#'
 #' can be used as part of a recall function to update a particular layer
 #'
 #' @param plotObj Qt plot object to have the layer added to

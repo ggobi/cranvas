@@ -29,7 +29,6 @@ find_y_label <- function(df) {
 
 
 #' make the window ranges
-#' make the window ranges
 #'
 #' @param dataRanges ranges of the data so a buffer of space may be added
 #' @param xlab if xlab is replaced with somthing other than null, it will be assumed that an axis label will be used
@@ -87,7 +86,7 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
 }
 
 
-##' Extend the range of data by an amount.
+##' Extend the range of data by an amount
 ##'
 ##' This is useful for setting a margin in the plot region.
 ##'
@@ -117,7 +116,7 @@ extend_ranges = function(x, f = qpar("mar")) {
     x + c(-1, 1) * f * (x[2] - x[1])
 }
 
-##' Re-order the columns of a data frame based on MDS or ANOVA.
+##' Re-order the columns of a data frame based on MDS or ANOVA
 ##'
 ##' For the MDS method, we use (1 - correlation matrix) as the
 ##' distance matrix and re-order the columns according their distances
@@ -184,6 +183,7 @@ reorder_var = function(data, type = c('none', 'MDS', 'ANOVA', 'randomForest'),
 }
 
 ##' Insert line breaks into character strings.
+##'
 ##' By default, all the non-alphanumeric characters are replaced by
 ##' \code{'\n'}, which can be useful when plotting long axis labels,
 ##' e.g., in parallel coordinates plots.
@@ -202,7 +202,8 @@ break_str = function(x, split = '[^[:alnum:]]', ...) {
     gsub(split, '\n', x, ...)
 }
 
-##' Match keys from a keyboard event.
+##' Match keys from a keyboard event
+##'
 ##' This is a simple wrapper function to test if the given keys are
 ##' hit in the keyboard event.
 ##'
@@ -232,7 +233,8 @@ match_key = function(key, event) {
     sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
 }
 
-##' Some common processings in the key press and release events.
+##' Some common processings in the key press and release events
+##'
 ##' The key press and release events often involve with setting the
 ##' selection mode of the \code{\link{brush}}, the alpha transparency,
 ##' and deleting selected elements, and so on. These functions
@@ -265,7 +267,7 @@ common_key_press = function(layer, event, data, meta) {
         visible(data) = !selected(data) & visible(data) else if (match_key('F5'))
             visible(data) = TRUE
 }
-##' Some common processings in the key release event.
+##' Some common processings in the key release event
 ##'
 ##' In a key release event, we set the selection mode to
 ##' \code{'none'}. If PageUp or PageDown was pressed, we show the
@@ -286,7 +288,8 @@ common_key_release = function(layer, event, data, meta) {
     }
 }
 
-##' Sync layer limits.
+##' Sync layer limits
+##'
 ##' The limits information is stored in the meta data as
 ##' \code{meta$limits}, of which this function makes use to sync the
 ##' limits of layers.
@@ -308,7 +311,7 @@ sync_limits = function(meta, ...) {
     })
 }
 
-##' Switch the values of two variables.
+##' Switch the values of two variables
 ##'
 ##' The values of two variables \code{a} and \code{b} are switched in
 ##' an environment \code{envir}.

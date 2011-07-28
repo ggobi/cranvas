@@ -52,8 +52,9 @@ qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max 
 	return(res)
 }
 
-##' Mosaic plot.
-##' Create a mosaicplot using a formula (as described in prodplot)
+##' Mosaic plot
+##'
+##' Create a mosaicplot using a formula (as described in prodplot).
 ##'
 ##' up arrow - takes out top var,
 ##' down arrow - adds next variable (if available)

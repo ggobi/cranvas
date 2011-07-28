@@ -24,8 +24,9 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 	 attr(qmap, "col.scale") <- scale
 }
 
-##' Interactive Maps.
-##' Create an interactive map from qdata
+##' Interactive Maps
+##'
+##' Create an interactive map from qdata.
 ##'
 ##' mouse wheel events are translated to focal zoom
 ##'

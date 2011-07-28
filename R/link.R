@@ -1,4 +1,5 @@
-##' Link mutaframes by a common categorical variable.
+##' Link mutaframes by a common categorical variable
+##'
 ##' This function links several mutaframes together by a common
 ##' categorical variable; this linking variable can be specified with
 ##' \code{\link{link_var}}.

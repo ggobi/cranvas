@@ -1,5 +1,7 @@
 ##' Draw a time plot
 ##'
+##' Draw a time-series plot.
+##'
 ##' Arrow up/down: in-/de-crease size of points.
 ##' Arrow left/right: wrap the time series when wrap=TRUE, while zoom
 ##' in/out with the center of the last clicked dot when wrap=FALSE.
