@@ -22,20 +22,23 @@ if (NROW(old.packages(repos = 'http://cran.r-project.org')) && (!interactive() |
     select.list(c('Yes', 'No'), title = 'Update old R packages?', preselect = 'Yes') == 'Yes')) {
     try(update.packages(ask = FALSE, repos = 'http://cran.r-project.org'))
 }
-## requires Rd2roxygen and formatR (don't ask why; just do it)
-if (!require("Rd2roxygen")) install.packages("Rd2roxygen", repos = "http://cran.r-project.org")
+## use Rd2roxygen to roxygenize cranvas
+if (!require("devtools")) install.packages("devtools", repos = "http://cran.r-project.org")
 if (!require("formatR")) install.packages("formatR", repos = "http://cran.r-project.org")
 
-## remove the man directory first
-unlink("man", recursive = TRUE)
+if (!grepl('roxygen2', packageDescription('Rd2roxygen', fields = 'Depends')) {
+    library(devtools)
+    install_github('roxygen2', 'klutometis')
+    install_github('Rd2roxygen', 'yihui')
+}
 
 ## go up a level
 owd = setwd("..")
 
 library(Rd2roxygen)
-options(width = 75, replace.assign = TRUE)
+options(width = 80, replace.assign = TRUE)
 
 ## run roxygen and several cleaning up steps
-try(rab("cranvas", "cranvas", install = TRUE, copy.package = FALSE))
+try(rab("cranvas", install = TRUE))
 
 setwd(owd)
