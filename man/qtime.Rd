@@ -61,9 +61,10 @@
   be backed to the original xaxis position, no matter wrap
   is TRUE or FALSE. Key '+'/'-': de-/in-crease alpha level
   (starts at alpha=1 by default). Key 'u'/'d': separate/mix
-  the series groups by shifting them up and down. Key 'g':
-  change the wrapping speed circularly in the values of
-  parameter 'shift'.
+  the series groups by shifting them up and down. Shift +
+  'u'/'d': for multivariate y's, separate/mix them by
+  shifting up and down. Key 'g': change the wrapping speed
+  circularly in the values of parameter 'shift'.
 }
 \examples{
 library(cranvas)
