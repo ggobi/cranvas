@@ -90,7 +90,8 @@ qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
-        hits = data[, meta$var] %in% levels(as.factor(data[, meta$var]))[hits]
+        if (length(hits))
+            hits = data[, meta$var] %in% levels(as.factor(data[, meta$var]))[hits]
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         self_link(data)
     }
