@@ -62,17 +62,6 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     mf$.size = size
     mf$.visible = visible
 
-    ## shadow matrix for missing values
-    shadowmatrix = is.na(data)
-    colnames(shadowmatrix) = paste('NA', colnames(data), sep='.')
-
-    ## add shadow matrix at the end if there are missing values
-    if (sum(shadowmatrix)) {
-        idx = (colSums(shadowmatrix) > 0)
-        mf = data.frame(mf,shadowmatrix[,idx])
-        warning(paste('Missing values: there are',sum(shadowmatrix),'missing values in',sum(idx),'columns.'))
-    }
-
     ## prevent converting from characters to factors
     if (!is.mutaframe(mf)) {
         old_opts = options(stringsAsFactors = FALSE)
@@ -98,6 +87,19 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     ## specifies which variable is used for (hot/cold) linking
     ## use link_var(data) to access the linking variable
     attr(mf, "Link") = mutalist(linkvar = NULL, type = "hot", focused = FALSE)
+
+    shadow = is.na(data)  # shadow matrix for missing values
+    ## add shadow matrix to 'shadow' attribute
+    if (sum(shadow)) {
+        idx = (colSums(shadow) > 0)
+        message('There are ', sum(shadow),' missing values in', sum(idx), 'columns.\n',
+                '  a shadow matrix is attached to attr(data, "Shadow")')
+        attr(mf, 'Shadow') = shadow
+        add_listener(mf, function(i, j) {
+            if (!(j %in% row_attrs))
+                attr(mf, 'Shadow') = is.na(as.data.frame(mf[, !(names(mf) %in% row_attrs)]))
+        })  # shadow matrix will change when data is changed
+    }
 
     mf
 }
