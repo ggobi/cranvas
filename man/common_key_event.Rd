@@ -18,8 +18,6 @@
 }
 \value{
   \code{NULL}
-
-  \code{NULL}
 }
 \description{
   The key press and release events often involve with

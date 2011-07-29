@@ -10,6 +10,9 @@
 ##' variables (listeners added), and the id's of the listeners
 ##' attached on each mutaframe will be returned as a list.
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @section Warning: The mutaframes must be different, otherwise the
+##' linking will end up with infinite recursion. For example,
+##' \code{link(data1, data1)} is not allowed.
 ##' @seealso \code{\link{qdata}}, \code{\link{link_var}},
 ##' \code{\link{link_type}}, \code{\link{remove_link}}
 ##' @export
@@ -65,10 +68,10 @@ link = function(...) {
 ##'
 ##' @param data the mutaframe (typically created by
 ##' \code{\link{qdata}}), with an attribute \code{Link}
-##' @return the name of the linking variable
+##' @return \code{\link{link_var}} returns the name of the linking
+##' variable
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @export link_var
-##' @export "link_var<-"
+##' @export
 ##' @seealso \code{\link{qdata}}, \code{\link{link}}
 ##' @examples
 ##' mf = qdata(head(iris))
@@ -83,8 +86,9 @@ link_var = function(data) {
 ##' @rdname link_var
 ##' @usage link_var(data) <- value
 ##' @param value the name of the linking variable (or \code{NULL} to
-##' disable linking)
-##' @return set the linking variable
+##' disable linking); the variable must be a factor (i.e. categorical
+##' variable)
+##' @export "link_var<-"
 `link_var<-` = function(data, value) {
     if (!is.null(value)) {
         if (!(value %in% colnames(data)))
@@ -107,7 +111,7 @@ link_var = function(data) {
 ##'
 ##' @param data the mutaframe (typically created by
 ##' \code{\link{qdata}}), with an attribute \code{Link}
-##' @return the type of linking
+##' @return \code{\link{link_type}} returns the type of linking
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples
@@ -122,7 +126,6 @@ link_type = function(data) {
 ##' @usage link_type(data) <- value
 ##' @param value the type of linking (possible values are \code{hot},
 ##' \code{cold} and \code{self})
-##' @return set the linking type
 ##' @export "link_type<-"
 `link_type<-` = function(data, value) {
     attr(data, 'Link')$type = value
@@ -169,7 +172,7 @@ remove_link = function(..., id) {
 ##'
 ##' link_var(mf) = 'Species'
 ##' link_type(mf) = 'self'
-##' self_link(mf)
+##' self_link(mf)  # all the first 50 rows are brushed
 ##' selected(mf)
 self_link = function(data) {
     if ((!('self' %in% link_type(data))) || is.null(v <- link_var(data))) return()

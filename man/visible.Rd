@@ -14,11 +14,8 @@
   \code{nrow(data)}}
 }
 \value{
-  returns the logical vector to control the visibility of
-  observations
-
-  changes the logical vector of visibility (i.e.,
-  \code{data$.visible})
+  The function \code{\link{visible}} returns the logical
+  vector to control the visibility of observations
 }
 \description{
   There is a column \code{.visible} to control the

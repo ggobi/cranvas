@@ -20,6 +20,11 @@
   common categorical variable; this linking variable can be
   specified with \code{\link{link_var}}.
 }
+\section{Warning}{
+  The mutaframes must be different, otherwise the linking
+  will end up with infinite recursion. For example,
+  \code{link(data1, data1)} is not allowed.
+}
 \examples{
 ### (1) proof of concept
 library(cranvas)

@@ -274,7 +274,6 @@ common_key_press = function(layer, event, data, meta) {
 ##' brush history.
 ##'
 ##' @rdname common_key_event
-##' @return \code{NULL}
 ##' @export
 common_key_release = function(layer, event, data, meta) {
     b = brush(data)

@@ -23,11 +23,10 @@
   \item{value}{the value of the brush attribute}
 }
 \value{
-  the brush object or the attribute of the brush; note the
-  brush object can be further manipulated with other
-  methods -- see examples below.
-
-  set the attribute of the brush
+  The function \code{\link{brush}} returns the brush object
+  or the attribute of the brush; note the brush object can
+  be further manipulated with other methods -- see examples
+  below.
 }
 \description{
   The brush object in \pkg{cranvas} is essentially an

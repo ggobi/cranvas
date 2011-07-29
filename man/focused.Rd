@@ -13,11 +13,9 @@
   \item{value}{a logical value: whether on focus or not}
 }
 \value{
-  a logical value: whether the plot corresponding to this
-  mutaframe is on focus or not
-
-  \code{NULL}; the status of focus is changed to
-  \code{value}
+  The function \code{\link{focused}} returns a logical
+  value: whether the plot corresponding to \code{data} is
+  on focus or not
 }
 \description{
   The plot on top of all the rest of plots is on focus, and

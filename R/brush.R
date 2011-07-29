@@ -62,9 +62,9 @@ brushGen = setRefClass('BRUSH',
 ##' width or size of points); if \code{attr} is missing, the whole
 ##' brush object (as a reference object; see
 ##' \code{\link[methods]{setRefClass}}) will be returned
-##' @return the brush object or the attribute of the brush; note the
-##' brush object can be further manipulated with other methods -- see
-##' examples below.
+##' @return The function \code{\link{brush}} returns the brush object
+##' or the attribute of the brush; note the brush object can be
+##' further manipulated with other methods -- see examples below.
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link{qdata}}
 ##' @export
@@ -117,7 +117,6 @@ brush = function(data, attr) {
 ##' @usage brush(data, attr) <- value
 ##' @param value the value of the brush attribute
 ##' @export "brush<-"
-##' @return set the attribute of the brush
 `brush<-` = function (data, attr, value) {
     b = brush(data)
     eval(parse(text = paste('b$', attr[1], ' = value', sep = '')))

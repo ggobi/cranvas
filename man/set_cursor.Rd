@@ -12,7 +12,8 @@
   Details)}
 }
 \value{
-  NULL; the cursor of the view is set as a side effect
+  \code{NULL}; the cursor of the view is set as a side
+  effect
 }
 \description{
   Change the shape of cursor on a view.

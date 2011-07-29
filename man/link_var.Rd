@@ -12,12 +12,12 @@
   \code{\link{qdata}}), with an attribute \code{Link}}
 
   \item{value}{the name of the linking variable (or
-  \code{NULL} to disable linking)}
+  \code{NULL} to disable linking); the variable must be a
+  factor (i.e. categorical variable)}
 }
 \value{
-  the name of the linking variable
-
-  set the linking variable
+  \code{\link{link_var}} returns the name of the linking
+  variable
 }
 \description{
   Set or query the linking variable in a mutaframe.

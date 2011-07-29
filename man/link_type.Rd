@@ -15,9 +15,7 @@
   \code{hot}, \code{cold} and \code{self})}
 }
 \value{
-  the type of linking
-
-  set the linking type
+  \code{\link{link_type}} returns the type of linking
 }
 \description{
   Types of linking include hot, cold and self linking. Hot

@@ -159,8 +159,9 @@ mode_selection = function(x, y, mode = "none") {
 ##' The plot on top of all the rest of plots is on focus, and the
 ##' corresponding mutaframe is said to be on focus too.
 ##' @param data the mutaframe
-##' @return a logical value: whether the plot corresponding to this
-##' mutaframe is on focus or not
+##' @return The function \code{\link{focused}} returns a logical
+##' value: whether the plot corresponding to \code{data} is on focus
+##' or not
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link{qdata}}
 ##' @export
@@ -179,7 +180,6 @@ focused = function(data) {
 ##' @usage focused(data) <- value
 ##' @param value a logical value: whether on focus or not
 ##' @export "focused<-"
-##' @return \code{NULL}; the status of focus is changed to \code{value}
 `focused<-` = function(data, value) {
     attr(data, "Link")[["focused"]] = value
     data
@@ -191,8 +191,8 @@ focused = function(data) {
 ##' observations. This can be useful for ``deleting'' certain
 ##' observations from the plot (set their visibility to \code{FALSE}).
 ##' @param data the mutaframe
-##' @return returns the logical vector to control the visibility of
-##' observations
+##' @return The function \code{\link{visible}} returns the logical
+##' vector to control the visibility of observations
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link{qdata}}
 ##' @export
@@ -211,7 +211,6 @@ visible = function(data) {
 ##' @usage visible(data) <- value
 ##' @param value a logical vector of the length \code{nrow(data)}
 ##' @export "visible<-"
-##' @return changes the logical vector of visibility (i.e., \code{data$.visible})
 `visible<-` = function(data, value) {
     data$.visible = value
     data
@@ -222,8 +221,9 @@ visible = function(data) {
 ##' The column \code{.brushed} controls which observations are being
 ##' brushed (i.e. those \code{TRUE}'s are selected).
 ##' @param data the mutaframe
-##' @return returns the logical vector corresponding to whether the
-##' observations are selected or not
+##' @return The function \code{\link{selected}} returns the logical
+##' vector corresponding to whether the observations are selected or
+##' not
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link{qdata}}
 ##' @export
@@ -232,9 +232,10 @@ visible = function(data) {
 ##' selected(df)
 ##'
 ##' selected(df) = rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
-##'
 ##' selected(df)
 ##'
+##' selected(df) = 3L  # brush the 3rd row
+##' selected(df)
 selected = function(data) {
     if ('.brushed' %in% names(data))
         data$.brushed else logical(nrow(data))
@@ -245,7 +246,6 @@ selected = function(data) {
 ##' a vector of integers which will be used to create a logical vector
 ##' with \code{TRUE} corresponding to these indicies
 ##' @export "selected<-"
-##' @return sets the selected status of observations
 `selected<-` = function(data, value) {
     ## if value is numeric indices, convert it to a logical vector
     if (is.numeric(value)) {
@@ -288,7 +288,8 @@ selected = function(data) {
 ##' @param view the view for which to change the cursor (created by
 ##' \code{\link[qtpaint]{qplotView}})
 ##' @param cursor an integer or a character string (see Details)
-##' @return NULL; the cursor of the view is set as a side effect
+##' @return \code{NULL}; the cursor of the view is set as a side
+##' effect
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @references \url{http://doc.qt.nokia.com/latest/qt.html#CursorShape-enum}
 ##' @export

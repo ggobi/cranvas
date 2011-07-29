@@ -24,7 +24,7 @@ selected(mf)
 
 link_var(mf) <- "Species"
 link_type(mf) <- "self"
-self_link(mf)
+self_link(mf)  # all the first 50 rows are brushed
 selected(mf)
 }
 \author{

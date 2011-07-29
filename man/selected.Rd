@@ -16,10 +16,9 @@
   corresponding to these indicies}
 }
 \value{
-  returns the logical vector corresponding to whether the
-  observations are selected or not
-
-  sets the selected status of observations
+  The function \code{\link{selected}} returns the logical
+  vector corresponding to whether the observations are
+  selected or not
 }
 \description{
   The column \code{.brushed} controls which observations
@@ -32,7 +31,9 @@ df <- qdata(iris)
 selected(df)
 
 selected(df) <- rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
+selected(df)
 
+selected(df) <- 3L  # brush the 3rd row
 selected(df)
 }
 \author{
