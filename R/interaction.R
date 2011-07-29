@@ -56,7 +56,6 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
             collapse = ", ")))
     }
     mf = data
-    ## initialize here; TODO: get rid of this in qparallel, qmosaic...
     mf$.brushed = brushed
     mf$.color = color
     mf$.fill = fill
