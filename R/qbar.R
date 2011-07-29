@@ -16,11 +16,10 @@
 ##' @example inst/examples/qbar-ex.R
 qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
     b = brush(data)
+    if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
     meta =
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
-                     alpha = 1, horizontal = horizontal)
-    if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
-    meta$main = main
+                     alpha = 1, horizontal = horizontal, main = main)
     compute_coords = function() {
         tmp = data[visible(data), meta$var]
         tmp = as.factor(tmp)
@@ -191,4 +190,5 @@ Bar.meta =
                                      stroke = 'character', fill = 'character',
                                      start = 'numeric', pos = 'numeric',
                                      brush.move = 'logical', brush.size = 'numeric',
-                                     manual.brush = 'function', horizontal = 'logical')))
+                                     manual.brush = 'function', horizontal = 'logical',
+                                     main = 'character')))
