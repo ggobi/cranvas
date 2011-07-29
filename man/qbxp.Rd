@@ -1,7 +1,6 @@
 \name{qbxp}
 \alias{qbxp}
-\title{Create a boxplot layer.
-A ``low-level'' plotting function to create a boxplot layer.}
+\title{Create a boxplot layer}
 \usage{
   qbxp(parent = NULL, vars = NULL, data, subset = FALSE,
   at, width, horizontal = FALSE, sister = NULL, ...)
@@ -36,8 +35,8 @@ A ``low-level'' plotting function to create a boxplot layer.}
   a layer object
 }
 \description{
-  Create a boxplot layer. A ``low-level'' plotting function
-  to create a boxplot layer.
+  A ``low-level'' plotting function to create a boxplot
+  layer.
 }
 \examples{
 library(cranvas)

@@ -1,13 +1,7 @@
 \name{link_type}
 \alias{link_type}
 \alias{link_type<-}
-\title{Set or query the type of linking.
-Types of linking include hot, cold and self linking. Hot linking
-means other plots get updated immediately after the current plot
-is brushed; cold linking will not update other plots until they
-are on focus; self linking means all the elements in the same
-category as the current brushed element(s) will be brushed as
-well.}
+\title{Set or query the type of linking}
 \usage{
   link_type(data)
 
@@ -26,13 +20,12 @@ well.}
   set the linking type
 }
 \description{
-  Set or query the type of linking. Types of linking
-  include hot, cold and self linking. Hot linking means
-  other plots get updated immediately after the current
-  plot is brushed; cold linking will not update other plots
-  until they are on focus; self linking means all the
-  elements in the same category as the current brushed
-  element(s) will be brushed as well.
+  Types of linking include hot, cold and self linking. Hot
+  linking means other plots get updated immediately after
+  the current plot is brushed; cold linking will not update
+  other plots until they are on focus; self linking means
+  all the elements in the same category as the current
+  brushed element(s) will be brushed as well.
 }
 \examples{
 mf <- qdata(iris)

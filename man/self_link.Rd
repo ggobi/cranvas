@@ -1,10 +1,7 @@
 \name{self_link}
 \alias{self_link}
-\title{Update a mutaframe by the linking on itself through a categorical variable.
-If the linking type is \code{self} on a mutaframe, and the linking
-variable has been specified, this function will brush all the rows
-which are in the same category or categories of the current
-brushed elements.}
+\title{Update a mutaframe by the linking on itself through a categorical
+variable}
 \usage{
   self_link(data)
 }
@@ -15,12 +12,10 @@ brushed elements.}
   the \code{.brushed} column in the mutaframe is updated
 }
 \description{
-  Update a mutaframe by the linking on itself through a
-  categorical variable. If the linking type is \code{self}
-  on a mutaframe, and the linking variable has been
-  specified, this function will brush all the rows which
-  are in the same category or categories of the current
-  brushed elements.
+  If the linking type is \code{self} on a mutaframe, and
+  the linking variable has been specified, this function
+  will brush all the rows which are in the same category or
+  categories of the current brushed elements.
 }
 \examples{
 mf <- qdata(iris)

@@ -1,4 +1,5 @@
-##' Boxplots for variables in the data or a continuous variable vs a categorical variable
+##' Boxplots for variables in the data or a continuous variable vs a
+##' categorical variable
 ##'
 ##' This function can draw side-by-side boxplots for all the variables
 ##' in a data frame or boxplots for a continous variable vs a
@@ -114,7 +115,8 @@ qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
 }
 
 
-##' Create a boxplot layer.
+##' Create a boxplot layer
+##'
 ##' A ``low-level'' plotting function to create a boxplot layer.
 ##'
 ##' @param parent the parent layer in which to embed this boxplot

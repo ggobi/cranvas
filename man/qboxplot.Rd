@@ -1,6 +1,7 @@
 \name{qboxplot}
 \alias{qboxplot}
-\title{Boxplots for variables in the data or a continuous variable vs a categorical variable}
+\title{Boxplots for variables in the data or a continuous variable vs a
+categorical variable}
 \usage{
   qboxplot(vars, data, at = NULL, width = NULL, horizontal
   = FALSE)

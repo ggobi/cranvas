@@ -96,7 +96,8 @@ link_var = function(data) {
     data
 }
 
-##' Set or query the type of linking.
+##' Set or query the type of linking
+##'
 ##' Types of linking include hot, cold and self linking. Hot linking
 ##' means other plots get updated immediately after the current plot
 ##' is brushed; cold linking will not update other plots until they
@@ -128,7 +129,8 @@ link_type = function(data) {
     data
 }
 
-##' Remove the linking between mutaframes.
+##' Remove the linking between mutaframes
+##'
 ##' This is the reverse operation to \code{\link{link}}, i.e., this
 ##' function removes the linking (listeners) between mutaframes.
 ##'
@@ -149,7 +151,9 @@ remove_link = function(..., id) {
     }
 }
 
-##' Update a mutaframe by the linking on itself through a categorical variable.
+##' Update a mutaframe by the linking on itself through a categorical
+##' variable
+##'
 ##' If the linking type is \code{self} on a mutaframe, and the linking
 ##' variable has been specified, this function will brush all the rows
 ##' which are in the same category or categories of the current

@@ -1,8 +1,6 @@
 \name{remove_link}
 \alias{remove_link}
-\title{Remove the linking between mutaframes.
-This is the reverse operation to \code{\link{link}}, i.e., this
-function removes the linking (listeners) between mutaframes.}
+\title{Remove the linking between mutaframes}
 \usage{
   remove_link(..., id)
 }
@@ -17,10 +15,9 @@ function removes the linking (listeners) between mutaframes.}
   the listeners are removed
 }
 \description{
-  Remove the linking between mutaframes. This is the
-  reverse operation to \code{\link{link}}, i.e., this
-  function removes the linking (listeners) between
-  mutaframes.
+  This is the reverse operation to \code{\link{link}},
+  i.e., this function removes the linking (listeners)
+  between mutaframes.
 }
 \examples{
 ## see ?link
