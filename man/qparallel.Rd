@@ -290,8 +290,8 @@ options(cranvas_debug = FALSE)
 ## linking two parcoords plots: split the data into 2 parts
 testdata <- qdata(as.data.frame(matrix(rnorm(2000 * 
     10), ncol = 10)))
-qparallel(testdata, vars = sprintf("V%d", 1:6))
-qparallel(testdata, vars = sprintf("V%d", 4:10))
+qparallel(testdata, vars = sprintf("V\%d", 1:6))
+qparallel(testdata, vars = sprintf("V\%d", 4:10))
 
 library(ggplot2)
 qdiamonds <- qdata(diamonds, color = rgb(1, 0, 0, 
