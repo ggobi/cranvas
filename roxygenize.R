@@ -24,13 +24,11 @@ if (NROW(old.packages(repos = 'http://cran.r-project.org')) && (!interactive() |
     try(update.packages(ask = FALSE, repos = 'http://cran.r-project.org'))
 }
 ## use Rd2roxygen to roxygenize cranvas
-if (!require("devtools")) install.packages("devtools", repos = "http://cran.r-project.org")
 if (!require("formatR")) install.packages("formatR", repos = "http://cran.r-project.org")
 
 if (!grepl('roxygen2', packageDescription('Rd2roxygen', fields = 'Depends'))) {
-    library(devtools)
-    install_github('roxygen2', 'klutometis')
-    install_github('Rd2roxygen', 'yihui')
+    install.packages('roxygen2', repos = "http://cran.r-project.org")
+    install.packages('Rd2roxygen', repos = "http://cran.r-project.org")
 }
 
 ## go up a level
