@@ -66,7 +66,6 @@ qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
     }
     brush_draw = function(layer, painter) {
         if (b$identify) return()
-        if (any(is.na(meta$pos))) return()
         if (any(idx <- selected(data) & visible(data))) {
             tmp = as.factor(data[idx, meta$var])
             if (meta$horizontal)
