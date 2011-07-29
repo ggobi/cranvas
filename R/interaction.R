@@ -52,8 +52,8 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     ## once in a blue moon...
     conflict_attrs = row_attrs %in% colnames(data)
     if (any(conflict_attrs)) {
-        stop(sprintf("variable names conflicts: %s already exist(s) in data", paste(row_attrs[conflict_attrs],
-            collapse = ", ")))
+        stop(sprintf("variable names conflicts: %s already exist(s) in data",
+                     paste(row_attrs[conflict_attrs], collapse = ", ")))
     }
     mf = data
     mf$.brushed = brushed
@@ -80,25 +80,24 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
         on.exit(options(old_opts))
     }
 
-
     ## attach a brush to data; we need to create the xxxChanged event in specific plots
     ## use brush(data) to access this brush
-    attr(mf, "Brush") = brushGen$new(style = list(color = "yellow", linewidth = 2, linetype = NULL),
-        color = "yellow", color.gen = function(...) NULL, size = 2, size.gen = function(...) NULL,
-        mode = "none", identify = FALSE, label.gen = function(...) {
-            paste(capture.output(print(...)), collapse = '\n')
-        }, label.color = "darkgray",
-        history.size = 30, history.index = 0, history.list = list(),
-        persistent = FALSE, persistent.color = character(0), persistent.list = list(),
-        cursor = 0L)
+    attr(mf, "Brush") =
+        brushGen$new(style = list(color = "yellow", linewidth = 2, linetype = NULL),
+                     color = "yellow", color.gen = function(...) NULL,
+                     size = 2, size.gen = function(...) NULL,
+                     mode = "none", identify = FALSE, label.gen = function(...) {
+                         paste(capture.output(print(...)), collapse = '\n')
+                     }, label.color = "darkgray",
+                     history.size = 30, history.index = 0, history.list = list(),
+                     persistent = FALSE, persistent.color = character(0),
+                     persistent.list = list(), cursor = 0L)
 
     ## here 'mode' is explained in the documentation of mode_selection()
 
     ## specifies which variable is used for (hot/cold) linking
     ## use link_var(data) to access the linking variable
     attr(mf, "Link") = mutalist(linkvar = NULL, type = "hot", focused = FALSE)
-
-    ## and other possible attributes
 
     mf
 }
