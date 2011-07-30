@@ -121,55 +121,6 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
 }
 
 
-##' Logical operations under different selection mode
-##'
-##' A selection mode is essentially a logical operation like AND, OR, and XOR, etc.
-##'
-##' There are five selection modes:
-##' \describe{
-##'   \item{none}{ignore previous selection and completely start over again}
-##'   \item{and}{select the intersection, i.e. the objects that are selected by two successive brushing operations}
-##'   \item{or}{select the union, i.e. any objects selected by all previous operations and the current operation}
-##'   \item{xor}{toggle the selection}
-##'   \item{not}{negation, i.e. exclude the objects under two successive brushing operations}
-##'   \item{complement}{the complement of the current selection}
-##' }
-##' We can hold the key while brushing: A for 'and', O for 'or', X for 'xor', N for 'not' and C for 'complement'.
-##' @param x logical: the previous selection status
-##' @param y logical: the current selection status (if \code{y} is a
-##' numeric vector, it will be converted to a logical vector of the
-##' same length with \code{x} with \code{TRUE}'s corresponding to the
-##' numeric indicies)
-##' @param mode the selection mode string; see Details
-##' @return a logical vector indicating whether the objects are selected
-##' @author Yihui Xie <\url{http://yihui.name}>
-##' @seealso \code{\link[base]{&}}, \code{\link[base]{|}},
-##' \code{\link[base]{xor}}, \code{\link[base]{!}}
-##' @export
-##' @examples
-##' x1 = c(TRUE, TRUE, FALSE, FALSE)
-##' x2 = c(FALSE, TRUE, TRUE, FALSE)
-##' mode_selection(x1, x2, 'none')
-##' mode_selection(x1, x2, 'and')
-##' mode_selection(x1, x2, 'or')
-##' mode_selection(x1, x2, 'xor')
-##' mode_selection(x1, x2, 'not')
-##' mode_selection(x1, x2, 'complement')
-##'
-##' mode_selection(x1, c(2, 3), 'and')  # equivalent to x2
-mode_selection = function(x, y, mode = "none") {
-    if (is.numeric(y)) {
-        tmp = logical(length(x))
-        tmp[y] = TRUE
-        y = tmp
-    }
-    ## a series of logical operations
-    ## if mode is not specified, return y, the current status
-    switch(mode, none = y, and = x & y, or = x | y, xor = xor(x, y), not = x & !y,
-        complement = !y, y)
-}
-
-
 ##' Set or query the focus status
 ##'
 ##' The plot on top of all the rest of plots is on focus, and the
@@ -273,57 +224,70 @@ selected = function(data) {
     data
 }
 
-.QtCursor = structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
-    9L, 10L, 11L, 12L, 13L, 14L, 17L, 18L, 15L, 16L, 20L,
-    19L, 21L, 24L), .Names = c("ArrowCursor", "UpArrowCursor",
-    "CrossCursor", "WaitCursor", "IBeamCursor", "SizeVerCursor",
-    "SizeHorCursor", "SizeBDiagCursor", "SizeFDiagCursor",
-    "SizeAllCursor", "BlankCursor", "SplitVCursor", "SplitHCursor",
-    "PointingHandCursor", "ForbiddenCursor", "OpenHandCursor",
-    "ClosedHandCursor", "WhatsThisCursor", "BusyCursor",
-    "DragMoveCursor", "DragCopyCursor", "DragLinkCursor",
-    "BitmapCursor"))
-
-##' Set the cursor of a view
+##' Set or query the linking variable in a mutaframe
 ##'
-##' Change the shape of cursor on a view.
-##'
-##' All possible cursor types with the corresponding integer code are:
-##'
-##' 0: ArrowCursor; 1: UpArrowCursor; 2: CrossCursor; 3: WaitCursor;
-##' 4: IBeamCursor; 5: SizeVerCursor; 6: SizeHorCursor; 7:
-##' SizeBDiagCursor; 8: SizeFDiagCursor; 9: SizeAllCursor; 10:
-##' BlankCursor; 11: SplitVCursor; 12: SplitHCursor; 13:
-##' PointingHandCursor; 14: ForbiddenCursor; 17: OpenHandCursor; 18:
-##' ClosedHandCursor; 15: WhatsThisCursor; 16: BusyCursor; 20:
-##' DragMoveCursor; 19: DragCopyCursor; 21: DragLinkCursor; 24:
-##' BitmapCursor
-##'
-##' We can pass either the integer code or the character string to the
-##' \code{cursor} argument.
-##' @param view the view for which to change the cursor (created by
-##' \code{\link[qtpaint]{qplotView}})
-##' @param cursor an integer or a character string (see Details)
-##' @return \code{NULL}; the cursor of the view is set as a side
-##' effect
+##' @param data the mutaframe (typically created by
+##' \code{\link{qdata}}), with an attribute \code{Link}
+##' @return \code{\link{link_var}} returns the name of the linking
+##' variable
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @references \url{http://doc.qt.nokia.com/latest/qt.html#CursorShape-enum}
+##' @export
+##' @seealso \code{\link{qdata}}, \code{\link{link}}
+##' @examples
+##' mf = qdata(head(iris))
+##' link_var(mf)  # NULL
+##' link_var(mf) = 'Species'  # linking by 'Species'
+##' link_var(mf)
+##' link_var(mf) = NULL  # disable linking
+link_var = function(data) {
+    attr(data, "Link")[["linkvar"]]
+}
+
+##' @rdname link_var
+##' @usage link_var(data) <- value
+##' @param value the name of the linking variable (or \code{NULL} to
+##' disable linking); the variable must be a factor (i.e. categorical
+##' variable)
+##' @export "link_var<-"
+`link_var<-` = function(data, value) {
+    if (!is.null(value)) {
+        if (!(value %in% colnames(data)))
+            stop(value, " is not in the column names of data")
+        if (!is.factor(data[, value]))
+            stop('currently only support linking through categorical variables (factors)')
+    }
+    attr(data, "Link")[["linkvar"]] = value
+    data
+}
+
+##' Set or query the type of linking
+##'
+##' Types of linking include hot, cold and self linking. Hot linking
+##' means other plots get updated immediately after the current plot
+##' is brushed; cold linking will not update other plots until they
+##' are on focus; self linking means all the elements in the same
+##' category as the current brushed element(s) will be brushed as
+##' well.
+##'
+##' @param data the mutaframe (typically created by
+##' \code{\link{qdata}}), with an attribute \code{Link}
+##' @return \code{\link{link_type}} returns the type of linking
+##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples
-##' library(cranvas)
-##' library(qtpaint)
-##' scene = qscene()
-##' qlayer(scene)
-##' v = qplotView(scene = scene)
-##' print(v)
-##'
-##' set_cursor(v, 'WaitCursor')
-##'
-##' set_cursor(v, 2L)  # CrossCursor
-##'
-set_cursor = function(view, cursor = 'ArrowCursor') {
-    cu = view$cursor
-    if (is.character(cursor)) cursor = .QtCursor[cursor]
-    cu$setShape(cursor)
-    view$cursor = cu
+##' mf = qdata(iris)
+##' link_type(mf)
+##' link_type(mf) = 'self'
+##' link_type(mf) = 'cold'
+link_type = function(data) {
+    attr(data, 'Link')$type
+}
+##' @rdname link_type
+##' @usage link_type(data) <- value
+##' @param value the type of linking (possible values are \code{hot},
+##' \code{cold} and \code{self})
+##' @export "link_type<-"
+`link_type<-` = function(data, value) {
+    attr(data, 'Link')$type = value
+    data
 }
