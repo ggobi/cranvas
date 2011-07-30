@@ -3,7 +3,7 @@
 \title{Parallel coordinates plot}
 \usage{
   qparallel(vars, data, scale = "range", names =
-  break_str(vars), na.action = na.impute, center = NULL,
+  break_str(vars), na.action = na_impute, center = NULL,
   order = c("none", "MDS", "ANOVA", "randomForest"),
   horizontal = TRUE, glyph = c("auto", "line", "tick",
   "circle", "square", "triangle"), boxplot = FALSE, boxwex,
