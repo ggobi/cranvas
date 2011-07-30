@@ -46,7 +46,7 @@ qhist2(Serve.Speed, data = qtennis)
 
 qbar(Country, data = qtennis)
 
-qparallel(~., data = qtennis)  # all variables
+qparallel(~., data = qtennis)  # all variables; you may need a large window
 
 record_selector("Name", data = qtennis)  # a simple GUI
 }

@@ -1,7 +1,7 @@
 \name{link_var}
 \alias{link_var}
 \alias{link_var<-}
-\title{Set or query the linking variable in a mutaframe.}
+\title{Set or query the linking variable in a mutaframe}
 \usage{
   link_var(data)
 
@@ -20,7 +20,7 @@
   variable
 }
 \description{
-  Set or query the linking variable in a mutaframe.
+  Set or query the linking variable in a mutaframe
 }
 \examples{
 mf <- qdata(head(iris))
