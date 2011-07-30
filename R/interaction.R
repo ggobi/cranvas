@@ -107,8 +107,8 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     ## add shadow matrix to 'shadow' attribute
     if (sum(shadow)) {
         idx = (colSums(shadow) > 0)
-        message('There are ', sum(shadow),' missing values in', sum(idx), 'columns.\n',
-                '  a shadow matrix is attached to attr(data, "Shadow")')
+        message('There are ', sum(shadow),' missing values in ', sum(idx), ' columns.',
+                ' A shadow matrix is attached to attr(data, "Shadow")')
         attr(mf, 'Shadow') = shadow
         add_listener(mf, function(i, j) {
             if (!(j %in% row_attrs))
