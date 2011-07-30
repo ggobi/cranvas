@@ -5,7 +5,6 @@
 ##' @import qtpaint
 ##' @import plumbr
 ##' @import objectSignals
-##' @exportPattern ".*"
 ##' @name cranvas-package
 ##' @docType package
 NULL
