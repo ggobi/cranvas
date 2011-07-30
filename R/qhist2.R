@@ -15,7 +15,8 @@
 ##' numeric vector giving the breakpoints
 ##' @param freq draw the frequencies (\code{TRUE}) or densities
 ##' (\code{FALSE})
-##' @param main the main title
+##' @param main the main title (default to be \code{"Histogram of
+##' variable name"})
 ##' @param horizontal whether to draw a horizontal or vertical plot
 ##' @return A histogram
 ##' @author Yihui Xie <\url{http://yihui.name}>
@@ -23,7 +24,7 @@
 ##' @example inst/examples/qhist2-ex.R
 qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
     b = brush(data)
-    if (missing(main)) main = paste("Histogram of", deparse(substitute(data)))
+    if (missing(main)) main = paste("Histogram of", deparse(substitute(x)))
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x),
                      alpha = 1, horizontal = horizontal, main = main, breaks = breaks)

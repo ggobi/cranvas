@@ -17,7 +17,8 @@
   \item{freq}{draw the frequencies (\code{TRUE}) or
   densities (\code{FALSE})}
 
-  \item{main}{the main title}
+  \item{main}{the main title (default to be
+  \code{"Histogram of variable name"})}
 
   \item{horizontal}{whether to draw a horizontal or
   vertical plot}
@@ -42,8 +43,7 @@
 library(cranvas)
 data(tennis)
 tennis$Matches <- factor(tennis$Matches)
-qtennis <- qdata(tennis, fill = dscale(tennis$Matches, 
-    hue_pal()), color = dscale(tennis$Matches, hue_pal()))
+qtennis <- qdata(tennis, fill = Matches, color = Matches)
 
 qhist2(First.Serve.Pct, qtennis)
 qbar(Matches, qtennis)
@@ -64,6 +64,10 @@ link_var(qflea) <- "species"
 link_type(qflea) <- "self"
 ## now brush one bar, all rows in the same species will be
 #   brushed
+
+## map tars1 to colors
+qflea2 <- qdata(flea, color = tars1, fill = tars1)
+qhist2(tars1, qflea2)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
