@@ -54,16 +54,12 @@ qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", center = media
     horizontal = FALSE, glyph = "tick", boxplot = TRUE, boxwex = 0.8)
 
 ## color palette
-library(RColorBrewer)
-
-qnrc$.color = brewer.pal(3, "Set1")[as.integer(nrcstat$Control)]  # public or private
+qnrc = qdata(nrcstat, color = Control)  # public or private
 qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", boxplot = TRUE)
 
 
 ## old iris...
-##  create a mutaframe containing row attributes first
-iris.col = brewer.pal(3, "Set1")[as.integer(iris$Species)]
-qiris = qdata(iris, brushed = FALSE, color = iris.col)
+qiris = qdata(iris, color = Species)
 
 qparallel(data = qiris, main = 'scale columns individually to [0, 1]')
 qparallel(data = qiris, scale = "I", main = 'unscaled data')
@@ -75,11 +71,11 @@ st2 = function(x) ((x - min(x))/(max(x) - min(x)))^2
 qparallel(data = qiris, scale = "st2")
 
 ## subsetting
-qparallel(data = qiris, vars = c("Sepal.Length", "Sepal.Width", "Species"))
+qparallel(c("Sepal.Length", "Sepal.Width", "Species"), data = qiris)
 ## or formula interface
-qparallel(data = qiris, vars = ~Sepal.Length + Sepal.Width)
+qparallel(~Sepal.Length + Sepal.Width, data = qiris)
 # '.' means all variables in the data frame as usual
-qparallel(data = qiris, vars = ~.)
+qparallel(~., data = qiris)
 
 ## vertical
 qparallel(data = qiris, horizontal = FALSE)
@@ -169,18 +165,6 @@ qparallel(data = qhuge3)
 
 options(cranvas_debug = FALSE)
 
-## linking two parcoords plots: split the data into 2 parts
-testdata = qdata(as.data.frame(matrix(rnorm(2000 * 10), ncol = 10)))
-qparallel(testdata, vars = sprintf("V%d", 1:6))
-qparallel(testdata, vars = sprintf("V%d", 4:10))
-
-library(ggplot2)
-qdiamonds = qdata(diamonds, color = rgb(1, 0, 0, 0.01))
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", jitter = c('cut', 'color', 'clarity'))
-qdiamonds$.color = brewer.pal(5, "Set1")[as.integer(diamonds$cut)]
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
-qdiamonds$.color = brewer.pal(7, "Set1")[as.integer(diamonds$color)]
-qparallel(data = qdiamonds, vars = 1:7, glyph = "line", order = "ANOVA")
 
 ## for large data, glyphs (short ticks) are automatically used instead of
 #   segments
@@ -192,19 +176,11 @@ data(NewHavenResidential)
 qnhr = qdata(NewHavenResidential, color = rgb(1, 0, 0, 0.1))
 qparallel(data = qnhr)
 
-qparallel(data = qnhr, vars = names(NewHavenResidential)[1:4])
-qparallel(data = qnhr, vars = names(NewHavenResidential)[5:8])
+qparallel(1:4, data = qnhr)
+qparallel(5:8, data = qnhr)
 
 
-# ggplot2
-library(ggplot2)
-ggpcp(NewHavenResidential) + geom_line()
-
-# lattice
-library(lattice)
-parallel(NewHavenResidential)
-
-qnhr$.color = brewer.pal(3, "Set1")[as.integer(NewHavenResidential$zone)]
+qnhr = qdata(NewHavenResidential, color = zone)
 qparallel(data = qnhr)
 
 qparallel(data = qnhr, horizontal = FALSE)
