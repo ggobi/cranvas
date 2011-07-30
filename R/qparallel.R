@@ -69,7 +69,7 @@
 ##' @export
 ##' @example inst/examples/qparallel-ex.R
 qparallel = function(vars, data, scale = "range", names = break_str(vars),
-    na.action = na.impute,
+    na.action = na_impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
