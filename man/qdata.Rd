@@ -66,7 +66,7 @@ data(tennis)
 str(tennis)
 qtennis <- qdata(tennis, color = Aces, fill = Aces)  # more Aces, closer to red; less, blue
 
-qhist2(Aces, data = qtennis)
+qhist2(Aces, data = qtennis, main = "Number of Aces")
 attr(qtennis, "Scales")  # the scales information
 
 selected(qtennis)[1:10] <- TRUE  # brush the first 10 cases
