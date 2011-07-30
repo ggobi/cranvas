@@ -57,10 +57,24 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     }
     mf = data
     mf$.brushed = brushed
-    mf$.color = color
-    mf$.fill = fill
-    mf$.size = size
     mf$.visible = visible
+
+    z = as.list(match.call()[-1])
+    l = list()
+    for (i in c('color', 'fill', 'size')) {
+        if (is.language(z[[i]])) {
+            data(munsell_map, package = "munsell")
+            v = eval(z[[i]], data)
+            mf[[sprintf('.%s', i)]] = if (i != 'size') {
+                if (is.factor(v)) dscale(v, hue_pal()) else if (is.numeric(v))
+                    cscale(v, seq_gradient_pal()) else
+                if (!inherits(try(col2rgb(v), silent = TRUE), 'try-error')) v else
+                    stop(i, ' must be either a factor or a numeric variable or valid colors!')
+            } else if (is.numeric(v)) area_pal()(v) else
+                stop('size must be numeric!')
+            l[[i]] = deparse(z[[i]])
+        } else mf[[sprintf('.%s', i)]] = switch(i, color = color, fill = fill, size = size)
+    }
 
     ## prevent converting from characters to factors
     if (!is.mutaframe(mf)) {
@@ -101,6 +115,7 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
         })  # shadow matrix will change when data is changed
     }
 
+    attr(mf, 'Scales') = l  # scales information to be used in legend
     mf
 }
 
