@@ -1,21 +1,39 @@
 ##' Create a mutaframe from data with attributes for interaction
 ##'
-##' This function will first check if the names of some predefined row
-##' attributes (e.g. \code{.color}, \code{.brushed}) exist in the
+##' This function will first check if the names of some pre-defined
+##' row attributes (e.g. \code{.color}, \code{.brushed}) exist in the
 ##' column names of the data (will issue an error if they do); then
 ##' append these columns to the original data to create an augmented
 ##' data as a \code{\link[plumbr]{mutaframe}}; in the end add some
-##' attributes to the mutaframe to control the behavior of interaction
-##' (mainly the \code{\link{brush}} object and the
-##' \code{\link{link}}ing specification).
+##' attributes to the mutaframe for the purpose of interaction (mainly
+##' the \code{\link{brush}} object and the \code{\link{link}}ing
+##' specification). A shadow matrix will be attached if any missing
+##' values are present in the original data.
 ##'
-##' @param data a data frame (typically); it will be coerced to a data
-##' frame
+##' When the three arguments \code{color}, \code{fill} and \code{size}
+##' take values as variable names in \code{data}, default palettes
+##' will be used to generate colors and sizes. The sequential color
+##' gradient palette (\code{\link[scales]{seq_gradient_pal}}) will be
+##' applied to continuous variables, and the hue palette
+##' (\code{\link[scales]{hue_pal}}) will be applied to categorical
+##' variables. The area palette (\code{\link[scales]{area_pal}}) is
+##' used to create a size vector when the size variable is
+##' continuous. If any palette is used, an attribute \code{attr(data,
+##' 'Scales')} will be attached to the returned mutaframe, which will
+##' help specific plots to generate legends.
+##'
+##' @param data a data frame (it will be coerced to a data frame if it
+##' is not)
 ##' @param color colors of graphical elements (default black)
-##' corresponding to rows of data
+##' corresponding to rows of data; it can be a vector of valid R
+##' colors, or a name of variable in \code{data} (must be either a
+##' factor or a numeric variable), or an R expression to calculate
+##' colors
 ##' @param fill colors for filling the graphical elements
-##' (e.g. rectangles)
-##' @param size sizes of rows (default 1)
+##' (e.g. rectangles); possible values are similar to \code{color}
+##' @param size sizes of rows (default 1); possible values are similar
+##' to \code{color}, but when using a variable to generate sizes, it
+##' must be a numeric variable
 ##' @param brushed a logical vector indicating whether the rows are
 ##' brushed (default all \code{FALSE})
 ##' @param visible a logical vector indicating whether the rows are
@@ -25,24 +43,7 @@
 ##' @seealso \code{\link[plumbr]{mutaframe}}, \code{\link{brush}},
 ##' \code{\link{link}}
 ##' @export
-##' @examples
-##' iris0 = qdata(iris, color = 'red', brushed = FALSE)
-##' ## thicker line for brushed elements
-##' brush(iris0, 'size') = 3
-##' qparallel(iris0)
-##' ## random colors
-##' iris0$.color = sample(1:8, nrow(iris), replace = TRUE)
-##' ## change the colors to green
-##' iris0$.color = 'green'
-##' ## 'brushing' by command line
-##' for (i in 1:10) {
-##'     selected(iris0) = sample(c(TRUE, FALSE), nrow(iris), replace = TRUE)
-##'     Sys.sleep(1)
-##' }
-##' ## change the brush color to green
-##' brush(iris0, 'color') = 'green'
-##' ## change brushed lines to black
-##' brush(iris0, 'color') = 'black'
+##' @example inst/examples/qdata-ex.R
 qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)

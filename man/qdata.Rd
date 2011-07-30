@@ -6,16 +6,22 @@
   brushed = FALSE, visible = TRUE)
 }
 \arguments{
-  \item{data}{a data frame (typically); it will be coerced
-  to a data frame}
+  \item{data}{a data frame (it will be coerced to a data
+  frame if it is not)}
 
   \item{color}{colors of graphical elements (default black)
-  corresponding to rows of data}
+  corresponding to rows of data; it can be a vector of
+  valid R colors, or a name of variable in \code{data}
+  (must be either a factor or a numeric variable), or an R
+  expression to calculate colors}
 
   \item{fill}{colors for filling the graphical elements
-  (e.g. rectangles)}
+  (e.g. rectangles); possible values are similar to
+  \code{color}}
 
-  \item{size}{sizes of rows (default 1)}
+  \item{size}{sizes of rows (default 1); possible values
+  are similar to \code{color}, but when using a variable to
+  generate sizes, it must be a numeric variable}
 
   \item{brushed}{a logical vector indicating whether the
   rows are brushed (default all \code{FALSE})}
@@ -28,33 +34,63 @@
 }
 \description{
   This function will first check if the names of some
-  predefined row attributes (e.g. \code{.color},
+  pre-defined row attributes (e.g. \code{.color},
   \code{.brushed}) exist in the column names of the data
   (will issue an error if they do); then append these
   columns to the original data to create an augmented data
   as a \code{\link[plumbr]{mutaframe}}; in the end add some
-  attributes to the mutaframe to control the behavior of
+  attributes to the mutaframe for the purpose of
   interaction (mainly the \code{\link{brush}} object and
-  the \code{\link{link}}ing specification).
+  the \code{\link{link}}ing specification). A shadow matrix
+  will be attached if any missing values are present in the
+  original data.
+}
+\details{
+  When the three arguments \code{color}, \code{fill} and
+  \code{size} take values as variable names in \code{data},
+  default palettes will be used to generate colors and
+  sizes. The sequential color gradient palette
+  (\code{\link[scales]{seq_gradient_pal}}) will be applied
+  to continuous variables, and the hue palette
+  (\code{\link[scales]{hue_pal}}) will be applied to
+  categorical variables. The area palette
+  (\code{\link[scales]{area_pal}}) is used to create a size
+  vector when the size variable is continuous. If any
+  palette is used, an attribute \code{attr(data, 'Scales')}
+  will be attached to the returned mutaframe, which will
+  help specific plots to generate legends.
 }
 \examples{
-iris0 <- qdata(iris, color = "red", brushed = FALSE)
-## thicker line for brushed elements
-brush(iris0, "size") <- 3
-qparallel(iris0)
-## random colors
-iris0$.color <- sample(1:8, nrow(iris), replace = TRUE)
-## change the colors to green
-iris0$.color <- "green"
-## 'brushing' by command line
-for (i in 1:10) {
-    selected(iris0) <- sample(c(TRUE, FALSE), nrow(iris), replace = TRUE)
-    Sys.sleep(1)
-}
-## change the brush color to green
-brush(iris0, "color") <- "green"
-## change brushed lines to black
-brush(iris0, "color") <- "black"
+library(cranvas)
+data(tennis)
+str(tennis)
+qtennis <- qdata(tennis, color = Aces, fill = Aces)  # more Aces, closer to red; less, blue
+
+qhist2(Aces, data = qtennis)
+attr(qtennis, "Scales")  # the scales information
+
+selected(qtennis)[1:10] <- TRUE  # brush the first 10 cases
+
+b <- brush(qtennis)  # the brush object
+b$style  # style the brush rectangle
+b$style$color <- "brown"  # a brown brush
+
+b$color  # color of brushed elements
+
+b$color <- "cyan"  # brushed elements become cyan
+
+## linking by categorical variable Country
+link_var(qtennis) <- "Country"
+link_type(qtennis) <- "self"
+## now all elements in the same category as those brushed
+#   will be brushed
+
+attr(qtennis, "Shadow")  # should be NULL, since no misssing values here
+
+
+## we can also use the default black color and gray fill
+qtennis <- qdata(tennis)
+qhist2(Double.Faults, data = qtennis)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
