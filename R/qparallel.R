@@ -389,21 +389,9 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             tmpy = mat2seg(meta$y, meta$identified)
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
-            qfont(painter) = Qt$QFont('Monospace')
-            .labels = b$label.gen(data[meta$identified, meta$vars])
-            bgwidth = qstrWidth(painter, .labels)
-            bgheight = qstrHeight(painter, .labels)
-            ## adjust drawing directions when close to the boundary
-            hflag = meta$limits[2] - meta$pos[1] > bgwidth
-            vflag = meta$pos[2] - meta$limits[3] > bgheight
-            qdrawRect(painter, meta$pos[1], meta$pos[2],
-                      meta$pos[1] + ifelse(hflag, 1, -1) * bgwidth,
-                      meta$pos[2] + ifelse(vflag, -1, 1) * bgheight,
-                      stroke = rgb(1, 1, 1, 0.8), fill = rgb(1, 1, 1, 0.8))
-            qstrokeColor(painter) = b$label.color
-            qdrawText(painter, .labels, meta$pos[1], meta$pos[2],
-                      halign = ifelse(hflag, "left", "right"),
-                      valign = ifelse(vflag, "top", "bottom"))
+            ## identify labels
+            meta$identify.labels = b$label.gen(data[meta$identified, meta$vars])
+            draw_identify(layer, painter, data, meta)
         }
     }
 
@@ -511,4 +499,5 @@ Parallel.meta =
                 xlabels = 'character', ylabels = 'character', limits = 'matrix',
                 segx0 = 'numeric', segx1 = 'numeric', segy0 = 'numeric', segy1 = 'numeric',
                 x0 = 'numeric', y0 = 'numeric', brush.size = 'numeric',
-                identified = 'numeric', manual.brush = 'function')))
+                identified = 'numeric', manual.brush = 'function',
+                identify.labels = 'character')))
