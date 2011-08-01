@@ -94,15 +94,7 @@ qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
         draw_brush(painter, b, meta)
     }
     brush_mouse_press = function(layer, event) {
-        meta$start = as.numeric(event$pos())
-        ## on right click, we can resize the brush; left click: only move the brush
-        if (event$button() == Qt$Qt$RightButton) {
-            b$cursor = 2L
-            meta$brush.move = FALSE
-        } else if (event$button() == Qt$Qt$LeftButton) {
-            b$cursor = 0L
-            meta$brush.move = TRUE
-        }
+        common_mouse_press(layer, event, data, meta)
     }
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
@@ -110,12 +102,11 @@ qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
         if (length(hits))
             hits = meta$intervals %in% hits
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
-        self_link(data)
+        common_mouse_move(layer, event, data, meta)
     }
     brush_mouse_release = function(layer, event) {
         brush_mouse_move(layer, event)
-        b$cursor = 0L  # restore to Arrow cursor
-        save_brush_history(data)  # store brushing history
+        common_mouse_release(layer, event, data, meta)
     }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)

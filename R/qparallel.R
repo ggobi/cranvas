@@ -241,15 +241,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
 
     ## record the coordinates of the mouse on click
     brush_mouse_press = function(layer, event) {
-        meta$start = as.numeric(event$pos())
-        ## on right click, we can resize the brush; left click: only move the brush
-        if (event$button() == Qt$Qt$RightButton) {
-            b$cursor = 2L
-            meta$brush.move = FALSE
-        } else if (event$button() == Qt$Qt$LeftButton) {
-            b$cursor = 0L
-            meta$brush.move = TRUE
-        }
+        common_mouse_press(layer, event, data, meta)
     }
 
     ## monitor keypress event
@@ -326,13 +318,12 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
-        self_link(data)
+        common_mouse_move(layer, event, data, meta)
         cranvas_debug()
     }
     brush_mouse_release = function(layer, event) {
         brush_mouse_move(layer, event)
-        b$cursor = 0L  # restore to Arrow cursor
-        save_brush_history(data)  # store brushing history
+        common_mouse_release(layer, event, data, meta)
     }
 
     ## convert a matrix to coordinates of segments
