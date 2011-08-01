@@ -39,7 +39,7 @@ qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
         meta$xlab = meta$var
         meta$ylab = if (freq) 'Frequency' else 'Density'
         meta$xleft = tmp$breaks[-length(tmp$breaks)]; meta$xright = tmp$breaks[-1]
-        meta$ybottom = 0; meta$ytop = meta$y
+        meta$ybottom = rep(0, length(meta$xleft)); meta$ytop = meta$y
         meta$limits =
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
