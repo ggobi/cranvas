@@ -22,6 +22,7 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @examples ## see source code of qparallel() or qhist()
 draw_identify = function(layer, painter, data, meta) {
+    if (!length(meta$identify.labels)) return()
     b = brush(data)
     qfont(painter) = Qt$QFont('Monospace')
     bgwidth = qstrWidth(painter, meta$identify.labels)
