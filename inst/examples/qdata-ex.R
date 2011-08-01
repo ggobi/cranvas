@@ -3,7 +3,7 @@ data(tennis)
 str(tennis)
 qtennis = qdata(tennis, color = Aces, fill = Aces)  # more Aces, closer to red; less, blue
 
-qhist2(Aces, data = qtennis, main = 'Number of Aces')
+qhist(Aces, data = qtennis, main = 'Number of Aces')
 attr(qtennis, 'Scales')  # the scales information
 
 selected(qtennis)[1:10] = TRUE  # brush the first 10 cases
@@ -26,4 +26,4 @@ attr(qtennis, 'Shadow')  # should be NULL, since no misssing values here
 
 ## we can also use the default black color and gray fill
 qtennis = qdata(tennis)
-qhist2(Double.Faults, data = qtennis)
+qhist(Double.Faults, data = qtennis)

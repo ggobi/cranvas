@@ -4,7 +4,7 @@ data(tennis)
 qtennis = qdata(tennis, color = Serve.Speed, fill = Serve.Speed, size = Aces)
 
 ## then create plots
-qhist2(Serve.Speed, data = qtennis)
+qhist(Serve.Speed, data = qtennis)
 
 qbar(Country, data = qtennis)
 

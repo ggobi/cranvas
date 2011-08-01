@@ -1,33 +1,27 @@
-## examples of qhist()
-library(ggplot2)
 library(cranvas)
-library(scales)
-
 data(tennis)
-qtennis <- qdata(tennis)
+tennis$Matches = factor(tennis$Matches)
+qtennis = qdata(tennis, fill = Matches, color = Matches)
 
-# Not working yet
-#qtennis <- qdata(tennis, fill=dscale(factor(tennis$Matches), hue_pal()))
+qhist(First.Serve.Pct, qtennis)
+qbar(Matches, qtennis)
 
-print(qhist(First.Serve.Pct, qtennis, horizontal = FALSE))
-print(qhist(Serve.Speed, qtennis, horizontal = FALSE))
+qhist(First.Serve.Pct, qtennis, horizontal = TRUE)
 
-print(qhist(First.Serve.Pct, qtennis, splitByCol="Matches",horizontal = FALSE))
-print(qhist(Serve.Speed, qtennis, splitByCol="Matches",horizontal = FALSE))
+qhist(Serve.Speed, qtennis)
+qhist(Serve.Speed, qtennis, freq = FALSE)  # density
 
-# Position argument doesn't seem to work.
-print(qhist(First.Serve.Pct, qtennis, splitByCol="Matches",horizontal = FALSE, postion="dodge"))
-print(qhist(First.Serve.Pct, qtennis, splitByCol="Matches",horizontal = FALSE, postion="relative"))
-print(qhist(First.Serve.Pct, qtennis, splitByCol="Matches",horizontal = FALSE, postion="identity"))
 
-# categorical variable linking
+## categorical variable linking
 data(flea)
 qflea <- qdata(flea)
-print(qhist(tars1, qflea))
-print(qhist(aede1, qflea))
-
-print(qhist(tars1, qflea, splitByCol="species"))
-print(qhist(aede1, qflea, splitByCol="species"))
+qhist(tars1, qflea)
+qhist(aede1, qflea)
 
 link_var(qflea) = 'species'
 link_type(qflea) = 'self'
+## now brush one bar, all rows in the same species will be brushed
+
+## map tars1 to colors
+qflea2 <- qdata(flea, color = tars1, fill = tars1)
+qhist(tars1, qflea2)

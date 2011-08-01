@@ -28,7 +28,6 @@ Suggests:
     productplots
 Collate:
     'axes.R'
-    'bin.R'
     'brush.R'
     'cranvas-package.R'
     'GUI-selector.R'
@@ -48,6 +47,5 @@ Collate:
     'qtourr.R'
     'utils.R'
     'zzz.R'
-    'qhist2.R'
     'data.R'
     'identify.R'

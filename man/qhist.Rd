@@ -1,80 +1,78 @@
 \name{qhist}
 \alias{qhist}
-\title{Create a hist plot}
+\title{Draw a histogram}
 \usage{
-  qhist(x, data, splitByCol = -1, horizontal = FALSE,
-  position = "none", main = NULL, name = NULL, ash = FALSE,
-  start = NULL, nbins = round(sqrt(nrow(data)), 0),
-  binwidth = NULL, bin_algo_str = NULL, xlim = NULL, ylim =
-  NULL, cache = TRUE, ...)
+  qhist(x, data, breaks = 30, freq = TRUE, main, horizontal
+  = FALSE)
 }
 \arguments{
-  \item{data}{mutaframe to use}
+  \item{x}{the name of the numeric variable to be used to
+  draw the histogram}
 
-  \item{x}{variable to plot}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
-  \item{horizontal}{boolean to decide if the bars are
-  horizontal or vertical}
+  \item{breaks}{a single number giving the number of bins,
+  or a numeric vector giving the breakpoints}
 
-  \item{xlim}{= c(min, max) user specifed data range for
-  the x axis, by default range(x)}
+  \item{freq}{draw the frequencies (\code{TRUE}) or
+  densities (\code{FALSE})}
 
-  \item{ylim}{= c(min, max) user specifed data range for
-  the y axis, by default range(y)}
+  \item{main}{the main title (default to be
+  \code{"Histogram of variable name"})}
 
-  \item{...}{arguments supplied to hist() or the hist
-  layer}
+  \item{horizontal}{whether to draw a horizontal or
+  vertical plot}
+}
+\value{
+  A histogram
 }
 \description{
-  Create a hist plot from 1-D numeric data
+  Draw an interactive histogram. It supports some common
+  keyboard interactions (see
+  \code{\link{common_key_press}}) as well as other
+  interactions specific to histograms.
 }
 \details{
-  keystroke Interactions: right/left arrow shift anchors;
-  up/down arrow increase/decrease bin size; M re-adjusts
-  the maximum on the y-axis to 10% above the bin count
+  Arrow keys can be used to change the binwidth as well as
+  the breakpoints in the histograme. Up and Down can
+  increase and decrease the binwidth respectively; Left and
+  Right can move the breakpoints of the bins to the left
+  (smaller) or right (larger).
+
+  In the identify mode, the breakpoints of the bin(s) as
+  well as counts and proportion of cases in the bin(s) are
+  shown as text labels in the plot.
 }
 \examples{
-## examples of qhist()
-library(ggplot2)
 library(cranvas)
-library(scales)
-
 data(tennis)
-qtennis <- qdata(tennis)
+tennis$Matches <- factor(tennis$Matches)
+qtennis <- qdata(tennis, fill = Matches, color = Matches)
 
-# Not working yet
-#qtennis <- qdata(tennis,
-#   fill=dscale(factor(tennis$Matches), hue_pal()))
+qhist(First.Serve.Pct, qtennis)
+qbar(Matches, qtennis)
 
-print(qhist(First.Serve.Pct, qtennis, horizontal = FALSE))
-print(qhist(Serve.Speed, qtennis, horizontal = FALSE))
+qhist(First.Serve.Pct, qtennis, horizontal = TRUE)
 
-print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
-    horizontal = FALSE))
-print(qhist(Serve.Speed, qtennis, splitByCol = "Matches", 
-    horizontal = FALSE))
+qhist(Serve.Speed, qtennis)
+qhist(Serve.Speed, qtennis, freq = FALSE)  # density
 
-# Position argument doesn't seem to work.
-print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
-    horizontal = FALSE, postion = "dodge"))
-print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
-    horizontal = FALSE, postion = "relative"))
-print(qhist(First.Serve.Pct, qtennis, splitByCol = "Matches", 
-    horizontal = FALSE, postion = "identity"))
 
-# categorical variable linking
+## categorical variable linking
 data(flea)
 qflea <- qdata(flea)
-print(qhist(tars1, qflea))
-print(qhist(aede1, qflea))
-
-print(qhist(tars1, qflea, splitByCol = "species"))
-print(qhist(aede1, qflea, splitByCol = "species"))
+qhist(tars1, qflea)
+qhist(aede1, qflea)
 
 link_var(qflea) <- "species"
 link_type(qflea) <- "self"
+## now brush one bar, all rows in the same species will be
+#   brushed
+
+## map tars1 to colors
+qflea2 <- qdata(flea, color = tars1, fill = tars1)
+qhist(tars1, qflea2)
 }
 \author{
-  Barret Schloerke, Di Cook, Heike Hofmann
+  Yihui Xie <\url{http://yihui.name}>
 }
-\keyword{hplot}
