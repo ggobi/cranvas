@@ -358,7 +358,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
             nn = length(tmpx)
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
         }
-        draw_brush(painter, b, meta)
+        draw_brush(layer, painter, data, meta)
         cranvas_debug()
     }
 

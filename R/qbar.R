@@ -74,7 +74,7 @@ qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
             qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, c(table(tmp)),
                       stroke = NA, fill = b$color)
         }
-        draw_brush(painter, b, meta)
+        draw_brush(layer, painter, data, meta)
     }
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)

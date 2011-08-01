@@ -2,16 +2,15 @@
 \alias{draw_brush}
 \title{Draw the brush rectangle}
 \usage{
-  draw_brush(painter, brush, meta)
+  draw_brush(layer, painter, data, meta)
 }
 \arguments{
-  \item{painter}{the painter of the layer on which to draw
-  the brush}
+  \item{layer,painter}{the painter of the layer on which to
+  draw the brush}
 
-  \item{brush}{a brush object created by
-  \code{\link{brush}} and attached to a mutaframe; the
-  color and line width of the brush are stored in this
-  object}
+  \item{data}{the data created by \code{\link{qdata}}; a
+  brush object is in \code{brush(data)}; the color and line
+  width of the brush are stored in this object}
 
   \item{meta}{the meta data (has a least these two
   components: \code{meta$pos} and \code{meta$brush.size})}
