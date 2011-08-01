@@ -366,8 +366,7 @@ qparallel = function(vars, data, scale = "range", names = break_str(vars),
         if (!b$identify) return()
         b$cursor = 2L  # Cross
         meta$pos = as.numeric(event$pos())
-        rect = qrect(matrix(c(meta$pos - c(meta$xr, meta$yr)/100, meta$pos + c(meta$xr, meta$yr)/100), 2, byrow = TRUE))
-        hits = layer$locate(rect) + 1
+        hits = layer$locate(identify_rect(meta)) + 1
         meta$identified = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         qupdate(layer.identify)
     }
