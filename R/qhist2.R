@@ -8,6 +8,10 @@
 ##' breakpoints in the histograme. Up and Down can increase and
 ##' decrease the binwidth respectively; Left and Right can move the
 ##' breakpoints of the bins to the left (smaller) or right (larger).
+##'
+##' In the identify mode, the breakpoints of the bin(s) as well as
+##' counts and proportion of cases in the bin(s) are shown as text
+##' labels in the plot.
 ##' @param x the name of the numeric variable to be used to draw the
 ##' histogram
 ##' @param data a mutaframe created by \code{\link{qdata}}
@@ -131,12 +135,31 @@ qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
     key_release = function(layer, event) {
         common_key_release(layer, event, data, meta)
     }
+    identify_hover = function(layer, event) {
+        if (!b$identify) return()
+        b$cursor = 2L
+        meta$pos = as.numeric(event$pos())
+        meta$identified = layer$locate(identify_rect(meta)) + 1
+        qupdate(layer.identify)
+    }
+    identify_draw = function(layer, painter) {
+        if (!b$identify || !length(meta$identified)) return()
+        idx = meta$identified
+        k = meta$intervals %in% idx
+        meta$identify.labels =
+            sprintf('bin: (%s]\ncount: %s\nproportion: %.2f%%',
+                    paste(meta$breaks[range(idx) + c(0, 1)], collapse = ','),
+                    sum(k), mean(k) * 100)
+        draw_identify(layer, painter, data, meta)
+        qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
+                  meta$ytop[idx], stroke = b$color, fill = NA)
+    }
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
         qlayer(paintFun = main_draw,
                mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-               mouseMove = brush_mouse_move,
+               mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
                focusInFun = function(layer, painter) {
                    focused(data) = TRUE
@@ -144,6 +167,7 @@ qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
                    focused(data) = FALSE
                }, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
+    layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
     layer.xlab = qmtext(meta = meta, side = 1)
     layer.ylab = qmtext(meta = meta, side = 2)
@@ -158,6 +182,7 @@ qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
     layer.root[1, 2] = layer.grid
     layer.root[1, 2] = layer.main
     layer.root[1, 2] = layer.brush
+    layer.root[1, 2] = layer.identify
     layer.root[1, 3] = qlayer()
     layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, 30)
@@ -194,7 +219,7 @@ qhist2 = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
     b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
     })
-    sync_limits(meta, layer.main, layer.brush)  # sync limits of main & brush layers
+    sync_limits(meta, layer.main, layer.brush, layer.identify)  # sync limits
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
@@ -220,4 +245,5 @@ Hist.meta =
                                      start = 'numeric', pos = 'numeric',
                                      brush.move = 'logical', brush.size = 'numeric',
                                      manual.brush = 'function', horizontal = 'logical',
-                                     main = 'character', intervals = 'integer')))
+                                     main = 'character', intervals = 'integer',
+                                     identified = 'numeric', identify.labels = 'character')))
