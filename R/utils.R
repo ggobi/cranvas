@@ -553,3 +553,23 @@ set_cursor = function(view, cursor = 'ArrowCursor') {
     }
     data
 }
+
+##' Create a rectangle to be used in identifying
+##'
+##' To identify cases under the mouse, we need a small rectangle to
+##' look for cases in this rectangle. This function creates such a
+##' rectangle using \code{meta$pos} (mouse position) and
+##' \code{meta$limits} (layer limits).
+##'
+##' Currently the size of the rectangle is 1\% of the layer limits.
+##' @param meta the meta data containing at least \code{meta$pos} and
+##' \code{meta$limits}
+##' @return A Qt rectangle object (see \code{\link[qtbase]{qrect}})
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## see source code of, e.g., qparallel()
+identify_rect = function(meta) {
+    r = apply(meta$limits, 2, diff) / 200
+    p = meta$pos
+    qrect(rbind(p - r, p + r))
+}
