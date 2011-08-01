@@ -29,7 +29,16 @@
   object are linked by default, so the interactions in one
   plot will be reflected in other plots as well.
 
-  See \code{\link{common_key_press}} and
+  A plot can be in either the brush mode (default) or the
+  identify mode. In the brush mode, we can use a rectangle
+  brush to select elements in the plot; in the identify
+  mode, the information about the identified elements under
+  the mouse will be shown in the plot.
+
+  See \code{\link{common_mouse_press}},
+  \code{\link{common_mouse_move}},
+  \code{\link{common_mouse_release}},
+  \code{\link{common_key_press}} and
   \code{\link{common_key_release}} for common interactions
   in all plots, and the documentation of specific plots for
   other possible interactions.
