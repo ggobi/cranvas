@@ -329,6 +329,7 @@ common_mouse_move = function(layer, event, data, meta) {
 ##' @rdname common_events
 ##' @export
 common_mouse_release = function(layer, event, data, meta) {
+    b = brush(data)
     b$cursor = 0L  # restore to Arrow cursor
     save_brush_history(data)  # store brushing history
 }
