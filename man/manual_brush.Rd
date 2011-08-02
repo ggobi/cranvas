@@ -13,7 +13,8 @@
   representing a mouse position}
 
   \item{pause}{the time to pause between two successive
-  mouse positions}
+  mouse positions (recycled to the same length of
+  \code{pos}; each element used after each mouse position)}
 }
 \value{
   \code{NULL}
