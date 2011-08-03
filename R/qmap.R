@@ -15,6 +15,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 
 	 colors <- scale$map(label)
 	 link <- as.character(unique(qdata[,link_var(qdata)]))
+   scale$coldf <- data.frame(values=label, regions=link)
 	 lcolor <- rep(NA, nrow(qmap))
 	 for (i in 1:length(link)) {
 			j <- which(qmap[,link_var(qmap)] == link[i])
@@ -43,7 +44,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale) {
 ##' @export
 ##' @example inst/examples/qmap-ex.R
 qmap <- function(data, longitude, latitude, group, label = group,
-    main = NULL, ...) {
+    main = NULL, filled = TRUE, ...) {
 
     ## check if an attribute exist
     #  browser()
@@ -79,7 +80,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
     lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
 
     draw <- function(item, painter, exposed) {
-
+      if (filled) {
         for (j in 1:nrow(groupdata)) {
         		i <- groupdata$group[j]
             xx <- x[group == i]
@@ -88,7 +89,14 @@ qmap <- function(data, longitude, latitude, group, label = group,
         }
  #print(table(groupdata$color))
 #	print("draw legend")
-
+      } else {
+        for (j in 1:nrow(groupdata)) {
+        		i <- groupdata$group[j]
+            xx <- x[group == i]
+            yy <- y[group == i]
+            qdrawPolygon(painter, xx, yy, stroke = groupdata$color[j], fill = NULL)
+        }
+      }
 
     }
 
@@ -241,6 +249,43 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
     # Key board events ---------------------------------------------------------
 
+      # helper functions
+      df2map <- function(mapdf) {
+        res <- ddply(mapdf, .(group), summarize, 
+          x = c(long, NA),
+          y = c(lat, NA)
+        )
+        x <- res$x
+        y <- res$y
+        chr <- ddply(mapdf, .(group), summarize, 
+          names = region[1]
+        )
+        
+        return(list(x=x, y=y, 
+                    range=c(range(mapdf$long), range(mapdf$lat)),
+                    names=as.character(chr$names)))
+      }
+
+      map2df <- function(map) {
+        pls <- slot(map, "polygons")
+        n <- length(pls)
+      
+        res <- ldply(pls, function(x) {
+          pl <- slot(x, "Polygons")
+          id <- slot(x, "ID")
+              m <- length(pl)
+          coords <- data.frame()
+              for (j in 1:m) {
+                crds <- data.frame(slot(pl[[j]], "coords"))
+                  names(crds) <- c("long", "lat")
+                  crds$ID <- id
+            coords <- rbind(coords, crds)
+               }
+          return(coords)
+        })
+        return(res)
+      }
+
     keyPressFun <- function(item, event, ...) {
         if (event$key() == Qt$Qt$Key_Shift) {
             .extended <<- !.extended
@@ -259,6 +304,48 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
           qupdate(root_layer)
 
+        } 
+        if (event$key() == Qt$Qt$Key_F) {
+          filled <<- !filled
+          qupdate(root_layer)         
+        }
+        if (event$key() == Qt$Qt$Key_C) {
+          print("calculate cartogram:\n")
+          if (!is.null(attr(data, "col.scale"))) {
+            # need to check that it is a continuous color scheme
+            if (is.numeric(attr(data, "col.scale")$coldf[,"values"])) {
+            
+              # first example was from usacrimes
+              usacrimes <- attr(data, "col.scale")$coldf
+              usacrimes <- unique(merge(usacrimes, data.frame(label=groupdata$label), by.x="regions", by.y="label", all.y=T))
+              idx <- which(is.na(usacrimes$values))
+              ## set missing values to ten percent below minimum, unless negative
+              usacrimes$values[idx] <- max(min(usacrimes$values, na.rm=T)/2, min(usacrimes$values, na.rm=T) - 0.1*diff(range(usacrimes$values, na.rm=T)))
+              row.names(usacrimes) <- as.character(usacrimes$regions)
+              usacrimes <- usacrimes[,c(2,1)]
+  #            browser()
+
+              stmap <- df2map(df.data)
+              sp <- maptools::map2SpatialPolygons(stmap, stmap$names)
+              spdf <- sp::SpatialPolygonsDataFrame(sp, usacrimes, match.ID = TRUE)
+              cart <- cart::cartogram(spdf, variable="values")
+
+              cartpls <- sp::SpatialPolygonsDataFrame(cart, usacrimes, match.ID = TRUE)
+              cartdf <- map2df(cartpls)
+
+              cartdf$x <- states$long
+              cartdf$y <- states$lat
+              cartdf <- transform(cartdf, 
+                cartx = (long-min(long))/diff(range(long))*diff(range(x))+min(x),
+                carty = (lat-min(lat))/diff(range(lat))*diff(range(y))+min(y)
+              )
+browser()              
+              data$cartx <- cartdf$long
+              data$carty <- cartdf$lat
+
+
+            }
+          }          
         }
     }
 
@@ -364,7 +451,15 @@ qmap <- function(data, longitude, latitude, group, label = group,
 				qupdate(datalayer)
 				qupdate(brushing_layer)
 			}, {
-			print(sprintf("uncovered event in map: %s", j))
+#			print(sprintf("uncovered event in map: %s", j))
+          df.data <<- data.frame(data)
+      
+          x <<- eval(arguments$longitude, df.data)
+          y <<- eval(arguments$latitude, df.data)
+      
+          qupdate(root_layer)
+				  qupdate(datalayer)
+          qupdate(brushing_layer)
 			})
     })
 
