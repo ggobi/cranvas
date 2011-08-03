@@ -264,7 +264,8 @@ update_brush_size = function(meta, event) {
 ##' length 2 or a matrix of 2 columns with each row representing a
 ##' mouse position
 ##' @param pause the time to pause between two successive mouse
-##' positions
+##' positions (recycled to the same length of \code{pos}; each element
+##' used after each mouse position)
 ##' @return \code{NULL}
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
@@ -273,9 +274,10 @@ manual_brush = function(obj, pos, pause = 0) {
     meta = attr(obj, 'meta')
     if (is.null(meta)) stop("obj must have an attribute 'meta'")
     pos = matrix(pos, ncol = 2)
+    pause = rep(pause, length = nrow(pos))
     for (i in 1:nrow(pos)) {
         meta$manual.brush(pos[i, ])
-        Sys.sleep(pause)
+        Sys.sleep(pause[i])
     }
 }
 
