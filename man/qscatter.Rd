@@ -91,3 +91,6 @@ qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()),
 print(qscatter(tars1, aede1, qflea))
 
 }
+\author{
+  cranvas developers
+}

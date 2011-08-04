@@ -1,27 +1,29 @@
-#' Draw a scatterplot
-#'
-#' Draw a scatterplot with interactions.
-#'
-#' arrow up/down: in-/de-crease size of points
-#' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
-#' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
-#' Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
-#' Key 'r' resets data range to original scale
-#' @param x which designates variable displayed on the horizontal axis
-#' @param y which designates variable displayed on the vertical axis
-#' @param data mutaframe data to use
-#' @param main main title for the plot
-#' @param labeled whether axes should be labeled
-#' @param size point size
-#' @param alpha transparency level, 1=completely opaque
-#' @param width width of plotting device (in pixels) at opening
-#' @param height height of plotting device (in pixels) at opening
-#' @param xlim = c(min, max) user specifed data range for the x axis, by default range(x)
-#' @param ylim = c(min, max) user specifed data range for the y axis, by default range(y)
-#' @param xlab label on horizontal axis, default is name of x variable
-#' @param ylab label on vertical axis, default is name of y variable
-#' @param cache boolean to turn cache on for layers, defaults to TRUE
-#' @example inst/examples/qscat-ex.R
+##' Draw a scatterplot
+##'
+##' Draw a scatterplot with interactions.
+##'
+##' arrow up/down: in-/de-crease size of points
+##' arrow left/right: de-/in-crease alpha level (starts at alpha=1 by default)
+##' Key 'z' toggle zoom on/off (default is off): mouse click & drag will specify a zoom window, reset to default window by click/no drag
+##' Key 'x' toggle focal zoom on/off (default is off): mouse click & drag will specify a zoom window, zoom out by pressing shift key
+##' Key 'r' resets data range to original scale
+##' @param x which designates variable displayed on the horizontal axis
+##' @param y which designates variable displayed on the vertical axis
+##' @param data mutaframe data to use
+##' @param main main title for the plot
+##' @param labeled whether axes should be labeled
+##' @param size point size
+##' @param alpha transparency level, 1=completely opaque
+##' @param width width of plotting device (in pixels) at opening
+##' @param height height of plotting device (in pixels) at opening
+##' @param xlim = c(min, max) user specifed data range for the x axis, by default range(x)
+##' @param ylim = c(min, max) user specifed data range for the y axis, by default range(y)
+##' @param xlab label on horizontal axis, default is name of x variable
+##' @param ylab label on vertical axis, default is name of y variable
+##' @param cache boolean to turn cache on for layers, defaults to TRUE
+##' @author cranvas developers
+##' @export
+##' @example inst/examples/qscat-ex.R
 qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
   labeled = TRUE, size = 4, alpha = 1, width=600, height=600,  xlim=NULL,
   ylim=NULL, xlab=NULL, ylab=NULL, cache = T, ...)
