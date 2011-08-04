@@ -69,6 +69,8 @@ setMapColorByLabel(qstates, qcrimes, Robbery/Population,
 # change to different choropleth map:
 setMapColorByLabel(qstates, qcrimes, log(1e+05 * Robbery/Population + 
     1), scale_colour_gradient2())
+setMapColorByLabel(qstates, qcrimes, log(1e+05 * Burglary/Population + 
+    1), scale_colour_gradient2())
 
 ##############
 
@@ -100,6 +102,40 @@ library(profr)
 
 #res <- profr(print(qmap(qworld, long, lat, group,
 #   label=id)))
+
+
+#################
+# cartogram
+# first example
+
+data(cartdata)
+# cartdata is a cartogram for the rate of burglaries from
+#   the crimes data set
+# the cartogram algorithm is based on the one implemented
+#   in the cart package (R Forge)
+
+# cartdata should have same length as qstates
+
+cartdata$diffx <- cartdata$long - states$long
+cartdata$diffy <- cartdata$lat - states$lat
+
+# map to cartogram
+for (i in 11:1) {
+    x <- (i - 1)/10
+    qstates$long <- with(cartdata, long - x * diffx)
+    qstates$lat <- with(cartdata, lat - x * diffy)
+    scan()
+}
+
+# and back to the map again
+for (i in 1:11) {
+    x <- (i - 1)/10
+    qstates$long <- with(cartdata, long - x * diffx)
+    qstates$lat <- with(cartdata, lat - x * diffy)
+    scan()
+}
+
+
 }
 \author{
   Heike Hofmann

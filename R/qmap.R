@@ -354,6 +354,8 @@ qmap <- function(data, longitude, latitude, group, label = group,
               data$cartx <- cartdf$cartx
               data$carty <- cartdf$carty
 ## display choropleth map
+              data$cartx <- cartdf$cartx
+              data$carty <- cartdf$carty
 
                             
             }
@@ -450,29 +452,32 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
     ## update the brush layer in case of any modifications to the mutaframe
     d.idx = add_listener(data, function(i, j) {
-			switch(j, .brushed = {
-				recalcbrushed()
-				qupdate(brushing_layer)
-			}, .color = {
-				for (i in 1:nrow(groupdata)) {
-					cc <- data$.color[group == groupdata$group[i]]
-					groupdata$color[i] <<- cc[1]
-				}
-				# change legend accordingly
-
-				qupdate(datalayer)
-				qupdate(brushing_layer)
-			}, {
-			print(sprintf("uncovered event in map: %s", j))
-          df.data <<- data.frame(data)
-      
-          x <<- eval(arguments$longitude, df.data)
-          y <<- eval(arguments$latitude, df.data)
-      
-          qupdate(root_layer)
-				  qupdate(datalayer)
+      print(sprintf("qmap::add_listener length(j) == %d", length(j)))
+      if (length(j) == 1) {
+        switch(j, .brushed = {
+          recalcbrushed()
           qupdate(brushing_layer)
-			})
+        }, .color = {
+          for (i in 1:nrow(groupdata)) {
+            cc <- data$.color[group == groupdata$group[i]]
+            groupdata$color[i] <<- cc[1]
+          }
+          # change legend accordingly
+  
+          qupdate(datalayer)
+          qupdate(brushing_layer)
+        }, {
+        print(sprintf("uncovered event in map: %s", j))
+            df.data <<- data.frame(data)
+        
+            x <<- eval(arguments$longitude, df.data)
+            y <<- eval(arguments$latitude, df.data)
+        
+            qupdate(root_layer)
+            qupdate(datalayer)
+            qupdate(brushing_layer)
+        })
+      }
     })
 
     ## update the brush layer if brush attributes change
