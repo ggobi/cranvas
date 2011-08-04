@@ -208,6 +208,7 @@ qhist = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
                }, {
                    compute_coords(); compute_colors(); flip_coords()
                    qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+                   layer.main$invalidateIndex()
                    qupdate(layer.main)
                })
     })
@@ -225,6 +226,7 @@ qhist = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
     }
     meta$breaksChanged$connect(function () {
         compute_coords(); compute_intervals(); compute_colors(); flip_coords()
+        layer.main$invalidateIndex()
         qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis); qupdate(layer.main)
     })
     attr(view, 'meta') = meta

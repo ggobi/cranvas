@@ -3,7 +3,7 @@
 \title{Interactive Maps}
 \usage{
   qmap(data, longitude, latitude, group, label = group,
-  main = NULL, ...)
+  main = NULL, filled = TRUE, ...)
 }
 \arguments{
   \item{data}{a mutaframe which is typically built upon a

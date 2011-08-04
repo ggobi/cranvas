@@ -1,7 +1,7 @@
 library(cranvas)
 data(tennis)
 tennis$Matches = factor(tennis$Matches)
-qtennis = qdata(tennis, fill = Matches, color = Matches)
+qtennis = qdata(tennis)
 
 qhist(First.Serve.Pct, qtennis)
 qbar(Matches, qtennis)
@@ -10,7 +10,6 @@ qhist(First.Serve.Pct, qtennis, horizontal = TRUE)
 
 qhist(Serve.Speed, qtennis)
 qhist(Serve.Speed, qtennis, freq = FALSE)  # density
-
 
 ## categorical variable linking
 data(flea)
