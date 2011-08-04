@@ -1,5 +1,17 @@
+##' Add Colour to Interactive Maps
+##'
+##' Creates a choropleth map from an interactive map generated with qmap.
+##'
+##' 'C' computes a cartogram representation 
+##' @param qmap a mutaframe for the ap representation
+##' @param qdata is the mutaframe containing the variable to be displayed as colour
+##' @param label is the variable in the qdata mutaframe to be displayed
+##' @param scale is a color scheme from the scales package, options include scale_colour_gradient(), scale_colour_gradient2(), ...
+##' @author Heike Hofmann
+##' @export
+##' @example inst/examples/qmap-ex.R
 
-setMapColorByLabel <- function(qmap, qdata, label, scale) {
+setMapColorByLabel <- function(qmap, qdata, label, scale = scale_colour_gradient()) {
 	if (is.null(link_var(qmap)) | is.null(link_var(qdata)))
 		error("data sets need to be linked")
 
@@ -314,7 +326,8 @@ qmap <- function(data, longitude, latitude, group, label = group,
           if (!is.null(attr(data, "col.scale"))) {
             # need to check that it is a continuous color scheme
             if (is.numeric(attr(data, "col.scale")$coldf[,"values"])) {
-            
+
+## create choropleth map            
               # first example was from usacrimes
               usacrimes <- attr(data, "col.scale")$coldf
               usacrimes <- unique(merge(usacrimes, data.frame(label=groupdata$label), by.x="regions", by.y="label", all.y=T))
@@ -323,7 +336,6 @@ qmap <- function(data, longitude, latitude, group, label = group,
               usacrimes$values[idx] <- max(min(usacrimes$values, na.rm=T)/2, min(usacrimes$values, na.rm=T) - 0.1*diff(range(usacrimes$values, na.rm=T)))
               row.names(usacrimes) <- as.character(usacrimes$regions)
               usacrimes <- usacrimes[,c(2,1)]
-  #            browser()
 
               stmap <- df2map(df.data)
               sp <- maptools::map2SpatialPolygons(stmap, stmap$names)
@@ -339,11 +351,11 @@ qmap <- function(data, longitude, latitude, group, label = group,
                 cartx = (long-min(long))/diff(range(long))*diff(range(x))+min(x),
                 carty = (lat-min(lat))/diff(range(lat))*diff(range(y))+min(y)
               )
-browser()              
-              data$cartx <- cartdf$long
-              data$carty <- cartdf$lat
+              data$cartx <- cartdf$cartx
+              data$carty <- cartdf$carty
+## display choropleth map
 
-
+                            
             }
           }          
         }
@@ -451,7 +463,7 @@ browser()
 				qupdate(datalayer)
 				qupdate(brushing_layer)
 			}, {
-#			print(sprintf("uncovered event in map: %s", j))
+			print(sprintf("uncovered event in map: %s", j))
           df.data <<- data.frame(data)
       
           x <<- eval(arguments$longitude, df.data)
