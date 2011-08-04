@@ -111,7 +111,8 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
                 ' A shadow matrix is attached to attr(data, "Shadow")')
         attr(mf, 'Shadow') = shadow
         add_listener(mf, function(i, j) {
-            if (is.null(j) || !(j %in% row_attrs))
+            if (is.null(j)) return()
+            if (!(j %in% row_attrs))
                 attr(mf, 'Shadow') = is.na(as.data.frame(mf[, !(names(mf) %in% row_attrs)]))
         })  # shadow matrix will change when data is changed
     }
