@@ -80,6 +80,12 @@ qmap <- function(data, longitude, latitude, group, label = group,
     ## parameters for the brush
     .brush.attr = attr(data, ".brush.attr")
 
+    ## cartogram changed?
+    cartogram_this <- FALSE
+    at_map <- TRUE
+    cartmaxstep <- 20
+    cartstep <- 0
+
     if (is.null(main))
         .df.title <- paste("Map of", deparse(substitute(data)))
 
@@ -351,9 +357,13 @@ qmap <- function(data, longitude, latitude, group, label = group,
                 cartx = (long-min(long))/diff(range(long))*diff(range(x))+min(x),
                 carty = (lat-min(lat))/diff(range(lat))*diff(range(y))+min(y)
               )
-              data$cartx <- cartdf$cartx
-              data$carty <- cartdf$carty
+## first time the data is set, the listeners don't know what to do with them ...
+              if (! ("cartx" %in% names(data)) | !("carty" %in% names(data))) {
+                data$cartx <- cartdf$cartx
+                data$carty <- cartdf$carty
+              }
 ## display choropleth map
+              cartogram_this <<- TRUE
               data$cartx <- cartdf$cartx
               data$carty <- cartdf$carty
 
@@ -361,6 +371,51 @@ qmap <- function(data, longitude, latitude, group, label = group,
             }
           }          
         }
+        if (event$key() == Qt$Qt$Key_M) {
+          at_map <<- TRUE
+          cartstep <<- 0
+          x <- eval(arguments$longitude, df.data)
+          y <- eval(arguments$latitude, df.data)
+          qupdate(root_layer)          
+        }
+
+        if (event$key() %in% c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)) {  
+          if (cartogram_this) {
+            if (event$key() == Qt$Qt$Key_Right) {
+            # move one step closer from map to cartogram
+              if (cartstep < cartmaxstep) {
+                cartstep <<- cartstep + 1
+
+                x <- eval(arguments$longitude, df.data)
+                y <- eval(arguments$latitude, df.data)
+                diffx <- (data$cartx-x)/cartmaxstep
+                diffy <- (data$carty-y)/cartmaxstep
+                
+                x <<- x + cartstep*diffx
+                y <<- y + cartstep*diffy
+                qupdate(root_layer)
+                qupdate(datalayer)
+              }
+            }
+            if (event$key() == Qt$Qt$Key_Left) {
+            # move one step closer from cartogram to map
+              if (cartstep > 0) {
+                cartstep <<- cartstep - 1
+
+                x <- eval(arguments$longitude, df.data)
+                y <- eval(arguments$latitude, df.data)
+                diffx <- (data$cartx-x)/cartmaxstep
+                diffy <- (data$carty-y)/cartmaxstep
+                
+                x <<- x + cartstep*diffx
+                y <<- y + cartstep*diffy
+                qupdate(root_layer)
+                qupdate(datalayer)
+              }
+            }          
+          }
+        } 
+        
     }
 
 
@@ -452,7 +507,6 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
     ## update the brush layer in case of any modifications to the mutaframe
     d.idx = add_listener(data, function(i, j) {
-      print(sprintf("qmap::add_listener length(j) == %d", length(j)))
       if (length(j) == 1) {
         switch(j, .brushed = {
           recalcbrushed()
@@ -466,6 +520,22 @@ qmap <- function(data, longitude, latitude, group, label = group,
   
           qupdate(datalayer)
           qupdate(brushing_layer)
+        }, carty={
+          # I'm assuming that carty is the second one of the cartogram variables to be changed
+          print("got carty event\n")
+          if (cartogram_this) {
+            print("and will react to it")
+            K <- 50
+            at_map <<- FALSE
+            cartstep <<- cartmaxstep
+            diffx <- (x - data$cartx)/K
+            diffy <- (y - data$carty)/K
+            for (i in 1:K) {
+              x <<- x - diffx
+              y <<- y - diffy
+              qupdate(datalayer)
+            }
+          }
         }, {
         print(sprintf("uncovered event in map: %s", j))
             df.data <<- data.frame(data)
@@ -477,7 +547,8 @@ qmap <- function(data, longitude, latitude, group, label = group,
             qupdate(datalayer)
             qupdate(brushing_layer)
         })
-      }
+      } else 
+        print(sprintf("qmap::add_listener length(j) == %d", length(j)))      
     })
 
     ## update the brush layer if brush attributes change
