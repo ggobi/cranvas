@@ -180,7 +180,7 @@ qscatter <- function(x, y, data, aspect.ratio = NULL, main = NULL,
         qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2] - .bsize[2],
           .bpos[1], .bpos[2], stroke = b$style$color)
         qdrawCircle(painter, .bpos[1], .bpos[2], # hot spot
-          r = 1.5 * b$style$linewidth,
+          r = 0.6 * b$style$linewidth,
           stroke = b$style$color, fill = b$style$color)
 #        qdrawRect(painter, .bpos[1] - .bsize[1], .bpos[2],
 #              .bpos[1], .bpos[2] - .bsize[2],
