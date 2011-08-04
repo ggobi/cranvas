@@ -148,6 +148,7 @@ qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
                    qupdate(layer.main)
                }, {
                    compute_coords(); compute_colors(); compute_bars(); flip_coords()
+                   layer.main$invalidateIndex()
                    qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
                    qupdate(layer.main)
                })
