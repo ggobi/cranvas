@@ -2,7 +2,7 @@
 \alias{qmval}
 \title{Interactive Missing Value Plot}
 \usage{
-  qmval(data, vars, main, varmax = 20, ...)
+qmval(data, vars, main, varmax = 20, ...)
 }
 \arguments{
   \item{data}{a mutaframe which is typically built upon a

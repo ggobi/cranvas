@@ -3,7 +3,7 @@
 \title{Update a mutaframe by the linking on itself through a categorical
 variable}
 \usage{
-  self_link(data)
+self_link(data)
 }
 \arguments{
   \item{data}{a mutaframe created by \code{\link{qdata}}}

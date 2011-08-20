@@ -2,9 +2,9 @@
 \alias{qmosaic}
 \title{Mosaic plot}
 \usage{
-  qmosaic(data, formula, divider = mosaic(), cascade = 0,
-  scale_max = TRUE, na.rm = FALSE, subset = NULL, main =
-  NULL, cache = T, ...)
+qmosaic(data, formula, divider = mosaic(), cascade = 0, 
+    scale_max = TRUE, na.rm = FALSE, subset = NULL, main = NULL, 
+    cache = T, ...)
 }
 \arguments{
   \item{data}{a mutaframe which is typically built upon a

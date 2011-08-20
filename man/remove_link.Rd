@@ -2,7 +2,7 @@
 \alias{remove_link}
 \title{Remove the linking between mutaframes}
 \usage{
-  remove_link(..., id)
+remove_link(..., id)
 }
 \arguments{
   \item{...}{the mutaframes from which the linking will be

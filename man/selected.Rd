@@ -3,9 +3,9 @@
 \alias{selected<-}
 \title{Set or query the selected (brushed) observations}
 \usage{
-  selected(data)
+selected(data)
 
-  selected(data) <- value
+selected(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe}

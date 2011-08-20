@@ -3,9 +3,9 @@
 \alias{visible<-}
 \title{Set or query the visibility of observations}
 \usage{
-  visible(data)
+visible(data)
 
-  visible(data) <- value
+visible(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe}

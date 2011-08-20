@@ -2,7 +2,7 @@
 \alias{save_brush_history}
 \title{Create the brush history}
 \usage{
-  save_brush_history(data, index = selected(data))
+save_brush_history(data, index = selected(data))
 }
 \arguments{
   \item{data}{the mutaframe created by \code{\link{qdata}}}

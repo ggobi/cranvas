@@ -2,10 +2,10 @@
 \alias{qscatter}
 \title{Draw a scatterplot}
 \usage{
-  qscatter(x, y, data, aspect.ratio = NULL, main = NULL,
-  labeled = TRUE, size = 4, alpha = 1, width = 600, height
-  = 600, xlim = NULL, ylim = NULL, xlab = NULL, ylab =
-  NULL, cache = T, ...)
+qscatter(x, y, data, aspect.ratio = NULL, main = NULL, 
+    labeled = TRUE, size = 4, alpha = 1, width = 600, height = 600, 
+    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, cache = T, 
+    ...)
 }
 \arguments{
   \item{x}{which designates variable displayed on the

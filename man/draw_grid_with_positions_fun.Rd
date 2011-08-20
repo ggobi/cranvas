@@ -2,9 +2,8 @@
 \alias{draw_grid_with_positions_fun}
 \title{draw grid with qt}
 \usage{
-  draw_grid_with_positions_fun(plotObj, dataRanges, horiPos
-  = NULL, vertPos = NULL, minor.horiPos = NULL,
-  minor.vertPos = NULL)
+draw_grid_with_positions_fun(plotObj, dataRanges, 
+    horiPos = NULL, vertPos = NULL, minor.horiPos = NULL, minor.vertPos = NULL)
 }
 \arguments{
   \item{plotObj}{Qt plot object to have the layer added to}
@@ -23,4 +22,3 @@
   Barret Schloerke \email{bigbear@iastate.edu}
 }
 \keyword{hplot}
-

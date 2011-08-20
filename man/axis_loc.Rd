@@ -2,7 +2,7 @@
 \alias{axis_loc}
 \title{Calculate pretty locations of axis tick marks}
 \usage{
-  axis_loc(x)
+axis_loc(x)
 }
 \arguments{
   \item{x}{the data vector (either numeric or factor)}

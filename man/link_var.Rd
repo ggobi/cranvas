@@ -3,9 +3,9 @@
 \alias{link_var<-}
 \title{Set or query the linking variable in a mutaframe}
 \usage{
-  link_var(data)
+link_var(data)
 
-  link_var(data) <- value
+link_var(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe (typically created by

@@ -2,7 +2,7 @@
 \alias{qpar}
 \title{Graphical parameters in cranvas}
 \usage{
-  qpar(...)
+qpar(...)
 }
 \arguments{
   \item{...}{options of the form \code{tag = value}}

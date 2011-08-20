@@ -2,8 +2,8 @@
 \alias{draw_x_axes_with_labels_fun}
 \title{draw x axes with qt}
 \usage{
-  draw_x_axes_with_labels_fun(plotObj, dataRanges,
-  axisLabels, labelHoriPos, name = NULL)
+draw_x_axes_with_labels_fun(plotObj, dataRanges, axisLabels, 
+    labelHoriPos, name = NULL)
 }
 \arguments{
   \item{plotObj}{Qt plot object to have the layer added to}
@@ -28,4 +28,3 @@
   Barret Schloerke \email{bigbear@iastate.edu}
 }
 \keyword{hplot}
-

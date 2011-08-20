@@ -2,7 +2,7 @@
 \alias{qbar}
 \title{Create a bar plot}
 \usage{
-  qbar(x, data, space = 0.1, main, horizontal = FALSE)
+qbar(x, data, space = 0.1, main, horizontal = FALSE)
 }
 \arguments{
   \item{x}{a variable name}

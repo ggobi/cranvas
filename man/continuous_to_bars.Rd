@@ -2,8 +2,8 @@
 \alias{continuous_to_bars}
 \title{Continuous items to bins}
 \usage{
-  continuous_to_bars(data = NULL, splitBy = NULL, brushed =
-  NULL, typeInfo = "hist", position = "none", ...)
+continuous_to_bars(data = NULL, splitBy = NULL, brushed = NULL, 
+    typeInfo = "hist", position = "none", ...)
 }
 \arguments{
   \item{data}{data to be used}

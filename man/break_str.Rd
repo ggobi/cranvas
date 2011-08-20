@@ -2,7 +2,7 @@
 \alias{break_str}
 \title{Insert line breaks into character strings}
 \usage{
-  break_str(x, split = "[^[:alnum:]]", ...)
+break_str(x, split = "[^[:alnum:]]", ...)
 }
 \arguments{
   \item{x}{a character vector}

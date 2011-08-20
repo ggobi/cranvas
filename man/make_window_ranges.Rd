@@ -2,8 +2,8 @@
 \alias{make_window_ranges}
 \title{make the window ranges}
 \usage{
-  make_window_ranges(dataRanges, xlab = NULL, ylab = NULL,
-  xtickmarks = FALSE, ytickmarks = FALSE, main = NULL)
+make_window_ranges(dataRanges, xlab = NULL, ylab = NULL, 
+    xtickmarks = FALSE, ytickmarks = FALSE, main = NULL)
 }
 \arguments{
   \item{dataRanges}{ranges of the data so a buffer of space

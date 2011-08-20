@@ -2,7 +2,7 @@
 \alias{set_cursor}
 \title{Set the cursor of a view}
 \usage{
-  set_cursor(view, cursor = "ArrowCursor")
+set_cursor(view, cursor = "ArrowCursor")
 }
 \arguments{
   \item{view}{the view for which to change the cursor

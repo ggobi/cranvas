@@ -7,7 +7,7 @@
   \url{http://sites.nationalacademies.org/pga/resdoc/index.htm}
 }
 \usage{
-  data(nrcstat)
+data(nrcstat)
 }
 \description{
   This data contains the NRC rankings for all the

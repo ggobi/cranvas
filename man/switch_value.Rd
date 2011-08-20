@@ -2,7 +2,7 @@
 \alias{switch_value}
 \title{Switch the values of two variables}
 \usage{
-  switch_value(a, b, envir = .GlobalEnv)
+switch_value(a, b, envir = .GlobalEnv)
 }
 \arguments{
   \item{a}{the name of the first variable (character)}

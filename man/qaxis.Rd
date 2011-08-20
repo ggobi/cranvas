@@ -2,8 +2,8 @@
 \alias{qaxis}
 \title{Create an axis layer}
 \usage{
-  qaxis(parent = NULL, meta = NULL, side = 1, at = NULL,
-  labels = NULL, ...)
+qaxis(parent = NULL, meta = NULL, side = 1, at = NULL, 
+    labels = NULL, ...)
 }
 \arguments{
   \item{parent}{the parent layer (default to be

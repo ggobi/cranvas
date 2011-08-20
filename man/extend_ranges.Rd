@@ -2,7 +2,7 @@
 \alias{extend_ranges}
 \title{Extend the range of data by an amount}
 \usage{
-  extend_ranges(x, f = qpar("mar"))
+extend_ranges(x, f = qpar("mar"))
 }
 \arguments{
   \item{x}{the data vector (either the orginal vector or

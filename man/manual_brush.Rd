@@ -2,7 +2,7 @@
 \alias{manual_brush}
 \title{Manually brush the plot via command line}
 \usage{
-  manual_brush(obj, pos, pause = 0)
+manual_brush(obj, pos, pause = 0)
 }
 \arguments{
   \item{obj}{the plot object with an attribute \code{meta},

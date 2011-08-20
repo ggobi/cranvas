@@ -2,7 +2,7 @@
 \alias{mode_selection}
 \title{Logical operations under different selection mode}
 \usage{
-  mode_selection(x, y, mode = "none")
+mode_selection(x, y, mode = "none")
 }
 \arguments{
   \item{x}{logical: the previous selection status}

@@ -2,8 +2,7 @@
 \alias{qhist}
 \title{Draw a histogram}
 \usage{
-  qhist(x, data, breaks = 30, freq = TRUE, main, horizontal
-  = FALSE)
+qhist(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE)
 }
 \arguments{
   \item{x}{the name of the numeric variable to be used to

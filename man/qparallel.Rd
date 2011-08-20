@@ -2,13 +2,11 @@
 \alias{qparallel}
 \title{Parallel coordinates plot}
 \usage{
-  qparallel(vars, data, scale = "range", names =
-  break_str(vars), na.action = na_impute, center = NULL,
-  order = c("none", "MDS", "ANOVA", "randomForest"),
-  horizontal = TRUE, glyph = c("auto", "line", "tick",
-  "circle", "square", "triangle"), boxplot = FALSE, boxwex,
-  jitter = NULL, amount = NULL, main, alpha = 1, draw.range
-  = TRUE)
+qparallel(vars, data, scale = "range", names = break_str(vars), 
+    na.action = na_impute, center = NULL, order = c("none", "MDS", 
+        "ANOVA", "randomForest"), horizontal = TRUE, glyph = c("auto", 
+        "line", "tick", "circle", "square", "triangle"), boxplot = FALSE, 
+    boxwex, jitter = NULL, amount = NULL, main, alpha = 1, draw.range = TRUE)
 }
 \arguments{
   \item{vars}{variables to show; can be a character vector

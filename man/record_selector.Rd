@@ -2,7 +2,7 @@
 \alias{record_selector}
 \title{Select a subset of data through a GUI to be brushed}
 \usage{
-  record_selector(vars, data)
+record_selector(vars, data)
 }
 \arguments{
   \item{data}{a mutaframe created by \code{\link{qdata}}

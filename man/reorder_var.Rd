@@ -2,9 +2,9 @@
 \alias{reorder_var}
 \title{Re-order the columns of a data frame based on MDS or ANOVA}
 \usage{
-  reorder_var(data, type = c("none", "MDS", "ANOVA",
-  "randomForest"), vars = names(data), numcol =
-  sapply(data, is.numeric), x = data$.color)
+reorder_var(data, type = c("none", "MDS", "ANOVA", 
+    "randomForest"), vars = names(data), numcol = sapply(data, 
+    is.numeric), x = data$.color)
 }
 \arguments{
   \item{data}{a data frame (or similar data structures like

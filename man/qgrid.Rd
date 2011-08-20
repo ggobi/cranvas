@@ -2,8 +2,8 @@
 \alias{qgrid}
 \title{Create a background grid layer}
 \usage{
-  qgrid(parent = NULL, meta = NULL, xat, yat, xlim, ylim,
-  minor = "xy", ...)
+qgrid(parent = NULL, meta = NULL, xat, yat, xlim, 
+    ylim, minor = "xy", ...)
 }
 \arguments{
   \item{parent}{the parent layer (default to be

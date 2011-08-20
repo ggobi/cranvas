@@ -2,7 +2,7 @@
 \alias{link}
 \title{Link mutaframes by a common categorical variable}
 \usage{
-  link(...)
+link(...)
 }
 \arguments{
   \item{...}{the mutaframes (at least two different

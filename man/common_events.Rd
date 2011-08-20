@@ -6,15 +6,15 @@
 \alias{common_mouse_release}
 \title{Some common processings in the keyboard and mouse events}
 \usage{
-  common_key_press(layer, event, data, meta)
+common_key_press(layer, event, data, meta)
 
-  common_key_release(layer, event, data, meta)
+common_key_release(layer, event, data, meta)
 
-  common_mouse_press(layer, event, data, meta)
+common_mouse_press(layer, event, data, meta)
 
-  common_mouse_move(layer, event, data, meta)
+common_mouse_move(layer, event, data, meta)
 
-  common_mouse_release(layer, event, data, meta)
+common_mouse_release(layer, event, data, meta)
 }
 \arguments{
   \item{layer}{the layer argument in the event callback}

@@ -3,9 +3,9 @@
 \alias{brush<-}
 \title{Set or query the brush attributes}
 \usage{
-  brush(data, attr)
+brush(data, attr)
 
-  brush(data, attr) <- value
+brush(data, attr) <- value
 }
 \arguments{
   \item{data}{the mutaframe created by \code{\link{qdata}},

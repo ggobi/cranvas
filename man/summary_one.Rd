@@ -2,7 +2,7 @@
 \alias{summary_one}
 \title{Give a column-wise scalar summary of the data frame or matrix}
 \usage{
-  summary_one(x, fun = median, ...)
+summary_one(x, fun = median, ...)
 }
 \arguments{
   \item{x}{the data frame or matrix to be summarized}

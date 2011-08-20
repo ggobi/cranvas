@@ -2,7 +2,7 @@
 \alias{match_key}
 \title{Match keys from a keyboard event}
 \usage{
-  match_key(key, event)
+match_key(key, event)
 }
 \arguments{
   \item{key}{a character vector of key names (see the

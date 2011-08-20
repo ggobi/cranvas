@@ -3,9 +3,9 @@
 \alias{link_type<-}
 \title{Set or query the type of linking}
 \usage{
-  link_type(data)
+link_type(data)
 
-  link_type(data) <- value
+link_type(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe (typically created by

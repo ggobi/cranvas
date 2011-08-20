@@ -2,8 +2,8 @@
 \alias{qmtext}
 \title{Create a margin text layer}
 \usage{
-  qmtext(parent = NULL, meta = NULL, side = 1, text = "", x
-  = 0.5, y = 0.5, cex = 1, ...)
+qmtext(parent = NULL, meta = NULL, side = 1, text = "", 
+    x = 0.5, y = 0.5, cex = 1, ...)
 }
 \arguments{
   \item{parent}{the parent layer (default to be

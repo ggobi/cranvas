@@ -2,7 +2,7 @@
 \alias{divide_by_maximum}
 \title{Divide by maximum.}
 \usage{
-  divide_by_maximum(val, maxVal = val)
+divide_by_maximum(val, maxVal = val)
 }
 \arguments{
   \item{val}{value to be scaled}

@@ -1,34 +1,28 @@
-\name{qmap}
-\alias{qmap}
-\title{Interactive Maps}
+\name{setMapColorByLabel}
+\alias{setMapColorByLabel}
+\title{Add Colour to Interactive Maps}
 \usage{
-qmap(data, longitude, latitude, group, label = group, 
-    main = NULL, filled = TRUE, ...)
+setMapColorByLabel(qmap, qdata, label, scale = scale_colour_gradient())
 }
 \arguments{
-  \item{data}{a mutaframe which is typically built upon a
-  data frame along with several row attributes}
+  \item{qmap}{a mutaframe for the ap representation}
 
-  \item{latitude}{spatial x variable}
+  \item{qdata}{is the mutaframe containing the variable to
+  be displayed as colour}
 
-  \item{longitude}{spatial y variable}
+  \item{label}{is the variable in the qdata mutaframe to be
+  displayed}
 
-  \item{group}{grouping variable for polygons}
-
-  \item{main}{window title, by default 'Map of <data set>'}
-
-  \item{...}{}
-}
-\value{
-  NULL
+  \item{scale}{is a color scheme from the scales package,
+  options include scale_colour_gradient(),
+  scale_colour_gradient2(), ...}
 }
 \description{
-  Create an interactive map from qdata.
+  Creates a choropleth map from an interactive map
+  generated with qmap.
 }
 \details{
-  mouse wheel events are translated to focal zoom
-
-  'R' resets maps to original scale after zoom
+  'C' computes a cartogram representation
 }
 \examples{
 library(cranvas)

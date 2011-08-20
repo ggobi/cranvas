@@ -3,9 +3,9 @@
 \alias{focused<-}
 \title{Set or query the focus status}
 \usage{
-  focused(data)
+focused(data)
 
-  focused(data) <- value
+focused(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe}

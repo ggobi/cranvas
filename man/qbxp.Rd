@@ -2,8 +2,8 @@
 \alias{qbxp}
 \title{Create a boxplot layer}
 \usage{
-  qbxp(parent = NULL, vars = NULL, data, subset = FALSE,
-  at, width, horizontal = FALSE, sister = NULL, ...)
+qbxp(parent = NULL, vars = NULL, data, subset = FALSE, 
+    at, width, horizontal = FALSE, sister = NULL, ...)
 }
 \arguments{
   \item{parent}{the parent layer in which to embed this

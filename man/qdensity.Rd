@@ -2,9 +2,9 @@
 \alias{qdensity}
 \title{Draw a univariate density plot}
 \usage{
-  qdensity(x, data, main = NULL, binwidth = NULL, size = 4,
-  alpha = 0.5, xlim = NULL, ylim = NULL, xlab = NULL, ylab
-  = NULL, cache = T, ...)
+qdensity(x, data, main = NULL, binwidth = NULL, size = 4, 
+    alpha = 0.5, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, 
+    cache = T, ...)
 }
 \arguments{
   \item{x}{which designates variable displayed on the
@@ -82,7 +82,6 @@ print(qdensity(aede1, qflea))
 print(qdensity(aede3, qflea))
 
 #### test colors
-qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()), 
-    color = dscale(flea$species, hue_pal()))
+qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()), color = dscale(flea$species, hue_pal()))
 print(qdensity(tars1, qflea))
 }
