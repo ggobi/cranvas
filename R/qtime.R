@@ -38,6 +38,7 @@
 ##' @param xlab label on horizontal axis, default is name of x variable
 ##' @param ylab label on vertical axis, default is name of y variable
 ##' @example inst/examples/qtime-ex.R
+##' @export
 
 
 qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
@@ -129,6 +130,23 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       paste(meta$varname$y,collapse=', '))
   }
 
+  ## SetLimits Function
+  setLimitsFunc <- function(x){
+    qupdate(bg_layer)
+    bg_layer$setLimits(meta$lims)
+  if (x=="x") {
+      qupdate(xaxis_layer)
+      xaxis_layer$setLimits(qrect(meta$datarange[1:2], c(0, 1)))
+	} else if (x=="y") {
+      qupdate(yaxis_layer)
+      yaxis_layer$setLimits(qrect(c(0, 1), meta$datarange[3:4]))
+    }
+	main_circle_layer$setLimits(meta$lims)
+    main_line_layer$setLimits(meta$lims)
+    brush_layer$setLimits(meta$lims)
+    query_layer$setLimits(meta$lims)
+  }
+  
 ####################
   ## event handlers ##----------
 ####################
@@ -224,14 +242,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         meta$xtmp[meta$time<=tmpXzoom[1]]=NA
         meta$xtmp[meta$time>=tmpXzoom[2]]=NA
       }
-      qupdate(bg_layer)
-      bg_layer$setLimits(meta$lims)
-      qupdate(xaxis_layer)
-      xaxis_layer$setLimits(qrect(meta$datarange[1:2], c(0, 1)))
-      main_circle_layer$setLimits(meta$lims)
-      main_line_layer$setLimits(meta$lims)
-      brush_layer$setLimits(meta$lims)
-      query_layer$setLimits(meta$lims)
+      setLimitsFunc("x")
     } else if (event$key()==Qt$Qt$Key_Left){
       ## arrow left
       
@@ -282,14 +293,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         meta$xtmp[meta$time<tmpXzoom[1]]=NA
         meta$xtmp[meta$time>tmpXzoom[2]]=NA
       }}
-      qupdate(bg_layer)
-      bg_layer$setLimits(meta$lims)
-      qupdate(xaxis_layer)
-      xaxis_layer$setLimits(qrect(meta$datarange[1:2], c(0, 1)))
-      main_circle_layer$setLimits(meta$lims)
-      main_line_layer$setLimits(meta$lims)
-      brush_layer$setLimits(meta$lims)
-      query_layer$setLimits(meta$lims)
+	  setLimitsFunc("x")
 
     } else if (event$key() == Qt$Qt$Key_U) {
         ## Key U (for Up)
@@ -300,14 +304,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           }
           meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
           meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
-        # qupdate(bg_layer)
-          bg_layer$setLimits(meta$lims)
-        # qupdate(yaxis_layer)
-          yaxis_layer$setLimits(qrect(c(0, 1), meta$datarange[3:4]))
-          main_circle_layer$setLimits(meta$lims)
-          main_line_layer$setLimits(meta$lims)
-          brush_layer$setLimits(meta$lims)
-          query_layer$setLimits(meta$lims)
+		  setLimitsFunc("y")
         } else if (!is.null(meta$group) & length(meta$group)>0) {
           meta$vertconst <- meta$vertconst + 0.05
           if (meta$vertconst>1) meta$vertconst <- 1
@@ -324,14 +321,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           }
           meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
           meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
-          # qupdate(bg_layer)
-          bg_layer$setLimits(meta$lims)
-          # qupdate(yaxis_layer)
-          yaxis_layer$setLimits(qrect(c(0, 1), meta$datarange[3:4]))
-          main_circle_layer$setLimits(meta$lims)
-          main_line_layer$setLimits(meta$lims)
-          brush_layer$setLimits(meta$lims)
-          query_layer$setLimits(meta$lims)
+          setLimitsFunc("y")
         }
     } else if (event$key() == Qt$Qt$Key_D) {
         ## Key D (for Down)
@@ -340,14 +330,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           meta$ytmp <- meta$y
           meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
           meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])      
-          # qupdate(bg_layer)
-          bg_layer$setLimits(meta$lims)
-          # qupdate(yaxis_layer)
-          yaxis_layer$setLimits(qrect(c(0, 1), meta$datarange[3:4]))
-          main_circle_layer$setLimits(meta$lims)
-          main_line_layer$setLimits(meta$lims)
-          brush_layer$setLimits(meta$lims)
-          query_layer$setLimits(meta$lims)
+          setLimitsFunc("y")
         } else if (!is.null(meta$group) & length(meta$group)>0) {
           meta$vertconst <- meta$vertconst - 0.05
           if (meta$vertconst<0) meta$vertconst <- 0
@@ -370,14 +353,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           }
           meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
           meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])       
-          # qupdate(bg_layer)
-          bg_layer$setLimits(meta$lims)
-          # qupdate(yaxis_layer)
-          yaxis_layer$setLimits(qrect(c(0, 1), meta$datarange[3:4]))
-          main_circle_layer$setLimits(meta$lims)
-          main_line_layer$setLimits(meta$lims)
-          brush_layer$setLimits(meta$lims)
-          query_layer$setLimits(meta$lims)
+          setLimitsFunc("y")
         } 
     }
     if (length(i <- which(event$key() == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
@@ -649,7 +625,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   attr(view, 'meta') <- meta
   view
 }
-
 
 Time.meta =
     setRefClass("Time_meta", fields =
