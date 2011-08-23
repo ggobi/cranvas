@@ -496,7 +496,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
                 r = 1.5 * b$style$linewidth,
                 stroke = b$style$color, fill = b$style$color)    
     if (!any(selected(data))) return()
-    hdata <- subset(data.frame(meta$xtmp,meta$ytmp[,unique(meta$hitscol)]), .brushed)
     if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
       meta$hitsrow <- meta$orderBack[selected(data)]
       meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
