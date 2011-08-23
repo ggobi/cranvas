@@ -58,6 +58,38 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   meta$xtmp <- meta$time
   meta$xlab <- ifelse(is.null(xlab), meta$varname$x, xlab)
   
+  ## Period for time series / Group for panel data
+  if (is.null(call$period) & is.null(call$group)) {
+    meta$vargroup <- rep(1, nrow(data))
+    meta$orderEnter <- order(meta$time, decreasing=FALSE)
+    meta$orderBack <- rank(meta$time,ties.method='first')
+  } else {
+    if (!is.null(call$period)) {
+      meta$varname$g <- as.character(call$period)
+    } else {
+      meta$varname$g <- as.character(call$group)
+    }
+    meta$orderEnter <- order(as.factor(data[,meta$varname$g]), meta$time, decreasing=FALSE)
+    meta$group <- as.factor(data[meta$orderEnter,meta$varname$g])
+    meta$orderBack <- rank(meta$time+as.integer(as.factor(data[,meta$varname$g]))*(max(meta$time,na.rm=TRUE)+1),
+                           ties.method='first')
+
+    meta$vargroup <- meta$group
+  }
+  if (!all(meta$orderEnter==1:nrow(data))) {
+    meta$time <- meta$time[meta$orderEnter]
+    meta$xtmp <- meta$xtmp[meta$orderEnter]
+  }
+  if (!is.null(call$period)) {
+    pdLen <- tapply(meta$time,meta$group,length)
+    if (!all(pdLen==pdLen[1])) {
+      warning('Period lengths are not the same.')
+    }
+    ## need to be modified here !!
+    meta$time <- rep(1:pdLen[1],length=length(meta$time)) 
+    meta$xtmp <- meta$time
+  }
+    
   ## Y axis setting
   if (inherits(y, 'formula')){
     if (length(y)!=2){stop("Wrong formula format.")}
@@ -65,7 +97,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   } else {
     meta$varname$y <- as.character(call$y) 
   }
-  meta$yorig <- as.data.frame(data[,meta$varname$y,drop=FALSE])
+  meta$yorig <- as.data.frame(data[meta$orderEnter,meta$varname$y,drop=FALSE])
   meta$y <- meta$yorig
   if (ncol(meta$yorig)>1) {
     for (i in 1:ncol(meta$yorig)) {
@@ -75,26 +107,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   }
   meta$ytmp <- meta$y
   meta$ylab <- ifelse(is.null(ylab), paste(meta$varname$y,collapse=', '), ylab)
- 
-  ## Period for time series / Group for panel data
-  if (!is.null(call$period)) {
-    meta$varname$g <- as.character(call$period)
-    meta$group <- as.factor(data[,meta$varname$g])
-    pdLen <- tapply(meta$time,meta$group,length)
-    if (!all(pdLen==pdLen[1])) {
-      warning('Period lengths are not the same.')
-    }
-    ## need to be modified here !!
-    meta$time <- rep(1:pdLen[1],length=length(meta$time)) 
-    meta$xtmp <- meta$time
-    meta$vargroup <- meta$group
-  } else  if (!is.null(call$group)) {
-    meta$varname$g <- as.character(call$group)
-    meta$group <- as.factor(data[,meta$varname$g])
-    meta$vargroup <- meta$group
-  } else {
-    meta$vargroup <- rep(1, nrow(data))
-  }
 
   ## Other settings
   meta$wrap.group <- rep(1, nrow(data))
@@ -105,46 +117,46 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
   ## Range etc.
   meta$zoomsize <- diff(range(meta$xtmp, na.rm = TRUE))
-  meta$datarange <- c(extend_ranges(meta$xtmp),
-                      extend_ranges(range(meta$ytmp, na.rm = TRUE)))
-  meta$lims <- qrect(meta$datarange[c(1, 2)],
-                     meta$datarange[c(3, 4)])
+  meta$limits <- matrix(c(extend_ranges(meta$xtmp),
+                        extend_ranges(range(meta$ytmp, na.rm = TRUE))), nrow=2)
+  meta$xat <- axis_loc(meta$limits[1:2])
+  meta$yat <- axis_loc(meta$limits[3:4])
+  meta$xlabels <- format(meta$xat)
+  meta$ylabels <- format(meta$yat)
 
   ## Radius etc.
   meta$radius <- size
   meta$alpha <- alpha
-  meta$stroke <- data$.color
-  meta$fill <- data$.fill
+  meta$stroke <- data$.color[meta$orderEnter]
+  meta$fill <- data$.fill[meta$orderEnter]
 
   ## Brush etc.
   meta$pos <- c(NA, NA)
   meta$query.pos <- NULL
   meta$start <- c(NA, NA)
   meta$brush.move <- TRUE
-  meta$brush.size <- c(diff(meta$datarange[c(1, 2)]),
-                       diff(meta$datarange[c(3, 4)]))/30
+  meta$brush.size <- c(diff(meta$limits[1:2]),
+                       diff(meta$limits[3:4]))/30
 
   ## Title
-  if (is.null(main)) {
-    main = paste("Time Plot of", meta$varname$x, "And", 
-      paste(meta$varname$y,collapse=', '))
-  }
-
-  ## SetLimits Function
-  setLimitsFunc <- function(x){
-    qupdate(bg_layer)
-    bg_layer$setLimits(meta$lims)
-  if (x=="x") {
-      qupdate(xaxis_layer)
-      xaxis_layer$setLimits(qrect(meta$datarange[1:2], c(0, 1)))
-	} else if (x=="y") {
-      qupdate(yaxis_layer)
-      yaxis_layer$setLimits(qrect(c(0, 1), meta$datarange[3:4]))
+  meta$main <- if (is.null(main)) 
+                 sprintf("Time Plot of %s And %s", 
+                         meta$varname$x, paste(meta$varname$y, collapse=', ')) else main
+  
+  ## set limits for yaxis
+  meta.yaxis <- function() {
+    if (is.null(meta$group) | !meta$vertconst){
+      meta$yat <- axis_loc(meta$limits[3:4])
+    } else {
+      meta$yat <- (as.integer(unique(meta$group))-1)*meta$vertconst+0.5
     }
-	main_circle_layer$setLimits(meta$lims)
-    main_line_layer$setLimits(meta$lims)
-    brush_layer$setLimits(meta$lims)
-    query_layer$setLimits(meta$lims)
+    if (meta$vertconst==0) {
+      meta$ylabels <- format(meta$yat)
+      meta$ylab <- ifelse(is.null(ylab), paste(meta$varname$y,collapse=', '), ylab)
+    } else {
+      meta$ylabels <- format(unique(meta$group))
+      meta$ylab <- meta$varname$g
+    }
   }
   
 ####################
@@ -163,16 +175,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     }
   }
 
-  ##  brush_mouse_release <- function(layer, event){
-  ##    .bend <- as.numeric(event$pos())
-  ##    idx <- tdf$x>min(.bstart[1],.bend[1]) &
-  ##    y>min(.bstart[2],.bend[2]) &
-  ##    tdf$x<max(.bstart[1],.bend[1]) &
-  ##    y<max(.bstart[2],.bend[2])
-  ##    selected(data) <- idx
-  ##    if (length(idx)) qupdate(brush_layer)
-  ##  }
-
   brush_mouse_move <- function(layer, event) {
     .new.brushed <- rep(FALSE, nrow(data))
     rect <- qrect(update_brush_size(meta))
@@ -185,9 +187,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     meta$hitsrow[meta$hitsrow==0] <- nrow(data)
     meta$hitscol <- (hits-0.0000001)%/%nrow(data)+1
     
-    .new.brushed[meta$hitsrow] <- TRUE
-    selected(data) <- mode_selection(selected(data), .new.brushed,
-                                     mode = b$mode)
+    #.new.brushed[meta$hitsrow] <- TRUE
+    selected(data) <- meta$orderEnter[meta$hitsrow] #mode_selection(selected(data), .new.brushed, mode = b$mode)
     if (!is.null(meta$group)) self_link(data)
   }
 
@@ -198,6 +199,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       ## key G for gear(shift the wrapping speed)
       
       meta$wrap.shift <- c(meta$wrap.shift[-1],meta$wrap.shift[1])
+      qupdate(layer.text)
     } else if (event$key()==Qt$Qt$Key_Right){
       ## arrow right
 
@@ -211,8 +213,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
             meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
             meta$xtmp[meta$xtmp==0] <- zoombound
           }
-          meta$datarange[1:2] <- extend_ranges(meta$xtmp)
-          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+          meta$limits[1:2] <- extend_ranges(meta$xtmp)
         } else {
         zoombound <- crt_range-meta$wrap.shift[1]
         if (meta$wrap.shift[1]==1 & zoombound<3){
@@ -227,8 +228,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
           meta$xtmp[meta$xtmp==0] <- zoombound
         }
-        meta$datarange[1:2] <- extend_ranges(meta$xtmp)
-        meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+        meta$limits[1:2] <- extend_ranges(meta$xtmp)
         }
       } else {
         meta$zoomsize <- meta$zoomsize-2
@@ -236,13 +236,13 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         tmpXzoom <- meta$start[1] + c(-0.5,0.5) * meta$zoomsize
         tmpXzoom[1] <- max(tmpXzoom[1], min(meta$time, na.rm=TRUE))
         tmpXzoom[2] <- min(tmpXzoom[2], max(meta$time, na.rm=TRUE))
-        meta$datarange[1:2] <- extend_ranges(tmpXzoom)
-        meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+        meta$limits[1:2] <- extend_ranges(tmpXzoom)
         meta$xtmp <- meta$time
         meta$xtmp[meta$time<=tmpXzoom[1]]=NA
         meta$xtmp[meta$time>=tmpXzoom[2]]=NA
       }
-      setLimitsFunc("x")
+      meta$xat <- axis_loc(meta$limits[1:2])
+      meta$xlabels <- format(meta$xat)
     } else if (event$key()==Qt$Qt$Key_Left){
       ## arrow left
       
@@ -250,8 +250,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           meta$xtmp <- meta$time
           meta$wrap.group <- 1
           meta$zoomsize <- diff(range(meta$xtmp, na.rm = TRUE))
-          meta$datarange[1:2] <- extend_ranges(meta$xtmp)
-          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+          meta$limits[1:2] <- extend_ranges(meta$xtmp)
       } else {
       if (wrap) {
         zoombound <- crt_range+meta$wrap.shift[1]
@@ -277,8 +276,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
             meta$xtmp[meta$xtmp==0] <- zoombound
           }
         }
-        meta$datarange[1:2] <- extend_ranges(meta$xtmp)
-        meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])        
+        meta$limits[1:2] <- extend_ranges(meta$xtmp)       
       } else {
         meta$zoomsize <- meta$zoomsize+2
         if (meta$zoomsize > 2*diff(range(meta$time,na.rm=TRUE))) {
@@ -287,13 +285,13 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         tmpXzoom <- meta$start[1] + c(-0.5,0.5) * meta$zoomsize
         tmpXzoom[1] <- max(tmpXzoom[1], min(meta$time, na.rm=TRUE))
         tmpXzoom[2] <- min(tmpXzoom[2], max(meta$time, na.rm=TRUE))
-        meta$datarange[1:2] <- extend_ranges(tmpXzoom)
-        meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
+        meta$limits[1:2] <- extend_ranges(tmpXzoom)
         meta$xtmp <- meta$time
         meta$xtmp[meta$time<tmpXzoom[1]]=NA
         meta$xtmp[meta$time>tmpXzoom[2]]=NA
       }}
-	  setLimitsFunc("x")
+	  meta$xat <- axis_loc(meta$limits[1:2])
+    meta$xlabels <- format(meta$xat)
 
     } else if (event$key() == Qt$Qt$Key_U) {
         ## Key U (for Up)
@@ -302,9 +300,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           for (i in 1:ncol(meta$y)){
             meta$ytmp[,i] <- meta$y[,i]+i
           }
-          meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
-          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
-		  setLimitsFunc("y")
         } else if (!is.null(meta$group) & length(meta$group)>0) {
           meta$vertconst <- meta$vertconst + 0.05
           if (meta$vertconst>1) meta$vertconst <- 1
@@ -319,25 +314,20 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
                   (as.integer(meta$group)-1)*meta$vertconst
             }
           }
-          meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
-          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])
-          setLimitsFunc("y")
         }
+        meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
+        meta.yaxis()
     } else if (event$key() == Qt$Qt$Key_D) {
         ## Key D (for Down)
         
         if (ncol(meta$y)>1 & event$modifiers() == Qt$Qt$ShiftModifier) {
           meta$ytmp <- meta$y
-          meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
-          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])      
-          setLimitsFunc("y")
         } else if (!is.null(meta$group) & length(meta$group)>0) {
           meta$vertconst <- meta$vertconst - 0.05
           if (meta$vertconst<0) meta$vertconst <- 0
           if (!meta$vertconst) {
             meta$ytmp <- meta$y
-            meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
-            meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])         
+            meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))      
           } else {
             if (ncol(meta$y)==1){
              meta$ytmp <- (meta$y-min(meta$y,na.rm=TRUE))/
@@ -351,10 +341,9 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
               }
             }
           }
-          meta$datarange[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
-          meta$lims <- qrect(meta$datarange[c(1, 2)], meta$datarange[c(3, 4)])       
-          setLimitsFunc("y")
         } 
+          meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))  
+          meta.yaxis()
     }
     if (length(i <- which(event$key() == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
       ## arrow up/down
@@ -375,15 +364,16 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     ypos <- meta$query.pos[2]
     
     queryaround <- ifelse(meta$radius<=4,8/meta$radius,1)
-    xrange <- meta$radius/root_layer$size$width() *
-      diff(meta$datarange[c(1, 2)]) * queryaround
-    yrange <- meta$radius/root_layer$size$height() *
-      diff(meta$datarange[c(3, 4)]) * queryaround
+    xrange <- meta$radius/layer.root$size$width() *
+      diff(meta$limits[c(1, 2)]) * queryaround
+    yrange <- meta$radius/layer.root$size$height() *
+      diff(meta$limits[c(3, 4)]) * queryaround
 
     rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
                            xpos + xrange, ypos + yrange),
                          2, byrow = TRUE))
     main_circle_layer$invalidateIndex()
+    main_line_layer$invalidateIndex()
     hits <- main_circle_layer$locate(rect) + 1
 
     ## Nothing under mouse?
@@ -405,7 +395,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       hitscol <- hitscol[distidx]
     }
     if (is.null(meta$group)) {hitspd <- NULL} else {hitspd <- meta$varname$g}
-    info <- as.data.frame(data[hitsrow,
+    info <- as.data.frame(data[meta$orderEnter[hitsrow],
                                c(meta$varname$x, meta$varname$y[hitscol],hitspd)])
 
     ## label position
@@ -432,8 +422,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     bgheight <- qstrHeight(painter, infostring)
 
     ## adjust drawing directions when close to the boundary
-    hflag <- meta$datarange[2] - xpos > bgwidth
-    vflag <- ypos - meta$datarange[3] > bgheight
+    hflag <- meta$limits[2] - xpos > bgwidth
+    vflag <- ypos - meta$limits[3] > bgheight
     qdrawRect(painter, labelxpos, labelypos,
               labelxpos + ifelse(hflag, 1, -1) * bgwidth,
               labelypos + ifelse(vflag, -1, 1) * bgheight,
@@ -460,31 +450,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 ############
   ## layers ##----------
 ############
-
-  xaxis <- function(layer, painter) {
-    sx <- axis_loc(meta$datarange[1:2])
-    draw_x_axes_with_labels_fun(painter, c(meta$datarange[1:2],1,5),
-                                axisLabel =sx, labelHoriPos = sx,
-                                name = meta$xlab)
-  }
-
-  yaxis <- function(layer, painter) {
-    if (is.null(meta$group) | !meta$vertconst){
-      sy <- axis_loc(meta$datarange[3:4])
-    } else {
-      sy <- (as.integer(unique(meta$group))-1)*meta$vertconst
-    }
-    if (!meta$vertconst) {aL <- sy} else {aL <- unique(meta$group)}
-    draw_y_axes_with_labels_fun(painter, c(1,5, meta$datarange[3:4]),
-                                axisLabel = aL, labelVertPos = sy,
-                                name = ifelse(!meta$vertconst,meta$ylab,meta$varname$g))
-  }
-
-  grid <- function(layer, painter) {
-    sx <- axis_loc(meta$datarange[1:2])
-    sy <- axis_loc(meta$datarange[3:4])
-    draw_grid_with_positions_fun(painter, meta$datarange, sx, sy)
-  }
 
   main_circle_draw <- function(layer,painter){
     for (j in 1:ncol(meta$y)) {
@@ -530,12 +495,12 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     qdrawCircle(painter, meta$pos[1], meta$pos[2],
                 r = 1.5 * b$style$linewidth,
                 stroke = b$style$color, fill = b$style$color)    
-    .brushed <- selected(data)
-    if (!any(.brushed)) return()
+    if (!any(selected(data))) return()
     hdata <- subset(data.frame(meta$xtmp,meta$ytmp[,unique(meta$hitscol)]), .brushed)
-    ## (re)draw brushed data points
-    brushx <- hdata[,1]
-    brushy <- hdata[,-1]
+    if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+      meta$hitsrow <- meta$orderBack[selected(data)]
+      meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
+    }
     shadowmatrix <- matrix(FALSE,nrow=nrow(data),ncol=ncol(meta$y))
     for (i in 1:length(meta$hitsrow)) {
       shadowmatrix[meta$hitsrow[i],meta$hitscol[i]] <- TRUE
@@ -544,20 +509,28 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     stroke <- b$color
     radius <- meta$radius
 
-    if (is.vector(brushy)){
-      qdrawCircle(painter, x = brushx, y = brushy,
-                  r = meta$radius*2, fill = fill,
-                  stroke = stroke)
-    } else {
-      for (i in 1:ncol(meta$y)){
-        if (any(shadowmatrix[,i])) {
-          qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
-                      y = meta$ytmp[shadowmatrix[,i],i],
-                      r = meta$radius*2, fill = fill,
-                      stroke = stroke)
+    for (i in 1:ncol(meta$y)){
+      if (any(shadowmatrix[,i])) {
+         qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
+                    y = meta$ytmp[shadowmatrix[,i],i],
+                    r = meta$radius*2, fill = fill,
+                    stroke = stroke)
+         if (sum(shadowmatrix[,i])>1) {
+           for (k in unique(meta$vargroup)) {
+             for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
+               idxtmp <- (meta$wrap.group==j & meta$vargroup==k & shadowmatrix[,i])
+               if (sum(idxtmp)){                 
+                 xtmp <- meta$xtmp
+                 ytmp <- meta$ytmp[,i]
+                 xtmp[!idxtmp] <- NA
+                 ytmp[!idxtmp] <- NA
+                 qdrawLine(painter, xtmp, ytmp, stroke=stroke)
+               }
+            }
+          }
         }
       }
-    }   
+    }  
   }
 
 #####################
@@ -569,59 +542,87 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   if (!is.null(asp)) xWidth <- round(yWidth*asp)
 
   scene <- qscene()
-  root_layer <- qlayer(scene)
-  ##root_layer$setGeometry(qrect(0, 0, xWidth, yWidth))
-  xaxis_layer <- qlayer(parent=root_layer, paintFun = xaxis,
-                        limits = qrect(meta$datarange[1:2], c(0, 1)),
-                        row=2, col=1, clip=FALSE)
-  yaxis_layer <- qlayer(parent=root_layer, paintFun = yaxis,
-                        limits = qrect(c(0, 1), meta$datarange[3:4]),
-                        row=1, col=0, clip=FALSE)
-  bg_layer <- qlayer(parent= root_layer, paintFun = grid,
-                     limits = meta$lims, row=1, col=1, clip=FALSE)
-  main_circle_layer <- qlayer(root_layer,paintFun=main_circle_draw,
+  layer.root <- qlayer(scene)
+  layer.title <- qmtext(meta = meta, side = 3)
+  layer.xlab = qmtext(meta = meta, side = 1)
+  layer.ylab = qmtext(meta = meta, side = 2)
+  layer.xaxis = qaxis(meta = meta, side = 1)
+  layer.yaxis = qaxis(meta = meta, side = 2)
+  layer.grid = qgrid(meta = meta, minor = 'xy')
+  main_circle_layer <- qlayer(paintFun=main_circle_draw,
                               mousePressFun=brush_mouse_press, mouseReleaseFun=brush_mouse_move,
                               mouseMove = brush_mouse_move, keyPressFun=key_press,
                               focusInFun = function(...) {focused(data) <- TRUE},
                               focusOutFun = function(...) {focused(data) <- FALSE},
-                              limits=meta$lims, row = 1, col = 1, clip=FALSE)
-  main_line_layer <- qlayer(root_layer,paintFun=main_line_draw,
-                            limits=meta$lims, row = 1, col = 1, clip=FALSE)
-  brush_layer <- qlayer(root_layer, brush_draw,
-                        limits=meta$lims, row = 1, col = 1, clip=FALSE)
-  query_layer <- qlayer(root_layer, query_draw,
-                        limits = meta$lims, hoverMoveFun = query_hover,
-                        hoverLeaveFun = query_hover_leave,
-                        row = 1, col = 1, clip=FALSE)
-
-  layout = root_layer$gridLayout()
-  layout$setRowPreferredHeight(0, 10)
-  layout$setColumnPreferredWidth(0, 60)
-  layout$setRowPreferredHeight(2, 60)
-  layout$setColumnPreferredWidth(2, 10)
-  layout$setColumnMaximumWidth(2, 15)
-  layout$setRowStretchFactor(0, 0)
-  layout$setColumnStretchFactor(0, 0)
-  layout$setRowStretchFactor(2, 0)
+                              limits=qrect(meta$limits))
+  main_line_layer <- qlayer(paintFun=main_line_draw,
+                            limits=qrect(meta$limits))
+  brush_layer <- qlayer(paintFun=brush_draw,
+                        limits=qrect(meta$limits))
+  query_layer <- qlayer(paintFun=query_draw,
+                        limits =qrect(meta$limits), hoverMoveFun = query_hover,
+                        hoverLeaveFun = query_hover_leave)
+  layer.text <- qlayer(paintFun=function(layer,painter){qdrawText(painter,paste("Wrapping Speed:",meta$wrap.shift[1]),
+                                                                  meta$limits[2,1],meta$limits[1,2],
+                                                                  halign='right',valign='bottom')},
+                       limits=qrect(meta$limits))
+  layer.root[0, 2] = layer.title
+  layer.root[2, 2] = layer.xaxis
+  layer.root[3, 2] = layer.xlab
+  layer.root[1, 1] = layer.yaxis
+  layer.root[1, 0] = layer.ylab
+  layer.root[1, 2] = layer.grid
+  layer.root[1, 2] = main_circle_layer
+  layer.root[1, 2] = main_line_layer
+  layer.root[1, 2] = brush_layer
+  layer.root[1, 2] = query_layer
+  layer.root[1, 2] = layer.text
+  layer.root[1, 3] = qlayer() 
+  layout = layer.root$gridLayout()
+  layout$setRowPreferredHeight(0, 30)
+  layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', meta$xlabels),
+                              function(xx) ifelse(any(xx <0), 0, length(xx)) + 2)))
+    layout$setRowPreferredHeight(3, 20)
+    layout$setColumnPreferredWidth(0, 10)
+    layout$setColumnPreferredWidth(1, 9 * max(nchar(unlist(strsplit(meta$ylabels, '\n')))) + 5)
+    layout$setColumnMaximumWidth(3, 10)
+    layout$setRowStretchFactor(0, 0)
+    layout$setRowStretchFactor(2, 0)
+    layout$setRowStretchFactor(3, 0)
+    layout$setColumnStretchFactor(0, 0)
+    layout$setColumnStretchFactor(1, 0)
 
   view <- qplotView(scene=scene)
-  view$setWindowTitle(main)
+  view$setWindowTitle(meta$main)
 
 ######################
   ## add some listeners #
 ######################
   ## if (is.mutaframe(data)) {
-  func <- function(i, j) {
-    switch(j, .brushed = qupdate(brush_layer),
-           .color = qupdate(main_circle_layer),
-           { ## any other event
-             main_circle_layer$invalidateIndex()
-             qupdate(main_circle_layer)
-             qupdate(brush_layer)
-           })
+  d.idx = add_listener(data, function(i, j) {
+        switch(j, .brushed = qupdate(brush_layer),
+               .color = {
+                   qupdate(main_circle_layer)
+                   qupdate(main_line_layer)
+               }, {
+                   qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+                   main_circle_layer$invalidateIndex()
+                   main_line_layer$invalidateIndex()
+                   qupdate(main_circle_layer)
+                   qupdate(main_line_layer)
+               })
+  })
+  qconnect(main_circle_layer, 'destroyed', function(x) {
+        ## b$colorChanged$disconnect(b.idx)
+        remove_listener(data, d.idx)
+  })
+  b$cursorChanged$connect(function() {
+        set_cursor(view, b$cursor)
+  })                          
+  sync_limits(meta, main_circle_layer,main_line_layer,brush_layer,query_layer,layer.text)
+  meta$manual.brush = function(pos) {
+    brush_mouse_move(layer = main_circle_layer, event = list(pos = function() pos))
   }
-  add_listener(data, func)
-  ## }
   attr(view, 'meta') <- meta
   view
 }
@@ -633,15 +634,22 @@ Time.meta =
                                      y = 'data.frame',
                                      yorig = 'data.frame',
                                      group = 'factor',
+                                     orderEnter = 'numeric',
+                                     orderBack = 'numeric',
                                      xtmp = 'numeric',
                                      ytmp = 'data.frame',
                                      wrap.group = 'numeric',
                                      wrap.shift = 'numeric',
                                      vargroup = 'numeric',
+                                     xat = 'numeric',
+                                     yat = 'numeric',
+                                     xlabels = 'character',
+                                     ylabels = 'character',
                                      xlab = 'character',
                                      ylab = 'character',
+                                     main = 'character',
                                      zoomsize = 'numeric',
-                                     datarange = 'numeric',
+                                     limits = 'matrix',
                                      radius = 'numeric',
                                      alpha = 'numeric',
                                      stroke = 'character',
