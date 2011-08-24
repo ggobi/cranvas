@@ -9,8 +9,6 @@ qhist(x, data = last_data(), breaks = 30, freq = TRUE,
   \item{x}{the name of the numeric variable to be used to
   draw the histogram}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}}
-
   \item{breaks}{a single number giving the number of bins,
   or a numeric vector giving the breakpoints}
 
@@ -22,6 +20,8 @@ qhist(x, data = last_data(), breaks = 30, freq = TRUE,
 
   \item{horizontal}{whether to draw a horizontal or
   vertical plot}
+
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   A histogram

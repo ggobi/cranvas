@@ -17,9 +17,6 @@ qparallel(vars, data = last_data(), scale = "range",
   the data except those whose names start with a dot will
   be used}
 
-  \item{data}{a mutaframe which is typically built upon a
-  data frame along with several row attributes}
-
   \item{scale}{data standardizing method; possible values
   are \code{'range'} (scale columns individually to [0,
   1]), \code{'I'} (do not transform; use original values),
@@ -66,6 +63,8 @@ qparallel(vars, data = last_data(), scale = "range",
 
   \item{draw.range}{whether to draw the range values (min
   and max for each variable)}
+
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   a plot object with attributes

@@ -14,8 +14,7 @@
 ##' draw side-by-side boxplots for the variables in the right hand
 ##' side, whereas a two-sided formula like \code{y ~ x} means boxplots
 ##' of a continuous \code{y} against a categorical \code{x}
-##' @param data a mutaframe or data frame; if missing, the first
-##' argument \code{vars} will be assumed to be the data
+##' @inheritParams qbar
 ##' @param at the locations of the boxplots (by default from 1 to
 ##' \code{p} where \code{p} is the number of variables to plot or the
 ##' number of levels of the categorical variable)

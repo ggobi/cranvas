@@ -14,10 +14,6 @@ qboxplot(vars, data = last_data(), at = NULL, width = NULL,
   \code{y ~ x} means boxplots of a continuous \code{y}
   against a categorical \code{x}}
 
-  \item{data}{a mutaframe or data frame; if missing, the
-  first argument \code{vars} will be assumed to be the
-  data}
-
   \item{at}{the locations of the boxplots (by default from
   1 to \code{p} where \code{p} is the number of variables
   to plot or the number of levels of the categorical
@@ -28,6 +24,8 @@ qboxplot(vars, data = last_data(), at = NULL, width = NULL,
   about 1/10 of the screen width}
 
   \item{horizontal}{horizontal or vertical boxplots}
+
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   NULL

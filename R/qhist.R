@@ -14,7 +14,7 @@
 ##' labels in the plot.
 ##' @param x the name of the numeric variable to be used to draw the
 ##' histogram
-##' @param data a mutaframe created by \code{\link{qdata}}
+##' @inheritParams qbar
 ##' @param breaks a single number giving the number of bins, or a
 ##' numeric vector giving the breakpoints
 ##' @param freq draw the frequencies (\code{TRUE}) or densities

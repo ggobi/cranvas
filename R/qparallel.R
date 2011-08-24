@@ -32,8 +32,7 @@
 ##' + x2'; if missing or it is a formula that contains a dot
 ##' (e.g. \code{ ~ .}), all variables in the data except those whose
 ##' names start with a dot will be used
-##' @param data a mutaframe which is typically built upon a data frame
-##' along with several row attributes
+##' @inheritParams qbar
 ##' @param scale data standardizing method; possible values are
 ##' \code{'range'} (scale columns individually to [0, 1]), \code{'I'}
 ##' (do not transform; use original values), \code{'var'} (make each
