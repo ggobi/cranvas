@@ -340,6 +340,10 @@ common_mouse_release = function(layer, event, data, meta) {
 ##' \code{meta$limits}, of which this function makes use to sync the
 ##' limits of layers.
 ##'
+##' An event is attached to \code{meta$limits} so that whenever it is
+##' changed, the limits all the layers will be reset by the method
+##' \code{layer$setLimits()}, hence we only need to take care of
+##' \code{meta$limits} and this function will do the rest of work.
 ##' @param meta the meta data contains a matrix of limits in
 ##' \code{meta$limits}
 ##' @param ... an arbitrary number of layers
@@ -347,6 +351,9 @@ common_mouse_release = function(layer, event, data, meta) {
 ##' that whenever the limits are changed, the layers will be updated
 ##' using the new limits)
 ##' @author Yihui Xie <\url{http://yihui.name}>
+##' @note You do not need to call \code{\link[qtpaint]{qupdate}} to
+##' update the layers explicitly when \code{meta$limits} is changed,
+##' because \code{layer$setLimits()} will update the layers.
 ##' @export
 ##' @examples ## sync_limits(meta, layer1, layer2, layer3)
 sync_limits = function(meta, ...) {
