@@ -2,7 +2,7 @@
 \alias{record_selector}
 \title{Select a subset of data through a GUI to be brushed}
 \usage{
-record_selector(vars, data)
+record_selector(vars, data = last_data())
 }
 \arguments{
   \item{data}{a mutaframe created by \code{\link{qdata}}
@@ -41,17 +41,17 @@ library(cranvas)
 
 ## old iris as the toy example
 qiris <- qdata(iris)
-qparallel(data = qiris)
-record_selector(data = qiris)
+qparallel()
+record_selector()
 
 ## NRC rankings
 data(nrcstat)
 qnrc <- qdata(nrcstat)
-qparallel(vars = 10:13, data = qnrc, main = "Overview of Rankings", 
+qparallel(vars = 10:13, main = "Overview of Rankings", 
     horizontal = FALSE)
-record_selector("Institution.Name", qnrc)
-qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity")
-qparallel(vars = 20:26, data = qnrc, main = "Publication, Award, Time to Degree")
+record_selector("Institution.Name")
+qparallel(vars = 14:19, main = "Research, Student Support, Diversity")
+qparallel(vars = 20:26, main = "Publication, Award, Time to Degree")
 }
 \author{
   Yihui Xie and Jason Crowley

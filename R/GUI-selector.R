@@ -29,18 +29,18 @@
 ##'
 ##' ## old iris as the toy example
 ##' qiris = qdata(iris)
-##' qparallel(data = qiris)
-##' record_selector(data = qiris)
+##' qparallel()
+##' record_selector()
 ##'
 ##' ## NRC rankings
 ##' data(nrcstat)
 ##' qnrc = qdata(nrcstat)
-##' qparallel(vars = 10:13, data = qnrc, main = 'Overview of Rankings', horizontal=FALSE)
-##' record_selector('Institution.Name', qnrc)
-##' qparallel(vars = 14:19, data = qnrc, main = 'Research, Student Support, Diversity')
-##' qparallel(vars = 20:26, data = qnrc, main = 'Publication, Award, Time to Degree')
+##' qparallel(vars = 10:13, main = 'Overview of Rankings', horizontal=FALSE)
+##' record_selector('Institution.Name')
+##' qparallel(vars = 14:19, main = 'Research, Student Support, Diversity')
+##' qparallel(vars = 20:26, main = 'Publication, Award, Time to Degree')
 ##'
-record_selector = function(vars, data) {
+record_selector = function(vars, data = last_data()) {
     if (missing(vars)) {
         vars = names(data)[!(sapply(as.data.frame(data), is.numeric))][1]
         if (is.na(vars))

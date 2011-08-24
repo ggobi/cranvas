@@ -6,8 +6,8 @@ qtennis = qdata(tennis, color = Serve.Speed, fill = Serve.Speed, size = Aces)
 ## then create plots
 qhist(Serve.Speed, data = qtennis)
 
-qbar(Country, data = qtennis)
+qbar(Country)
 
-qparallel(~., data = qtennis)  # all variables; you may need a large window
+qparallel(~.)  # all variables; you may need a large window
 
-record_selector("Name", data = qtennis)  # a simple GUI
+record_selector("Name")  # a simple GUI
