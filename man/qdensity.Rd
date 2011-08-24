@@ -82,6 +82,7 @@ print(qdensity(aede1, qflea))
 print(qdensity(aede3, qflea))
 
 #### test colors
-qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()), color = dscale(flea$species, hue_pal()))
+qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()), 
+    color = dscale(flea$species, hue_pal()))
 print(qdensity(tars1, qflea))
 }

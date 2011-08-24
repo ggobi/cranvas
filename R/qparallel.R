@@ -68,7 +68,7 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qparallel-ex.R
-qparallel = function(vars, data, scale = "range", names = break_str(vars),
+qparallel = function(vars, data = last_data(), scale = "range", names = break_str(vars),
     na.action = na_impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),

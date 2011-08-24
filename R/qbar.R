@@ -14,7 +14,7 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qbar-ex.R
-qbar = function(x, data, space = 0.1, main, horizontal = FALSE) {
+qbar = function(x, data = last_data(), space = 0.1, main, horizontal = FALSE) {
     b = brush(data)
     if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
     meta =

@@ -26,7 +26,7 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qhist-ex.R
-qhist = function(x, data, breaks = 30, freq = TRUE, main, horizontal = FALSE) {
+qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main, horizontal = FALSE) {
     b = brush(data)
     if (missing(main)) main = paste("Histogram of", deparse(substitute(x)))
     meta =

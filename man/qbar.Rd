@@ -2,7 +2,7 @@
 \alias{qbar}
 \title{Create a bar plot}
 \usage{
-qbar(x, data, space = 0.1, main, horizontal = FALSE)
+qbar(x, data = last_data(), space = 0.1, main, horizontal = FALSE)
 }
 \arguments{
   \item{x}{a variable name}
@@ -30,8 +30,7 @@ qbar(x, data, space = 0.1, main, horizontal = FALSE)
 \examples{
 library(cranvas)
 data(nrcstat)
-qnrc <- qdata(nrcstat, fill = dscale(nrcstat$Regional.Code, 
-    hue_pal()), color = dscale(nrcstat$Regional.Code, hue_pal()))
+qnrc <- qdata(nrcstat, color = Regional.Code)
 qbar(Regional.Code, qnrc)
 qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
     glyph = "tick", horizontal = FALSE, boxplot = TRUE)

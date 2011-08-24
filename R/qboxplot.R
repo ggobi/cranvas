@@ -27,7 +27,7 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @example inst/examples/qboxplot-ex.R
 ##' @export
-qboxplot = function(vars, data, at = NULL, width = NULL, horizontal = FALSE) {
+qboxplot = function(vars, data = last_data(), at = NULL, width = NULL, horizontal = FALSE) {
     if (missing(data)) {
         ## if no data is provided, I assume vars is the data
         data = if (is.mutaframe(vars)) vars else as.data.frame(vars)

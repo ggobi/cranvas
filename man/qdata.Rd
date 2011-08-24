@@ -2,7 +2,7 @@
 \alias{qdata}
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
-qdata(data, color = "black", fill = "grey30", size = 1, 
+qdata(data, color = "black", fill = NULL, size = 1, 
     brushed = FALSE, visible = TRUE)
 }
 \arguments{
@@ -17,7 +17,10 @@ qdata(data, color = "black", fill = "grey30", size = 1,
 
   \item{fill}{colors for filling the graphical elements
   (e.g. rectangles); possible values are similar to
-  \code{color}}
+  \code{color} but the default value \code{NULL} has a
+  special meaning: the fill colors will be the same as the
+  \code{color} argument but with more brightness (e.g. pure
+  black will become gray; see \code{\link{lighter}})}
 
   \item{size}{sizes of rows (default 1); possible values
   are similar to \code{color}, but when using a variable to
