@@ -561,10 +561,20 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   query_layer <- qlayer(paintFun=query_draw,
                         limits =qrect(meta$limits), hoverMoveFun = query_hover,
                         hoverLeaveFun = query_hover_leave)
-  layer.text <- qlayer(paintFun=function(layer,painter){qdrawText(painter,paste("Wrapping Speed:",meta$wrap.shift[1]),
+  layer.text <- qlayer(paintFun=function(layer,painter){qdrawText(painter,paste("Wrapping Period:",meta$wrap.shift[1]),
                                                                   meta$limits[2,1],meta$limits[1,2],
                                                                   halign='right',valign='bottom')},
                        limits=qrect(meta$limits))
+  j <- is.null(call$period) & is.null(call$group)
+  if (j) {
+    layer.text2 <- qlayer(paintFun=function(layer,painter){
+                                   qdrawText(painter,paste("ACF(lag=",meta$wrap.shift[1],"):",
+                                   round(acf(meta$ytmp,na.action=na.pass,plot=FALSE)$acf[meta$wrap.shift[1]+1],2),
+                                   sep=""),
+                                   meta$limits[1,1],meta$limits[1,2], 
+                                   halign='left',valign='bottom')},
+                          limits=qrect(meta$limits))
+  }
   layer.root[0, 2] = layer.title
   layer.root[2, 2] = layer.xaxis
   layer.root[3, 2] = layer.xlab
@@ -576,6 +586,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   layer.root[1, 2] = brush_layer
   layer.root[1, 2] = query_layer
   layer.root[1, 2] = layer.text
+  if (j) layer.root[1, 2] = layer.text2
   layer.root[1, 3] = qlayer() 
   layout = layer.root$gridLayout()
   layout$setRowPreferredHeight(0, 30)
@@ -618,7 +629,9 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
   })                          
-  sync_limits(meta, main_circle_layer,main_line_layer,brush_layer,query_layer,layer.text)
+  sync_limits(meta, main_circle_layer,main_line_layer,
+              brush_layer,query_layer,
+              layer.text)
   meta$manual.brush = function(pos) {
     brush_mouse_move(layer = main_circle_layer, event = list(pos = function() pos))
   }
