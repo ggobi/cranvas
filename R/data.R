@@ -30,7 +30,11 @@
 ##' factor or a numeric variable), or an R expression to calculate
 ##' colors
 ##' @param fill colors for filling the graphical elements
-##' (e.g. rectangles); possible values are similar to \code{color}
+##' (e.g. rectangles); possible values are similar to \code{color} but
+##' the default value \code{NULL} has a special meaning: the fill
+##' colors will be the same as the \code{color} argument but with more
+##' brightness (e.g. pure black will become gray; see
+##' \code{\link{lighter}})
 ##' @param size sizes of rows (default 1); possible values are similar
 ##' to \code{color}, but when using a variable to generate sizes, it
 ##' must be a numeric variable
@@ -44,7 +48,7 @@
 ##' \code{\link{link}}
 ##' @export
 ##' @example inst/examples/qdata-ex.R
-qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FALSE, visible = TRUE) {
+qdata = function(data, color = "black", fill = NULL, size = 1, brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
@@ -61,7 +65,7 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
     mf$.visible = visible
 
     z = as.list(match.call()[-1])
-    l = list()
+    l = list()  # record scales in a list
     for (i in c('color', 'fill', 'size')) {
         if (is.language(z[[i]])) {
             data(munsell_map, package = "munsell")
@@ -73,8 +77,16 @@ qdata = function(data, color = "black", fill = "grey30", size = 1, brushed = FAL
                     stop(i, ' must be either a factor or a numeric variable or valid colors!')
             } else if (is.numeric(v)) area_pal()(v) else
                 stop('size must be numeric!')
-            l[[i]] = deparse(z[[i]])
-        } else mf[[sprintf('.%s', i)]] = switch(i, color = color, fill = fill, size = size)
+            l[[i]] = list(label = deparse(z[[i]]), value = v)
+        } else {
+            mf[[sprintf('.%s', i)]] = if (i != 'fill') {
+                switch(i, color = color, size = size)
+            } else {
+                if (is.null(fill)) {
+                    lighter(mf$.color)  # default is use lighter .color
+                } else fill
+            }
+        }
     }
 
     ## prevent converting from characters to factors
