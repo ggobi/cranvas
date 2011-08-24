@@ -129,6 +129,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   meta$alpha <- alpha
   meta$stroke <- data$.color[meta$orderEnter]
   meta$fill <- data$.fill[meta$orderEnter]
+  meta$serie.mode <- FALSE
+  meta$serie.pos <- NULL
 
   ## Brush etc.
   meta$pos <- c(NA, NA)
@@ -187,14 +189,30 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     meta$hitsrow[meta$hitsrow==0] <- nrow(data)
     meta$hitscol <- (hits-0.0000001)%/%nrow(data)+1
     
-    #.new.brushed[meta$hitsrow] <- TRUE
-    selected(data) <- meta$orderEnter[meta$hitsrow] #mode_selection(selected(data), .new.brushed, mode = b$mode)
+    selected(data) <- meta$orderEnter[meta$hitsrow]
     if (!is.null(meta$group)) self_link(data)
   }
 
   key_press <- function(layer, event){
     crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
-
+    
+    if (event$key()==Qt$Qt$Key_M){
+      ## key M for switching the serie mode (for selecting and moving)
+      if (is.null(meta$group)) return()
+      meta$serie.mode <- !meta$serie.mode
+      if (!meta$serie.mode) {
+        link_type(data) <- NULL
+      } else {
+        if (class(data[,meta$varname$g])=='factor'){
+          link_var(data) <- meta$varname$g
+          link_type(data) <- "self"
+        } else {
+          message("The group variable is not a factor. Please change to factor before pressing M.")
+          meta$serie.mode <- FALSE
+        }
+      }
+    }
+    
     if (event$key()==Qt$Qt$Key_G){
       ## key G for gear(shift the wrapping speed)
       
@@ -439,11 +457,13 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
   query_hover <- function(item, event, ...) {
     meta$query.pos <- as.numeric(event$pos())
+    if (meta$serie.mode) meta$serie.pos <- as.numeric(event$pos())
     qupdate(query_layer)
   }
 
   query_hover_leave <- function(item, event, ...) {
     meta$query.pos <- NULL
+    if (meta$serie.mode) meta$serie.pos <- NULL
     qupdate(query_layer)
   }
 
@@ -488,6 +508,67 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   brush_draw <- function(layer, painter) {
        
     if (any(is.na(meta$pos))) return()
+
+    if (meta$serie.mode) {
+      if (is.null(meta$serie.pos)) return()
+      xpos <- meta$serie.pos[1]
+      ypos <- meta$serie.pos[2]
+      queryaround <- ifelse(meta$radius<=4,8/meta$radius,1)
+      xrange <- meta$radius/layer.root$size$width() *
+                diff(meta$limits[c(1, 2)]) * queryaround
+      yrange <- meta$radius/layer.root$size$height() *
+                diff(meta$limits[c(3, 4)]) * queryaround
+      rect <- qrect(matrix(c(xpos - xrange, ypos - yrange,
+                             xpos + xrange, ypos + yrange),
+                           2, byrow = TRUE))
+      main_circle_layer$invalidateIndex()
+      main_line_layer$invalidateIndex()
+      hits <- main_circle_layer$locate(rect) + 1
+      if (length(hits) < 1) {
+        selected(data) <- FALSE
+        return()
+      }
+      hitsrow <- round(hits %% nrow(data))
+      hitsrow[hitsrow==0] <- nrow(data)
+      hitscol <- (hits-0.0000001)%/%nrow(data)+1
+      selected(data) <- meta$orderEnter[hitsrow]
+      self_link(data)
+      if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+        meta$hitsrow <- meta$orderBack[selected(data)]
+        meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
+      }
+      shadowmatrix <- matrix(FALSE,nrow=nrow(data),ncol=ncol(meta$y))
+      for (i in 1:length(meta$hitsrow)) {
+        shadowmatrix[meta$hitsrow[i],meta$hitscol[i]] <- TRUE
+      }
+      fill <- b$color
+      stroke <- b$color
+      radius <- meta$radius
+      for (i in 1:ncol(meta$y)){
+        if (any(shadowmatrix[,i])) {
+          qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]]+meta$pos[1]-meta$serie.pos[1],
+                      y = meta$ytmp[shadowmatrix[,i],i],
+                      r = meta$radius*2, fill = fill,
+                      stroke = stroke)
+          if (sum(shadowmatrix[,i])>1) {
+            for (k in unique(meta$vargroup)) {
+              for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
+                idxtmp <- (meta$wrap.group==j & meta$vargroup==k & shadowmatrix[,i])
+                if (sum(idxtmp)){                 
+                  xtmp <- meta$xtmp +meta$pos[1]-meta$serie.pos[1]
+                  ytmp <- meta$ytmp[,i]
+                  xtmp[!idxtmp] <- NA
+                  ytmp[!idxtmp] <- NA
+                  qdrawLine(painter, xtmp, ytmp, stroke=stroke)
+                }
+              }
+            }
+          }
+        }
+      }
+      return()
+    }
+
     qlineWidth(painter) <- b$style$linewidth
     qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
               meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
@@ -557,7 +638,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   main_line_layer <- qlayer(paintFun=main_line_draw,
                             limits=qrect(meta$limits))
   brush_layer <- qlayer(paintFun=brush_draw,
-                        limits=qrect(meta$limits))
+                        limits=qrect(meta$limits),hoverMoveFun = query_hover,
+                        hoverLeaveFun = query_hover_leave)
   query_layer <- qlayer(paintFun=query_draw,
                         limits =qrect(meta$limits), hoverMoveFun = query_hover,
                         hoverLeaveFun = query_hover_leave)
@@ -670,4 +752,6 @@ Time.meta =
                                      pos = 'numeric',
                                      brush.move = 'logical',
                                      brush.size = 'numeric',
-                                     query.pos = 'numeric')))
+                                     query.pos = 'numeric',
+                                     serie.mode = 'logical',
+                                     serie.pos = 'numeric')))
