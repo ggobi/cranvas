@@ -5,13 +5,13 @@
 record_selector(vars, data = last_data())
 }
 \arguments{
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (with a column \code{.brushed})}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
-  \item{vars}{character or integer: the variable to be
-  displayed in the data selector (if not specified, the
-  first non-numeric variable will be used; if all columns
-  are numeric, the first column will be used)}
+  \item{vars}{a character string or an integer as a column
+  index, or a variable name (without quotes): the variable
+  to be displayed in the data selector (if not specified,
+  the first non-numeric variable will be used; if all
+  columns are numeric, the first column will be used)}
 }
 \value{
   \code{NULL} (a GUI will pop up)
@@ -49,7 +49,7 @@ data(nrcstat)
 qnrc <- qdata(nrcstat)
 qparallel(vars = 10:13, main = "Overview of Rankings", 
     horizontal = FALSE)
-record_selector("Institution.Name")
+record_selector(Institution.Name)
 qparallel(vars = 14:19, main = "Research, Student Support, Diversity")
 qparallel(vars = 20:26, main = "Publication, Award, Time to Degree")
 }

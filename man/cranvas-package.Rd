@@ -46,6 +46,8 @@
 \examples{
 library(cranvas)
 data(tennis)
+str(tennis)
+
 ## the first step is always to create the data object
 qtennis <- qdata(tennis, color = Serve.Speed, fill = Serve.Speed, 
     size = Aces)
@@ -53,9 +55,9 @@ qtennis <- qdata(tennis, color = Serve.Speed, fill = Serve.Speed,
 ## then create plots
 qhist(Serve.Speed, data = qtennis)
 
-qbar(Country, data = qtennis)
+qbar(Country)
 
-qparallel(~., data = qtennis)  # all variables; you may need a large window
+qparallel(~.)  # all variables; you may need a large window
 
-record_selector("Name", data = qtennis)  # a simple GUI
+record_selector(Name)  # a simple GUI to show the names
 }

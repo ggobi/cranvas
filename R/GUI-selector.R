@@ -15,9 +15,9 @@
 ##' data will get brushed accordingly. On the other hand, when we
 ##' click on a plot, the corresponding items in the list will be
 ##' selected as well.
-##' @param data a mutaframe created by \code{\link{qdata}} (with a
-##' column \code{.brushed})
-##' @param vars character or integer: the variable to be displayed in
+##' @param data a mutaframe created by \code{\link{qdata}}
+##' @param vars a character string or an integer as a column index, or
+##' a variable name (without quotes): the variable to be displayed in
 ##' the data selector (if not specified, the first non-numeric
 ##' variable will be used; if all columns are numeric, the first
 ##' column will be used)
@@ -36,16 +36,17 @@
 ##' data(nrcstat)
 ##' qnrc = qdata(nrcstat)
 ##' qparallel(vars = 10:13, main = 'Overview of Rankings', horizontal=FALSE)
-##' record_selector('Institution.Name')
+##' record_selector(Institution.Name)
 ##' qparallel(vars = 14:19, main = 'Research, Student Support, Diversity')
 ##' qparallel(vars = 20:26, main = 'Publication, Award, Time to Degree')
 ##'
 record_selector = function(vars, data = last_data()) {
-    if (missing(vars)) {
+    l = as.list(match.call()[-1])
+    if (is.null(l$vars)) {
         vars = names(data)[!(sapply(as.data.frame(data), is.numeric))][1]
         if (is.na(vars))
             vars = names(data)[1]
-    }
+    } else if (is.symbol(l$vars)) vars = as.character(l$vars)
     ## vars should be of length 1
     x = data[, vars[1]]
     xx = as.data.frame(data[!duplicated(x), vars[1], drop = FALSE])
