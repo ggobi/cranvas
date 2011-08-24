@@ -130,9 +130,31 @@ qdata = function(data, color = "black", fill = NULL, size = 1, brushed = FALSE, 
     }
 
     attr(mf, 'Scales') = l  # scales information to be used in legend
+    .cranvasEnv$.last.data = mf  # make a copy to .last.data
     mf
 }
 
+.cranvasEnv$.last.data = NULL
+
+##' Get the last used data object
+##'
+##' Since interactive graphics often involves with linking based on
+##' the same data object, this function provides an access to the last
+##' used data object, which is often the default value for the
+##' argument \code{data} in many plotting functions in this package.
+##' @return The last data object created by \code{\link{qdata}}.
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples library(cranvas)
+##' data(nrcstat)
+##' qnrc = qdata(nrcstat, color = Regional.Code)
+##' qbar(Regional.Code, data = last_data())
+##' ## or simply ignore the data argument
+##' qbar(Regional.Code)
+last_data = function() {
+    if (is.null(.cranvasEnv$.last.data))
+        stop('No data object was created by qdata() yet') else .cranvasEnv$.last.data
+}
 
 ##' Set or query the focus status
 ##'
