@@ -313,6 +313,6 @@ draw_brush = function(layer, painter, data, meta) {
     qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
               meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
               stroke = b$style$color, fill = NA)
-    qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 0.6 * b$style$linewidth,
+    qdrawGlyph(painter, qglyphCircle(r = 0.9 * b$style$linewidth), meta$pos[1], meta$pos[2],
                 stroke = b$style$color, fill = b$style$color)
 }
