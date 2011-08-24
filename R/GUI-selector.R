@@ -47,13 +47,14 @@ record_selector = function(vars, data = last_data()) {
         if (is.na(vars))
             vars = names(data)[1]
     } else if (is.symbol(l$vars)) vars = as.character(l$vars)
+    if (is.numeric(vars)) vars = names(data)[vars]
     ## vars should be of length 1
     x = data[, vars[1]]
     xx = as.data.frame(data[!duplicated(x), vars[1], drop = FALSE])
 
     # instantiate the window
     w = Qt$QWidget()
-    w$setWindowTitle("Record Selector")
+    w$setWindowTitle(paste("Record Selector:", vars))
 
     # setup the table and link the data model to it
     lst = Qt$QListView()
