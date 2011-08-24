@@ -20,6 +20,19 @@ sync_limits(meta, ...)
   \code{meta$limits}, of which this function makes use to
   sync the limits of layers.
 }
+\details{
+  An event is attached to \code{meta$limits} so that
+  whenever it is changed, the limits all the layers will be
+  reset by the method \code{layer$setLimits()}, hence we
+  only need to take care of \code{meta$limits} and this
+  function will do the rest of work.
+}
+\note{
+  You do not need to call \code{\link[qtpaint]{qupdate}} to
+  update the layers explicitly when \code{meta$limits} is
+  changed, because \code{layer$setLimits()} will update the
+  layers.
+}
 \examples{
 ## sync_limits(meta, layer1, layer2, layer3)
 }
