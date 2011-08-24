@@ -1,13 +1,13 @@
-#' This is not a display method, but a method for adding 
+#' This is not a display method, but a method for adding
 #' @noRd
 tourr <- function() {
-  
-  
+
+
 }
 
 # TODO:
 #   Respond to changes in underlying data, fps, vars, etc
-#  
+#
 
 #' @examples
 #' flea <- rescaler(flea)
@@ -20,11 +20,11 @@ tourr <- function() {
 #' flea_tour$start()
 #' flea_tour$pause()
 #' @noRd
-
-Tourr <- setRefClass("Tourr", 
+#' @export
+Tourr <- setRefClass("Tourr",
   c("dest", "src", "tour_path", "tour", "aps", "paused", "timer", "last_time")
 )
-    
+
 Tourr$methods(initialize = function(data, tour_path, vars, aps = 1, fps = 30) {
   stopifnot(is.mutaframe(data))
 
@@ -38,7 +38,7 @@ Tourr$methods(initialize = function(data, tour_path, vars, aps = 1, fps = 30) {
 
   timer <<- qtbase::qtimer(1000 / fps, .self$step)
   tour <<- new_tour(src, tour_path, NULL)
-  
+
   .self
 })
 
@@ -49,7 +49,7 @@ Tourr$methods(step = function() {
     delta <- 0
   } else {
     cur_time <- proc.time()[3]
-    delta <- (cur_time - last_time)    
+    delta <- (cur_time - last_time)
     last_time <<- cur_time
   }
 
@@ -72,10 +72,10 @@ Tourr$methods(step = function() {
 
 
 Tourr$methods(pause = function() {
-  timer$stop()  
+  timer$stop()
 })
 Tourr$methods(start = function() {
-  timer$start()  
+  timer$start()
 })
 Tourr$methods(slower = function() {
   aps <<- aps*0.9
