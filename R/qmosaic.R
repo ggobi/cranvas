@@ -1,10 +1,3 @@
-lighter <- function(color, factor=1.1) {
-	# converts color to hsv, multiplies v by factor, returns colors as hexcode
-	hsv <- rgb2hsv(col2rgb(color))
-	v <- pmax(pmin(hsv[3,]*factor, 1),0.15)
-	return(hsv(h=hsv[1,], s=hsv[2,], v=v))
-}
-
 paste_formula <- function(form) {
     # form has pieces wt, marg and cond
     # output is character - needs to be converted to formula afterwards
@@ -248,7 +241,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         # use a lighter shade of any color specified for points
         color <- as.character(xdata$.color)
 
-        qdrawRect(painter, left, bottom, right, top, fill = lighter(color, 1.1))
+        qdrawRect(painter, left, bottom, right, top, fill = lighter(color))
 
         if (.df.title) {
             add_title_fun(painter, dataRanges, title = extract_formula(.formula))

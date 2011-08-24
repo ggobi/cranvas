@@ -574,3 +574,23 @@ identify_rect = function(meta) {
     p = meta$pos
     qrect(rbind(p - r, p + r))
 }
+
+##' Generate lighter colors
+##'
+##' This function first converts colors to the RGB and HSV space, then
+##' modifies the brightness (the \code{V} component in HSV) by an
+##' amount.
+##' @param color the color vector
+##' @param factor numeric: larger than 0 means to make the color
+##' lighter, and less than 0 means darker (can be either a vector or a
+##' scalar)
+##' @return The modified color vector.
+##' @author Heike Hofmann and Yihui Xie
+##' @export
+##' @example inst/examples/lighter-ex.R
+lighter = function(color, factor = 0.2) {
+    ## converts color to hsv, multiplies v by factor, returns colors as hexcode
+    x = rgb2hsv(col2rgb(color))
+    v = pmax(pmin(x[3, ] + factor, 1), 0)
+    hsv(h = x[1, ], s = x[2, ], v = v)
+}
