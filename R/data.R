@@ -130,6 +130,7 @@ qdata = function(data, color = "black", fill = NULL, size = 1, brushed = FALSE, 
     }
 
     attr(mf, 'Scales') = l  # scales information to be used in legend
+    attr(mf, 'Generator') = 'd38bbe46dae5fa45758f3609f5dc1a0a'  # a token for internal use
     .cranvasEnv$.last.data = mf  # make a copy to .last.data
     mf
 }
@@ -325,4 +326,26 @@ link_type = function(data) {
 `link_type<-` = function(data, value) {
     attr(data, 'Link')$type = value
     data
+}
+
+##' Check if a data object was created by qdata()
+##'
+##' Data objects created by \code{\link{qdata}} has a special
+##' token. If an object was not created in that way, it will be
+##' converted by \code{\link{qdata}}.
+##'
+##' This function is designed for developers to check the validity of
+##' data objects.
+##' @param data a data object
+##' @return If \code{data} was created by \code{\link{qdata}}, it will
+##' be returned untouched, otherwise \code{qdata(data)} is returned.
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples check_data(cbind(x = 1:5, y = 6:10))
+check_data = function(data) {
+    if (identical(attr(data, 'Generator'), 'd38bbe46dae5fa45758f3609f5dc1a0a'))
+        data else {
+            message(paste(strwrap('Automatically converting to a mutaframe... Interaction will work based on this data, but will not link to any other plots. For linking to work, use qdata() to create data objects.'), collapse = '\n'))
+            qdata(data)
+        }
 }
