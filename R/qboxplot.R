@@ -28,13 +28,7 @@
 ##' @example inst/examples/qboxplot-ex.R
 ##' @export
 qboxplot = function(vars, data = last_data(), at = NULL, width = NULL, horizontal = FALSE) {
-    if (missing(data)) {
-        ## if no data is provided, I assume vars is the data
-        data = if (is.mutaframe(vars)) vars else as.data.frame(vars)
-        vars = names(data)
-    }
-    if (!any(class(data) %in% c('data.frame', 'mutaframe', 'list')))
-        data = as.data.frame(data)
+    data = check_data(data)
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
     if (inherits(vars, 'formula')) {
         vars.n = length(vars)  # 2 means one-sided formula, 3 means two-sided

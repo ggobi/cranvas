@@ -75,6 +75,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
     main, alpha = 1, draw.range = TRUE) {
 
+    data = check_data(data)
     b = brush(data)    # the brush attached to the data
 
     if (missing(main)) {

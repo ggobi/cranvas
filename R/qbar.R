@@ -15,6 +15,7 @@
 ##' @export
 ##' @example inst/examples/qbar-ex.R
 qbar = function(x, data = last_data(), space = 0.1, main, horizontal = FALSE) {
+    data = check_data(data)
     b = brush(data)
     if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
     meta =
