@@ -13,7 +13,8 @@ selected(data) <- value
   \item{value}{a logical vector of the length
   \code{nrow(data)}, or a vector of integers which will be
   used to create a logical vector with \code{TRUE}
-  corresponding to these indicies}
+  corresponding to these indicies, or a character vector of
+  row names to brush the corresponding rows}
 }
 \value{
   The function \code{\link{selected}} returns the logical
@@ -26,15 +27,17 @@ selected(data) <- value
   selected).
 }
 \examples{
-df <- qdata(iris)
+df <- qdata(mtcars)
 
 selected(df)
 
-selected(df) <- rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
+selected(df) <- rep(c(TRUE, FALSE), c(10, 22))  # brush the first 10 obs
 selected(df)
 
-selected(df) <- 3L  # brush the 3rd row
+selected(df) <- 15L  # brush the 15th row
 selected(df)
+
+selected(df) <- "Honda Civic"  # brush by row names
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

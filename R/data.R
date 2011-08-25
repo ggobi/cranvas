@@ -230,15 +230,17 @@ visible = function(data) {
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link{qdata}}
 ##' @export
-##' @examples df = qdata(iris)
+##' @examples df = qdata(mtcars)
 ##'
 ##' selected(df)
 ##'
-##' selected(df) = rep(c(TRUE, FALSE), c(10, 140))  # brush the first 10 obs
+##' selected(df) = rep(c(TRUE, FALSE), c(10, 22))  # brush the first 10 obs
 ##' selected(df)
 ##'
-##' selected(df) = 3L  # brush the 3rd row
+##' selected(df) = 15L  # brush the 15th row
 ##' selected(df)
+##'
+##' selected(df) = 'Honda Civic'  # brush by row names
 selected = function(data) {
     if ('.brushed' %in% names(data))
         data$.brushed else logical(nrow(data))
@@ -247,14 +249,16 @@ selected = function(data) {
 ##' @usage selected(data) <- value
 ##' @param value a logical vector of the length \code{nrow(data)}, or
 ##' a vector of integers which will be used to create a logical vector
-##' with \code{TRUE} corresponding to these indicies
+##' with \code{TRUE} corresponding to these indicies, or a character
+##' vector of row names to brush the corresponding rows
 ##' @export "selected<-"
 `selected<-` = function(data, value) {
-    ## if value is numeric indices, convert it to a logical vector
-    if (is.numeric(value)) {
+    ## if value is numeric indices or names, convert it to a logical vector
+    if (is.numeric(value) || is.character(value)) {
         tmp = logical(nrow(data))
+        names(tmp) = rownames(data)
         tmp[value] = TRUE
-        value = tmp
+        value = unname(tmp)
     }
     data$.brushed = value
     data
