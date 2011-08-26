@@ -70,14 +70,24 @@ qdata = function(data, color = "black", fill = NULL, size = 1, brushed = FALSE, 
         if (is.language(z[[i]])) {
             data(munsell_map, package = "munsell")
             v = eval(z[[i]], data)
+            pal = NULL
             mf[[sprintf('.%s', i)]] = if (i != 'size') {
-                if (is.factor(v)) dscale(v, hue_pal()) else if (is.numeric(v))
-                    cscale(v, seq_gradient_pal()) else
-                if (!inherits(try(col2rgb(v), silent = TRUE), 'try-error')) v else
-                    stop(i, ' must be either a factor or a numeric variable or valid colors!')
-            } else if (is.numeric(v)) area_pal()(v) else
-                stop('size must be numeric!')
-            l[[i]] = list(label = deparse(z[[i]]), value = v)
+                if (is.factor(v)) {
+                    pal = hue_pal()
+                    dscale(v, pal)
+                } else if (is.numeric(v)) {
+                    pal = seq_gradient_pal()
+                    cscale(v, pal)
+                } else {
+                    if (!inherits(try(col2rgb(v), silent = TRUE), 'try-error')) v else
+                    stop(sQuote(i),
+                         ' must be either a factor or a numeric variable or valid colors!')
+                }
+            } else if (is.numeric(v)) {
+                pal = area_pal()
+                pal(v)
+            } else stop(sQuote('size'), ' must be numeric!')
+            l[[i]] = list(label = deparse(z[[i]]), value = v, palette = pal)
         } else {
             mf[[sprintf('.%s', i)]] = if (i != 'fill') {
                 switch(i, color = color, size = size)
