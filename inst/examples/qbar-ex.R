@@ -1,8 +1,8 @@
 library(cranvas)
 data(nrcstat)
 qnrc = qdata(nrcstat, color = Regional.Code)
-qbar(Regional.Code, qnrc)
-qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
+qbar(Regional.Code)
+qparallel(vars = 13:10, main = "Overview of Rankings", glyph = "tick",
     horizontal = FALSE, boxplot = TRUE)
 
-qbar(Regional.Code, qnrc, horizontal = TRUE)  # horizontal plot
+qbar(Regional.Code, horizontal = TRUE)  # horizontal plot
