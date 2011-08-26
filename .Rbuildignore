@@ -3,4 +3,3 @@ load.R
 formatR.R
 roxygenize.R
 readme.Rd
-inst/doc
