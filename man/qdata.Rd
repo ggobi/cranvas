@@ -61,7 +61,15 @@ qdata(data, color = "black", fill = NULL, size = 1,
   vector when the size variable is continuous. If any
   palette is used, an attribute \code{attr(data, 'Scales')}
   will be attached to the returned mutaframe, which will
-  help specific plots to generate legends.
+  help specific plots to generate legends. This attribute
+  is of the form \code{list(color = list(label, value,
+  palette))}. Whenever any component is changed, the
+  corresponding aesthetics will be updated automatically;
+  for example, if we change the palette function for
+  \code{color}, the colors \code{data$.color} will be
+  updated using the new palette. See
+  \code{\link{color_pal<-}} for a list of functions on how
+  to modify scales information.
 }
 \examples{
 library(cranvas)

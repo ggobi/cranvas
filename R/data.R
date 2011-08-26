@@ -20,7 +20,13 @@
 ##' used to create a size vector when the size variable is
 ##' continuous. If any palette is used, an attribute \code{attr(data,
 ##' 'Scales')} will be attached to the returned mutaframe, which will
-##' help specific plots to generate legends.
+##' help specific plots to generate legends. This attribute is of the
+##' form \code{list(color = list(label, value, palette))}. Whenever
+##' any component is changed, the corresponding aesthetics will be
+##' updated automatically; for example, if we change the palette
+##' function for \code{color}, the colors \code{data$.color} will be
+##' updated using the new palette. See \code{\link{color_pal<-}} for a
+##' list of functions on how to modify scales information.
 ##'
 ##' @param data a data frame (it will be coerced to a data frame if it
 ##' is not)
@@ -65,7 +71,7 @@ qdata = function(data, color = "black", fill = NULL, size = 1, brushed = FALSE, 
     mf$.visible = visible
 
     z = as.list(match.call()[-1])
-    l = list()  # record scales in a list
+    l = Scales.meta$new()  # record scales in an environment genreated by ref classes
     for (i in c('color', 'fill', 'size')) {
         if (is.language(z[[i]])) {
             data(munsell_map, package = "munsell")
@@ -139,11 +145,27 @@ qdata = function(data, color = "black", fill = NULL, size = 1, brushed = FALSE, 
         })  # shadow matrix will change when data is changed
     }
 
+    ## whenever the scales information is changed, update data columns
+    l$changed$connect(function() {
+        if (length(l$color) && is.function(pal <- l$color$palette))
+            mf$.color = if (is.numeric(v <- l$color$value))
+                cscale(v, pal) else if (is.factor(v)) dscale(v, pal) else mf$.color
+        if (length(l$fill) && is.function(pal <- l$fill$palette))
+            mf$.fill = if (is.numeric(v <- l$fill$value))
+                cscale(v, pal) else if (is.factor(v)) dscale(v, pal) else mf$.fill
+        if (length(l$size) && is.function(pal <- l$size$palette))
+            mf$.size = if (is.numeric(v <- l$size$value)) pal(v) else mf$.size
+    })
+
     attr(mf, 'Scales') = l  # scales information to be used in legend
     attr(mf, 'Generator') = 'd38bbe46dae5fa45758f3609f5dc1a0a'  # a token for internal use
     .cranvasEnv$.last.data = mf  # make a copy to .last.data
     mf
 }
+Scales.meta =
+    setRefClass("Scales_meta", fields =
+                signalingFields(list(color = 'list', fill = 'list', size = 'list')))
+
 
 .cranvasEnv$.last.data = NULL
 
