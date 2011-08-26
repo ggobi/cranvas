@@ -21,8 +21,8 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
                      alpha = 1, horizontal = horizontal, main = main)
     compute_coords = function() {
+        data[, meta$var] = factor(data[, meta$var], exclude = NULL)
         tmp = data[visible(data), meta$var]
-        tmp = as.factor(tmp)
         meta$y = c(table(tmp))
         meta$xat = meta$x = seq_along(meta$y)
         meta$yat = axis_loc(c(0, meta$y))
@@ -67,7 +67,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     brush_draw = function(layer, painter) {
         if (b$identify) return()
         if (any(idx <- selected(data) & visible(data))) {
-            tmp = as.factor(data[idx, meta$var])
+            tmp = data[idx, meta$var]
             if (meta$horizontal)
                 qdrawRect(painter, meta$xleft, meta$ybottom, c(table(tmp)), meta$ytop,
                           stroke = NA, fill = b$color) else
@@ -83,7 +83,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
         if (length(hits))
-            hits = data[, meta$var] %in% levels(as.factor(data[, meta$var]))[hits]
+            hits = data[, meta$var] %in% levels(data[, meta$var])[hits]
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
     }
