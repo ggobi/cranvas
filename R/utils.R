@@ -601,3 +601,37 @@ lighter = function(color, factor = 0.2) {
     v = pmax(pmin(x[3, ] + factor, 1), 0)
     hsv(h = x[1, ], s = x[2, ], v = v)
 }
+
+##' Preferred height and width of layers with texts
+##'
+##' The height and width of a layer which draws texts often involves
+##' with the number of line breaks (\code{'\n'}) in the texts. These
+##' two functions give the preferred height and width of a layer as a
+##' rule of thumb.
+##'
+##' Usually the height and width of the title layer and x- and y-axis
+##' layers need to be adjusted dynamically.
+##' @param text the character vector to be drawn in the layer
+##' @return The height or width (numeric).
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @rdname prefer_dimension
+##' @examples prefer_height('a label'); prefer_height('this is\na label')
+##' prefer_width('abc'); prefer_width('a long long label')
+##' prefer_width('line\nbreaks')  # 'breaks' dominates the width because it is wider
+##' prefer_width('multiple\nvertical\nlines', horizontal = FALSE)
+prefer_height = function(text) {
+    if (all(!nzchar(text))) return(10)  # 10 pixels if text is empty
+    15 * max(sapply(gregexpr('\n', text),
+                    function(xx) ifelse(any(xx < 0), 0, length(xx)) + 2))
+}
+##' @param horizontal logical: the text is drawn horizontally
+##' (\code{TRUE}) or vertically (\code{FALSE})
+##' @rdname prefer_dimension
+##' @export
+prefer_width = function(text, horizontal = TRUE) {
+    if (horizontal)
+        9 * max(nchar(unlist(strsplit(text, '\n')))) + 5 else
+    10 * max(sapply(gregexpr('\n', text),
+                    function(xx) ifelse(any(xx < 0), 0, length(xx)) + 1))
+}
