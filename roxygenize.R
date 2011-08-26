@@ -38,6 +38,8 @@ library(Rd2roxygen)
 options(width = 80, replace.assign = TRUE)
 
 ## run roxygen and several cleaning up steps
+unlink('cranvas/man', recursive = TRUE)
+clear_caches()
 try(rab("cranvas", build = "build" %in% commandArgs(TRUE),
         install = "install" %in% commandArgs(TRUE),
         check = "check" %in% commandArgs(TRUE)))
