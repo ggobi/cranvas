@@ -412,8 +412,6 @@ check_data = function(data) {
 ##' @export
 ##' @example inst/examples/scales-ex.R
 ##' @rdname set_scales
-##' @aliases color_pal fill_pal size_pal color_var fill_var size_val
-##' color_label fill_label size_label
 ##' @usage color_pal(data) <- value
 ##' @export
 `color_pal<-` = function(data, value) {

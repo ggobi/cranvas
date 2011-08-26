@@ -1,21 +1,12 @@
 \name{color_pal<-}
-\alias{color_label}
 \alias{color_label<-}
-\alias{color_pal}
 \alias{color_pal<-}
-\alias{color_var}
 \alias{color_var<-}
-\alias{fill_label}
 \alias{fill_label<-}
-\alias{fill_pal}
 \alias{fill_pal<-}
-\alias{fill_var}
 \alias{fill_var<-}
-\alias{size_label}
 \alias{size_label<-}
-\alias{size_pal}
 \alias{size_pal<-}
-\alias{size_val}
 \alias{size_var<-}
 \title{Set palettes and variables to map data to aesthetics}
 \usage{
