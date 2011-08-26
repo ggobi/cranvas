@@ -2,16 +2,16 @@
 \alias{qdata}
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
-qdata(data, color = "black", fill = NULL, size = 1, 
+qdata(data, color = "#262626", fill = NULL, size = 1, 
     brushed = FALSE, visible = TRUE)
 }
 \arguments{
   \item{data}{a data frame (it will be coerced to a data
   frame if it is not)}
 
-  \item{color}{colors of graphical elements (default black)
-  corresponding to rows of data; it can be a vector of
-  valid R colors, or a name of variable in \code{data}
+  \item{color}{colors of graphical elements (default dark
+  gray) corresponding to rows of data; it can be a vector
+  of valid R colors, or a name of variable in \code{data}
   (must be either a factor or a numeric variable), or an R
   expression to calculate colors}
 

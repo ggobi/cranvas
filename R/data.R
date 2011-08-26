@@ -30,7 +30,7 @@
 ##'
 ##' @param data a data frame (it will be coerced to a data frame if it
 ##' is not)
-##' @param color colors of graphical elements (default black)
+##' @param color colors of graphical elements (default dark gray)
 ##' corresponding to rows of data; it can be a vector of valid R
 ##' colors, or a name of variable in \code{data} (must be either a
 ##' factor or a numeric variable), or an R expression to calculate
@@ -54,7 +54,7 @@
 ##' \code{\link{link}}
 ##' @export
 ##' @example inst/examples/qdata-ex.R
-qdata = function(data, color = "black", fill = NULL, size = 1, brushed = FALSE, visible = TRUE) {
+qdata = function(data, color = "#262626", fill = NULL, size = 1, brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
