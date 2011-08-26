@@ -363,3 +363,97 @@ check_data = function(data) {
             qdata(data)
         }
 }
+
+
+`.data_scales<-` = function(data, node1, node2, value) {
+    attr(data, 'Scales')[[node1]][[node2]] <- value
+    data
+}
+
+##' Set palettes and variables to map data to aesthetics
+##'
+##' These functions provide ways to modify the palettes, variables to
+##' create aesthetics and their labels in a data object created by
+##' \code{\link{qdata}}. Currently supported aesthetics are about
+##' color, fill and size of graphical elements.
+##'
+##' All these information is called ``scales'' (in the \pkg{ggplot2}
+##' term) and stored in \code{attr(data, 'Scales')}. Usually palette
+##' functions are from the \pkg{scales} package.
+##' @param data the data object
+##' @param value the palette (as a function mapping a data variable to
+##' graphical properties), the variable name (as a character scalar),
+##' or the label (as a character scalar)
+##' @return The corresponding scale information in \code{data} is set
+##' to \code{value}.
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @example inst/examples/scales-ex.R
+##' @rdname set_scales
+##' @aliases color_pal fill_pal size_pal color_var fill_var size_val
+##' color_label fill_label size_label
+##' @usage color_pal(data) <- value
+##' @export
+`color_pal<-` = function(data, value) {
+    .data_scales(data, 'color', 'palette') = value
+    data
+}
+##' @rdname set_scales
+##' @usage color_var(data) <- value
+##' @export
+`color_var<-` = function(data, value) {
+    .data_scales(data, 'color', 'value') = eval(as.symbol(value), data)
+    color_label(data) = value  # should change label too when variable is changed
+    data
+}
+##' @rdname set_scales
+##' @usage color_label(data) <- value
+##' @export
+`color_label<-` = function(data, value) {
+    .data_scales(data, 'color', 'label') = value
+    data
+}
+##' @rdname set_scales
+##' @usage fill_pal(data) <- value
+##' @export
+`fill_pal<-` = function(data, value) {
+    .data_scales(data, 'fill', 'palette') = value
+    data
+}
+##' @rdname set_scales
+##' @usage fill_var(data) <- value
+##' @export
+`fill_var<-` = function(data, value) {
+    .data_scales(data, 'fill', 'value') = eval(as.symbol(value), data)
+    fill_label(data) = value
+    data
+}
+##' @rdname set_scales
+##' @usage fill_label(data) <- value
+##' @export
+`fill_label<-` = function(data, value) {
+    .data_scales(data, 'fill', 'label') = value
+    data
+}
+##' @rdname set_scales
+##' @usage size_pal(data) <- value
+##' @export
+`size_pal<-` = function(data, value) {
+    .data_scales(data, 'size', 'palette') = value
+    data
+}
+##' @rdname set_scales
+##' @usage size_var(data) <- value
+##' @export
+`size_var<-` = function(data, value) {
+    .data_scales(data, 'size', 'value') = eval(as.symbol(value), data)
+    size_label(data) = value
+    data
+}
+##' @rdname set_scales
+##' @usage size_label(data) <- value
+##' @export
+`size_label<-` = function(data, value) {
+    .data_scales(data, 'size', 'label') = value
+    data
+}
