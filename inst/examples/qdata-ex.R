@@ -1,10 +1,11 @@
 library(cranvas)
 data(tennis)
 str(tennis)
-qtennis = qdata(tennis, color = Aces, fill = Aces)  # more Aces, closer to red; less, blue
+## more Aces, closer to red; less, blue; higher speed, larger points
+qtennis = qdata(tennis, color = Aces, size = Serve.Speed)
 
 qhist(Aces, data = qtennis, main = 'Number of Aces')
-attr(qtennis, 'Scales')  # the scales information
+ls.str(attr(qtennis, 'Scales'))  # the scales information
 
 selected(qtennis)[1:10] = TRUE  # brush the first 10 cases
 
