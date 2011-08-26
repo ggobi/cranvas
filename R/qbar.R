@@ -14,10 +14,9 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qbar-ex.R
-qbar = function(x, data = last_data(), space = 0.1, main, horizontal = FALSE) {
+qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE) {
     data = check_data(data)
     b = brush(data)
-    if (missing(main)) main = paste("Bar plot of", deparse(substitute(data)))
     meta =
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
                      alpha = 1, horizontal = horizontal, main = main)
@@ -139,8 +138,10 @@ qbar = function(x, data = last_data(), space = 0.1, main, horizontal = FALSE) {
     layout$setColumnStretchFactor(0, 0)
     layout$setColumnStretchFactor(1, 0)
     view = qplotView(scene = scene)
-    view$setWindowTitle(main)
-
+    view$setWindowTitle(sprintf('Bar plot: %s', meta$var))
+    meta$mainChanged$connect(function() {
+        view$setWindowTitle(sprintf('Bar plot: %s', meta$var))
+    })
     d.idx = add_listener(data, function(i, j) {
         switch(j, .brushed = qupdate(layer.brush),
                .color = {
