@@ -127,12 +127,11 @@ qbar = function(x, data = last_data(), space = 0.1, main, horizontal = FALSE) {
     layer.root[1, 2] = layer.brush
     layer.root[1, 3] = qlayer()
     layout = layer.root$gridLayout()
-    layout$setRowPreferredHeight(0, 30)
-    layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', meta$xlabels),
-                              function(xx) ifelse(any(xx <0), 0, length(xx)) + 2)))
-    layout$setRowPreferredHeight(3, 20)
-    layout$setColumnPreferredWidth(0, 10)
-    layout$setColumnPreferredWidth(1, 9 * max(nchar(unlist(strsplit(meta$ylabels, '\n')))) + 5)
+    layout$setRowPreferredHeight(0, prefer_height(meta$main))
+    layout$setRowPreferredHeight(2, prefer_height(meta$xlabels))
+    layout$setRowPreferredHeight(3, prefer_height(meta$xlab))
+    layout$setColumnPreferredWidth(0, prefer_width(meta$ylab, FALSE))
+    layout$setColumnPreferredWidth(1, prefer_width(meta$ylabels))
     layout$setColumnMaximumWidth(3, 10)
     layout$setRowStretchFactor(0, 0)
     layout$setRowStretchFactor(2, 0)
