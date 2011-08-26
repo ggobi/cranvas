@@ -2,7 +2,7 @@
 
 ## this script will automatically run roxygen on cranvas; it can be used as a shell script
 ## e.g. 'Rscript roxygenize.R' or 'Rscript roxyenize.R update' to run 'git pull' before roxygenizing
-## other options beside update include: build, install and check
+## run roxygen and check the package: Rscript roxygenize.R check
 
 ## extract the working directory from the file you provided
 ##  e.g. Rscript ~/pkg/cranvas/roxygenize.R
@@ -40,8 +40,6 @@ options(width = 80, replace.assign = TRUE)
 ## run roxygen and several cleaning up steps
 unlink('cranvas/man', recursive = TRUE)
 clear_caches()
-try(rab("cranvas", build = "build" %in% commandArgs(TRUE),
-        install = "install" %in% commandArgs(TRUE),
-        check = "check" %in% commandArgs(TRUE)))
+try(rab("cranvas", build = TRUE, install = TRUE, check = "check" %in% commandArgs(TRUE)))
 
 setwd(owd)
