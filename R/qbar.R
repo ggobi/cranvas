@@ -1,12 +1,25 @@
 ##' Create a bar plot
 ##'
-##' Key events are documented in \code{\link{common_key_press}} and
-##' \code{\link{common_key_release}}. Mouse events mainly include
-##' brushing; as usual, left click to move the brush, and right click
-##' to resize the brush.
-##' @param x a variable name (must be a factor)
+##' This function creates a bar plot based on a categorical variable
+##' to show the counts of all categories. Another categorical variable
+##' can be used to further split each bar into sub-categories, which
+##' will make the bar plot a representation of a contingency
+##' table. The splitting variable can be specified in
+##' \code{\link{qdata}} using either the \code{color} argument or the
+##' \code{border} argument.
+##'
+##' All the common interactions like brushing and deleting are
+##' documented in \code{\link{common_key_press}}.
+##'
+##' A zero-count category is represented by a one-pixel rectangle,
+##' which is a useful visual hint to indicate the presence of this
+##' category.
+##' @param x a variable name (will be coerced to a factor if it is
+##' not; \code{NA} will also be a level of the factor if the variable
+##' has any \code{NA}'s)
 ##' @param data a mutaframe created by \code{\link{qdata}}
-##' @param space the space between bars proportional to the width of bars
+##' @param space the space between bars proportional to the width of
+##' bars
 ##' @param main the main title
 ##' @param horizontal \code{TRUE} to draw a horizontal plot or
 ##' \code{FALSE} (vertical)

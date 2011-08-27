@@ -6,7 +6,9 @@ qbar(x, data = last_data(), space = 0.1, main = "",
     horizontal = FALSE)
 }
 \arguments{
-  \item{x}{a variable name (must be a factor)}
+  \item{x}{a variable name (will be coerced to a factor if
+  it is not; \code{NA} will also be a level of the factor
+  if the variable has any \code{NA}'s)}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}}
 
@@ -22,21 +24,45 @@ qbar(x, data = last_data(), space = 0.1, main = "",
   A bar plot
 }
 \description{
-  Key events are documented in
-  \code{\link{common_key_press}} and
-  \code{\link{common_key_release}}. Mouse events mainly
-  include brushing; as usual, left click to move the brush,
-  and right click to resize the brush.
+  This function creates a bar plot based on a categorical
+  variable to show the counts of all categories. Another
+  categorical variable can be used to further split each
+  bar into sub-categories, which will make the bar plot a
+  representation of a contingency table. The splitting
+  variable can be specified in \code{\link{qdata}} using
+  either the \code{color} argument or the \code{border}
+  argument.
+}
+\details{
+  All the common interactions like brushing and deleting
+  are documented in \code{\link{common_key_press}}.
+
+  A zero-count category is represented by a one-pixel
+  rectangle, which is a useful visual hint to indicate the
+  presence of this category.
 }
 \examples{
 library(cranvas)
+## tennis data
+data(tennis)
+
+qtennis <- qdata(tennis)
+qbar(Matches)
+
+## NRC rankings
 data(nrcstat)
-qnrc <- qdata(nrcstat, color = Regional.Code)
-qbar(Regional.Code)
+
+qnrc <- qdata(nrcstat, color = Control)  # Control: public or private univ
+qbar(Regional.Code, main = "Number of public and private colleges in each region")
+
 qparallel(vars = 13:10, main = "Overview of Rankings", 
     glyph = "tick", horizontal = FALSE, boxplot = TRUE)
 
 qbar(Regional.Code, horizontal = TRUE)  # horizontal plot
+
+## use border color to split the bars
+qnrc2 <- qdata(nrcstat, color = "white", border = Control)
+qbar(Regional.Code)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
