@@ -95,7 +95,9 @@ qdata =
                 pal = area_pal()
                 pal(v)
             } else stop(sQuote('size'), ' must be numeric!')
-            l[[i]] = list(label = deparse(z[[i]]), value = v, palette = pal)
+            l[[i]] =
+                list(label = deparse(z[[i]]), variable = deparse(z[[i]]),
+                     palette = pal)
         } else {
             if ((i == 'border') && is.null(z[[i]])) mf$.border = mf$.color else
             mf[[sprintf('.%s', i)]] = switch(i, color = color, border = border, size = size)
@@ -427,7 +429,7 @@ check_data = function(data) {
 ##' @usage color_var(data) <- value
 ##' @export
 `color_var<-` = function(data, value) {
-    .data_scales(data, 'color', 'value') = eval(as.symbol(value), data)
+    .data_scales(data, 'color', 'variable') = value
     color_label(data) = value  # should change label too when variable is changed
     data
 }
@@ -471,7 +473,7 @@ check_data = function(data) {
 ##' @usage size_var(data) <- value
 ##' @export
 `size_var<-` = function(data, value) {
-    .data_scales(data, 'size', 'value') = eval(as.symbol(value), data)
+    .data_scales(data, 'size', 'variable') = value
     size_label(data) = value
     data
 }
