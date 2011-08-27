@@ -73,6 +73,14 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     flip_coords()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
     main_draw = function(layer, painter) {
+        ## deal with 0 pixel rect
+        if (meta$horizontal) {
+            if (any(idx <- meta$xright == meta$xleft))
+                meta$xright[idx] = meta$xright[idx] + one_pixel(painter)[1]
+        } else {
+            if (any(idx <- meta$ytop == meta$ybottom))
+                meta$ytop[idx] = meta$ytop[idx] + one_pixel(painter)[2]
+        }
         qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
                   stroke = meta$border, fill = meta$color)
     }
