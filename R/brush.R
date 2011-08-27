@@ -301,9 +301,7 @@ draw_brush = function(layer, painter, data, meta) {
     if (length(meta$pos) == 0) return()
     b = brush(data)
     ## shift the brush shadow by 1 pixel
-    d =
-        apply(qvmap(qdeviceTransform(painter)$inverted(),
-                    c(0, 1 + b$style$linewidth), c(0, 1 + b$style$linewidth)), 2, diff)
+    d = (1 + b$style$linewidth / 2) * one_pixel(painter)
     qlineWidth(painter) = 1
     qdrawRect(painter, meta$pos[1] - meta$brush.size[1] + d[1],
               meta$pos[2] - meta$brush.size[2] + d[2],
