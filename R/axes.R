@@ -172,7 +172,7 @@ axis_loc = function(x) {
 ##' print(qplotView(scene = s))
 ##'
 qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy', ...) {
-    .bgcolor = "grey90"  # background color
+    .bgcolor = "gray90"  # background color
     minor_at = function(at, lim) {
         n = length(at)
         if (n <= 1) return(NULL)

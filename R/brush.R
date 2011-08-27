@@ -308,7 +308,7 @@ draw_brush = function(layer, painter, data, meta) {
     qdrawRect(painter, meta$pos[1] - meta$brush.size[1] + d[1],
               meta$pos[2] - meta$brush.size[2] + d[2],
               meta$pos[1] + d[1], meta$pos[2] + d[2],
-              stroke = rgb(0, 0, 0, .1), fill = NA)
+              stroke = 'gray90', fill = NA)
     qlineWidth(painter) = b$style$linewidth
     qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
               meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
