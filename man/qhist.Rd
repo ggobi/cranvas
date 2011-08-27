@@ -69,7 +69,7 @@ link_type(qflea) <- "self"
 #   brushed
 
 ## map tars1 to colors
-qflea2 <- qdata(flea, color = tars1, fill = tars1)
+qflea2 <- qdata(flea, color = tars1)
 qhist(tars1, qflea2)
 }
 \author{

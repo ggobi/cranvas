@@ -49,8 +49,7 @@ data(tennis)
 str(tennis)
 
 ## the first step is always to create the data object
-qtennis <- qdata(tennis, color = Serve.Speed, fill = Serve.Speed, 
-    size = Aces)
+qtennis <- qdata(tennis, color = Serve.Speed, size = Aces)
 
 ## then create plots
 qhist(Serve.Speed, data = qtennis)

@@ -10,23 +10,23 @@
 ##' specification). A shadow matrix will be attached if any missing
 ##' values are present in the original data.
 ##'
-##' When the three arguments \code{color}, \code{fill} and \code{size}
-##' take values as variable names in \code{data}, default palettes
-##' will be used to generate colors and sizes. The sequential color
-##' gradient palette (\code{\link[scales]{seq_gradient_pal}}) will be
-##' applied to continuous variables, and the hue palette
+##' When the three arguments \code{color}, \code{border} and
+##' \code{size} take values as variable names in \code{data}, default
+##' palettes will be used to generate colors and sizes. The sequential
+##' color gradient palette (\code{\link[scales]{seq_gradient_pal}})
+##' will be applied to continuous variables, and the hue palette
 ##' (\code{\link[scales]{hue_pal}}) will be applied to categorical
 ##' variables. The area palette (\code{\link[scales]{area_pal}}) is
 ##' used to create a size vector when the size variable is
-##' continuous. If any palette is used, an attribute \code{attr(data,
-##' 'Scales')} will be attached to the returned mutaframe, which will
-##' help specific plots to generate legends. This attribute is of the
-##' form \code{list(color = list(label, value, palette))}. Whenever
-##' any component is changed, the corresponding aesthetics will be
-##' updated automatically; for example, if we change the palette
-##' function for \code{color}, the colors \code{data$.color} will be
-##' updated using the new palette. See \code{\link{color_pal<-}} for a
-##' list of functions on how to modify scales information.
+##' continuous. An attribute \code{attr(data, 'Scales')} is attached
+##' to the returned mutaframe, which will help specific plots to
+##' generate legends. This attribute is of the form \code{list(color =
+##' list(label, variable, palette))}. Whenever any component is
+##' changed, the corresponding aesthetics will be updated
+##' automatically; for example, if we change the palette function for
+##' \code{color}, the colors \code{data$.color} will be updated using
+##' the new palette. See \code{\link{color_pal<-}} for a list of
+##' functions on how to modify scales information.
 ##'
 ##' @param data a data frame (it will be coerced to a data frame if it
 ##' is not)
@@ -34,20 +34,17 @@
 ##' corresponding to rows of data; it can be a vector of valid R
 ##' colors, or a name of variable in \code{data} (must be either a
 ##' factor or a numeric variable), or an R expression to calculate
-##' colors
-##' @param fill colors for filling the graphical elements
-##' (e.g. rectangles); possible values are similar to \code{color} but
-##' the default value \code{NULL} has a special meaning: the fill
-##' colors will be the same as the \code{color} argument but with more
-##' brightness (e.g. pure black will become gray; see
-##' \code{\link{lighter}})
+##' colors; \code{color} is used to fill the interior of graphical
+##' elements
+##' @param border colors for the border of graphical elements
+##' (e.g. rectangles); \code{NA} means to suppress the border
 ##' @param size sizes of rows (default 1); possible values are similar
 ##' to \code{color}, but when using a variable to generate sizes, it
 ##' must be a numeric variable
-##' @param brushed a logical vector indicating whether the rows are
-##' brushed (default all \code{FALSE})
-##' @param visible a logical vector indicating whether the rows are
-##' visible (default all \code{TRUE})
+##' @param brushed a logical vector indicating which rows are brushed
+##' (default all \code{FALSE})
+##' @param visible a logical vector indicating which rows are visible
+##' (default all \code{TRUE})
 ##' @return a mutaframe with attributes for interaction
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link[plumbr]{mutaframe}}, \code{\link{brush}},

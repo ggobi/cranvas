@@ -1,10 +1,10 @@
 \name{color_pal<-}
+\alias{border_label<-}
+\alias{border_pal<-}
+\alias{border_var<-}
 \alias{color_label<-}
 \alias{color_pal<-}
 \alias{color_var<-}
-\alias{fill_label<-}
-\alias{fill_pal<-}
-\alias{fill_var<-}
 \alias{size_label<-}
 \alias{size_pal<-}
 \alias{size_var<-}
@@ -16,11 +16,11 @@ color_var(data) <- value
 
 color_label(data) <- value
 
-fill_pal(data) <- value
+border_pal(data) <- value
 
-fill_var(data) <- value
+border_var(data) <- value
 
-fill_label(data) <- value
+border_label(data) <- value
 
 size_pal(data) <- value
 
@@ -44,7 +44,7 @@ size_label(data) <- value
   These functions provide ways to modify the palettes,
   variables to create aesthetics and their labels in a data
   object created by \code{\link{qdata}}. Currently
-  supported aesthetics are about color, fill and size of
+  supported aesthetics are about color, border and size of
   graphical elements.
 }
 \details{

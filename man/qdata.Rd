@@ -2,7 +2,7 @@
 \alias{qdata}
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
-qdata(data, color = "#262626", fill = NULL, size = 1, 
+qdata(data, color = "gray15", border = color, size = 1, 
     brushed = FALSE, visible = TRUE)
 }
 \arguments{
@@ -13,24 +13,22 @@ qdata(data, color = "#262626", fill = NULL, size = 1,
   gray) corresponding to rows of data; it can be a vector
   of valid R colors, or a name of variable in \code{data}
   (must be either a factor or a numeric variable), or an R
-  expression to calculate colors}
+  expression to calculate colors; \code{color} is used to
+  fill the interior of graphical elements}
 
-  \item{fill}{colors for filling the graphical elements
-  (e.g. rectangles); possible values are similar to
-  \code{color} but the default value \code{NULL} has a
-  special meaning: the fill colors will be the same as the
-  \code{color} argument but with more brightness (e.g. pure
-  black will become gray; see \code{\link{lighter}})}
+  \item{border}{colors for the border of graphical elements
+  (e.g. rectangles); \code{NA} means to suppress the
+  border}
 
   \item{size}{sizes of rows (default 1); possible values
   are similar to \code{color}, but when using a variable to
   generate sizes, it must be a numeric variable}
 
-  \item{brushed}{a logical vector indicating whether the
-  rows are brushed (default all \code{FALSE})}
+  \item{brushed}{a logical vector indicating which rows are
+  brushed (default all \code{FALSE})}
 
-  \item{visible}{a logical vector indicating whether the
-  rows are visible (default all \code{TRUE})}
+  \item{visible}{a logical vector indicating which rows are
+  visible (default all \code{TRUE})}
 }
 \value{
   a mutaframe with attributes for interaction
@@ -49,7 +47,7 @@ qdata(data, color = "#262626", fill = NULL, size = 1,
   original data.
 }
 \details{
-  When the three arguments \code{color}, \code{fill} and
+  When the three arguments \code{color}, \code{border} and
   \code{size} take values as variable names in \code{data},
   default palettes will be used to generate colors and
   sizes. The sequential color gradient palette
@@ -58,16 +56,15 @@ qdata(data, color = "#262626", fill = NULL, size = 1,
   (\code{\link[scales]{hue_pal}}) will be applied to
   categorical variables. The area palette
   (\code{\link[scales]{area_pal}}) is used to create a size
-  vector when the size variable is continuous. If any
-  palette is used, an attribute \code{attr(data, 'Scales')}
-  will be attached to the returned mutaframe, which will
-  help specific plots to generate legends. This attribute
-  is of the form \code{list(color = list(label, value,
-  palette))}. Whenever any component is changed, the
-  corresponding aesthetics will be updated automatically;
-  for example, if we change the palette function for
-  \code{color}, the colors \code{data$.color} will be
-  updated using the new palette. See
+  vector when the size variable is continuous. An attribute
+  \code{attr(data, 'Scales')} is attached to the returned
+  mutaframe, which will help specific plots to generate
+  legends. This attribute is of the form \code{list(color =
+  list(label, variable, palette))}. Whenever any component
+  is changed, the corresponding aesthetics will be updated
+  automatically; for example, if we change the palette
+  function for \code{color}, the colors \code{data$.color}
+  will be updated using the new palette. See
   \code{\link{color_pal<-}} for a list of functions on how
   to modify scales information.
 }
@@ -101,7 +98,7 @@ link_type(qtennis) <- "self"
 attr(qtennis, "Shadow")  # should be NULL, since no misssing values here
 
 
-## we can also use the default black color and gray fill
+## we can also use the default dark gray
 qtennis <- qdata(tennis)
 qhist(Double.Faults, data = qtennis)
 }

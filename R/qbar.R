@@ -4,7 +4,7 @@
 ##' \code{\link{common_key_release}}. Mouse events mainly include
 ##' brushing; as usual, left click to move the brush, and right click
 ##' to resize the brush.
-##' @param x a variable name
+##' @param x a variable name (must be a factor)
 ##' @param data a mutaframe created by \code{\link{qdata}}
 ##' @param space the space between bars proportional to the width of bars
 ##' @param main the main title

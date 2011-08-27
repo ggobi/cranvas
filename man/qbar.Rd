@@ -6,7 +6,7 @@ qbar(x, data = last_data(), space = 0.1, main = "",
     horizontal = FALSE)
 }
 \arguments{
-  \item{x}{a variable name}
+  \item{x}{a variable name (must be a factor)}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}}
 
