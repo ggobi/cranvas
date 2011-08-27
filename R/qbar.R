@@ -42,11 +42,21 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
     }
+    .no_split_color = function(x) {
+        if (length(unique(x)) == 1) x[1] else 'gray15'
     }
     compute_colors = function() {
-        tmp = meta$value
-        meta$color = tapply(data$.color, tmp, `[`, 1)
-        meta$border = tapply(data$.border, tmp, `[`, 1)
+        if (!length(meta$var2)) {
+            ## split variable was not set
+            meta$color = .no_split_color(data$.color)
+            meta$border = .no_split_color(data$.border)
+        } else {
+            ## higher priority on color than border
+            meta$color = rep(tapply(data$.color, meta$value2, `[`, 1), each = meta$nlevel)
+            meta$border = if (meta$split.type == 'color')
+                meta$color else rep(tapply(data$.border, meta$value2, `[`, 1),
+                                    each = meta$nlevel)
+        }
     }
     compute_coords()
     compute_colors()
