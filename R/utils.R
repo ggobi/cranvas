@@ -635,3 +635,22 @@ prefer_width = function(text, horizontal = TRUE) {
     10 * max(sapply(gregexpr('\n', text),
                     function(xx) ifelse(any(xx < 0), 0, length(xx)) + 1))
 }
+
+##' Get the relative width and height of one pixel on the screen
+##'
+##' This function calculates the relative size of one pixel in a layer
+##' coordinate system.
+##' @param painter the painter of a layer
+##' @return A numeric vector of length 2 (width and height).
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples library(qtpaint); s = qscene()
+##' qlayer(s, paintFun = function(layer, painter){d = one_pixel(painter)
+##' qdrawSegment(painter, .1, seq(0,1,.1), .1 + d[1], seq(0,1,.1))  # one pixel segments
+##' qdrawRect(painter, .3, .4, .3 + d[1], .4 + d[2]) # one pixel rectangle
+##' }, limits = qrect(c(0, 1), c(0, 1)))
+##' qplotView(scene = s)
+one_pixel = function(painter) {
+    m = qvmap(qdeviceTransform(painter)$inverted(), c(0, 1), c(0, 1))
+    c(m[2, 1] - m[1, 1], m[2, 2] - m[1, 2])
+}
