@@ -17,19 +17,31 @@
 qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE) {
     data = check_data(data)
     b = brush(data)
+    s = attr(data, 'Scales')
     meta =
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
                      alpha = 1, horizontal = horizontal, main = main)
     compute_coords = function() {
         meta$value = factor(data[, meta$var], exclude = NULL)
-        tmp = meta$value[visible(data)]
-        meta$y = c(table(tmp))
-        meta$xat = meta$x = seq_along(meta$y)
+        meta$nlevel = length(levels(meta$value))
+        .find_split_var(data, meta)
+        idx = visible(data)
+        tmp = table(meta$value[idx], meta$value2[idx])
+        if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
+        meta$y = c(tmp)
+        meta$xat = meta$x = rep(seq(nrow(tmp)), ncol(tmp))
         meta$yat = axis_loc(c(0, meta$y))
-        meta$xlabels = names(meta$y)
+        meta$xlabels = rownames(tmp)
         meta$ylabels = as.character(meta$yat)
         meta$xlab = meta$var
         meta$ylab = ''
+        w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
+        meta$xleft = meta$xat - w; meta$xright = meta$xat + w
+        meta$ybottom = c(cbind(0, tmp[, -ncol(tmp)])); meta$ytop = meta$y
+        meta$limits =
+            extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
+                                range(c(meta$ybottom, meta$ytop))))
+    }
     }
     compute_colors = function() {
         tmp = meta$value
@@ -48,16 +60,6 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
         switch_value('xright', 'ytop', meta)
         meta$limits = meta$limits[, 2:1]
     }
-    ## bars (rectangles)
-    compute_bars = function() {
-        w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
-        meta$xleft = meta$xat - w; meta$xright = meta$xat + w
-        meta$ybottom = 0; meta$ytop = meta$y
-        meta$limits =
-            extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
-                                range(c(meta$ybottom, meta$ytop))))
-    }
-    compute_bars()
     flip_coords()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
     main_draw = function(layer, painter) {
@@ -67,11 +69,11 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     brush_draw = function(layer, painter) {
         if (b$identify) return()
         if (any(idx <- selected(data) & visible(data))) {
-            tmp = meta$value[idx]
+            d = c(table(meta$value[idx], meta$value2[idx]))  # brushed counts
             if (meta$horizontal)
-                qdrawRect(painter, meta$xleft, meta$ybottom, c(table(tmp)), meta$ytop,
+                qdrawRect(painter, meta$xleft, meta$ybottom, meta$xleft + d, meta$ytop,
                           stroke = NA, fill = b$color) else
-            qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, c(table(tmp)),
+            qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ybottom + d,
                       stroke = NA, fill = b$color)
         }
         draw_brush(layer, painter, data, meta)
@@ -79,11 +81,21 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
     }
+    .find_intersect = function(x1, x2, idx, n) {
+        h = logical(length(x1))
+        for (i in idx)
+            h =
+                h | ((x1 %in% levels(x1)[(i %% n) + 1]) &
+                        (x2 %in% levels(x2)[ceiling((i + 1) / n)]))
+        h
+    }
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
-        hits = layer$locate(rect) + 1
-        if (length(hits))
-            hits = meta$value %in% levels(meta$value)[hits]
+        ## indices outside the range should be discarded
+        hits = discard(layer$locate(rect), c(0, meta$nlevel * meta$nlevel2 - 1))
+        if (length(hits)) {
+            hits = .find_intersect(meta$value, meta$value2, hits, meta$nlevel)
+        }
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
     }
@@ -148,7 +160,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
                    compute_colors()
                    qupdate(layer.main)
                }, {
-                   compute_coords(); compute_colors(); compute_bars(); flip_coords()
+                   compute_coords(); compute_colors(); flip_coords()
                    layer.main$invalidateIndex()
                    qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
                    qupdate(layer.main)
@@ -184,4 +196,25 @@ Bar.meta =
                                      start = 'numeric', pos = 'numeric',
                                      brush.move = 'logical', brush.size = 'numeric',
                                      manual.brush = 'function', horizontal = 'logical',
-                                     main = 'character')))
+                                     main = 'character',
+                                     var2 = 'character', value2 = 'factor',
+                                     split.type = 'character',
+                                     nlevel = 'integer', nlevel2 = 'integer')))
+
+.find_split_var = function(data, meta) {
+    s = attr(data, 'Scales')
+    for (i in c('color', 'border')) {
+        if (length(nm <- s[[i]]$variable) && (nm %in% names(data)) &&
+            is.factor(v <- data[, nm])) {
+            meta$var2 = nm
+            meta$value2 = factor(v, exclude = NULL)
+            meta$split.type = i
+            meta$nlevel2 = length(levels(meta$value2))
+            return()
+        }
+    }
+    meta$var2 = NULL
+    meta$value2 = factor(character(nrow(data)))
+    meta$split.type = NULL
+    meta$nlevel2 = 1
+}
