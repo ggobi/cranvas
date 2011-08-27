@@ -54,12 +54,14 @@
 ##' \code{\link{link}}
 ##' @export
 ##' @example inst/examples/qdata-ex.R
-qdata = function(data, color = "#262626", fill = NULL, size = 1, brushed = FALSE, visible = TRUE) {
+qdata =
+    function(data, color = "gray15", border = color, size = 1,
+             brushed = FALSE, visible = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
     ## row attributes needed by all plotting functions
-    row_attrs = c(".color", ".fill", ".size", ".brushed", ".visible")
+    row_attrs = c(".color", ".border", ".size", ".brushed", ".visible")
     ## once in a blue moon...
     conflict_attrs = row_attrs %in% colnames(data)
     if (any(conflict_attrs)) {
@@ -72,7 +74,7 @@ qdata = function(data, color = "#262626", fill = NULL, size = 1, brushed = FALSE
 
     z = as.list(match.call()[-1])
     l = Scales.meta$new()  # record scales in an environment genreated by ref classes
-    for (i in c('color', 'fill', 'size')) {
+    for (i in c('color', 'border', 'size')) {
         if (is.language(z[[i]])) {
             data(munsell_map, package = "munsell")
             v = eval(z[[i]], data)
@@ -95,13 +97,8 @@ qdata = function(data, color = "#262626", fill = NULL, size = 1, brushed = FALSE
             } else stop(sQuote('size'), ' must be numeric!')
             l[[i]] = list(label = deparse(z[[i]]), value = v, palette = pal)
         } else {
-            mf[[sprintf('.%s', i)]] = if (i != 'fill') {
-                switch(i, color = color, size = size)
-            } else {
-                if (is.null(fill)) {
-                    lighter(mf$.color)  # default is use lighter .color
-                } else fill
-            }
+            if ((i == 'border') && is.null(z[[i]])) mf$.border = mf$.color else
+            mf[[sprintf('.%s', i)]] = switch(i, color = color, border = border, size = size)
         }
     }
 
@@ -146,16 +143,24 @@ qdata = function(data, color = "#262626", fill = NULL, size = 1, brushed = FALSE
     }
 
     ## whenever the scales information is changed, update data columns
-    l$changed$connect(function() {
-        if (length(l$color) && is.function(pal <- l$color$palette))
-            mf$.color = if (is.numeric(v <- l$color$value))
-                cscale(v, pal) else if (is.factor(v)) dscale(v, pal) else mf$.color
-        if (length(l$fill) && is.function(pal <- l$fill$palette))
-            mf$.fill = if (is.numeric(v <- l$fill$value))
-                cscale(v, pal) else if (is.factor(v)) dscale(v, pal) else mf$.fill
-        if (length(l$size) && is.function(pal <- l$size$palette))
-            mf$.size = if (is.numeric(v <- l$size$value)) pal(v) else mf$.size
-    })
+    update_scales = function(comp) {
+        if (length(l[[comp]]) && is.function(pal <- l[[comp]]$palette)) {
+            if (!((name <- l[[comp]]$variable) %in% names(mf)))
+                stop(sprintf('variable \'%s\'is not in the data!'), name)
+            v = mf[, name]
+            if (comp %in% c('color', 'border')) {
+                mf[[sprintf('.%s', comp)]] = if (is.numeric(v))
+                    cscale(v, pal) else if (is.factor(v)) dscale(v, pal) else {
+                        mf[[sprintf('.%s', comp)]]
+                    }
+            } else if (comp == 'size') {
+                mf$.size = if (is.numeric(v)) pal(v) else mf$.size
+            }
+        }
+    }
+    l$colorChanged$connect(function() update_scales('color'))
+    l$borderChanged$connect(function() update_scales('border'))
+    l$sizeChanged$connect(function() update_scales('size'))
 
     attr(mf, 'Scales') = l  # scales information to be used in legend
     attr(mf, 'Generator') = 'd38bbe46dae5fa45758f3609f5dc1a0a'  # a token for internal use
@@ -164,7 +169,7 @@ qdata = function(data, color = "#262626", fill = NULL, size = 1, brushed = FALSE
 }
 Scales.meta =
     setRefClass("Scales_meta", fields =
-                signalingFields(list(color = 'list', fill = 'list', size = 'list')))
+                signalingFields(list(color = 'list', border = 'list', size = 'list')))
 
 
 .cranvasEnv$.last.data = NULL
@@ -397,7 +402,7 @@ check_data = function(data) {
 ##' These functions provide ways to modify the palettes, variables to
 ##' create aesthetics and their labels in a data object created by
 ##' \code{\link{qdata}}. Currently supported aesthetics are about
-##' color, fill and size of graphical elements.
+##' color, border and size of graphical elements.
 ##'
 ##' All these information is called ``scales'' (in the \pkg{ggplot2}
 ##' term) and stored in \code{attr(data, 'Scales')}. Usually palette
@@ -434,25 +439,25 @@ check_data = function(data) {
     data
 }
 ##' @rdname set_scales
-##' @usage fill_pal(data) <- value
+##' @usage border_pal(data) <- value
 ##' @export
-`fill_pal<-` = function(data, value) {
-    .data_scales(data, 'fill', 'palette') = value
+`border_pal<-` = function(data, value) {
+    .data_scales(data, 'border', 'palette') = value
     data
 }
 ##' @rdname set_scales
-##' @usage fill_var(data) <- value
+##' @usage border_var(data) <- value
 ##' @export
-`fill_var<-` = function(data, value) {
-    .data_scales(data, 'fill', 'value') = eval(as.symbol(value), data)
-    fill_label(data) = value
+`border_var<-` = function(data, value) {
+    .data_scales(data, 'border', 'variable') = value
+    border_label(data) = value
     data
 }
 ##' @rdname set_scales
-##' @usage fill_label(data) <- value
+##' @usage border_label(data) <- value
 ##' @export
-`fill_label<-` = function(data, value) {
-    .data_scales(data, 'fill', 'label') = value
+`border_label<-` = function(data, value) {
+    .data_scales(data, 'border', 'label') = value
     data
 }
 ##' @rdname set_scales

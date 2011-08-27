@@ -127,8 +127,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   ## Radius etc.
   meta$radius <- size
   meta$alpha <- alpha
-  meta$stroke <- data$.color[meta$orderEnter]
-  meta$fill <- data$.fill[meta$orderEnter]
+  meta$stroke <- data$.border[meta$orderEnter]
+  meta$fill <- data$.color[meta$orderEnter]
   meta$serie.mode <- FALSE
   meta$serie.pos <- NULL
 

@@ -33,8 +33,8 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     }
     compute_colors = function() {
         tmp = meta$value
-        meta$stroke = tapply(data$.color, tmp, `[`, 1)
-        meta$fill = tapply(data$.fill, tmp, `[`, 1)
+        meta$color = tapply(data$.color, tmp, `[`, 1)
+        meta$border = tapply(data$.border, tmp, `[`, 1)
     }
     compute_coords()
     compute_colors()
@@ -62,7 +62,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
     main_draw = function(layer, painter) {
         qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
-                  stroke = meta$stroke, fill = meta$fill)
+                  stroke = meta$border, fill = meta$color)
     }
     brush_draw = function(layer, painter) {
         if (b$identify) return()
@@ -180,7 +180,7 @@ Bar.meta =
                                      space = 'numeric', limits = 'matrix',
                                      xleft = 'numeric', xright = 'numeric',
                                      ybottom = 'numeric', ytop = 'numeric',
-                                     stroke = 'character', fill = 'character',
+                                     color = 'character', border = 'character',
                                      start = 'numeric', pos = 'numeric',
                                      brush.move = 'logical', brush.size = 'numeric',
                                      manual.brush = 'function', horizontal = 'logical',

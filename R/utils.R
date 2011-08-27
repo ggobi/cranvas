@@ -286,7 +286,7 @@ common_key_press = function(layer, event, data, meta) {
     } else if (length(i <- which(match_key(c('Plus', 'Minus'))))) {
         meta$alpha = max(0.01, min(1, c(1.1, 0.9)[i] * meta$alpha))
         data$.color = alpha(data$.color, meta$alpha)
-        data$.fill = alpha(data$.fill, meta$alpha)
+        data$.border = alpha(data$.border, meta$alpha)
     } else if (match_key('Delete'))
         visible(data) = !selected(data) & visible(data) else if (match_key('F5'))
             visible(data) = TRUE

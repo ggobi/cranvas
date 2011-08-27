@@ -63,8 +63,8 @@ qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main, horizont
                 include.lowest = TRUE)
     }
     compute_colors = function() {
-        meta$stroke = average_colors(data$.color, meta$intervals)
-        meta$fill = average_colors(data$.fill, meta$intervals)
+        meta$stroke = average_colors(data$.border, meta$intervals)
+        meta$fill = average_colors(data$.color, meta$intervals)
     }
     compute_coords()
     compute_intervals()

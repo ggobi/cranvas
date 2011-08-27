@@ -22,5 +22,5 @@ link_type(qflea) = 'self'
 ## now brush one bar, all rows in the same species will be brushed
 
 ## map tars1 to colors
-qflea2 <- qdata(flea, color = tars1, fill = tars1)
+qflea2 <- qdata(flea, color = tars1)
 qhist(tars1, qflea2)

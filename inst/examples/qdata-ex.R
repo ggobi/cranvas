@@ -25,6 +25,6 @@ link_type(qtennis) = 'self'
 attr(qtennis, 'Shadow')  # should be NULL, since no misssing values here
 
 
-## we can also use the default black color and gray fill
+## we can also use the default dark gray
 qtennis = qdata(tennis)
 qhist(Double.Faults, data = qtennis)

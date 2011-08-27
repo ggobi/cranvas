@@ -23,6 +23,6 @@ link_var(qflea) = 'species'
 link_type(qflea) = 'self'
 
 # Using species to color points
-qflea <- qdata(flea, fill = dscale(flea$species, hue_pal()), color = dscale(flea$species, hue_pal()))
+qflea <- qdata(flea, color = species)
 print(qscatter(tars1, aede1, qflea))
 
