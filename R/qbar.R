@@ -45,7 +45,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
         meta$xat = meta$x = rep(seq(meta$nlevel), meta$nlevel2)
         meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = rownames(tmp)
-        meta$ylabels = as.character(meta$yat)
+        meta$ylabels = format(meta$yat)
         meta$xlab = meta$var
         meta$ylab = ''
         w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
