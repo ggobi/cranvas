@@ -72,14 +72,10 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    main, alpha = 1, draw.range = TRUE) {
+    main = '', alpha = 1, draw.range = TRUE) {
 
     data = check_data(data)
     b = brush(data)    # the brush attached to the data
-
-    if (missing(main)) {
-        main = paste("Parallel Coordinates Plot of", deparse(substitute(data))) # title
-    }
 
     if (missing(vars)) vars = grep('^[^.]', colnames(data), value = TRUE)
     if (class(vars) == "formula") {
@@ -451,8 +447,10 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     layout$setRowStretchFactor(2, 0)
 
     view = qplotView(scene = scene)
-    view$setWindowTitle(meta$main)
-    attr(view, 'meta') = meta
+    view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', '))
+    meta$varsChanged$connect(function() {
+        view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', '))
+    })
 
     ## update the brush layer if brush attributes change
     b.idx = b$colorChanged$connect(function() {
@@ -472,6 +470,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
+    attr(view, 'meta') = meta
 
     view
 }
