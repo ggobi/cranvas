@@ -30,81 +30,60 @@ qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', hor
     data = check_data(data)
     b = brush(data)
     meta =
-        Hist.meta$new(var = as.character(as.list(match.call()[-1])$x),
+        Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
                      alpha = 1, horizontal = horizontal, main = main, breaks = breaks)
     compute_coords = function() {
-        tmp = hist(data[visible(data), meta$var], breaks = meta$breaks, plot = FALSE)
-        if (!identical(meta$breaks, tmp$breaks)) meta$breaks = tmp$breaks
-        meta$y = if (freq) tmp$counts else tmp$density
-        meta$x = tmp$mids
+        vis = visible(data)
+        hst = hist(data[vis, meta$var], breaks = meta$breaks, plot = FALSE)
+        if (!identical(meta$breaks, hst$breaks)) meta$breaks = hst$breaks
+        meta$value =
+            cut(data[, meta$var], breaks = meta$breaks, include.lowest = TRUE)
+        meta$nlevel = length(levels(meta$value))
+        .find_split_var(data, meta)
+        idx = visible(data)
+        tmp = table(meta$value[idx], meta$value2[idx])
+        if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
+        if (!meta$freq) tmp = tmp / (sum(vis) * diff(hst$breaks[1:2]))
+        meta$y = c(tmp)
+        meta$x = rep(hst$mids, meta$nlevel2)
         meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = format(meta$xat)
         meta$ylabels = format(meta$yat)
         meta$xlab = meta$var
-        meta$ylab = if (freq) 'Frequency' else 'Density'
-        meta$xleft = tmp$breaks[-length(tmp$breaks)]; meta$xright = tmp$breaks[-1]
-        meta$ybottom = rep(0, length(meta$xleft)); meta$ytop = meta$y
+        meta$ylab = if (meta$freq) 'Frequency' else 'Density'
+        meta$xleft = rep(hst$breaks[-length(hst$breaks)], meta$nlevel2)
+        meta$xright = rep(hst$breaks[-1], meta$nlevel2)
+        meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2])); meta$ytop = meta$y
         meta$limits =
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
     }
-    ## average the colors in the bins; may not be a good idea but simpler to implement
-    average_colors = function(x, f) {
-        f = factor(f, levels = seq(max(f, na.rm = TRUE)))
-        z = sapply(split(as.data.frame(t(col2rgb(x, alpha = TRUE))), f), colMeans) / 255
-        z[is.na(z)] = 0
-        rgb(z[1, ], z[2, ], z[3, ], z[4, ])
-    }
-    ## rows belong to which interval
-    compute_intervals = function() {
-        meta$intervals =
-            cut(data[, meta$var], breaks = meta$breaks, labels = FALSE,
-                include.lowest = TRUE)
-    }
-    compute_colors = function() {
-        meta$stroke = average_colors(data$.border, meta$intervals)
-        meta$fill = average_colors(data$.color, meta$intervals)
-    }
     compute_coords()
-    compute_intervals()
+    compute_colors = function() {
+        .bar_compute_colors(data, meta)
+    }
     compute_colors()
     flip_coords = function() {
-        if (!meta$horizontal) return()
-        switch_value('x', 'y', meta)
-        switch_value('xat', 'yat', meta)
-        switch_value('xlabels', 'ylabels', meta)
-        switch_value('xlab', 'ylab', meta)
-        switch_value('xleft', 'ybottom', meta)
-        switch_value('xright', 'ytop', meta)
-        meta$limits = meta$limits[, 2:1]
+        .bar_flip_coords(data, meta)
     }
     flip_coords()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
     main_draw = function(layer, painter) {
-        qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
-                  stroke = meta$stroke, fill = meta$fill)
+        .bar_draw_main(layer, painter, meta)
     }
     brush_draw = function(layer, painter) {
-        if (b$identify) return()
-        if (any(idx <- selected(data) & visible(data))) {
-            tmp = hist(data[idx, meta$var], breaks = meta$breaks, plot = FALSE)
-            ynew = if (freq) tmp$counts else tmp$density * mean(selected(data))
-            if (meta$horizontal)
-                qdrawRect(painter, meta$xleft, meta$ybottom, ynew, meta$ytop,
-                          stroke = NA, fill = b$color) else
-            qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, ynew,
-                      stroke = NA, fill = b$color)
-        }
-        draw_brush(layer, painter, data, meta)
+        .bar_draw_brush(layer, painter, data, meta)
     }
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
     }
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
-        hits = layer$locate(rect) + 1L
-        if (length(hits))
-            hits = meta$intervals %in% hits
+        ## indices outside the range should be discarded
+        hits = discard(layer$locate(rect), c(0, meta$nlevel * meta$nlevel2 - 1))
+        if (length(hits)) {
+            hits = .find_intersect(meta$value, meta$value2, hits, meta$nlevel)
+        }
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
     }
@@ -139,18 +118,18 @@ qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', hor
         if (!b$identify) return()
         b$cursor = 2L
         meta$pos = as.numeric(event$pos())
-        meta$identified = layer$locate(identify_rect(meta)) + 1
+        meta$identified = layer$locate(identify_rect(meta))
         qupdate(layer.identify)
     }
     identify_draw = function(layer, painter) {
-        if (!b$identify || !length(meta$identified)) return()
-        idx = meta$identified
-        k = meta$intervals %in% idx
+        if (!b$identify || !length(idx <- meta$identified)) return()
+        k = .find_intersect(meta$value, meta$value2, idx, meta$nlevel)
         meta$identify.labels =
             sprintf('bin: (%s]\ncount: %s\nproportion: %.2f%%',
-                    paste(meta$breaks[range(idx) + c(0, 1)], collapse = ','),
+                    paste(meta$breaks[range(idx %% meta$nlevel) + c(1, 2)], collapse = ','),
                     sum(k), mean(k) * 100)
         draw_identify(layer, painter, data, meta)
+        idx = idx + 1
         qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
                   meta$ytop[idx], stroke = b$color, fill = NA)
     }
@@ -226,7 +205,7 @@ qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', hor
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     meta$breaksChanged$connect(function () {
-        compute_coords(); compute_intervals(); compute_colors(); flip_coords()
+        compute_coords(); compute_colors(); flip_coords()
         layer.main$invalidateIndex()
         qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis); qupdate(layer.main)
     })
@@ -244,9 +223,13 @@ Hist.meta =
                                      breaks = 'numeric', limits = 'matrix',
                                      xleft = 'numeric', xright = 'numeric',
                                      ybottom = 'numeric', ytop = 'numeric',
-                                     stroke = 'character', fill = 'character',
+                                     border = 'character', color = 'character',
                                      start = 'numeric', pos = 'numeric',
                                      brush.move = 'logical', brush.size = 'numeric',
                                      manual.brush = 'function', horizontal = 'logical',
-                                     main = 'character', intervals = 'integer',
+                                     main = 'character', value = 'factor',
+                                     var2 = 'character', value2 = 'factor',
+                                     split.type = 'character',
+                                     nlevel = 'integer', nlevel2 = 'integer',
+                                     freq = 'logical',
                                      identified = 'numeric', identify.labels = 'character')))
