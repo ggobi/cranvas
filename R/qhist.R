@@ -31,34 +31,53 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qhist-ex.R
-qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', horizontal = FALSE) {
+qhist =
+    function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', horizontal = FALSE,
+             spine = FALSE) {
     data = check_data(data)
     b = brush(data)
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
-                     alpha = 1, horizontal = horizontal, main = main, breaks = breaks)
+                      alpha = 1, horizontal = horizontal, main = main, breaks = breaks,
+                      standardize = spine, spine = spine)
     compute_coords = function() {
-        vis = visible(data)
-        hst = hist(data[vis, meta$var], breaks = meta$breaks, plot = FALSE)
+        if (meta$spine) meta$freq = meta$standardize = TRUE else meta$standardize = FALSE
+        idx = visible(data)
+        hst = hist(data[idx, meta$var], breaks = meta$breaks, plot = FALSE)
         if (!identical(meta$breaks, hst$breaks)) meta$breaks = hst$breaks
         meta$value =
             cut(data[, meta$var], breaks = meta$breaks, include.lowest = TRUE)
         meta$nlevel = length(levels(meta$value))
         .find_split_var(data, meta)
-        idx = visible(data)
         tmp = table(meta$value[idx], meta$value2[idx])
         if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
-        if (!meta$freq) tmp = tmp / (sum(vis) * diff(hst$breaks[1:2]))
+        if (!meta$freq) tmp = tmp / (sum(idx) * diff(hst$breaks[1:2]))
+        if (meta$standardize) tmp = tmp / tmp[, meta$nlevel2, drop = ncol(tmp) > 1]
+        tmp[!is.finite(tmp)] = 0  # consider division by 0
         meta$y = c(tmp)
         meta$x = rep(hst$mids, meta$nlevel2)
         meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = format(meta$xat)
         meta$ylabels = format(meta$yat)
         meta$xlab = meta$var
-        meta$ylab = if (meta$freq) 'Frequency' else 'Density'
-        meta$xleft = rep(hst$breaks[-length(hst$breaks)], meta$nlevel2)
-        meta$xright = rep(hst$breaks[-1], meta$nlevel2)
-        meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2])); meta$ytop = meta$y
+        meta$ylab = if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
+        nb = length(hst$breaks)
+        if (meta$spine) {
+            meta$xright = cumsum(table(meta$value[idx])) / sum(idx)  # [0,1], prop counts
+            meta$xleft = c(0, meta$xright[-meta$nlevel])
+            meta$xat <- c(0, meta$xright)
+            meta$xlabels = unname(tapply(formatC(meta$breaks), meta$xat, function(x) {
+                if (length(x) <= 1) x else sprintf('%s%s(%s)',
+                          x[1], if (meta$horizontal) '' else '\n', x[length(x)])
+            }))
+            meta$xat = unique(meta$xat)
+            meta$xleft = rep(meta$xleft, meta$nlevel2)
+            meta$xright = rep(meta$xright, meta$nlevel2)
+        } else {
+            meta$xleft = rep(hst$breaks[-nb], meta$nlevel2)
+            meta$xright = rep(hst$breaks[-1], meta$nlevel2)
+        }
+        meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2, drop = FALSE])); meta$ytop = meta$y
         meta$limits =
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
@@ -157,7 +176,8 @@ qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', hor
     layer.ylab = qmtext(meta = meta, side = 2)
     layer.xaxis = qaxis(meta = meta, side = 1)
     layer.yaxis = qaxis(meta = meta, side = 2)
-    layer.grid = qgrid(meta = meta, minor = 'xy')
+    layer.grid = qgrid(meta = meta, minor = ifelse(meta$spine,
+                                    ifelse(meta$horizontal, 'x', 'y'), 'xy'))
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab
@@ -181,9 +201,9 @@ qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', hor
     layout$setColumnStretchFactor(0, 0)
     layout$setColumnStretchFactor(1, 0)
     view = qplotView(scene = scene)
-    view$setWindowTitle(paste("Histogram:", meta$var))
+    view$setWindowTitle(paste(ifelse(meta$spine, "Spine plot:", "Histogram:"), meta$var))
     meta$varChanged$connect(function() {
-        view$setWindowTitle(paste("Histogram:", meta$var))
+        view$setWindowTitle(paste(ifelse(meta$spine, "Spine plot:", "Histogram:"), meta$var))
     })
     d.idx = add_listener(data, function(i, j) {
         switch(j, .brushed = qupdate(layer.brush),
@@ -234,7 +254,7 @@ Hist.meta =
                                      manual.brush = 'function', horizontal = 'logical',
                                      main = 'character', value = 'factor',
                                      var2 = 'character', value2 = 'factor',
-                                     split.type = 'character',
+                                     split.type = 'character', spine = 'logical',
                                      nlevel = 'integer', nlevel2 = 'integer',
                                      freq = 'logical', standardize = 'logical',
                                      identified = 'numeric', identify.labels = 'character')))
