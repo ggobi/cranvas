@@ -58,9 +58,38 @@ NULL
 ##' summary(nrcstat)
 NULL
 
+##' Wages of male high-school dropouts
+##'
+##' The data was collected to track the labor experiences of male
+##' high-school dropouts. The men were between 14 and 17 years old at
+##' the time of the first survey.
+##' @name wages
+##' @docType data
+##' @usage data(wages)
+##' @format Number of subjects: 888; Number of variables: 15; Number
+##' of observations, across all subjects: 6402
+##'
+##' \describe{ \item{\code{id}}{id numbers for each subject}
+##' \item{\code{lnw}}{natural log of wages, adjusted for inflation, to
+##' 1990 dollars} \item{\code{exper}}{length of time in the workforce
+##' (in years). This is treated as the time variable, with \eqn{t = 0}
+##' for each subject starting on their first day at work. The number
+##' of time points and values of time points for each subject can
+##' differ} \item{\code{ged}}{when/if a graduate equivalency diploma
+##' is obtained} \item{\code{black}}{categorical indicator of race is
+##' black} \item{\code{hispanic}}{categorical indicator of race is
+##' hispanic} \item{\code{hgc}}{highest grade completed}
+##' \item{\code{uerate}}{unemployment rates in the local geographic
+##' region at each measurement time} }
+##' @source Singer, J. D. & Willett, J. B. (2003), \emph{Applied
+##' Longitudinal Data Analysis}, Oxford University Press, Oxford,
+##' UK. It is a subset of data collected in the National Longitudinal
+##' Survey of Youth (NLSY) described at
+##' \url{http://www.bls.gov/nls/nlsdata.htm}.
+##' @example inst/examples/wages-ex.R
+
 
 ## set options(cranvas_debug = TRUE) to print the debug message
-
 cranvas_debug = function(msg) {
     if (isTRUE(getOption("cranvas_debug"))) {
         if (missing(msg))
