@@ -55,70 +55,24 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
     }
-    .no_split_color = function(x) {
-        if (length(unique(x)) == 1) x[1] else 'gray15'
-    }
-    compute_colors = function() {
-        if (!length(meta$var2)) {
-            ## split variable was not set
-            meta$color = .no_split_color(data$.color)
-            meta$border = .no_split_color(data$.border)
-        } else {
-            ## higher priority on color than border
-            meta$color = rep(tapply(data$.color, meta$value2, `[`, 1), each = meta$nlevel)
-            meta$border = if (meta$split.type == 'color')
-                meta$color else rep(tapply(data$.border, meta$value2, `[`, 1),
-                                    each = meta$nlevel)
-        }
-    }
     compute_coords()
+    compute_colors = function() {
+        .bar_compute_colors(data, meta)
+    }
     compute_colors()
     flip_coords = function() {
-        if (!meta$horizontal) return()
-        switch_value('x', 'y', meta)
-        switch_value('xat', 'yat', meta)
-        switch_value('xlabels', 'ylabels', meta)
-        switch_value('xlab', 'ylab', meta)
-        switch_value('xleft', 'ybottom', meta)
-        switch_value('xright', 'ytop', meta)
-        meta$limits = meta$limits[, 2:1]
+        .bar_flip_coords(data, meta)
     }
     flip_coords()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
     main_draw = function(layer, painter) {
-        ## deal with 0 pixel rect
-        if (meta$horizontal) {
-            if (any(idx <- meta$xright == meta$xleft))
-                meta$xright[idx] = meta$xright[idx] + one_pixel(painter)[1]
-        } else {
-            if (any(idx <- meta$ytop == meta$ybottom))
-                meta$ytop[idx] = meta$ytop[idx] + one_pixel(painter)[2]
-        }
-        qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
-                  stroke = meta$border, fill = meta$color)
+        .bar_draw_main(layer, painter, meta)
     }
     brush_draw = function(layer, painter) {
-        if (b$identify) return()
-        if (any(idx <- selected(data) & visible(data))) {
-            d = c(table(meta$value[idx], meta$value2[idx]))  # brushed counts
-            if (meta$horizontal)
-                qdrawRect(painter, meta$xleft, meta$ybottom, meta$xleft + d, meta$ytop,
-                          stroke = NA, fill = b$color) else
-            qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ybottom + d,
-                      stroke = NA, fill = b$color)
-        }
-        draw_brush(layer, painter, data, meta)
+        .bar_draw_brush(layer, painter, data, meta)
     }
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
-    }
-    .find_intersect = function(x1, x2, idx, n) {
-        h = logical(length(x1))
-        for (i in idx)
-            h =
-                h | ((x1 %in% levels(x1)[(i %% n) + 1]) &
-                        (x2 %in% levels(x2)[ceiling((i + 1) / n)]))
-        h
     }
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
@@ -248,4 +202,66 @@ Bar.meta =
     meta$value2 = factor(character(nrow(data)))
     meta$split.type = NULL
     meta$nlevel2 = 1
+}
+
+.no_split_color = function(x) {
+    if (length(unique(x)) == 1) x[1] else 'gray15'
+}
+.bar_compute_colors = function(data, meta) {
+    if (!length(meta$var2)) {
+        ## split variable was not set
+        meta$color = .no_split_color(data$.color)
+        meta$border = .no_split_color(data$.border)
+    } else {
+        ## higher priority on color than border
+        meta$color = rep(tapply(data$.color, meta$value2, `[`, 1), each = meta$nlevel)
+        meta$border = if (meta$split.type == 'color')
+            meta$color else rep(tapply(data$.border, meta$value2, `[`, 1),
+                                each = meta$nlevel)
+    }
+}
+.bar_flip_coords = function(data, meta) {
+    if (!meta$horizontal) return()
+    switch_value('x', 'y', meta)
+    switch_value('xat', 'yat', meta)
+    switch_value('xlabels', 'ylabels', meta)
+    switch_value('xlab', 'ylab', meta)
+    switch_value('xleft', 'ybottom', meta)
+    switch_value('xright', 'ytop', meta)
+    meta$limits = meta$limits[, 2:1]
+}
+.bar_draw_main = function(layer, painter, meta) {
+    ## deal with 0 pixel rect
+    if (meta$horizontal) {
+        if (any(idx <- meta$xright == meta$xleft))
+            meta$xright[idx] = meta$xright[idx] + one_pixel(painter)[1]
+    } else {
+        if (any(idx <- meta$ytop == meta$ybottom))
+            meta$ytop[idx] = meta$ytop[idx] + one_pixel(painter)[2]
+    }
+    qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
+              stroke = meta$border, fill = meta$color)
+}
+.bar_draw_brush = function(layer, painter, data, meta) {
+    b = brush(data)
+    if (b$identify) return()
+    if (any(idx <- selected(data) & visible(data))) {
+        d = c(table(meta$value[idx], meta$value2[idx])) # brushed counts
+        if (!is.null(meta$freq) && !meta$freq)
+            d = d / (sum(visible(data)) * diff(meta$breaks[1:2]))
+        if (meta$horizontal)
+            qdrawRect(painter, meta$xleft, meta$ybottom, meta$xleft + d, meta$ytop,
+                      stroke = NA, fill = b$color) else
+        qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ybottom + d,
+                  stroke = NA, fill = b$color)
+    }
+    draw_brush(layer, painter, data, meta)
+}
+.find_intersect = function(x1, x2, idx, n) {
+    h = logical(length(x1))
+    for (i in idx)
+        h =
+            h | ((x1 %in% levels(x1)[(i %% n) + 1]) &
+                 (x2 %in% levels(x2)[ceiling((i + 1) / n)]))
+    h
 }
