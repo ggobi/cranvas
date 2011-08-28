@@ -1,55 +1,64 @@
 \name{qhist}
 \alias{qhist}
-\title{Draw a histogram}
+\alias{qspine}
+\title{Draw a histogram or a spine plot}
 \usage{
 qhist(x, data = last_data(), breaks = 30, freq = TRUE, 
-    main = "", horizontal = FALSE)
+    main = "", horizontal = FALSE, spine = FALSE)
+
+qspine(x, data = last_data(), breaks = 30, main = "", 
+    horizontal = FALSE)
 }
 \arguments{
   \item{x}{the name of the numeric variable to be used to
-  draw the histogram}
+  draw the histogram or spine plot}
 
   \item{breaks}{a single number giving the number of bins,
   or a numeric vector giving the breakpoints}
 
   \item{freq}{draw the frequencies (\code{TRUE}) or
-  densities (\code{FALSE})}
+  densities (\code{FALSE}) (only applies to histogram)}
 
-  \item{main}{the main title (default to be
-  \code{"Histogram of variable name"})}
-
-  \item{horizontal}{whether to draw a horizontal or
-  vertical plot}
+  \item{spine}{if \code{TRUE}, draw a spine plot (bar
+  widths proportional to counts instead of being equal)}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly
   used data)}
+
+  \item{main}{the main title}
+
+  \item{horizontal}{\code{TRUE} to draw a horizontal plot
+  or \code{FALSE} (vertical)}
 }
 \value{
-  A histogram
+  A histogram or a spine plot
 }
 \description{
-  Draw an interactive histogram based on a continuous
-  variable, optionally split by a categorical variable. It
-  supports some common keyboard interactions (see
-  \code{\link{common_key_press}}) as well as other
-  interactions specific to histograms.
+  Draw an interactive histogram or spine plot based on a
+  continuous variable, optionally split by a categorical
+  variable. It supports some common keyboard interactions
+  (see \code{\link{common_key_press}}) as well as other
+  interactions specific to histograms and spine plots.
 }
 \details{
   The splitting variable is usually specified in
   \code{\link{qdata}} as the \code{color} or \code{border}
-  argument; if it is present, each bar in the histogram
-  will be split into categories.
+  argument; if it is present, each bar in the plot will be
+  split into categories.
 
   Arrow keys can be used to change the binwidth as well as
-  the breakpoints in the histograme. Up and Down can
-  increase and decrease the binwidth respectively; Left and
-  Right can move the breakpoints of the bins to the left
-  (smaller) or right (larger).
+  the breakpoints in the plot. Up and Down can increase and
+  decrease the binwidth respectively; Left and Right can
+  move the breakpoints of the bins to the left (smaller) or
+  right (larger).
 
   In the identify mode, the breakpoints of the bin(s) as
   well as counts and proportion of cases in the bin(s) are
   shown as text labels in the plot.
+
+  The function \code{\link{qspine}} is a short-hand version
+  of \code{qhist(..., spine = TRUE)}.
 }
 \examples{
 library(cranvas)
@@ -63,6 +72,7 @@ qhist(tars1)
 qhist(tars2, freq = FALSE, main = "density of tars2")
 qhist(aede1)
 qhist(head, horizontal = TRUE)
+qspine(aede2)
 qparallel(~.)  # all variables
 
 link_var(qflea) <- "species"  # linking by categorical variable
@@ -77,10 +87,11 @@ link_var(qflea) <- NULL
 #### (2) tennis data: without a splitting variable
 data(tennis)
 
-qtennis <- qdata(tennis)
+qtennis <- qdata(tennis, color = "white", border = "black")
 
 qhist(First.Serve.Pct)
 qbar(Matches)
+qspine(Matches)
 
 qhist(First.Serve.Pct, horizontal = TRUE)
 

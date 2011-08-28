@@ -1,33 +1,36 @@
-##' Draw a histogram
+##' Draw a histogram or a spine plot
 ##'
-##' Draw an interactive histogram based on a continuous variable,
-##' optionally split by a categorical variable. It supports some
-##' common keyboard interactions (see \code{\link{common_key_press}})
-##' as well as other interactions specific to histograms.
+##' Draw an interactive histogram or spine plot based on a continuous
+##' variable, optionally split by a categorical variable. It supports
+##' some common keyboard interactions (see
+##' \code{\link{common_key_press}}) as well as other interactions
+##' specific to histograms and spine plots.
 ##'
 ##' The splitting variable is usually specified in \code{\link{qdata}}
 ##' as the \code{color} or \code{border} argument; if it is present,
-##' each bar in the histogram will be split into categories.
+##' each bar in the plot will be split into categories.
 ##'
 ##' Arrow keys can be used to change the binwidth as well as the
-##' breakpoints in the histograme. Up and Down can increase and
-##' decrease the binwidth respectively; Left and Right can move the
-##' breakpoints of the bins to the left (smaller) or right (larger).
+##' breakpoints in the plot. Up and Down can increase and decrease the
+##' binwidth respectively; Left and Right can move the breakpoints of
+##' the bins to the left (smaller) or right (larger).
 ##'
 ##' In the identify mode, the breakpoints of the bin(s) as well as
 ##' counts and proportion of cases in the bin(s) are shown as text
 ##' labels in the plot.
+##'
+##' The function \code{\link{qspine}} is a short-hand version of
+##' \code{qhist(..., spine = TRUE)}.
 ##' @param x the name of the numeric variable to be used to draw the
-##' histogram
-##' @inheritParams qbar
+##' histogram or spine plot
 ##' @param breaks a single number giving the number of bins, or a
 ##' numeric vector giving the breakpoints
 ##' @param freq draw the frequencies (\code{TRUE}) or densities
-##' (\code{FALSE})
-##' @param main the main title (default to be \code{"Histogram of
-##' variable name"})
-##' @param horizontal whether to draw a horizontal or vertical plot
-##' @return A histogram
+##' (\code{FALSE}) (only applies to histogram)
+##' @param spine if \code{TRUE}, draw a spine plot (bar widths
+##' proportional to counts instead of being equal)
+##' @inheritParams qbar
+##' @return A histogram or a spine plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qhist-ex.R

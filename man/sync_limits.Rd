@@ -26,6 +26,9 @@ sync_limits(meta, ...)
   reset by the method \code{layer$setLimits()}, hence we
   only need to take care of \code{meta$limits} and this
   function will do the rest of work.
+
+  Besides, the size and position of the brush will be
+  restored.
 }
 \note{
   You do not need to call \code{\link[qtpaint]{qupdate}} to
