@@ -6,7 +6,7 @@ qparallel(vars, data = last_data(), scale = "range",
     names = break_str(vars), na.action = na_impute, center = NULL, 
     order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = TRUE, 
     glyph = c("auto", "line", "tick", "circle", "square", "triangle"), 
-    boxplot = FALSE, boxwex, jitter = NULL, amount = NULL, main, 
+    boxplot = FALSE, boxwex, jitter = NULL, amount = NULL, main = "", 
     alpha = 1, draw.range = TRUE)
 }
 \arguments{
@@ -64,7 +64,9 @@ qparallel(vars, data = last_data(), scale = "range",
   \item{draw.range}{whether to draw the range values (min
   and max for each variable)}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}}
+  \item{data}{a mutaframe created by \code{\link{qdata}}
+  (default to be \code{\link{last_data}()}, i.e. the lastly
+  used data)}
 }
 \value{
   a plot object with attributes

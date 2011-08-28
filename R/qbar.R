@@ -24,7 +24,8 @@
 ##' @param x a variable name (will be coerced to a factor if it is
 ##' not; \code{NA} will also be a level of the factor if the variable
 ##' has any \code{NA}'s)
-##' @param data a mutaframe created by \code{\link{qdata}}
+##' @param data a mutaframe created by \code{\link{qdata}} (default to
+##' be \code{\link{last_data}()}, i.e. the lastly used data)
 ##' @param space the space between bars proportional to the width of
 ##' bars
 ##' @param main the main title

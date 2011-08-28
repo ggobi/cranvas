@@ -25,7 +25,9 @@ qboxplot(vars, data = last_data(), at = NULL, width = NULL,
 
   \item{horizontal}{horizontal or vertical boxplots}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}}
+  \item{data}{a mutaframe created by \code{\link{qdata}}
+  (default to be \code{\link{last_data}()}, i.e. the lastly
+  used data)}
 }
 \value{
   NULL

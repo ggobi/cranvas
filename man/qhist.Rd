@@ -21,7 +21,9 @@ qhist(x, data = last_data(), breaks = 30, freq = TRUE,
   \item{horizontal}{whether to draw a horizontal or
   vertical plot}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}}
+  \item{data}{a mutaframe created by \code{\link{qdata}}
+  (default to be \code{\link{last_data}()}, i.e. the lastly
+  used data)}
 }
 \value{
   A histogram

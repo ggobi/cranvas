@@ -3,14 +3,16 @@
 \title{Draw a bar plot}
 \usage{
 qbar(x, data = last_data(), space = 0.1, main = "", 
-    horizontal = FALSE)
+    horizontal = FALSE, standardize = FALSE)
 }
 \arguments{
   \item{x}{a variable name (will be coerced to a factor if
   it is not; \code{NA} will also be a level of the factor
   if the variable has any \code{NA}'s)}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}}
+  \item{data}{a mutaframe created by \code{\link{qdata}}
+  (default to be \code{\link{last_data}()}, i.e. the lastly
+  used data)}
 
   \item{space}{the space between bars proportional to the
   width of bars}
@@ -19,6 +21,9 @@ qbar(x, data = last_data(), space = 0.1, main = "",
 
   \item{horizontal}{\code{TRUE} to draw a horizontal plot
   or \code{FALSE} (vertical)}
+
+  \item{standardize}{logical: whether to standardize the
+  height of each bar to 1}
 }
 \value{
   A bar plot
@@ -66,6 +71,8 @@ qparallel(vars = 13:10, main = "Overview of Rankings",
     glyph = "tick", horizontal = FALSE, boxplot = TRUE)
 
 qbar(Regional.Code, horizontal = TRUE)  # horizontal plot
+qbar(Regional.Code, standardize = TRUE)  # standardize to 1
+
 
 ## use border color to split the bars
 qnrc2 <- qdata(nrcstat, color = "white", border = Control)
