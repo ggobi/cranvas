@@ -344,6 +344,8 @@ common_mouse_release = function(layer, event, data, meta) {
 ##' changed, the limits all the layers will be reset by the method
 ##' \code{layer$setLimits()}, hence we only need to take care of
 ##' \code{meta$limits} and this function will do the rest of work.
+##'
+##' Besides, the size and position of the brush will be restored.
 ##' @param meta the meta data contains a matrix of limits in
 ##' \code{meta$limits}
 ##' @param ... an arbitrary number of layers
@@ -359,6 +361,8 @@ common_mouse_release = function(layer, event, data, meta) {
 sync_limits = function(meta, ...) {
     l = list(...)
     meta$limitsChanged$connect(function() {
+        meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+        meta$pos = apply(meta$limits, 2, mean)
         r = qrect(meta$limits)
         sapply(l, function(x) x$setLimits(r))
     })
