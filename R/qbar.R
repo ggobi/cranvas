@@ -136,7 +136,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     layout$setColumnStretchFactor(1, 0)
     view = qplotView(scene = scene)
     view$setWindowTitle(sprintf('Bar plot: %s', meta$var))
-    meta$mainChanged$connect(function() {
+    meta$varChanged$connect(function() {
         view$setWindowTitle(sprintf('Bar plot: %s', meta$var))
     })
     d.idx = add_listener(data, function(i, j) {
