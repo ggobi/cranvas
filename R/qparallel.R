@@ -435,12 +435,9 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     })
 
     layout = layer.root$gridLayout()
-    layout$setRowPreferredHeight(0, 30)
-    ## the y-axis layer needs 'dynamic' width determined by #{characters}
-    ## here is a formula by my rule of thumb: 9 * nchar + 5
-    layout$setColumnPreferredWidth(0, 9 * max(nchar(unlist(strsplit(meta$ylabels, '\n')))) + 5)
-    layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', meta$xlabels),
-                              function(xx) ifelse(any(xx <0), 0, length(xx)) + 2)))
+    layout$setRowPreferredHeight(0, prefer_height(meta$main))
+    layout$setRowPreferredHeight(2, prefer_height(meta$xlabels))
+    layout$setColumnPreferredWidth(0, prefer_width(meta$ylabels))
     layout$setColumnMaximumWidth(2, 10)
     layout$setRowStretchFactor(0, 0)
     layout$setColumnStretchFactor(0, 0)
