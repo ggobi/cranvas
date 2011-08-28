@@ -1,4 +1,4 @@
-##' Create a bar plot
+##' Draw a bar plot
 ##'
 ##' This function creates a bar plot based on a categorical variable
 ##' to show the counts of all categories. Another categorical variable

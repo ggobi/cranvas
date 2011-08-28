@@ -1,6 +1,6 @@
 \name{qbar}
 \alias{qbar}
-\title{Create a bar plot}
+\title{Draw a bar plot}
 \usage{
 qbar(x, data = last_data(), space = 0.1, main = "", 
     horizontal = FALSE)

@@ -639,7 +639,8 @@ prefer_width = function(text, horizontal = TRUE) {
 ##' Get the relative width and height of one pixel on the screen
 ##'
 ##' This function calculates the relative size of one pixel in a layer
-##' coordinate system.
+##' coordinate system, since it has different relative dimensions in
+##' different coordinate systems.
 ##' @param painter the painter of a layer
 ##' @return A numeric vector of length 2 (width and height).
 ##' @author Yihui Xie <\url{http://yihui.name}>

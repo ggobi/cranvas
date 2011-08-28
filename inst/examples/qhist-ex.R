@@ -1,26 +1,35 @@
 library(cranvas)
+
+#### (1) split histogram by species, and categorical linking
+data(flea)
+qflea = qdata(flea, color = species)
+
+qhist(tars1)
+qhist(tars2, freq = FALSE, main = 'density of tars2')
+qhist(aede1)
+qhist(head, horizontal = TRUE)
+qparallel(~.)  # all variables
+
+link_var(qflea) = 'species'  # linking by categorical variable
+link_type(qflea) = 'self'
+## now brush one bar, all fleas of the same species will be brushed
+
+## remove linking
+link_var(qflea) = NULL
+
+
+#### (2) tennis data: without a splitting variable
 data(tennis)
-tennis$Matches = factor(tennis$Matches)
+
 qtennis = qdata(tennis)
 
-qhist(First.Serve.Pct, qtennis)
-qbar(Matches, qtennis)
+qhist(First.Serve.Pct)
+qbar(Matches)
 
-qhist(First.Serve.Pct, qtennis, horizontal = TRUE)
+qhist(First.Serve.Pct, horizontal = TRUE)
 
-qhist(Serve.Speed, qtennis)
-qhist(Serve.Speed, qtennis, freq = FALSE)  # density
+qhist(Serve.Speed)
+qhist(Serve.Speed, freq = FALSE)  # density
 
-## categorical variable linking
-data(flea)
-qflea <- qdata(flea)
-qhist(tars1, qflea)
-qhist(aede1, qflea)
 
-link_var(qflea) = 'species'
-link_type(qflea) = 'self'
-## now brush one bar, all rows in the same species will be brushed
-
-## map tars1 to colors
-qflea2 <- qdata(flea, color = tars1)
-qhist(tars1, qflea2)
+#### see help(wages) for yet another example

@@ -12,7 +12,8 @@ one_pixel(painter)
 }
 \description{
   This function calculates the relative size of one pixel
-  in a layer coordinate system.
+  in a layer coordinate system, since it has different
+  relative dimensions in different coordinate systems.
 }
 \examples{
 library(qtpaint)

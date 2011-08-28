@@ -1,8 +1,13 @@
 ##' Draw a histogram
 ##'
-##' Draw an interactive histogram. It supports some common keyboard
-##' interactions (see \code{\link{common_key_press}}) as well as other
-##' interactions specific to histograms.
+##' Draw an interactive histogram based on a continuous variable,
+##' optionally split by a categorical variable. It supports some
+##' common keyboard interactions (see \code{\link{common_key_press}})
+##' as well as other interactions specific to histograms.
+##'
+##' The splitting variable is usually specified in \code{\link{qdata}}
+##' as the \code{color} or \code{border} argument; if it is present,
+##' each bar in the histogram will be split into categories.
 ##'
 ##' Arrow keys can be used to change the binwidth as well as the
 ##' breakpoints in the histograme. Up and Down can increase and

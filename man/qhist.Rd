@@ -3,7 +3,7 @@
 \title{Draw a histogram}
 \usage{
 qhist(x, data = last_data(), breaks = 30, freq = TRUE, 
-    main, horizontal = FALSE)
+    main = "", horizontal = FALSE)
 }
 \arguments{
   \item{x}{the name of the numeric variable to be used to
@@ -27,12 +27,18 @@ qhist(x, data = last_data(), breaks = 30, freq = TRUE,
   A histogram
 }
 \description{
-  Draw an interactive histogram. It supports some common
-  keyboard interactions (see
+  Draw an interactive histogram based on a continuous
+  variable, optionally split by a categorical variable. It
+  supports some common keyboard interactions (see
   \code{\link{common_key_press}}) as well as other
   interactions specific to histograms.
 }
 \details{
+  The splitting variable is usually specified in
+  \code{\link{qdata}} as the \code{color} or \code{border}
+  argument; if it is present, each bar in the histogram
+  will be split into categories.
+
   Arrow keys can be used to change the binwidth as well as
   the breakpoints in the histograme. Up and Down can
   increase and decrease the binwidth respectively; Left and
@@ -45,32 +51,42 @@ qhist(x, data = last_data(), breaks = 30, freq = TRUE,
 }
 \examples{
 library(cranvas)
-data(tennis)
-tennis$Matches <- factor(tennis$Matches)
-qtennis <- qdata(tennis)
 
-qhist(First.Serve.Pct, qtennis)
-qbar(Matches, qtennis)
-
-qhist(First.Serve.Pct, qtennis, horizontal = TRUE)
-
-qhist(Serve.Speed, qtennis)
-qhist(Serve.Speed, qtennis, freq = FALSE)  # density
-
-## categorical variable linking
+#### (1) split histogram by species, and categorical
+#   linking
 data(flea)
-qflea <- qdata(flea)
-qhist(tars1, qflea)
-qhist(aede1, qflea)
+qflea <- qdata(flea, color = species)
 
-link_var(qflea) <- "species"
+qhist(tars1)
+qhist(tars2, freq = FALSE, main = "density of tars2")
+qhist(aede1)
+qhist(head, horizontal = TRUE)
+qparallel(~.)  # all variables
+
+link_var(qflea) <- "species"  # linking by categorical variable
 link_type(qflea) <- "self"
-## now brush one bar, all rows in the same species will be
+## now brush one bar, all fleas of the same species will be
 #   brushed
 
-## map tars1 to colors
-qflea2 <- qdata(flea, color = tars1)
-qhist(tars1, qflea2)
+## remove linking
+link_var(qflea) <- NULL
+
+
+#### (2) tennis data: without a splitting variable
+data(tennis)
+
+qtennis <- qdata(tennis)
+
+qhist(First.Serve.Pct)
+qbar(Matches)
+
+qhist(First.Serve.Pct, horizontal = TRUE)
+
+qhist(Serve.Speed)
+qhist(Serve.Speed, freq = FALSE)  # density
+
+
+#### see help(wages) for yet another example
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
