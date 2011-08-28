@@ -447,9 +447,9 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     layout$setRowStretchFactor(2, 0)
 
     view = qplotView(scene = scene)
-    view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', '))
+    view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', ')))
     meta$varsChanged$connect(function() {
-        view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', '))
+        view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', ')))
     })
 
     ## update the brush layer if brush attributes change
