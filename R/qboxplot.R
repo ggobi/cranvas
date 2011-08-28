@@ -86,11 +86,8 @@ qboxplot = function(vars, data = last_data(), at = NULL, width = NULL, horizonta
 
     layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, 30)
-    ## the y-axis layer needs 'dynamic' width determined by #{characters}
-    ## here is a formula by my rule of thumb: 9 * nchar + 5
-    layout$setColumnPreferredWidth(0, 9 * max(nchar(unlist(strsplit(ylabels, '\n')))) + 5)
-    layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', xlabels),
-                              function(xx) ifelse(any(xx <0), 0, length(xx)) + 2)))
+    layout$setColumnPreferredWidth(0, prefer_width(ylabels))
+    layout$setRowPreferredHeight(2, prefer_height(xlabels))
     layout$setColumnMaximumWidth(2, 10)
     layout$setRowStretchFactor(0, 0)
     layout$setColumnStretchFactor(0, 0)
