@@ -106,8 +106,7 @@ qhist =
     }
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
-        ## indices outside the range should be discarded
-        hits = discard(layer$locate(rect), c(0, meta$nlevel * meta$nlevel2 - 1))
+        hits = layer$locate(rect)
         if (length(hits)) {
             hits = .find_intersect(meta$value, meta$value2, hits, meta$nlevel)
         }
