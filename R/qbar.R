@@ -11,6 +11,13 @@
 ##' All the common interactions like brushing and deleting are
 ##' documented in \code{\link{common_key_press}}.
 ##'
+##' In the identify mode (press the key \code{?} to toggle between
+##' brush and identify mode), the variable and its identified values
+##' are shown as a text label in the plot, along with the counts and
+##' proportion of the identified categories. If the bar plot is split
+##' by an additional categorical variable, it will also be shown in
+##' the label.
+##'
 ##' A zero-count category is represented by a one-pixel rectangle,
 ##' which is a useful visual hint to indicate the presence of this
 ##' category.
@@ -94,12 +101,36 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     key_release = function(layer, event) {
         common_key_release(layer, event, data, meta)
     }
+    identify_hover = function(layer, event) {
+        if (!b$identify) return()
+        b$cursor = 2L
+        meta$pos = as.numeric(event$pos())
+        meta$identified = layer$locate(identify_rect(meta))
+        qupdate(layer.identify)
+    }
+    identify_draw = function(layer, painter) {
+        if (!b$identify || !length(idx <- meta$identified)) return()
+        k = .find_intersect(meta$value, meta$value2, idx, meta$nlevel)
+        vis = visible(data) & k
+        meta$identify.labels =
+            sprintf('%s = %s%s\ncounts: %s\nproportion: %.2f%%',
+                    meta$var, shQuote(paste(unique(meta$value[k]), collapse = ', ')),
+                    if (length(meta$var2)) {
+                        sprintf('\n(%s = %s)', meta$var2,
+                                paste(shQuote(unique(meta$value2[k])), collapse = ', '))
+                    } else '',
+                    sum(vis), mean(vis) * 100)
+        draw_identify(layer, painter, data, meta)
+        idx = idx + 1
+        qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
+                  meta$ytop[idx], stroke = b$color, fill = NA)
+    }
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
         qlayer(paintFun = main_draw,
                mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-               mouseMove = brush_mouse_move,
+               mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
                focusInFun = function(layer, painter) {
                    focused(data) = TRUE
@@ -107,6 +138,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
                    focused(data) = FALSE
                }, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
+    layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
     layer.xlab = qmtext(meta = meta, side = 1)
     layer.ylab = qmtext(meta = meta, side = 2)
@@ -121,6 +153,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     layer.root[1, 2] = layer.grid
     layer.root[1, 2] = layer.main
     layer.root[1, 2] = layer.brush
+    layer.root[1, 2] = layer.identify
     layer.root[1, 3] = qlayer()
     layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, prefer_height(meta$main))
@@ -159,7 +192,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
     b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
     })
-    sync_limits(meta, layer.main, layer.brush)  # sync limits of main & brush layers
+    sync_limits(meta, layer.main, layer.brush, layer.identify)
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
@@ -181,9 +214,10 @@ Bar.meta =
                                      start = 'numeric', pos = 'numeric',
                                      brush.move = 'logical', brush.size = 'numeric',
                                      manual.brush = 'function', horizontal = 'logical',
-                                     main = 'character',
+                                     main = 'character', freq = 'logical',
                                      var2 = 'character', value2 = 'factor',
-                                     split.type = 'character',
+                                     split.type = 'character', identified = 'integer',
+                                     identify.labels = 'character',
                                      nlevel = 'integer', nlevel2 = 'integer')))
 
 .find_split_var = function(data, meta) {
@@ -247,7 +281,7 @@ Bar.meta =
     if (b$identify) return()
     if (any(idx <- selected(data) & visible(data))) {
         d = c(table(meta$value[idx], meta$value2[idx])) # brushed counts
-        if (!is.null(meta$freq) && !meta$freq)
+        if (length(meta$freq) && !meta$freq)
             d = d / (sum(visible(data)) * diff(meta$breaks[1:2]))
         if (meta$horizontal)
             qdrawRect(painter, meta$xleft, meta$ybottom, meta$xleft + d, meta$ytop,

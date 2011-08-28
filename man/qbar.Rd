@@ -37,6 +37,13 @@ qbar(x, data = last_data(), space = 0.1, main = "",
   All the common interactions like brushing and deleting
   are documented in \code{\link{common_key_press}}.
 
+  In the identify mode (press the key \code{?} to toggle
+  between brush and identify mode), the variable and its
+  identified values are shown as a text label in the plot,
+  along with the counts and proportion of the identified
+  categories. If the bar plot is split by an additional
+  categorical variable, it will also be shown in the label.
+
   A zero-count category is represented by a one-pixel
   rectangle, which is a useful visual hint to indicate the
   presence of this category.
