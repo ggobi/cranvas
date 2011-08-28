@@ -26,10 +26,9 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qhist-ex.R
-qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main, horizontal = FALSE) {
+qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', horizontal = FALSE) {
     data = check_data(data)
     b = brush(data)
-    if (missing(main)) main = paste("Histogram of", deparse(substitute(x)))
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x),
                      alpha = 1, horizontal = horizontal, main = main, breaks = breaks)
@@ -199,8 +198,10 @@ qhist = function(x, data = last_data(), breaks = 30, freq = TRUE, main, horizont
     layout$setColumnStretchFactor(0, 0)
     layout$setColumnStretchFactor(1, 0)
     view = qplotView(scene = scene)
-    view$setWindowTitle(main)
-
+    view$setWindowTitle(paste("Histogram:", meta$var))
+    meta$varChanged$connect(function() {
+        view$setWindowTitle(paste("Histogram:", meta$var))
+    })
     d.idx = add_listener(data, function(i, j) {
         switch(j, .brushed = qupdate(layer.brush),
                .color = {
