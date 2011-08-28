@@ -42,7 +42,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
         tmp = table(meta$value[idx], meta$value2[idx])
         if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
         meta$y = c(tmp)
-        meta$xat = meta$x = rep(seq(nrow(tmp)), ncol(tmp))
+        meta$xat = meta$x = rep(seq(meta$nlevel), meta$nlevel2)
         meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = rownames(tmp)
         meta$ylabels = as.character(meta$yat)
@@ -50,7 +50,7 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
         meta$ylab = ''
         w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
         meta$xleft = meta$xat - w; meta$xright = meta$xat + w
-        meta$ybottom = c(cbind(0, tmp[, -ncol(tmp)])); meta$ytop = meta$y
+        meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2])); meta$ytop = meta$y
         meta$limits =
             extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
                                 range(c(meta$ybottom, meta$ytop))))
