@@ -236,5 +236,5 @@ Hist.meta =
                                      var2 = 'character', value2 = 'factor',
                                      split.type = 'character',
                                      nlevel = 'integer', nlevel2 = 'integer',
-                                     freq = 'logical',
+                                     freq = 'logical', standardize = 'logical',
                                      identified = 'numeric', identify.labels = 'character')))

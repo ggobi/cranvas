@@ -15,6 +15,8 @@ qparallel(vars = 13:10, main = "Overview of Rankings", glyph = "tick",
     horizontal = FALSE, boxplot = TRUE)
 
 qbar(Regional.Code, horizontal = TRUE)  # horizontal plot
+qbar(Regional.Code, standardize = TRUE)  # standardize to 1
+
 
 ## use border color to split the bars
 qnrc2 = qdata(nrcstat, color = 'white', border = Control)

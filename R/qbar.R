@@ -30,17 +30,22 @@
 ##' @param main the main title
 ##' @param horizontal \code{TRUE} to draw a horizontal plot or
 ##' \code{FALSE} (vertical)
+##' @param standardize logical: whether to standardize the height of
+##' each bar to 1
 ##' @return A bar plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/qbar-ex.R
-qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE) {
+qbar =
+    function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE,
+             standardize = FALSE) {
     data = check_data(data)
     b = brush(data)
     s = attr(data, 'Scales')
     meta =
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
-                     alpha = 1, horizontal = horizontal, main = main)
+                     alpha = 1, horizontal = horizontal, main = main,
+                     standardize = standardize)
     compute_coords = function() {
         meta$value = factor(data[, meta$var], exclude = NULL)
         meta$nlevel = length(levels(meta$value))
@@ -48,6 +53,8 @@ qbar = function(x, data = last_data(), space = 0.1, main = '', horizontal = FALS
         idx = visible(data)
         tmp = table(meta$value[idx], meta$value2[idx])
         if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
+        if (meta$standardize) tmp = tmp / tmp[, meta$nlevel2, drop = ncol(tmp) > 1]
+        tmp[!is.finite(tmp)] = 0  # consider division by 0
         meta$y = c(tmp)
         meta$xat = meta$x = rep(seq(meta$nlevel), meta$nlevel2)
         meta$yat = axis_loc(c(0, meta$y))
@@ -218,6 +225,7 @@ Bar.meta =
                                      var2 = 'character', value2 = 'factor',
                                      split.type = 'character', identified = 'integer',
                                      identify.labels = 'character',
+                                     standardize = 'logical',
                                      nlevel = 'integer', nlevel2 = 'integer')))
 
 .find_split_var = function(data, meta) {
@@ -279,10 +287,14 @@ Bar.meta =
 .bar_draw_brush = function(layer, painter, data, meta) {
     b = brush(data)
     if (b$identify) return()
-    if (any(idx <- selected(data) & visible(data))) {
+    if (any(idx <- selected(data) & (vis <- visible(data)))) {
         d = c(table(meta$value[idx], meta$value2[idx])) # brushed counts
         if (length(meta$freq) && !meta$freq)
-            d = d / (sum(visible(data)) * diff(meta$breaks[1:2]))
+            d = d / (sum(vis) * diff(meta$breaks[1:2]))
+        if (isTRUE(meta$standardize)) {
+            d = d / c(table(meta$value[vis]))
+            d[!is.finite(d)] = 0
+        }
         if (meta$horizontal)
             qdrawRect(painter, meta$xleft, meta$ybottom, meta$xleft + d, meta$ytop,
                       stroke = NA, fill = b$color) else
