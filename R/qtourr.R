@@ -36,7 +36,7 @@ Tourr$methods(initialize = function(data, tour_path, vars, aps = 1, fps = 30) {
   aps <<- aps
   last_time <<- NULL
 
-  timer <<- qtbase::qtimer(1000 / fps, .self$step)
+  timer <<- qtimer(1000 / fps, .self$step)
   tour <<- new_tour(src, tour_path, NULL)
 
   .self

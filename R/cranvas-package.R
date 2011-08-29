@@ -32,8 +32,9 @@
 ##' all plots, and the documentation of specific plots for other
 ##' possible interactions.
 ##' @importFrom qtbase Qt
-##' @importFrom qtbase qrect qfont qsize qconnect qdataFrameModel
+##' @importFrom qtbase qrect qfont qsize qconnect qdataFrameModel qtimer
 ##' @import qtpaint
+##' @importFrom tourr new_tour
 ##' @import plumbr
 ##' @import objectSignals
 ##' @name cranvas-package

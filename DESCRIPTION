@@ -4,6 +4,7 @@ Imports:
     qtpaint,
     reshape,
     plyr,
+    tourr,
     plumbr (>= 0.6.2),
     objectSignals
 Maintainer: Yihui Xie <xie@yihui.name>
