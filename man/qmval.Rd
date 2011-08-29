@@ -5,14 +5,14 @@
 \alias{qmval.numeric}
 \title{Draw a missing value plot}
 \usage{
-  qmval(vars, data = last_data(), ...)
+qmval(vars, data = last_data(), ...)
 
-  \method{qmval}{default} (vars, data = last_data(), space
-  = 0.1, main = "", horizontal = TRUE, standardize = TRUE)
+\method{qmval}{default}(vars, data = last_data(), space = 0.1, 
+    main = "", horizontal = TRUE, standardize = TRUE)
 
-  \method{qmval}{numeric} (vars, data = last_data(), ...)
+\method{qmval}{numeric}(vars, data = last_data(), ...)
 
-  \method{qmval}{formula} (vars, data = last_data(), ...)
+\method{qmval}{formula}(vars, data = last_data(), ...)
 }
 \arguments{
   \item{vars}{variables to show in the plot: a character
