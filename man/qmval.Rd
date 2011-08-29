@@ -78,7 +78,7 @@ qmval(~POORHLTH + FRUIT + GREENSAL)
 qparallel(100:110)
 
 ## TAO data
-data(tao)
+data(tao, package = "tourr")
 
 qtao <- qdata(tao)
 qmval(~.)

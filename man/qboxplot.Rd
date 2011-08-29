@@ -62,7 +62,7 @@ df <- qdata(round(data.frame(x = rnorm(100), y = runif(100),
 qboxplot(data = df)
 qparallel(~., data = df)  # brush on par-coords and you see little boxplots
 
-data(flea)
+data(flea, package = "tourr")
 qflea <- qdata(flea)
 qboxplot(tars1 ~ species, data = qflea)
 # qparallel(~ ., data=qflea) #This doesn't work yet, linkng

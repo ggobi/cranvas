@@ -68,12 +68,14 @@ print(qdensity(Serve.Speed, qtennis))
 record_selector("Name", qtennis)
 
 ####
-data(pollen)
-qpollen <- qdata(pollen)
-print(qdensity(RIDGE, qpollen))
+if (require("animation")) {
+    data(pollen, package = "animation")
+    qpollen <- qdata(pollen)
+    print(qdensity(RIDGE, data = qpollen))
+}
 
 ####
-data(flea)
+data(flea, package = "tourr")
 qflea <- qdata(flea)
 
 print(qdensity(tars1, qflea))
