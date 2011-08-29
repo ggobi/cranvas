@@ -1,14 +1,19 @@
-require(plyr)
 library(cranvas)
 
-# BRFSS data
+## BRFSS data
 data(brfss)
-qbrfss <- qdata(brfss)
-qmval(qbrfss, vars = 1:50)
-qparallel(qbrfss, vars = 1:3)
 
-# TAO data
+qbrfss <- qdata(brfss)
+qmval(names(brfss)[40:50])
+qmval(51:68)
+qmval(~POORHLTH+FRUIT+GREENSAL)
+
+qparallel(100:110)
+
+## TAO data
 data(tao)
+
 qtao <- qdata(tao)
-qmval(qtao)
-qscatter(longitude, latitude, qtao)
+qmval(~.)
+qmval(~., horizontal = FALSE, standardize = FALSE, main = 'horizontal plot with counts')
+qscatter(longitude, latitude)
