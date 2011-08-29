@@ -186,8 +186,9 @@ qnhr$.color = rgb(1, 0, 0, 0.01)
 qparallel(data = qnhr, jitter = "zone", amount = 0.3)
 qparallel(data = qnhr, jitter = c("bedrms", "zone"), amount = 0.2)
 
+if (require('animation')) {
+  data(pollen, package = 'animation')
+  qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
+  qparallel(~.)
+}
 
-library(animation)
-data(pollen)
-qpollen = qdata(pollen, color = rgb(0, 0, 1, 0.01))
-qparallel(data = qpollen)

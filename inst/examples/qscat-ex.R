@@ -9,10 +9,12 @@ qnrc = qdata(nrcstat)
 print(qscatter(R.Rankings.5th.Percentile, R.Rankings.95th.Percentile, qnrc))
 print(qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile, qnrc))
 
-data(pollen)
-qpollen <- qdata(pollen)
-qscatter(RIDGE, CRACK, qpollen)
-# try zooming into the center
+if (require('animation')) {
+  data(pollen, package = 'animation')
+  qpollen <- qdata(pollen)
+  print(qscatter(RIDGE, CRACK))
+  ## try zooming into the center
+}
 
 # categorical variable linking
 data(flea)

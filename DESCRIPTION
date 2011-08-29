@@ -25,7 +25,8 @@ BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
     scales
 Suggests:
-    productplots
+    productplots,
+    animation
 Collate:
     'axes.R'
     'brush.R'
