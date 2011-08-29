@@ -1,377 +1,83 @@
-## please use source('../load.R') and avoid writing the require() statements here
-
-myvarsummary <- function(x) {
-    if (is.factor(x) || is.character(x))
-        return(names(sort(table(x), decreasing = TRUE))[1])
-    if (is.logical(x))
-        return(any(x, na.rm = TRUE))
-
-    return(mean(x))
-}
-
-mysummary <- function(x) {
-    ldply(x, myvarsummary)
-}
-
-scale_color <- function(colour, value = colour, na.color = 0) {
-    if (is.numeric(colour)) {
-        # assume grey colour scheme
-        cmin <- min(colour, na.rm = T)
-        cmax <- max(colour, na.rm = T)
-        grey <- (value - cmin)/(cmax - cmin)
-        grey <- pmin(grey, 1)
-        grey <- pmax(grey, 0)
-        nas <- is.na(grey)
-        grey[nas] <- na.color
-        return(rgb(grey, grey, grey))
-    }
-
-    print(paste("colour not implemented for type", mode(colour)))
-}
-
-
-##' Interactive Missing Value Plot
+##' Draw a missing value plot
 ##'
-##' An interactive missing value plot.
+##' A missing value plot shows the counts or proportions of missing
+##' values in each variable. It is essentially a stacked bar plot,
+##' i.e. a bar plot of variables split by the logical vectors of
+##' missingness of observations.
 ##'
-##' @param data a mutaframe which is typically built upon a data frame
-##' along with several row attributes
-##' @param ...
-##' @return NULL
-##' @author Heike Hofmann
+##' As usual, common interactions are defined in
+##' \code{\link{common_key_press}}. Brushing on a missing value plot
+##' has a slightly different meaning with brushing other types of
+##' plots: if a rectangle is brushed in a missing value plot, all rows
+##' in the orginal data in which the current variable is brushed
+##' (i.e. either missing or non-missing) are brushed; on the other
+##' hand, the brushed rows in the original data will also be reflected
+##' in the missing value plot.
+##' @param vars variables to show in the plot: a character vector of
+##' variable names, or a numeric vector of column indices, or a
+##' two-sided formula like \code{~ x1 + x2 + x3} (without the
+##' left-hand side)
+##' @inheritParams qbar
+##' @param ... arguments passed to the default method
+##' @return A missing value plot
+##' @author Heike Hofmann and Yihui Xie
+##' @note Unlike most other plots in this package, this plot does not
+##' fully support linking between all plots. Only one missing value
+##' plot can link to all other types of plots at a time, but all other
+##' plots (except other missing value plots) can link to all missing
+##' value plots.
 ##' @export
 ##' @example inst/examples/qmval-ex.R
-qmval <- function(data, vars, main, varmax = 20, ...) {
-    ## check if an attribute exist
-    #  browser()
-    # if (!is.mutaframe(data)) data <- qdata(data)
-
-    #  ## parameters for the brush
-    #  .brush.attr = attr(data, '.brush.attr')
-
-    ##
-    if (missing(vars))
-        vars <- names(data)
-    if (is.numeric(vars))
-        vars = names(data)[as.integer(vars)]
-
-    ## we are only interested in variables with missing values
-    df.data <- as.data.frame(data[, vars])
-    nmis <- sapply(df.data, function(x) return(sum(is.na(x))), simplify = T)
-    vars <- vars[nmis > 0]
-    ## use only varmax many variables
-    if (length(vars) > varmax) {
-        print(paste("warning: only first", varmax, "variables out of", length(vars),
-            "are shown."))
-        vars <- vars[1:varmax]
-    }
-    # get data summary
-    .data.summary <- ldply(df.data[, vars], function(x) return(sum(is.na(x))))
-    names(.data.summary) <- c("Names", "NAs")
-    .data.summary$Values <- nrow(df.data) - .data.summary$NAs
-    .data.summary$mvBrushed <- 0
-    .data.summary$valBrushed <- 0
-
-    recalcBrushing <- function() {
-        # update .data.summary$mvBrushed
-        .data.summary$mvBrushed <<- ldply(df.data[, .data.summary$Names], function(x) return(sum(is.na(x) &
-            data$.brushed)))$V1
-        .data.summary$valBrushed <<- ldply(df.data[, .data.summary$Names], function(x) return(sum(!is.na(x) &
-            data$.brushed)))$V1
-    }
-
-    recalcBrushing()
-
-    p <- length(vars)
-
-    dataRanges <- c(extend_ranges(c(0, 1)), extend_ranges(c(0, 1)))
-
-    # space in window around plot (margins in base R)
-    # this space depends on the labels needed on the left
-    # find out about these first:
-
-    dataname <- deparse(substitute(data))
-    if (missing(main)) {
-        main <- paste("Missing Value Plot of", dataname)
-    }
-
-    lims <- qrect(dataRanges[c(1, 2)], dataRanges[c(3, 4)])
-
-    draw <- function(item, painter, exposed) {
-        ## basic rectangle: each with width 0.6*1/p
-        top <- 0.8 * 1/p
-        left <- 0
-        right <- 1
-        bottom <- 0.2 * 1/p
-
-        n <- nrow(data)
-        for (i in 1:p) {
-            qdrawRect(painter, left, bottom, right * .data.summary$Values[i]/n, top,
-                fill = "grey50", stroke = "black")
-            qdrawRect(painter, right * .data.summary$Values[i]/n, bottom, right,
-                top, fill = "white", stroke = "black")
-            # qdrawText(painter, .data.summary$Names[i], left, bottom, halign = 'left',
-            #   valign = 'bottom')
-            bottom <- bottom + 1/p
-            top <- top + 1/p
-        }
-
-        # put labels on top
-        bottom <- 0.5 * 1/p
-        for (i in 1:p) {
-            qdrawText(painter, .data.summary$Names[i], left, bottom, halign = "left")
-            bottom <- bottom + 1/p
-        }
-    }
-
-    # Brushing -----------------------------------------------------------------
-    .startBrush <- NULL
-    .endBrush <- NULL
-    .brush <- FALSE
-
-    drawBrush <- function(item, painter, exposed) {
-        left = min(.startBrush[1], .endBrush[1])
-        right = max(.startBrush[1], .endBrush[1])
-        top = max(.startBrush[2], .endBrush[2])
-        bottom = min(.startBrush[2], .endBrush[2])
-
-        qdrawRect(painter, left, bottom, right, top, fill = rgb(0, 0, 0, alpha = 0.3),
-            stroke = "black")
-    }
-
-
-    brushing_draw <- function(item, painter, exposed, ...) {
-
-        brushcolor <- brush(data)$color
-
-        # basic rectangle:
-        top <- 0.8 * 1/p
-        left <- 0
-        right <- 1
-        bottom <- 0.2 * 1/p
-
-        n <- nrow(data)
-        for (i in 1:p) {
-            qdrawRect(painter, left, bottom, (right * .data.summary$valBrushed[i])/n,
-                top, fill = brushcolor, stroke = brushcolor)
-            qdrawRect(painter, (right * (n - .data.summary$mvBrushed[i]))/n, bottom,
-                right, top, fill = brushcolor, stroke = brushcolor)
-            bottom <- bottom + 1/p
-            top <- top + 1/p
-        }
-
-        # put labels on top
-        bottom <- 0.5 * 1/p
-        qstrokeColor(painter) <- "black"
-        for (i in 1:p) {
-            qdrawText(painter, .data.summary$Names[i], left, bottom, halign = "left")
-            bottom <- bottom + 1/p
-        }
-
-        if (!is.null(.endBrush)) {
-            drawBrush(item, painter, exposed)
-        }
-    }
-
-    brushing_mouse_press <- function(item, event, ...) {
-        #print('brushing_mouse_press')
-        .brush <<- TRUE
-        if (is.null(.startBrush)) {
-            .startBrush <<- as.numeric(event$pos())
-            .endBrush <<- as.numeric(event$pos())
-        }
-
-        setHiliting()
-        qupdate(brushing_layer)
-    }
-
-    brushing_mouse_move <- function(item, event, ...) {
-        #print('brushing_mouse_move')
-        .endBrush <<- as.numeric(event$pos())
-
-        setHiliting()
-        qupdate(brushing_layer)
-    }
-
-    brushing_mouse_release <- function(item, event, ...) {
-        #print('brushing_mouse_release')
-        .endBrush <<- as.numeric(event$pos())
-        setHiliting()
-        qupdate(brushing_layer)
-
-
-        .brush <<- FALSE
-
-
-        .startBrush <<- NULL
-        .endBrush <<- NULL
-
-        setSelected()
-    }
-
-    setHiliting <- function() {
-        left = min(.startBrush[1], .endBrush[1])
-        right = max(.startBrush[1], .endBrush[1]) + 1e-08
-        top = max(.startBrush[2], .endBrush[2]) + 1e-08
-        bottom = min(.startBrush[2], .endBrush[2])
-
-        rect = qrect(matrix(c(left, bottom, right, top), 2, byrow = TRUE))
-        hits = datalayer$locate(rect) + 1
-        #  browser()
-        for (i in 1:p) {
-            .data.summary$mvBrushed[i] <<- 0
-            .data.summary$valBrushed[i] <<- 0
-        }
-        for (i in hits) {
-            var <- (i + 1)%/%2
-            missing <- (i%%2) == 0
-
-            if (missing)
-                .data.summary$mvBrushed[var] <<- .data.summary$NAs[var]
-            else .data.summary$valBrushed[var] <<- .data.summary$Values[var]
-        }
-    }
-
-    setSelected <- function() {
-        .brushed <- rep(FALSE, nrow(data))
-        #  browser()
-        for (i in 1:p) {
-            if (.data.summary$mvBrushed[i] == .data.summary$NAs[i]) {
-                print(.data.summary$Names[i])
-                .brushed[which(is.na(data[, .data.summary$Names[i]]))] <- TRUE
-            }
-            if (.data.summary$valBrushed[i] == .data.summary$Values[i]) {
-                print(.data.summary$Names[i])
-                .brushed[which(!is.na(data[, .data.summary$Names[i]]))] <- TRUE
-            }
-        }
-        data$.brushed <- .brushed
-    }
-
-
-    # Key board events ---------------------------------------------------------
-
-    keyPressFun <- function(item, event, ...) {
-        #  if (event$key() == Qt$Qt$Key_Shift) .extended <<- !.extended
-        if (event$key() == Qt$Qt$Key_S) {
-            # sort according to number missing values
-            .data.summary <<- .data.summary[order(.data.summary$Values), ]
-            datalayer$invalidateIndex()
-            qupdate(datalayer)
-            qupdate(brushing_layer)
-        }
-    }
-
-
-    # Display category information on hover (query) ----------------------------
-    .queryPos <- NULL
-
-    query_draw <- function(item, painter, exposed, ...) {
-        # Don't draw when brushing
-        if (.brush)
-            return()
-        if (is.null(.queryPos))
-            return()
-        xpos <- .queryPos[1]
-        ypos <- .queryPos[2]
-        rect = qrect(matrix(c(xpos, ypos, xpos + 1e-04, ypos + 1e-04), 2, byrow = TRUE))
-        hits = datalayer$locate(rect) + 1
-
-        # Nothing under mouse?
-        if (length(hits) == 0)
-            return()
-
-        var <- (hits + 1)%/%2
-        info <- .data.summary[var, ]
-        infostring = with(info, paste(Names[1], ": ", valBrushed[1], "/", Values[1],
-            " NAs: ", mvBrushed[1], "/", NAs[1]), sep = "")
-
-        bgwidth = qstrWidth(painter, infostring)
-        bgheight = qstrHeight(painter, infostring)
-
-        ## adjust drawing directions when close to the boundary
-        hflag = dataRanges[2] - xpos > bgwidth
-        vflag = ypos - dataRanges[3] > bgheight
-        qdrawRect(painter, xpos, ypos, xpos + ifelse(hflag, 1, -1) * bgwidth, ypos +
-            ifelse(vflag, -1, 1) * bgheight, stroke = rgb(1, 1, 1, 0.5), fill = rgb(1,
-            1, 1, 0.5))
-
-        qstrokeColor(painter) = brush(data)$label.color
-        qdrawText(painter, infostring, xpos, ypos, halign = ifelse(hflag, "left",
-            "right"), valign = ifelse(vflag, "top", "bottom"))
-    }
-
-    query_hover <- function(item, event, ...) {
-        if (.brush)
-            return()
-
-        .queryPos <<- as.numeric(event$pos())
-        qupdate(querylayer)
-    }
-
-    query_hover_leave <- function(item, event, ...) {
-        .queryPos <<- NULL
-        qupdate(querylayer)
-    }
-
-    # Display legend information for colour ----------------------------
-
-    legend_draw <- function(item, painter, exposed, ...) {
-
-    }
-
-    scene = qscene()
-    rootlayer = qlayer(scene)
-    datalayer = qlayer(paintFun = draw, keyPressFun = keyPressFun, limits = lims)
-    bglayer = qgrid(xat = axis_loc(dataRanges[1:2]),
-                    yat = seq(0.5/p, 1, 1/p),
-                    xlim = dataRanges[1:2], ylim = dataRanges[3:4], minor = 'x',
-                    limits = lims)
-    xaxislayer =
-        qaxis(side = 1, at = axis_loc(c(0, 1)), limits = qrect(cbind(dataRanges[, 1], 0:1)))
-    brushing_layer = qlayer(paintFun = brushing_draw, mousePressFun = brushing_mouse_press,
-        mouseMoveFun = brushing_mouse_move, mouseReleaseFun = brushing_mouse_release,
-        limits = lims)
-    querylayer = qlayer(paintFun = query_draw, hoverMoveFun = query_hover,
-                        hoverLeaveFun = query_hover_leave, limits = lims)
-    legendlayer = qlayer(paintFun = legend_draw, limits = lims)
-    titlelayer = qmtext(side = 3, text = main)
-
-    rootlayer[1, 1] = bglayer
-    rootlayer[1, 1] = datalayer
-    rootlayer[1, 1] = brushing_layer
-    rootlayer[1, 1] = querylayer
-    rootlayer[1, 2] = legendlayer
-    rootlayer[0, 1] = titlelayer
-    rootlayer[2, 1] = xaxislayer
-    rootlayer[1, 0] = qlayer()
-
-    layout = rootlayer$gridLayout()
-    layout$setRowPreferredHeight(0, 30)
-    layout$setRowPreferredHeight(2, 15)
-    layout$setRowStretchFactor(0, 0)
-    layout$setRowStretchFactor(2, 0)
-    layout$setColumnPreferredWidth(0, 10)
-    layout$setColumnMaximumWidth(2, 10)
-    layout$setColumnStretchFactor(0, 0)
-
-    ## update the brush layer in case of any modifications to the mutaframe
-    add_listener(data, function(i, j) {
-        switch(j, .brushed = {
-            recalcBrushing()
-            qupdate(brushing_layer)
-        }, .color = {
-            qupdate(datalayer)
-            qupdate(brushing_layer)
-        })
-    })
-
-
-    # ## update the brush layer if brush attributes change
-    # add_listener(.brush.attr, function(i, j) {
-    #   qupdate(brushing_layer)
-    # })
-
-    qplotView(scene = scene)
+qmval = function(vars, data = last_data(), ...) {
+    UseMethod('qmval')
 }
-
+##' @method qmval default
+##' @rdname qmval
+##' @export
+qmval.default =
+    function(vars, data = last_data(), space = 0.1, main = '', horizontal = TRUE,
+             standardize = TRUE) {
+        shadow = attr(data, 'Shadow')
+        if (is.null(shadow)) stop('there are no missing values in the data!')
+        ## reshape the shadow matrix to a new qdata()
+        d =
+            data.frame(variable = rep(vars, each = nrow(data)),
+                       missing = factor(as.vector(shadow[, vars]), c(TRUE, FALSE)))
+        nd = qdata(d, color = missing, copy = FALSE)
+        ## link nd to data
+        add_listener(nd, function(i, j) {
+            if (focused(nd)) {
+                if (j == '.brushed') {
+                    selected(data) = apply(matrix(selected(nd), ncol = length(vars)), 1, any)
+                } else if (j == '.visible') {
+                    visible(data) = apply(matrix(visible(nd), ncol = length(vars)), 1, all)
+                }
+            }
+        })
+        add_listener(data, function(i, j) {
+            if (focused(data)) {
+                if (j == '.brushed') {
+                    selected(nd) = rep(selected(data), length(vars))
+                } else if (j == '.visible') {
+                    visible(nd) = rep(visible(data), length(vars))
+                }
+            }
+        })
+        qbar(variable, data = nd, space = space, main = main, horizontal = horizontal,
+             standardize = standardize)
+    }
+##' @method qmval numeric
+##' @rdname qmval
+##' @export
+qmval.numeric = function(vars, data = last_data(), ...) {
+    qmval(names(data)[vars], data, ...)
+}
+##' @method qmval formula
+##' @rdname qmval
+##' @export
+qmval.formula = function(vars, data = last_data(), ...) {
+    if (length(vars) != 2) stop("'vars' must be a one-sided formula!")
+    v = all.vars(vars)
+    if (identical(v, '.')) v = grep('^[^.]', names(data), value = TRUE)
+    qmval(v, data, ...)
+}
