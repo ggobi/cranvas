@@ -1,32 +1,13 @@
-##' Parallel coordinates plot
+##' Draw a parallel coordinates plot
 ##'
-##' Create a parallel coordinates plot from a data frame or matrix, with each
-##' line representing a row.
+##' Create a parallel coordinates plot (par-coords) from a data frame,
+##' with each line representing a row.
 ##'
-##' We can turn on/off identify by setting \code{brush(data,
-##' 'identify')} to be \code{TRUE}/\code{FALSE}. In the identify mode,
-##' the rows of data in a small neighborhood of the mouse will be
-##' shown on the screen. In the brush mode, we can use the left button
-##' of the mouse to drag a brush over the plot, and the brushed
-##' elements will be highlighted; the right button is used to resize
-##' the brush. A simple click will not activate the brush -- the brush
-##' works only when the mouse is moved to a difference location with
-##' one button being pressed.
-##'
-##' Several key stroke interactions are available as well: in the
-##' brush mode, we can hold the key \code{A} for \code{AND}
-##' operations, i.e. only the elements which were brushed in the last
-##' time \emph{and} are also brushed this time will be finally
-##' brushed. Similarly, \code{O} is for \code{OR}; \code{X} for
-##' \code{XOR}; \code{N} for \code{NOT} and \code{C} for
-##' \code{COMPLEMENT}. We can press \code{R} to toggle the min/max
-##' labels. Keys \code{+} and \code{-} can adjust the opacity of the
-##' plot linearly. \code{Delete} can make the brushed elements
-##' invisible while \code{F5} will make all the elements visible. The
-##' arrow keys are used to adjust the order of the variables and flip
-##' the values of variables (like a mirror reflection). \code{PageUp}
-##' and \code{PageDown} can be used to go back and forth in the brush
-##' history.
+##' See \code{\link{common_key_press}} for a series of common
+##' interactions. There are also some interactions specific to
+##' par-coords: press \code{R} to toggle the min/max labels; the arrow
+##' keys are used to adjust the order of the variables and flip the
+##' values of variables (like a mirror reflection).
 ##' @param vars variables to show; can be a character vector (column
 ##' names), an integer vector (column indices) or a formula like '~ x1
 ##' + x2'; if missing or it is a formula that contains a dot

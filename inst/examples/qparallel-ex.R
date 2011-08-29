@@ -1,7 +1,3 @@
-## interaction: drag with the right button to resize the brush; left button to move it
-
-## options(cranvas_debug = TRUE)
-
 library(cranvas)
 
 data(nrcstat)
