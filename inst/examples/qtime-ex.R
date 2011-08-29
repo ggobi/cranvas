@@ -18,11 +18,12 @@ print(qtime(TimeIndx,~ts+ps_tovs+ca_med,qnasa,Year,wrap=FALSE))
 require(nlme)
 Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
                           Remifentanil$ID==1,])
-Remi <- qdata(Remifentanil[complete.cases(Remifentanil),])
-Remi$ID <- factor(Remi$ID)
+Remi <- Remifentanil[complete.cases(Remifentanil),]
+Remi$ID <- factor(Remi$ID,levels=65:1)
+qRemi <- qdata(Remi)
 print(qtime(Time,~conc,Rem))
-print(qtime(Time,~conc,Remi,group=ID))
-print(qtime(Time,~conc,Remi,group=ID,wrap=FALSE))
+print(qtime(Time,~conc,qRemi,group=ID))
+print(qtime(Time,~conc,qRemi,group=ID,wrap=FALSE))
 
 # for categorical brushing self-link dataset by ID:
 link_var(Remi) <- "ID"   # ON

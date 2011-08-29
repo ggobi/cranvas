@@ -71,7 +71,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       meta$varname$g <- as.character(call$group)
     }
     meta$orderEnter <- order(as.factor(data[,meta$varname$g]), meta$time, decreasing=FALSE)
-    meta$group <- as.factor(data[meta$orderEnter,meta$varname$g])
+    meta$group <- factor(data[meta$orderEnter,meta$varname$g])
     meta$orderBack <- rank(meta$time+as.integer(as.factor(data[,meta$varname$g]))*(max(meta$time,na.rm=TRUE)+1),
                            ties.method='first')
 
