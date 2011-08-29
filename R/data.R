@@ -45,15 +45,27 @@
 ##' (default all \code{FALSE})
 ##' @param visible a logical vector indicating which rows are visible
 ##' (default all \code{TRUE})
+##' @param copy logical: if \code{TRUE}, a copy of the generated data
+##' object is stored and can be accessed later by
+##' \code{\link{last_data}()}, which enables us to ignore the
+##' \code{data} argument in many plotting functions since they default
+##' to \code{\link{last_data}()}
 ##' @return a mutaframe with attributes for interaction
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link[plumbr]{mutaframe}}, \code{\link{brush}},
 ##' \code{\link{link}}
+##' @note The argument \code{copy} should be used with care. If we
+##' only focus on one dataset and all plots are created from this
+##' dataset, \code{copy = TRUE} can save some typing efforts. However,
+##' if we need to switch between different datasets frequently, it is
+##' recommended to write the \code{data} argument in a plotting
+##' function explicitly, e.g. \code{qbar(x, data =
+##' a_specific_data_object)}.
 ##' @export
 ##' @example inst/examples/qdata-ex.R
 qdata =
     function(data, color = "gray15", border = color, size = 1,
-             brushed = FALSE, visible = TRUE) {
+             brushed = FALSE, visible = TRUE, copy = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
@@ -163,7 +175,7 @@ qdata =
 
     attr(mf, 'Scales') = l  # scales information to be used in legend
     attr(mf, 'Generator') = 'd38bbe46dae5fa45758f3609f5dc1a0a'  # a token for internal use
-    .cranvasEnv$.last.data = mf  # make a copy to .last.data
+    if (copy) .cranvasEnv$.last.data = mf  # make a copy to .last.data
     mf
 }
 Scales.meta =

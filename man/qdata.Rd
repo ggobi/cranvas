@@ -3,7 +3,7 @@
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
 qdata(data, color = "gray15", border = color, size = 1, 
-    brushed = FALSE, visible = TRUE)
+    brushed = FALSE, visible = TRUE, copy = TRUE)
 }
 \arguments{
   \item{data}{a data frame (it will be coerced to a data
@@ -29,6 +29,12 @@ qdata(data, color = "gray15", border = color, size = 1,
 
   \item{visible}{a logical vector indicating which rows are
   visible (default all \code{TRUE})}
+
+  \item{copy}{logical: if \code{TRUE}, a copy of the
+  generated data object is stored and can be accessed later
+  by \code{\link{last_data}()}, which enables us to ignore
+  the \code{data} argument in many plotting functions since
+  they default to \code{\link{last_data}()}}
 }
 \value{
   a mutaframe with attributes for interaction
@@ -67,6 +73,15 @@ qdata(data, color = "gray15", border = color, size = 1,
   will be updated using the new palette. See
   \code{\link{color_pal<-}} for a list of functions on how
   to modify scales information.
+}
+\note{
+  The argument \code{copy} should be used with care. If we
+  only focus on one dataset and all plots are created from
+  this dataset, \code{copy = TRUE} can save some typing
+  efforts. However, if we need to switch between different
+  datasets frequently, it is recommended to write the
+  \code{data} argument in a plotting function explicitly,
+  e.g. \code{qbar(x, data = a_specific_data_object)}.
 }
 \examples{
 library(cranvas)
