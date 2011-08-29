@@ -19,7 +19,7 @@ if (require('animation')) {
 }
 
 ####
-data(flea)
+data(flea, package = 'tourr')
 qflea <- qdata(flea)
 
 print(qdensity(tars1, qflea))

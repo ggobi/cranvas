@@ -1,16 +1,18 @@
 ## examples of tourrs in cranvas
 library(cranvas)
-library(tourr)
-require(ggplot2)
 
-flea <- rescaler(flea)
-qflea <- qdata(flea)
+data(flea, package = 'tourr')
+flea.s <- flea
+flea.s[, -7] <- tourr::rescale(flea.s[, -7])
+qflea <- qdata(flea.s)
 flea_tour <- Tourr$new(qflea, grand_tour(3), 1:6)
 flea_tour$step()
-print(qparallel(c("tour_1", "tour_2", "tour_3"), qflea))
-print(qscatter(tour_1, tour_2, qflea, labeled=TRUE, xlim=c(-4,4), ylim=c(-4,4)))
-print(qhist(tour_1, qflea, xlim=c(-4,6)))
-print(qdensity(tour_1, qflea, xlim=c(-4,4)))
+
+qparallel(c("tour_1", "tour_2", "tour_3"), qflea)
+qscatter(tour_1, tour_2, qflea, labeled=TRUE, xlim=c(-4,4), ylim=c(-4,4))
+## buggy: qhist(tour_1, qflea)
+qdensity(tour_1, qflea, xlim=c(-4,4))
+
 flea_tour$start()
 flea_tour$pause()
 flea_tour$slower()

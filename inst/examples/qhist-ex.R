@@ -1,7 +1,7 @@
 library(cranvas)
 
 #### (1) split histogram by species, and categorical linking
-data(flea)
+data(flea, package = 'tourr')
 qflea = qdata(flea, color = species)
 
 qhist(tars1)

@@ -17,7 +17,7 @@ if (require('animation')) {
 }
 
 # categorical variable linking
-data(flea)
+data(flea, package = 'tourr')
 qflea <- qdata(flea)
 print(qscatter(tars1, aede1, qflea))
 
