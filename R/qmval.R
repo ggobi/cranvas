@@ -27,6 +27,7 @@
 ##' plots (except other missing value plots) can link to all missing
 ##' value plots.
 ##' @export
+##' @family plots
 ##' @example inst/examples/qmval-ex.R
 qmval = function(vars, data = last_data(), ...) {
     UseMethod('qmval')

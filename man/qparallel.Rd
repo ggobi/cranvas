@@ -320,3 +320,10 @@ qparallel(data = qpollen)
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+\seealso{
+  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
+  \code{\link{qhist}}, \code{\link{qmval}},
+  \code{\link{qmval.default}}, \code{\link{qmval.formula}},
+  \code{\link{qmval.numeric}}, \code{\link{qspine}},
+  \code{\link{qtime}}
+}

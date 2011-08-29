@@ -104,3 +104,9 @@ qhist(Serve.Speed, freq = FALSE)  # density
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+\seealso{
+  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
+  \code{\link{qmval}}, \code{\link{qmval.default}},
+  \code{\link{qmval.formula}}, \code{\link{qmval.numeric}},
+  \code{\link{qparallel}}, \code{\link{qtime}}
+}

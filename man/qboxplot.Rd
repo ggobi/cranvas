@@ -72,3 +72,10 @@ qboxplot(tars1 ~ species, data = qflea)
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+\seealso{
+  Other plots: \code{\link{qbar}}, \code{\link{qhist}},
+  \code{\link{qmval}}, \code{\link{qmval.default}},
+  \code{\link{qmval.formula}}, \code{\link{qmval.numeric}},
+  \code{\link{qparallel}}, \code{\link{qspine}},
+  \code{\link{qtime}}
+}

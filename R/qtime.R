@@ -19,7 +19,7 @@
 ##' parameter 'shift'.
 ##' @param time The variable indicating time, which is displayed on
 ##' the horizontal axis
-##' @param y The variable(s) displayed on the vertical axis. It must 
+##' @param y The variable(s) displayed on the vertical axis. It must
 ##' be a formula with only right hand side at the moment. See examples.
 ##' @param data Mutaframe data to use
 ##' @param period The variable to group the time series. Better to be
@@ -39,10 +39,11 @@
 ##' @param ylab label on vertical axis, default is name of y variable
 ##' @example inst/examples/qtime-ex.R
 ##' @export
+##' @family plots
 
 
 qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
-                  shift=c(1,7,12,24), size=2, alpha=1, asp=NULL, 
+                  shift=c(1,7,12,24), size=2, alpha=1, asp=NULL,
                   main=NULL, xlab=NULL, ylab=NULL,...){
 
 #####################
@@ -52,12 +53,12 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   call <- as.list(match.call()[-1])
   b <- brush(data)
   meta <- Time.meta$new(varname = list(x = as.character(call$time)))
- 
+
   ## X axis setting
   meta$time <- eval(call$time, as.data.frame(data))
   meta$xtmp <- meta$time
   meta$xlab <- ifelse(is.null(xlab), meta$varname$x, xlab)
-  
+
   ## Period for time series / Group for panel data
   if (is.null(call$period) & is.null(call$group)) {
     meta$vargroup <- rep(1, nrow(data))
@@ -86,16 +87,16 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       warning('Period lengths are not the same.')
     }
     ## need to be modified here !!
-    meta$time <- rep(1:pdLen[1],length=length(meta$time)) 
+    meta$time <- rep(1:pdLen[1],length=length(meta$time))
     meta$xtmp <- meta$time
   }
-    
+
   ## Y axis setting
   if (inherits(y, 'formula')){
     if (length(y)!=2){stop("Wrong formula format.")}
     meta$varname$y <- all.vars(y)
   } else {
-    meta$varname$y <- as.character(call$y) 
+    meta$varname$y <- as.character(call$y)
   }
   meta$yorig <- as.data.frame(data[meta$orderEnter,meta$varname$y,drop=FALSE])
   meta$y <- meta$yorig
@@ -141,10 +142,10 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
                        diff(meta$limits[3:4]))/30
 
   ## Title
-  meta$main <- if (is.null(main)) 
-                 sprintf("Time Plot of %s And %s", 
+  meta$main <- if (is.null(main))
+                 sprintf("Time Plot of %s And %s",
                          meta$varname$x, paste(meta$varname$y, collapse=', ')) else main
-  
+
   ## set limits for yaxis
   meta.yaxis <- function() {
     if (is.null(meta$group) | !meta$vertconst){
@@ -160,7 +161,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       meta$ylab <- meta$varname$g
     }
   }
-  
+
 ####################
   ## event handlers ##----------
 ####################
@@ -188,14 +189,14 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     meta$hitsrow <- round(hits %% nrow(data))
     meta$hitsrow[meta$hitsrow==0] <- nrow(data)
     meta$hitscol <- (hits-0.0000001)%/%nrow(data)+1
-    
+
     selected(data) <- meta$orderEnter[meta$hitsrow]
     if (!is.null(meta$group)) self_link(data)
   }
 
   key_press <- function(layer, event){
     crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
-    
+
     if (event$key()==Qt$Qt$Key_M){
       ## key M for switching the serie mode (for selecting and moving)
       if (is.null(meta$group)) return()
@@ -212,10 +213,10 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         }
       }
     }
-    
+
     if (event$key()==Qt$Qt$Key_G){
       ## key G for gear(shift the wrapping speed)
-      
+
       meta$wrap.shift <- c(meta$wrap.shift[-1],meta$wrap.shift[1])
       qupdate(layer.text)
     } else if (event$key()==Qt$Qt$Key_Right){
@@ -263,7 +264,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       meta$xlabels <- format(meta$xat)
     } else if (event$key()==Qt$Qt$Key_Left){
       ## arrow left
-      
+
       if (event$modifiers() == Qt$Qt$ShiftModifier) {
           meta$xtmp <- meta$time
           meta$wrap.group <- 1
@@ -294,7 +295,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
             meta$xtmp[meta$xtmp==0] <- zoombound
           }
         }
-        meta$limits[1:2] <- extend_ranges(meta$xtmp)       
+        meta$limits[1:2] <- extend_ranges(meta$xtmp)
       } else {
         meta$zoomsize <- meta$zoomsize+2
         if (meta$zoomsize > 2*diff(range(meta$time,na.rm=TRUE))) {
@@ -313,7 +314,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
     } else if (event$key() == Qt$Qt$Key_U) {
         ## Key U (for Up)
-        
+
         if (ncol(meta$y)>1 & event$modifiers() == Qt$Qt$ShiftModifier) {
           for (i in 1:ncol(meta$y)){
             meta$ytmp[,i] <- meta$y[,i]+i
@@ -337,7 +338,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         meta.yaxis()
     } else if (event$key() == Qt$Qt$Key_D) {
         ## Key D (for Down)
-        
+
         if (ncol(meta$y)>1 & event$modifiers() == Qt$Qt$ShiftModifier) {
           meta$ytmp <- meta$y
         } else if (!is.null(meta$group) & length(meta$group)>0) {
@@ -345,7 +346,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           if (meta$vertconst<0) meta$vertconst <- 0
           if (!meta$vertconst) {
             meta$ytmp <- meta$y
-            meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))      
+            meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
           } else {
             if (ncol(meta$y)==1){
              meta$ytmp <- (meta$y-min(meta$y,na.rm=TRUE))/
@@ -359,8 +360,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
               }
             }
           }
-        } 
-          meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))  
+        }
+          meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
           meta.yaxis()
     }
     if (length(i <- which(event$key() == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
@@ -380,7 +381,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
     xpos <- meta$query.pos[1]
     ypos <- meta$query.pos[2]
-    
+
     queryaround <- ifelse(meta$radius<=4,8/meta$radius,1)
     xrange <- meta$radius/layer.root$size$width() *
       diff(meta$limits[c(1, 2)]) * queryaround
@@ -506,7 +507,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   }
 
   brush_draw <- function(layer, painter) {
-       
+
     if (any(is.na(meta$pos))) return()
 
     if (meta$serie.mode) {
@@ -554,7 +555,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
             for (k in unique(meta$vargroup)) {
               for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
                 idxtmp <- (meta$wrap.group==j & meta$vargroup==k & shadowmatrix[,i])
-                if (sum(idxtmp)){                 
+                if (sum(idxtmp)){
                   xtmp <- meta$xtmp +meta$pos[1]-meta$serie.pos[1]
                   ytmp <- meta$ytmp[,i]
                   xtmp[!idxtmp] <- NA
@@ -575,7 +576,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
               stroke = b$style$color)
     qdrawCircle(painter, meta$pos[1], meta$pos[2],
                 r = 1.5 * b$style$linewidth,
-                stroke = b$style$color, fill = b$style$color)    
+                stroke = b$style$color, fill = b$style$color)
     if (!any(selected(data))) return()
     if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
       meta$hitsrow <- meta$orderBack[selected(data)]
@@ -599,7 +600,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
            for (k in unique(meta$vargroup)) {
              for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
                idxtmp <- (meta$wrap.group==j & meta$vargroup==k & shadowmatrix[,i])
-               if (sum(idxtmp)){                 
+               if (sum(idxtmp)){
                  xtmp <- meta$xtmp
                  ytmp <- meta$ytmp[,i]
                  xtmp[!idxtmp] <- NA
@@ -610,7 +611,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           }
         }
       }
-    }  
+    }
   }
 
 #####################
@@ -653,7 +654,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
                                    qdrawText(painter,paste("ACF(lag=",meta$wrap.shift[1],"):",
                                    round(acf(meta$ytmp,na.action=na.pass,plot=FALSE)$acf[meta$wrap.shift[1]+1],2),
                                    sep=""),
-                                   meta$limits[1,1],meta$limits[1,2], 
+                                   meta$limits[1,1],meta$limits[1,2],
                                    halign='left',valign='bottom')},
                           limits=qrect(meta$limits))
   }
@@ -669,7 +670,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   layer.root[1, 2] = query_layer
   layer.root[1, 2] = layer.text
   if (j) layer.root[1, 2] = layer.text2
-  layer.root[1, 3] = qlayer() 
+  layer.root[1, 3] = qlayer()
   layout = layer.root$gridLayout()
   layout$setRowPreferredHeight(0, 30)
   layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', meta$xlabels),
@@ -710,7 +711,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   })
   b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
-  })                          
+  })
   sync_limits(meta, main_circle_layer,main_line_layer,
               brush_layer,query_layer,
               layer.text)

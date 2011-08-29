@@ -26,6 +26,7 @@
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @example inst/examples/qboxplot-ex.R
 ##' @export
+##' @family plots
 qboxplot = function(vars, data = last_data(), at = NULL, width = NULL, horizontal = FALSE) {
     data = check_data(data)
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)

@@ -33,6 +33,7 @@
 ##' @return A histogram or a spine plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
+##' @family plots
 ##' @example inst/examples/qhist-ex.R
 qhist =
     function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', horizontal = FALSE,

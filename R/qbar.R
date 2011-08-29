@@ -36,6 +36,7 @@
 ##' @return A bar plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
+##' @family plots
 ##' @example inst/examples/qbar-ex.R
 qbar =
     function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE,

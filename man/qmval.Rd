@@ -89,3 +89,8 @@ qscatter(longitude, latitude)
 \author{
   Heike Hofmann and Yihui Xie
 }
+\seealso{
+  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
+  \code{\link{qhist}}, \code{\link{qparallel}},
+  \code{\link{qspine}}, \code{\link{qtime}}
+}

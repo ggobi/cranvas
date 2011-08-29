@@ -66,6 +66,7 @@
 ##' @return a plot object with attributes
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
+##' @family plots
 ##' @example inst/examples/qparallel-ex.R
 qparallel = function(vars, data = last_data(), scale = "range", names = break_str(vars),
     na.action = na_impute,
