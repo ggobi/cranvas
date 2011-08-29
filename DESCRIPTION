@@ -4,8 +4,7 @@ Imports:
     qtpaint,
     reshape,
     plyr,
-    plumbr (>= 0.6.0),
-    stringr,
+    plumbr (>= 0.6.2),
     objectSignals
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
