@@ -132,20 +132,28 @@ qhist =
     }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
-        brk = meta$breaks
         if (length(i <- which(match_key(c('Up', 'Down'))))) {
-            if ((nb <- length(brk) + c(-1, 1)[i]) > 1)
-                meta$breaks = seq(min(brk), max(brk), length.out = nb)  # more/less bins
+            if (meta$binwidth >= 1e-7) {
+                meta$binwidth = c(1.05, 0.95)[i] * meta$binwidth  # larger/smaller bins
+                initial_bins(default = FALSE)  # use new binwidth
+            } else message('binwidth too small!')
             return()
         } else if (length(i <- which(match_key(c('Left', 'Right'))))) {
-            r = range(data[visible(data), meta$var], na.rm = TRUE)
-            brk = brk + c(-1, 1)[i] * (brk[2] - brk[1]) / 50  # shift by +/-(2% bin)
-            if (min(brk) > r[1]) brk = c(2 * brk[1] - brk[2], brk)
-            if (max(brk) < r[2]) brk = c(brk, tail(brk, 1) + brk[2] - brk[1])
+            brk = meta$breaks
+            r = range(data[, meta$var], na.rm = TRUE, finite = TRUE)
+            brk = brk + c(-1, 1)[i] * meta$binwidth / 50  # shift by +/-(2% bin)
+            if (min(brk) > r[1]) brk = c(brk[1] - meta$binwidth, brk)
+            if (max(brk) < r[2]) brk = c(brk, tail(brk, 1) + meta$binwidth)
             if (length(brk) <= 2) return()
             ## see if two breakpoints both < min or > max (remove one if so)
-            if (all(head(brk, 2) <= r[1])) brk = brk[-1]
-            if (all(tail(brk, 2) >= r[2])) brk = brk[-length(brk)]
+            if (all(head(brk, 2) <= r[1])) {
+                brk = brk[-1]
+                message('removed one left-most bin because it does not contain data...')
+            }
+            if (all(tail(brk, 2) >= r[2])) {
+                brk = brk[-length(brk)]
+                message('removed one right-most bin because it does not contain data...')
+            }
             meta$breaks = brk
             return()
         }
