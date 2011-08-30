@@ -29,6 +29,7 @@
 ##' (\code{FALSE}) (only applies to histogram)
 ##' @param spine if \code{TRUE}, draw a spine plot (bar widths
 ##' proportional to counts instead of being equal)
+##' @param ... arguments passed to \code{\link{qhist}}
 ##' @inheritParams qbar
 ##' @return A histogram or a spine plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
