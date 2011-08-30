@@ -288,11 +288,11 @@ Bar.meta =
 .bar_draw_main = function(layer, painter, meta) {
     ## deal with 0 pixel rect
     if (meta$horizontal) {
-        if (any(idx <- meta$xright == meta$xleft))
-            meta$xright[idx] = meta$xright[idx] + one_pixel(painter)[1]
+        if (any(idx <- meta$xright == 0))
+            meta$xright[idx] = one_pixel(painter)[1]
     } else {
-        if (any(idx <- meta$ytop == meta$ybottom))
-            meta$ytop[idx] = meta$ytop[idx] + one_pixel(painter)[2]
+        if (any(idx <- meta$ytop == 0))
+            meta$ytop[idx] = one_pixel(painter)[2]
     }
     qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
               stroke = meta$border, fill = meta$color)
