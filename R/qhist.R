@@ -229,16 +229,16 @@ qhist =
         view$setWindowTitle(paste(ifelse(meta$spine, "Spine plot:", "Histogram:"), meta$var))
     })
     d.idx = add_listener(data, function(i, j) {
-        switch(j, .brushed = qupdate(layer.brush),
-               .color = {
-                   compute_colors()
-                   qupdate(layer.main)
-               }, {
-                   compute_coords(); compute_colors(); flip_coords()
-                   qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
-                   layer.main$invalidateIndex()
-                   qupdate(layer.main)
-               })
+        idx = which(j == c(meta$var, '.brushed', '.color', '.border'))
+        if (length(idx) < 1) {
+            compute_coords(); compute_colors(); flip_coords()
+            qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+            layer.main$invalidateIndex(); qupdate(layer.main)
+            return()
+        } else if (idx == 4) idx = 3
+        switch(idx, initial_bins(), qupdate(layer.brush), {
+            compute_colors(); qupdate(layer.main)
+        })
     })
     qconnect(layer.main, 'destroyed', function(x) {
         ## b$colorChanged$disconnect(b.idx)
