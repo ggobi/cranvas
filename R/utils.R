@@ -38,6 +38,7 @@ find_y_label <- function(df) {
 #' @keywords hplot
 #' @examples
 #'  make_window_ranges(c(0,1,2,3))
+#' @noRd
 make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks = FALSE,
     ytickmarks = FALSE, main = NULL) {
 

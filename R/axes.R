@@ -298,6 +298,7 @@ qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = 0.5, y = 
 #' @param dataRanges ranges of the data so a buffer of space may be added
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
+#' @noRd
 draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
     vertPos = NULL, minor.horiPos = NULL, minor.vertPos = NULL) {
     #background
@@ -373,6 +374,7 @@ draw_grid_with_positions_fun <- function(plotObj, dataRanges, horiPos = NULL,
 #' @param labelHoriPos horizontal position of the axisLabels
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
+#' @noRd
 draw_x_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
     labelHoriPos, name = NULL) {
     #  X label
@@ -418,6 +420,7 @@ draw_x_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
 #' @param labelVertPos vertical position of the axisLabels
 #' @author Barret Schloerke \email{bigbear@@iastate.edu}
 #' @keywords hplot
+#' @noRd
 draw_y_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
     labelVertPos, name = NULL) {
     # Y label
@@ -453,6 +456,7 @@ draw_y_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
 
 #' add a title using qt
 #'
+#' @noRd
 add_title_fun <- function(plotObj, dataRanges, title) {
 
     if (!is.null(title)) {
