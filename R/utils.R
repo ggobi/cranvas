@@ -91,9 +91,11 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
 ##' This is useful for setting a margin in the plot region.
 ##'
 ##' @param x the data vector (either the orginal vector or its range)
-##' or a 2x2 matrix which defines the ranges of two axes in two
-##' columns
-##' @param f the amount to extend the range
+##' or an n by 2 matrix which is used to define the ranges of two axes
+##' in two columns
+##' @param f the amount to extend the range (usually a scalar; when it
+##' is a vector, its length must be 2, giving the amount to extend to
+##' the left and right respectively)
 ##' @return a vector or a matrix of ranges corresponding to the input
 ##' \code{x}
 ##' @author Yihui Xie <\url{http://yihui.name}>
@@ -101,18 +103,16 @@ make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks 
 ##' @examples extend_ranges(c(0, 1))
 ##' extend_ranges(1:10)
 ##'
-##' m = matrix(c(c(1,10), c(5, 8)), nrow = 2)
+##' m = matrix(c(c(1,5,10), c(5,7,8)), ncol = 2)
 ##' extend_ranges(m)
-##' extend_ranges(m, c(.1, .2))
-##'
+##' extend_ranges(m, f = c(.1, .2))  # larger top and right margins
 extend_ranges = function(x, f = qpar("mar")) {
-    if (is.matrix(x)) {
-        if (!identical(dim(x), c(2L, 2L)))
-            stop("the range matrix must be of dim 2x2")
-        x = apply(x, 2, sort)
-        return(x + f * t((x[2, ] - x[1, ]) %*% t(c(-1, 1))))
+    if (!is.null(d <- dim(x))) {
+        if (length(d) != 2L) stop("x must be of 2 dimensions")
+        if (d[2] != 2L) stop("x must be of 2 columns")
+        return(apply(x, 2, extend_ranges, f = f))
     }
-    x = range(x, na.rm = TRUE)
+    if (length(x) != 2) x = range(x, na.rm = TRUE, finite = TRUE)
     x + c(-1, 1) * f * (x[2] - x[1])
 }
 
