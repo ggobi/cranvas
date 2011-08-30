@@ -657,5 +657,5 @@ prefer_width = function(text, horizontal = TRUE) {
 ##' qplotView(scene = s)
 one_pixel = function(painter) {
     m = qvmap(qdeviceTransform(painter)$inverted(), c(0, 1), c(0, 1))
-    c(m[2, 1] - m[1, 1], m[2, 2] - m[1, 2])
+    abs(c(m[2, 1] - m[1, 1], m[2, 2] - m[1, 2]))
 }
