@@ -10,7 +10,7 @@ flea_tour$step()
 
 qparallel(c("tour_1", "tour_2", "tour_3"), qflea)
 qscatter(tour_1, tour_2, qflea, labeled=TRUE, xlim=c(-4,4), ylim=c(-4,4))
-## buggy: qhist(tour_1, qflea)
+qhist(tour_1, qflea, binwidth = 0.1, xlim = c(-1, 1))
 qdensity(tour_1, qflea, xlim=c(-4,4))
 
 flea_tour$start()

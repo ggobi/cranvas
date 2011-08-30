@@ -23,8 +23,8 @@
 ##' \code{qhist(..., spine = TRUE)}.
 ##' @param x the name of the numeric variable to be used to draw the
 ##' histogram or spine plot
-##' @param breaks a single number giving the number of bins, or a
-##' numeric vector giving the breakpoints
+##' @param bins the desired number of bins
+##' @param binwidth the bin width (\code{range(x) / bins} by default)
 ##' @param freq draw the frequencies (\code{TRUE}) or densities
 ##' (\code{FALSE}) (only applies to histogram)
 ##' @param spine if \code{TRUE}, draw a spine plot (bar widths
@@ -36,40 +36,50 @@
 ##' @family plots
 ##' @example inst/examples/qhist-ex.R
 qhist =
-    function(x, data = last_data(), breaks = 30, freq = TRUE, main = '', horizontal = FALSE,
-             spine = FALSE) {
+    function(x, data = last_data(), bins = 30, binwidth = NULL, freq = TRUE,
+             main = '', horizontal = FALSE, spine = FALSE, xlim = NULL, ylim = NULL) {
     data = check_data(data)
     b = brush(data)
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
-                      alpha = 1, horizontal = horizontal, main = main, breaks = breaks,
-                      standardize = spine, spine = spine)
+                      alpha = 1, horizontal = horizontal, main = main,
+                      standardize = spine, spine = spine, multiplier = 1)
+    initial_bins = function(default = TRUE) {
+        d = data[, meta$var]
+        ## temporarily steal from hadley's densityvis
+        r = range(d, na.rm = TRUE, finite = TRUE)
+        if (diff(r) < 1e-7 && default) {
+            meta$breaks = r
+            meta$binwidth = diff(r)
+        } else {
+            if (default) meta$binwidth = if (is.null(binwidth)) diff(r) / bins else binwidth
+            meta$breaks = seq(r[1], r[2] + meta$binwidth, meta$binwidth) - meta$binwidth / 2
+        }
+    }
+    initial_bins()
     compute_coords = function() {
         if (meta$spine) meta$freq = meta$standardize = TRUE else meta$standardize = FALSE
         idx = visible(data)
-        hst = hist(data[idx, meta$var], breaks = meta$breaks, plot = FALSE)
-        if (!identical(meta$breaks, hst$breaks)) meta$breaks = hst$breaks
-        meta$value =
-            cut(data[, meta$var], breaks = meta$breaks, include.lowest = TRUE)
-        meta$nlevel = length(levels(meta$value))
+        meta$value = cut(data[, meta$var], breaks = meta$breaks, include.lowest = TRUE)
+        nb = length(meta$breaks)
+        meta$nlevel = nb - 1
         .find_split_var(data, meta)
         tmp = table(meta$value[idx], meta$value2[idx])
         if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
-        if (!meta$freq) tmp = tmp / (sum(idx) * diff(hst$breaks[1:2]))
+        if (!meta$freq) tmp = tmp / (sum(idx) * meta$binwidth)
         if (meta$standardize) tmp = tmp / tmp[, meta$nlevel2, drop = ncol(tmp) > 1]
         tmp[!is.finite(tmp)] = 0  # consider division by 0
         meta$y = c(tmp)
-        meta$x = rep(hst$mids, meta$nlevel2)
+        meta$x = rep(meta$breaks[-1] - meta$binwidth / 2, meta$nlevel2)
         meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = format(meta$xat)
         meta$ylabels = format(meta$yat)
         meta$xlab = meta$var
         meta$ylab = if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
-        nb = length(hst$breaks)
         if (meta$spine) {
             meta$xright = cumsum(table(meta$value[idx])) / sum(idx)  # [0,1], prop counts
             meta$xleft = c(0, meta$xright[-meta$nlevel])
-            meta$xat <- c(0, meta$xright)
+            meta$xat = c(0, meta$xright)
             meta$xlabels = unname(tapply(formatC(meta$breaks), meta$xat, function(x) {
                 if (length(x) <= 1) x else sprintf('%s%s(%s)',
                           x[1], if (meta$horizontal) '' else '\n', x[length(x)])
@@ -78,13 +88,15 @@ qhist =
             meta$xleft = rep(meta$xleft, meta$nlevel2)
             meta$xright = rep(meta$xright, meta$nlevel2)
         } else {
-            meta$xleft = rep(hst$breaks[-nb], meta$nlevel2)
-            meta$xright = rep(hst$breaks[-1], meta$nlevel2)
+            meta$xleft = rep(meta$breaks[-nb], meta$nlevel2)
+            meta$xright = rep(meta$breaks[-1], meta$nlevel2)
         }
         meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2, drop = FALSE])); meta$ytop = meta$y
         meta$limits =
-            extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
-                                range(c(meta$ybottom, meta$ytop))))
+            extend_ranges(cbind(if (is.null(xlim))
+                                range(c(meta$xleft, meta$xright)) else xlim,
+                                if (is.null(ylim))
+                                range(c(meta$ybottom, meta$ytop)) else ylim))
     }
     compute_coords()
     compute_colors = function() {
@@ -260,4 +272,5 @@ Hist.meta =
                                      split.type = 'character', spine = 'logical',
                                      nlevel = 'integer', nlevel2 = 'integer',
                                      freq = 'logical', standardize = 'logical',
+                                     binwidth = 'numeric', multiplier = 'numeric',
                                      identified = 'numeric', identify.labels = 'character')))

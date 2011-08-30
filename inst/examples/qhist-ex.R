@@ -6,7 +6,7 @@ qflea = qdata(flea, color = species)
 
 qhist(tars1)
 qhist(tars2, freq = FALSE, main = 'density of tars2')
-qhist(aede1)
+qhist(aede1, ylim = c(0, 10), main = 'fix y-axis limits')
 qhist(head, horizontal = TRUE)
 qspine(aede2)
 qparallel(~.)  # all variables
