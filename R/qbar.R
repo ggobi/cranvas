@@ -21,6 +21,10 @@
 ##' A zero-count category is represented by a one-pixel rectangle,
 ##' which is a useful visual hint to indicate the presence of this
 ##' category.
+##'
+##' The x-axis (or y-axis when \code{horizontal = TRUE}) tickmark
+##' locations are from 1 to \code{n} where \code{n} is the number of
+##' levels of the factor variable to be plotted.
 ##' @param x a variable name (will be coerced to a factor if it is
 ##' not; \code{NA} will also be a level of the factor if the variable
 ##' has any \code{NA}'s)
@@ -33,6 +37,12 @@
 ##' \code{FALSE} (vertical)
 ##' @param standardize logical: whether to standardize the height of
 ##' each bar to 1
+##' @param xlim a numeric vector of length 2 (like \code{c(x0, x1)})
+##' for x-axis limits; it will be calculated from the data limits if
+##' not specified (\code{NULL}). Note when \code{x0 > x1}, the axis
+##' direction will be reversed (i.e. from larger values to small
+##' values)
+##' @param ylim y-axis limits; similar to \code{xlim}
 ##' @return A bar plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
@@ -40,7 +50,7 @@
 ##' @example inst/examples/qbar-ex.R
 qbar =
     function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE,
-             standardize = FALSE) {
+             standardize = FALSE, xlim = NULL, ylim = NULL) {
     data = check_data(data)
     b = brush(data)
     s = attr(data, 'Scales')
@@ -68,8 +78,10 @@ qbar =
         meta$xleft = meta$xat - w; meta$xright = meta$xat + w
         meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2])); meta$ytop = meta$y
         meta$limits =
-            extend_ranges(cbind(range(c(meta$xleft, meta$xright)),
-                                range(c(meta$ybottom, meta$ytop))))
+            extend_ranges(cbind(if (is.null(xlim))
+                                range(c(meta$xleft, meta$xright)) else xlim,
+                                if (is.null(ylim))
+                                range(c(meta$ybottom, meta$ytop)) else ylim))
     }
     compute_coords()
     compute_colors = function() {
