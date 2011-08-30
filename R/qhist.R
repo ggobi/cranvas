@@ -92,6 +92,12 @@ qhist =
             meta$xright = rep(meta$breaks[-1], meta$nlevel2)
         }
         meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2, drop = FALSE])); meta$ytop = meta$y
+        if (!freq && max(meta$ytop) < 0.5) {
+            ## there seems to be an ugly bug in qt: rectangles with small height not drawn
+            meta$multiplier = k = 1 / max(meta$ytop) * 10
+            meta$ybottom = meta$ybottom * k; meta$ytop = meta$ytop * k
+            meta$yat = meta$yat * k; if (!is.null(ylim)) ylim = ylim * k
+        }
         meta$limits =
             extend_ranges(cbind(if (is.null(xlim))
                                 range(c(meta$xleft, meta$xright)) else xlim,

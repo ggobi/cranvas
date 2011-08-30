@@ -291,7 +291,7 @@ Bar.meta =
     if (any(idx <- selected(data) & (vis <- visible(data)))) {
         d = c(table(meta$value[idx], meta$value2[idx])) # brushed counts
         if (length(meta$freq) && !meta$freq)
-            d = d / (sum(vis) * diff(meta$breaks[1:2]))
+            d = d / (sum(vis) * diff(meta$breaks[1:2])) * meta$multiplier
         if (isTRUE(meta$standardize)) {
             d = d / c(table(meta$value[vis]))
             d[!is.finite(d)] = 0
