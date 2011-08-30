@@ -86,17 +86,26 @@ print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, qnasa,
 print(qtime(TimeIndx, ~ts + ps_tovs + ca_med, qnasa, 
     Year, wrap = FALSE))
 
+library(reshape)
+nasaTsCa <- nasa11[, c(6, 9, 14)]
+nasaTsCa[, 2:3] <- rescaler(nasaTsCa[, 2:3])
+nasaTsCa <- melt(nasaTsCa, 1)
+qnasaTsCa <- qdata(nasaTsCa)
+print(qtime(TimeIndx, ~value, qnasaTsCa, group = variable, 
+    shift = c(1, 12)))
+
 
 ## example 2: Remifentanil in the nlme package
 require(nlme)
 Rem <- qdata(Remifentanil[complete.cases(Remifentanil) & 
     Remifentanil$ID == 1, ])
-Remi <- qdata(Remifentanil[complete.cases(Remifentanil), 
-    ])
-Remi$ID <- factor(Remi$ID)
+Remi <- Remifentanil[complete.cases(Remifentanil), 
+    ]
+qRemi$ID <- factor(qRemi$ID, levels = 65:1)
+qRemi <- qdata(Remi)
 print(qtime(Time, ~conc, Rem))
-print(qtime(Time, ~conc, Remi, group = ID))
-print(qtime(Time, ~conc, Remi, group = ID, wrap = FALSE))
+print(qtime(Time, ~conc, qRemi, group = ID))
+print(qtime(Time, ~conc, qRemi, group = ID, wrap = FALSE))
 
 # for categorical brushing self-link dataset by ID:
 link_var(Remi) <- "ID"  # ON
