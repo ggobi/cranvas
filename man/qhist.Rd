@@ -3,24 +3,28 @@
 \alias{qspine}
 \title{Draw a histogram or a spine plot}
 \usage{
-qhist(x, data = last_data(), breaks = 30, freq = TRUE, 
-    main = "", horizontal = FALSE, spine = FALSE)
+qhist(x, data = last_data(), bins = 30, binwidth = NULL, 
+    freq = TRUE, main = "", horizontal = FALSE, spine = FALSE, 
+    xlim = NULL, ylim = NULL)
 
-qspine(x, data = last_data(), breaks = 30, main = "", 
-    horizontal = FALSE)
+qspine(x, data = last_data(), ...)
 }
 \arguments{
   \item{x}{the name of the numeric variable to be used to
   draw the histogram or spine plot}
 
-  \item{breaks}{a single number giving the number of bins,
-  or a numeric vector giving the breakpoints}
+  \item{bins}{the desired number of bins}
+
+  \item{binwidth}{the bin width (\code{range(x) / bins} by
+  default)}
 
   \item{freq}{draw the frequencies (\code{TRUE}) or
   densities (\code{FALSE}) (only applies to histogram)}
 
   \item{spine}{if \code{TRUE}, draw a spine plot (bar
   widths proportional to counts instead of being equal)}
+
+  \item{...}{arguments passed to \code{\link{qhist}}}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly
@@ -30,6 +34,15 @@ qspine(x, data = last_data(), breaks = 30, main = "",
 
   \item{horizontal}{\code{TRUE} to draw a horizontal plot
   or \code{FALSE} (vertical)}
+
+  \item{xlim}{a numeric vector of length 2 (like
+  \code{c(x0, x1)}) for x-axis limits; it will be
+  calculated from the data limits if not specified
+  (\code{NULL}). Note when \code{x0 > x1}, the axis
+  direction will be reversed (i.e. from larger values to
+  small values)}
+
+  \item{ylim}{y-axis limits; similar to \code{xlim}}
 }
 \value{
   A histogram or a spine plot
@@ -70,7 +83,7 @@ qflea <- qdata(flea, color = species)
 
 qhist(tars1)
 qhist(tars2, freq = FALSE, main = "density of tars2")
-qhist(aede1)
+qhist(aede1, ylim = c(0, 10), main = "fix y-axis limits")
 qhist(head, horizontal = TRUE)
 qspine(aede2)
 qparallel(~.)  # all variables

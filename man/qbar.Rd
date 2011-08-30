@@ -3,7 +3,7 @@
 \title{Draw a bar plot}
 \usage{
 qbar(x, data = last_data(), space = 0.1, main = "", 
-    horizontal = FALSE, standardize = FALSE)
+    horizontal = FALSE, standardize = FALSE, xlim = NULL, ylim = NULL)
 }
 \arguments{
   \item{x}{a variable name (will be coerced to a factor if
@@ -24,6 +24,15 @@ qbar(x, data = last_data(), space = 0.1, main = "",
 
   \item{standardize}{logical: whether to standardize the
   height of each bar to 1}
+
+  \item{xlim}{a numeric vector of length 2 (like
+  \code{c(x0, x1)}) for x-axis limits; it will be
+  calculated from the data limits if not specified
+  (\code{NULL}). Note when \code{x0 > x1}, the axis
+  direction will be reversed (i.e. from larger values to
+  small values)}
+
+  \item{ylim}{y-axis limits; similar to \code{xlim}}
 }
 \value{
   A bar plot
@@ -52,6 +61,11 @@ qbar(x, data = last_data(), space = 0.1, main = "",
   A zero-count category is represented by a one-pixel
   rectangle, which is a useful visual hint to indicate the
   presence of this category.
+
+  The x-axis (or y-axis when \code{horizontal = TRUE})
+  tickmark locations are from 1 to \code{n} where \code{n}
+  is the number of levels of the factor variable to be
+  plotted.
 }
 \examples{
 library(cranvas)

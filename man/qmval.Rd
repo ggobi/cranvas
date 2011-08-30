@@ -7,8 +7,8 @@
 \usage{
 qmval(vars, data = last_data(), ...)
 
-\method{qmval}{default}(vars, data = last_data(), space = 0.1, 
-    main = "", horizontal = TRUE, standardize = TRUE)
+\method{qmval}{default}(vars, data = last_data(), horizontal = TRUE, 
+    standardize = TRUE, ...)
 
 \method{qmval}{numeric}(vars, data = last_data(), ...)
 
@@ -20,16 +20,12 @@ qmval(vars, data = last_data(), ...)
   indices, or a two-sided formula like \code{~ x1 + x2 +
   x3} (without the left-hand side)}
 
-  \item{...}{arguments passed to the default method}
+  \item{...}{arguments passed to the default method and
+  further to \code{\link{qbar}}}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly
   used data)}
-
-  \item{space}{the space between bars proportional to the
-  width of bars}
-
-  \item{main}{the main title}
 
   \item{horizontal}{\code{TRUE} to draw a horizontal plot
   or \code{FALSE} (vertical)}
@@ -56,6 +52,8 @@ qmval(vars, data = last_data(), ...)
   non-missing) are brushed; on the other hand, the brushed
   rows in the original data will also be reflected in the
   missing value plot.
+
+  This plot is built upon the bar plot \code{\link{qbar}}.
 }
 \note{
   Unlike most other plots in this package, this plot does
