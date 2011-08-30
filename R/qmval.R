@@ -13,12 +13,15 @@
 ##' (i.e. either missing or non-missing) are brushed; on the other
 ##' hand, the brushed rows in the original data will also be reflected
 ##' in the missing value plot.
+##'
+##' This plot is built upon the bar plot \code{\link{qbar}}.
 ##' @param vars variables to show in the plot: a character vector of
 ##' variable names, or a numeric vector of column indices, or a
 ##' two-sided formula like \code{~ x1 + x2 + x3} (without the
 ##' left-hand side)
 ##' @inheritParams qbar
-##' @param ... arguments passed to the default method
+##' @param ... arguments passed to the default method and further to
+##' \code{\link{qbar}}
 ##' @return A missing value plot
 ##' @author Heike Hofmann and Yihui Xie
 ##' @note Unlike most other plots in this package, this plot does not
@@ -36,8 +39,7 @@ qmval = function(vars, data = last_data(), ...) {
 ##' @rdname qmval
 ##' @export
 qmval.default =
-    function(vars, data = last_data(), space = 0.1, main = '', horizontal = TRUE,
-             standardize = TRUE) {
+    function(vars, data = last_data(), horizontal = TRUE, standardize = TRUE, ...) {
         shadow = attr(data, 'Shadow')
         if (is.null(shadow)) stop('there are no missing values in the data!')
         ## reshape the shadow matrix to a new qdata()
@@ -64,8 +66,7 @@ qmval.default =
                 }
             }
         })
-        qbar(variable, data = nd, space = space, main = main, horizontal = horizontal,
-             standardize = standardize)
+        qbar(variable, data = nd, horizontal = horizontal, standardize = standardize, ...)
     }
 ##' @method qmval numeric
 ##' @rdname qmval
