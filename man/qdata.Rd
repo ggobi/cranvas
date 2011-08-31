@@ -104,11 +104,6 @@ b$color  # color of brushed elements
 
 b$color <- "cyan"  # brushed elements become cyan
 
-## linking by categorical variable Country
-link_var(qtennis) <- "Country"
-link_type(qtennis) <- "self"
-## now all elements in the same category as those brushed
-#   will be brushed
 
 attr(qtennis, "Shadow")  # should be NULL, since no misssing values here
 
