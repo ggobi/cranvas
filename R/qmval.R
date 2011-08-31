@@ -18,24 +18,18 @@
 ##' @param vars variables to show in the plot: a character vector of
 ##' variable names, or a numeric vector of column indices, or a
 ##' two-sided formula like \code{~ x1 + x2 + x3} (without the
-##' left-hand side)
+##' left-hand side); see \code{\link{var_names}}
 ##' @inheritParams qbar
-##' @param ... arguments passed to the default method and further to
-##' \code{\link{qbar}}
+##' @param ... arguments passed to \code{\link{qbar}}
 ##' @return A missing value plot
 ##' @author Heike Hofmann and Yihui Xie
 ##' @export
 ##' @family plots
 ##' @example inst/examples/qmval-ex.R
-qmval = function(vars, data = last_data(), ...) {
-    UseMethod('qmval')
-}
-##' @method qmval default
-##' @rdname qmval
-##' @export
-qmval.default =
+qmval =
     function(vars, data = last_data(), horizontal = TRUE, standardize = TRUE, ...) {
         shadow = attr(data, 'Shadow')
+        vars = var_names(vars, data)
         if (is.null(shadow)) stop('there are no missing values in the data!')
         ## reshape the shadow matrix to a new qdata()
         d =
@@ -66,18 +60,3 @@ qmval.default =
         })
         qbar(variable, data = nd, horizontal = horizontal, standardize = standardize, ...)
     }
-##' @method qmval numeric
-##' @rdname qmval
-##' @export
-qmval.numeric = function(vars, data = last_data(), ...) {
-    qmval(names(data)[vars], data, ...)
-}
-##' @method qmval formula
-##' @rdname qmval
-##' @export
-qmval.formula = function(vars, data = last_data(), ...) {
-    if (length(vars) != 2) stop("'vars' must be a one-sided formula!")
-    v = all.vars(vars)
-    if (identical(v, '.')) v = grep('^[^.]', names(data), value = TRUE)
-    qmval(v, data, ...)
-}
