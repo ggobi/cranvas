@@ -657,3 +657,52 @@ one_pixel = function(painter) {
     m = qvmap(qdeviceTransform(painter)$inverted(), c(0, 1), c(0, 1))
     abs(c(m[2, 1] - m[1, 1], m[2, 2] - m[1, 2]))
 }
+
+##' Get variable names
+##'
+##' It is often flexible to input variables in plotting functions, and
+##' this generic function convert most common inputs (character,
+##' numeric or formula) to a character vector of variable names.
+##'
+##' Numeric indices are converted to character names according to the
+##' positions of variables in the data; \code{\link[base]{all.vars}}
+##' is used to extract all variable names in a formula, and the
+##' special formula \code{~ .} is treated differently: it means all
+##' variables in the data except thoese names starting with a dot
+##' (e.g. \code{.color}).
+##' @param vars a character vector of variable names, or a numeric
+##' vector of column indices, or a two-sided formula like \code{~ x1 +
+##' x2 + x3}
+##' @param data the data containing the variables
+##' @return A character vector
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @examples var_names(~., data = mtcars); var_names(1:3, mtcars)
+var_names = function(vars, data) {
+    UseMethod('var_names')
+}
+##' @method var_names default
+##' @rdname var_names
+##' @export
+var_names.default = function(vars, data) {
+    stop("'vars' must be a character or numeric vector or a formula")
+}
+##' @method var_names character
+##' @rdname var_names
+##' @export
+var_names.character = function(vars, data) {
+    vars
+}
+##' @method var_names numeric
+##' @rdname var_names
+##' @export
+var_names.numeric = function(vars, data) {
+    names(data)[vars]
+}
+##' @method var_names formula
+##' @rdname var_names
+##' @export
+var_names.formula = function(vars, data) {
+    v = all.vars(vars)
+    if (identical(v, '.')) v = grep('^[^.]', names(data), value = TRUE)
+    v
+}
