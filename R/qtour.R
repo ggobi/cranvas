@@ -40,8 +40,8 @@ qtour =
                 src <<- tourr::rescale(src)
             if (meta$sphere)
                 src <<- tourr::sphere(src)
-            timer <<- qtimer(1000 / meta$fps, tour_step)
             tour <<- new_tour(src, meta$tour_path, NULL)
+            timer$interval = 1000 / meta$fps
         }
         tour_step = function() {
             if (is.null(last_time)) {
@@ -65,6 +65,7 @@ qtour =
             }
             invisible(step)
         }
+        timer = qtimer(1000, tour_step)
         tour_init()
         meta$pause = function() {
             timer$stop()
