@@ -1,53 +1,29 @@
-### (1) proof of concept
 library(cranvas)
+data(flea, package = 'tourr')
 
-## link the original data with a frequency table
-data1 = qdata(iris)
-tab2 = as.data.frame(table(iris$Species))
+### (1) linking to oneself through a categorical variable
+qflea = qdata(flea, color = species)
+qhist(tars1)  # an ordinary histogram; try brushing
+
+## now we link qflea to itself by species
+id = link_cat(qflea, 'species')
+## brush the plot and see what happens
+
+remove_listener(qflea, id)  # remove this linking; back to normal linking again
+
+
+### (2) link the original data with a frequency table
+tab2 = as.data.frame(table(flea$species))
 colnames(tab2) = c("type", "freq")
-data2 = qdata(tab2)
+(qflea2 = qdata(tab2))
+head(qflea)  # what the two datasets look like
 
-data1
-data2
+## see how two different datasets can be linked through a common categorical variable
+id = link_cat(qflea, var1 = 'species', qflea2, var2 = 'type')
+qhist(tars1, data = qflea)
+qbar(type, data = qflea2, standardize = TRUE)
 
-## specify the linking variable respectively: link 'Species' with 'type'
-link_var(data1) = "Species"
-link_var(data2) = "type"
 
-link(data1, data2)
-
-## now we brush data1
-focused(data1) = TRUE  # suppose data1 is on focus
-selected(data1)[1] = TRUE  # the first row is brushed
-## check the changes: data2 has been updated
-data1
-data2
-
-## and we move the mouse over data2
-focused(data2) = TRUE
-focused(data1) = FALSE  # data1 lost focus, of course
-selected(data2)[3] = TRUE  # we brush the category 'virginica'
-data2
-data1
-
-selected(data2)[1] = FALSE  # do not brush 'setosa'
-data2
-data1
-
-## remove the linking
-remove_link(data1, data2, id = list(1, 1))
-
-### (2) linking two par-coords plots: one original data, one aggregated
-data(nrcstat)
-nrcstat.agg = aggregate(nrcstat[, 10:19], list(Regional.Code = nrcstat$Regional.Code),
-    function(x) round(mean(x), 1))
-qnrc = qdata(nrcstat)
-qnrc.agg = qdata(nrcstat.agg)
-## link by region
-link_var(qnrc) = link_var(qnrc.agg) = "Regional.Code"
-link(qnrc, qnrc.agg)
-
-qparallel(vars = c(8, 10:19), data = qnrc)
-qparallel(data = qnrc.agg)
-
-brush(qnrc.agg, "identify") = TRUE  # turn on labels
+## remove the linking on two datasets respectively
+remove_listener(qflea, id[1])
+remove_listener(qflea2, id[2])

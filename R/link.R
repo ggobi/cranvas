@@ -1,20 +1,37 @@
-##' Link mutaframes by a common categorical variable
+##' Categorical linking
 ##'
-##' This function links several mutaframes together by a common
-##' categorical variable; this linking variable can be specified with
-##' \code{\link{link_var}}.
+##' This function links two mutaframes together (or one mutaframe to
+##' itself) by a common categorical variable so that whenever one
+##' element (or multiple elements) in a category (or multiple
+##' categories) is brushed, all elements in this (these) categories
+##' will be brushed.
 ##'
-##' @param ... the mutaframes (at least two different mutaframes); the
-##' mutaframes are typically created by \code{\link{qdata}}
-##' @return the mutaframes will be linked together by their linking
-##' variables (listeners added), and the id's of the listeners
-##' attached on each mutaframe will be returned as a list.
+##' Categorical linking is achieved by a series of logical operations:
+##' first, look for which rows are brushed in the first mutaframe, and
+##' find out the values of its linking variable as well as the
+##' categories they belong to, then look for which elements of the
+##' linking variable in the second mutaframe (possibly the same
+##' mutaframe) are in these categories, and brush these elements
+##' (corresponding to rows).
+##'
+##' The implementation is through listeners on mutaframes from the
+##' \pkg{plumbr} package. It may be important keep track of the id's
+##' of listeners to avoid unnecessary burden of updating data objects
+##' in a linking chain. Listeners can be detached from mutaframes by
+##' \code{\link[plumbr]{remove_listener}} (see examples below).
+##' @param mf1 the first mutaframe
+##' @param var1 the name of the linking variable of \code{mf1}
+##' @param mf2 (optional) the second mutaframe; default \code{NULL}
+##' means \code{mf1} will be linked to itself
+##' @param var2 (optional) the name of the linking variable of \code{mf2}
+##' @return The mutaframes will be linked together by their linking
+##' variables (listeners are added to mutaframes), and the id's of the
+##' listeners attached on each mutaframe will be returned as a vector
+##' (first element for the first mutaframe; second element for the
+##' second one).
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @section Warning: The mutaframes must be different, otherwise the
-##' linking will end up with infinite recursion. For example,
-##' \code{link(data1, data1)} is not allowed.
 ##' @seealso \code{\link{qdata}}, \code{\link{link_var}},
-##' \code{\link{link_type}}, \code{\link{remove_link}}
+##' \code{\link{link_type}}
 ##' @export
 ##' @example inst/examples/link_cat-ex.R
 link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {

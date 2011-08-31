@@ -24,7 +24,7 @@ print(qparallel(data=qcrimes))
 link_var(qcrimes) = "State"
 link_var(qstates) = "region"
 
-link(qcrimes, qstates)
+link_cat(qcrimes, 'State', qstates, 'region')
 print(qscatter(Population, Robbery, qcrimes))
 
 # Choropleth maps
