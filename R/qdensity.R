@@ -593,8 +593,6 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     keyPressFun = keyPressFun, mouseMoveFun = mouse_move,
     mousePressFun = brush_mouse_press,
     mouseReleaseFun = mouse_move, #mouse_release - doesn't work,
-    focusInFun = function(...) { focused(data) <- TRUE },
-    focusOutFun = function(...) { focused(data) <- FALSE },
     wheelFun = handle_wheel_event, limits = lims,
       cache=cache, row=1, col=1, clip=FALSE)
 

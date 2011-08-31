@@ -370,12 +370,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
         mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
         mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
         keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
-        focusInFun = function(layer, painter) {
-            focused(data) = TRUE
-        }, focusOutFun = function(layer, painter) {
-            focused(data) = FALSE
-        },
-        limits = qrect(meta$limits))
+        limits = qrect(meta$limits), clip = TRUE)
 
     layer.range = qlayer(paintFun = range_draw, limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
