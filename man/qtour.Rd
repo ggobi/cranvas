@@ -64,7 +64,6 @@ qtour(vars = ~., data = last_data(), tour_path = grand_tour(),
   \code{rescale} and \code{sphere}.
 }
 \examples{
-## examples of tourrs in cranvas
 library(cranvas)
 data(flea, package = "tourr")
 
@@ -84,7 +83,7 @@ flea_tour$slower()
 flea_tour$faster()
 
 ## change the type of tour
-flea_tour$tour_path <- guided_tour(tourr::holes, d = 3)
+flea_tour$tour_path <- guided_tour(holes, d = 3)
 
 ## do sphering
 flea_tour$sphere <- TRUE

@@ -16,7 +16,7 @@ flea_tour$slower()
 flea_tour$faster()
 
 ## change the type of tour
-flea_tour$tour_path = guided_tour(tourr::holes, d = 3)
+flea_tour$tour_path = guided_tour(holes, d = 3)
 
 ## do sphering
 flea_tour$sphere = TRUE
