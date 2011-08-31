@@ -244,10 +244,7 @@ match_key = function(key, event) {
 ##'
 ##' @section Mouse Events: Left click to brush the plot with a
 ##' rectangle brush, and right click to resize the brush (the cursor
-##' shape will become a cross). If the linking variable has been set
-##' and the linking type is \code{'self'}, the data will be
-##' self-linked in the mouse move event (see
-##' \code{\link{self_link}}). When the mouse is released, the brush
+##' shape will become a cross). When the mouse is released, the brush
 ##' history will be saved (\code{\link{save_brush_history}}).
 ##'
 ##' @section Key Events: The keys A, O, X, N and C corresponds to the
@@ -325,7 +322,7 @@ common_mouse_press = function(layer, event, data, meta) {
 ##' @rdname common_events
 ##' @export
 common_mouse_move = function(layer, event, data, meta) {
-    self_link(data)
+
 }
 ##' @rdname common_events
 ##' @export
