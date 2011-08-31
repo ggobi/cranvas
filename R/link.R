@@ -17,51 +17,30 @@
 ##' \code{\link{link_type}}, \code{\link{remove_link}}
 ##' @export
 ##' @example inst/examples/link_cat-ex.R
-link = function(...) {
-    s = list(...)
-    if ((n <- length(s)) < 2)
-        stop("the number of mutaframes to be linked must be greater than one")
-    for (k in 1:n) {
-        if (!is.mutaframe(s[[k]]))
-            stop("argument ", k, " is not a mutaframe")
-        if (is.null(link_var(s[[k]])))
-            stop("mutaframe ", k, " must have a linking variable; see ?link_var")
-        if (!(".brushed" %in% colnames(s[[k]])))
-            stop("mutaframe ", k, " must have a column '.brushed'")
-    }
-    id = vector(mode = 'list', length = n)
-    cb = combn(n, 2)
-    for (k in 1:ncol(cb)) {
-        ## chain them in a circle
-        k1 = cb[1, k]
-        k2 = cb[2, k]
-        mf1 = s[[k1]]
-        mf2 = s[[k2]]
-        if (identical(mf1, mf2)) {
-            warning(sprintf('mutaframe %d and %d are identical and will not be linked; ',
-                            k1, k2),
-                    sprintf('please set link_type(%s) <- "self"',
-                            as.character(match.call()[-1])[k1]))
-            next
-        }
-        link1 = link_var(mf1)
-        link2 = link_var(mf2)
-        id[[k1]] = append(id[[k1]], add_listener(mf1, function(i, j) {
-            if (focused(mf1)) {
-                ## mf1 changed --> query link1 --> match link2 --> change mf2$.brushed
-                ulink1 = unique(mf1[, link1][mf1$.brushed])
-                ## update mf2$.brushed according to mf1's selected categories
-                mf2$.brushed = mf2[, link2] %in% ulink1
-            }
-        }))
-        id[[k2]] = append(id[[k2]], add_listener(mf2, function(i, j) {
-            if (focused(mf2)) {
-                ulink2 = unique(mf2[, link2][mf2$.brushed])
-                mf1$.brushed = mf1[, link1] %in% ulink2
-            }
-        }))
-    }
-    id
+link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
+    link2 = !is.null(mf2)
+    if (!check_data(mf1, FALSE) || (link2 && !check_data(mf2, FALSE)))
+        stop('the mutaframes must be created from qdata()')
+    if (is.null(var1) || (link2 && is.null(var2)))
+        stop("must specify linking variables")
+    ## is a mutaframe changed? a token to control the listener and avoid infinite recursion
+    change1 = change2 = FALSE
+    c(add_listener(mf1, function(i, j) {
+        if (j != '.brushed' || ifelse(link2, change1, change2)) return()
+        change2 <<- TRUE
+        ## mf1 changed --> query var1 --> match var2 --> change mf2$.brushed
+        ## update mf2$.brushed according to mf1's selected categories
+        ulink = unique(mf1[, var1][mf1$.brushed])
+        if (link2) {
+            mf2$.brushed = mf2[, var2] %in% ulink
+        } else mf1$.brushed = mf1[, var1] %in% ulink
+        change2 <<- FALSE
+    }), if (link2) add_listener(mf2, function(i, j) {
+        if (j != '.brushed' || change2) return()
+        change1 <<- TRUE
+        mf1$.brushed = mf1[, var1] %in% unique(mf2[, var2][mf2$.brushed])
+        change1 <<- FALSE
+    }))
 }
 
 
