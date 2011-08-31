@@ -383,23 +383,29 @@ link_type = function(data) {
 ##' Check if a data object was created by qdata()
 ##'
 ##' Data objects created by \code{\link{qdata}} has a special
-##' token. If an object was not created in that way, it will be
+##' token. If an object was not created in that way, it can be
 ##' converted by \code{\link{qdata}}.
 ##'
 ##' This function is designed for developers to check the validity of
 ##' data objects.
 ##' @param data a data object
-##' @return If \code{data} was created by \code{\link{qdata}}, it will
-##' be returned untouched, otherwise \code{qdata(data)} is returned.
+##' @param convert whether to convert the input data by
+##' \code{\link{qdata}}
+##' @return If \code{convert == FALSE}, this function only returns a
+##' logical value indicating whether the data object was created by
+##' \code{\link{qdata}}, otherwise it will be converted if it was not
+##' from \code{qdata(data)}.
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples check_data(cbind(x = 1:5, y = 6:10))
-check_data = function(data) {
-    if (identical(attr(data, 'Generator'), 'd38bbe46dae5fa45758f3609f5dc1a0a'))
-        data else {
-            message(paste(strwrap('Automatically converting to a mutaframe... Interaction will work based on this data, but will not link to any other plots. For linking to work, use qdata() to create data objects.'), collapse = '\n'))
-            qdata(data)
-        }
+##' check_data(1:8, convert = FALSE); check_data(qdata(mtcars), convert = FALSE)  # TRUE
+check_data = function(data, convert = TRUE) {
+    is_qdata = identical(attr(data, 'Generator'), 'd38bbe46dae5fa45758f3609f5dc1a0a')
+    if (!convert) return(is_qdata)
+    if (is_qdata) data else {
+        message(paste(strwrap('Automatically converting to a mutaframe... Interaction will work based on this data, but will not link to any other plots. For linking to work, use qdata() to create data objects.'), collapse = '\n'))
+        qdata(data)
+    }
 }
 
 
