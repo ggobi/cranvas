@@ -92,8 +92,8 @@ rownames(qnrc) <- abbreviate(paste(nrcstat$Institution.Name,
     nrcstat$Program.Name, sep = " -> "))
 
 ## Overview: type, rankings
-print(qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
-    glyph = "tick", horizontal = FALSE, boxplot = TRUE))
+qparallel(13:10, main = "Overview of Rankings", glyph = "tick", 
+    horizontal = FALSE, boxplot = TRUE)
 
 qnrc$.color <- "red"
 
@@ -105,20 +105,16 @@ brush(qnrc, "color") <- "green"
 brush(qnrc, "color") <- "yellow"
 brush(qnrc, "persistent") <- FALSE  # transient brushing
 
-record_selector("Institution.Name", qnrc)
+record_selector(Institution.Name, qnrc)
 
 ## How to find out ISU by intersection and negation?
 #   public, midwest, large program
 
-## show data labels (identifying)
-brush(qnrc, "identify") <- TRUE
-brush(qnrc, "label.color") <- "black"
-
-brush(qnrc, "identify") <- FALSE  # turn off identification
-
 ## brush one row, and the whole category gets brushed
-link_var(qnrc) <- "Regional.Code"
-link_type(qnrc) <- "self"
+id <- link_cat(qnrc, "Regional.Code")
+
+## remove categorical linking
+remove_listener(qnrc, id)
 
 
 qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity", 

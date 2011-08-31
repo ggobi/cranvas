@@ -11,12 +11,12 @@ qhist(head, horizontal = TRUE)
 qspine(aede2)
 qparallel(~.)  # all variables
 
-link_var(qflea) = 'species'  # linking by categorical variable
-link_type(qflea) = 'self'
+id = link_cat(qflea, 'species')  # linking by categorical variable
 ## now brush one bar, all fleas of the same species will be brushed
 
+
 ## remove linking
-link_var(qflea) = NULL
+remove_listener(qflea, id)
 
 
 #### (2) tennis data: without a splitting variable
