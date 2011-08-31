@@ -298,7 +298,7 @@ manual_brush = function(obj, pos, pause = 0) {
 ##' @export
 ##' @examples ## see the source code of, e.g., qbar() for its usage
 draw_brush = function(layer, painter, data, meta) {
-    if (!focused(data) || length(meta$pos) == 0) return()
+    if (length(meta$pos) == 0) return()
     b = brush(data)
     ## shift the brush shadow by 1 pixel
     d = (1 + b$style$linewidth / 2) * one_pixel(painter)
