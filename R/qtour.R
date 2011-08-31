@@ -30,7 +30,7 @@ qtour =
         data = check_data(data)
         meta =
             Tour.meta$new(vars = var_names(vars, data), aps = aps, fps = fps,
-                           rescale = rescale, sphere = sphere)
+                           rescale = rescale, sphere = sphere, tour_path = tour_path)
         src = last_time = tour = timer = NULL
 
         tour_init = function() {
@@ -41,7 +41,7 @@ qtour =
             if (meta$sphere)
                 src <<- tourr::sphere(src)
             timer <<- qtimer(1000 / meta$fps, tour_step)
-            tour <<- new_tour(src, tour_path, NULL)
+            tour <<- new_tour(src, meta$tour_path, NULL)
         }
         tour_step = function() {
             if (is.null(last_time)) {
@@ -84,7 +84,7 @@ qtour =
 Tour.meta =
     setRefClass("Tourr_meta", fields =
                 signalingFields(list(vars = 'character',
-                                     ## tour_path = 'function',
+                                     tour_path = 'tour_path',
                                      aps = 'numeric', fps = 'numeric',
                                      rescale = 'logical', sphere = 'logical',
                                      start = 'function', stop = 'function',
