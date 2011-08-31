@@ -11,11 +11,21 @@
 ##' (further, those linked to this mutaframe) on the fly.
 ##'
 ##' Four basic methods can be applied to the object returned by this
-##' function (say, \code{tour}): \code{tour$start()} will start the
-##' tour (tour projections change successively and are attached to the
-##' mutaframe; column names are \code{tour_1}, \code{tour_2}, ...);
-##' \code{tour$stop()} pauses the tour; \code{tour$slower()} makes the
-##' tour slower and \code{tour$faster()} makes it faster.
+##' function (say, \code{tour}):
+##'
+##' \describe{ \item{\code{tour$start()}}{starts the tour (tour
+##' projections change successively and are attached to the mutaframe;
+##' column names are \code{tour_1}, \code{tour_2}, ...)}
+##' \item{\code{tour$stop()}}{pauses the tour}
+##' \item{\code{tour$slower()}}{makes the tour slower}
+##' \item{\code{tour$faster()}}{makes it faster.} }
+##'
+##' We can also modify the parameters passed to \code{\link{qtour}()}
+##' on the fly through this object. For example, we can change the
+##' type of tour to the guided tour using a syntax like
+##' \code{tour$tour_path <- guided_tour(...)}. All other parameters
+##' can be changed similarly, including \code{vars}, \code{aps},
+##' \code{fps}, \code{rescale} and \code{sphere}.
 ##' @param vars variable names to be used in the tour (parsed by
 ##' \code{\link{var_names}})
 ##' @inheritParams qbar
@@ -79,6 +89,7 @@ qtour =
         meta$faster = function() {
             meta$aps = meta$aps * 1.1
         }
+        meta$changed$connect(tour_init)  # if anything changes, re-initialize the tour
         meta
     }
 
