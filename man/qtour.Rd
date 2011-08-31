@@ -46,12 +46,22 @@ qtour(vars = ~., data = last_data(), tour_path = grand_tour(),
   mutaframe) on the fly.
 
   Four basic methods can be applied to the object returned
-  by this function (say, \code{tour}): \code{tour$start()}
-  will start the tour (tour projections change successively
-  and are attached to the mutaframe; column names are
-  \code{tour_1}, \code{tour_2}, ...); \code{tour$stop()}
-  pauses the tour; \code{tour$slower()} makes the tour
-  slower and \code{tour$faster()} makes it faster.
+  by this function (say, \code{tour}):
+
+  \describe{ \item{\code{tour$start()}}{starts the tour
+  (tour projections change successively and are attached to
+  the mutaframe; column names are \code{tour_1},
+  \code{tour_2}, ...)} \item{\code{tour$stop()}}{pauses the
+  tour} \item{\code{tour$slower()}}{makes the tour slower}
+  \item{\code{tour$faster()}}{makes it faster.} }
+
+  We can also modify the parameters passed to
+  \code{\link{qtour}()} on the fly through this object. For
+  example, we can change the type of tour to the guided
+  tour using a syntax like \code{tour$tour_path <-
+  guided_tour(...)}. All other parameters can be changed
+  similarly, including \code{vars}, \code{aps}, \code{fps},
+  \code{rescale} and \code{sphere}.
 }
 \examples{
 ## examples of tourrs in cranvas
@@ -68,9 +78,16 @@ qhist(tour_1, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0,
 
 flea_tour$pause()
 
+## adjust speed
+flea_tour$start()
 flea_tour$slower()
-
 flea_tour$faster()
+
+## change the type of tour
+flea_tour$tour_path <- guided_tour(tourr::holes, d = 3)
+
+## do sphering
+flea_tour$sphere <- TRUE
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
