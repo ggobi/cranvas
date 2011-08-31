@@ -1,19 +1,16 @@
 ## examples of tourrs in cranvas
 library(cranvas)
-
 data(flea, package = 'tourr')
-flea.s <- flea
-flea.s[, -7] <- tourr::rescale(flea.s[, -7])
-qflea <- qdata(flea.s)
-flea_tour <- Tourr$new(qflea, grand_tour(3), 1:6)
-flea_tour$step()
 
-qparallel(c("tour_1", "tour_2", "tour_3"), qflea)
-qscatter(tour_1, tour_2, qflea, labeled=TRUE, xlim=c(-4,4), ylim=c(-4,4))
-qhist(tour_1, qflea, binwidth = 0.1, xlim = c(-1, 1))
-qdensity(tour_1, qflea, xlim=c(-4,4))
-
+qflea = qdata(flea, color = species)
+flea_tour = qtour(1:6, data = qflea, tour_path = grand_tour(3))
 flea_tour$start()
+
+qparallel(~tour_1+tour_2+tour_3)
+qhist(tour_1, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0, 16))
+
 flea_tour$pause()
+
 flea_tour$slower()
+
 flea_tour$faster()
