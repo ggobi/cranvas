@@ -55,13 +55,6 @@ qmval(vars, data = last_data(), ...)
 
   This plot is built upon the bar plot \code{\link{qbar}}.
 }
-\note{
-  Unlike most other plots in this package, this plot does
-  not fully support linking between all plots. Only one
-  missing value plot can link to all other types of plots
-  at a time, but all other plots (except other missing
-  value plots) can link to all missing value plots.
-}
 \examples{
 library(cranvas)
 

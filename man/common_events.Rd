@@ -46,12 +46,8 @@ common_mouse_release(layer, event, data, meta)
 \section{Mouse Events}{
   Left click to brush the plot with a rectangle brush, and
   right click to resize the brush (the cursor shape will
-  become a cross). If the linking variable has been set and
-  the linking type is \code{'self'}, the data will be
-  self-linked in the mouse move event (see
-  \code{\link{self_link}}). When the mouse is released, the
-  brush history will be saved
-  (\code{\link{save_brush_history}}).
+  become a cross). When the mouse is released, the brush
+  history will be saved (\code{\link{save_brush_history}}).
 }
 
 \section{Key Events}{
