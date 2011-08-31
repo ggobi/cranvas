@@ -85,7 +85,6 @@ qdata =
     l = Scales.meta$new()  # record scales in an environment genreated by ref classes
     for (i in c('color', 'border', 'size')) {
         if (is.language(z[[i]])) {
-            data(munsell_map, package = "munsell")
             v = eval(z[[i]], data)
             pal = NULL
             mf[[sprintf('.%s', i)]] = if (i != 'size') {
