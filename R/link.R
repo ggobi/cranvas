@@ -60,6 +60,25 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
     }))
 }
 
+##' k-Nearest neighbor linking
+##'
+##' When a number of elements in a data are brushed, their k-nearest
+##' neighbors (based on a certain distance measure) are brushed as
+##' well.
+##' @inheritParams link_cat
+##' @param var1 the variable names or column indices of the first
+##' mutaframe to be used to calculate distances
+##' @param var2 (optional) variable names or column indices of the
+##' second mutaframe
+##' @return Similar to categorical linking (\code{\link{link_cat}}),
+##' this function also links two mutaframes together (or one mutaframe
+##' to itself), and id's of listeners are returned.
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## TODO
+link_knn = function(mf1, var1, mf2 = NULL, var2 = NULL, ...) {
+
+}
 
 ##' Remove the linking between mutaframes
 ##'
