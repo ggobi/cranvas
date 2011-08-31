@@ -24,11 +24,6 @@
 ##' \code{\link{qbar}}
 ##' @return A missing value plot
 ##' @author Heike Hofmann and Yihui Xie
-##' @note Unlike most other plots in this package, this plot does not
-##' fully support linking between all plots. Only one missing value
-##' plot can link to all other types of plots at a time, but all other
-##' plots (except other missing value plots) can link to all missing
-##' value plots.
 ##' @export
 ##' @family plots
 ##' @example inst/examples/qmval-ex.R
@@ -47,24 +42,27 @@ qmval.default =
             data.frame(variable = rep(vars, each = nrow(data)),
                        missing = factor(as.vector(shadow[, vars]), c(TRUE, FALSE)))
         nd = qdata(d, color = missing, copy = FALSE)
-        ## link nd to data
+        ## link nd to data (code borrowed from link.R)
+        change1 = change2 = FALSE
         add_listener(nd, function(i, j) {
-            if (focused(nd)) {
-                if (j == '.brushed') {
-                    selected(data) = apply(matrix(selected(nd), ncol = length(vars)), 1, any)
-                } else if (j == '.visible') {
-                    visible(data) = apply(matrix(visible(nd), ncol = length(vars)), 1, all)
-                }
+            if (change1) return()
+            change2 <<- TRUE
+            if (j == '.brushed') {
+                selected(data) = apply(matrix(selected(nd), ncol = length(vars)), 1, any)
+            } else if (j == '.visible') {
+                visible(data) = apply(matrix(visible(nd), ncol = length(vars)), 1, all)
             }
+            change2 <<- FALSE
         })
         add_listener(data, function(i, j) {
-            if (focused(data)) {
-                if (j == '.brushed') {
-                    selected(nd) = rep(selected(data), length(vars))
-                } else if (j == '.visible') {
-                    visible(nd) = rep(visible(data), length(vars))
-                }
+            if (change2) return()
+            change1 <<- TRUE
+            if (j == '.brushed') {
+                selected(nd) = rep(selected(data), length(vars))
+            } else if (j == '.visible') {
+                visible(nd) = rep(visible(data), length(vars))
             }
+            change1 <<- FALSE
         })
         qbar(variable, data = nd, horizontal = horizontal, standardize = standardize, ...)
     }
