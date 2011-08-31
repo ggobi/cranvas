@@ -38,7 +38,7 @@
 ##' grand_tour guided_tour little_tour local_tour new_tour
 ##' planned_tour
 ##' @export dependence_tour frozen_guided_tour frozen_tour grand_tour
-##' guided_tour little_tour local_tour new_tour planned_tour
+##' guided_tour little_tour local_tour planned_tour
 ##' @import plumbr
 ##' @import objectSignals
 ##' @name cranvas-package
