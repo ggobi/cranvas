@@ -676,7 +676,7 @@ one_pixel = function(painter) {
 ##' @param data the data containing the variables
 ##' @return A character vector
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @examples var_names(~., data = mtcars); var_names(1:3, mtcars)
+##' @examples var_names(~., mtcars); var_names(~disp+hp, mtcars); var_names(1:3, mtcars)
 var_names = function(vars, data) {
     UseMethod('var_names')
 }

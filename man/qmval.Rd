@@ -1,27 +1,18 @@
 \name{qmval}
 \alias{qmval}
-\alias{qmval.default}
-\alias{qmval.formula}
-\alias{qmval.numeric}
 \title{Draw a missing value plot}
 \usage{
-qmval(vars, data = last_data(), ...)
-
-\method{qmval}{default}(vars, data = last_data(), horizontal = TRUE, 
+qmval(vars, data = last_data(), horizontal = TRUE, 
     standardize = TRUE, ...)
-
-\method{qmval}{numeric}(vars, data = last_data(), ...)
-
-\method{qmval}{formula}(vars, data = last_data(), ...)
 }
 \arguments{
   \item{vars}{variables to show in the plot: a character
   vector of variable names, or a numeric vector of column
   indices, or a two-sided formula like \code{~ x1 + x2 +
-  x3} (without the left-hand side)}
+  x3} (without the left-hand side); see
+  \code{\link{var_names}}}
 
-  \item{...}{arguments passed to the default method and
-  further to \code{\link{qbar}}}
+  \item{...}{arguments passed to \code{\link{qbar}}}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly

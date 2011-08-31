@@ -127,7 +127,5 @@ link_var(wage) <- NULL  # OFF
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qhist}}, \code{\link{qmval}},
-  \code{\link{qmval.default}}, \code{\link{qmval.formula}},
-  \code{\link{qmval.numeric}}, \code{\link{qparallel}},
-  \code{\link{qspine}}
+  \code{\link{qparallel}}, \code{\link{qspine}}
 }
