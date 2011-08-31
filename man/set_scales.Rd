@@ -1,12 +1,12 @@
 \name{color_pal<-}
-\alias{border_label<-}
 \alias{border_pal<-}
+\alias{border_title<-}
 \alias{border_var<-}
-\alias{color_label<-}
 \alias{color_pal<-}
+\alias{color_title<-}
 \alias{color_var<-}
-\alias{size_label<-}
 \alias{size_pal<-}
+\alias{size_title<-}
 \alias{size_var<-}
 \title{Set palettes and variables to map data to aesthetics}
 \usage{
@@ -14,26 +14,26 @@ color_pal(data) <- value
 
 color_var(data) <- value
 
-color_label(data) <- value
+color_title(data) <- value
 
 border_pal(data) <- value
 
 border_var(data) <- value
 
-border_label(data) <- value
+border_title(data) <- value
 
 size_pal(data) <- value
 
 size_var(data) <- value
 
-size_label(data) <- value
+size_title(data) <- value
 }
 \arguments{
   \item{data}{the data object}
 
   \item{value}{the palette (as a function mapping a data
   variable to graphical properties), the variable name (as
-  a character scalar), or the label (as a character
+  a character scalar), or the title (as a character
   scalar)}
 }
 \value{
@@ -42,7 +42,7 @@ size_label(data) <- value
 }
 \description{
   These functions provide ways to modify the palettes,
-  variables to create aesthetics and their labels in a data
+  variables to create aesthetics and their titles in a data
   object created by \code{\link{qdata}}. Currently
   supported aesthetics are about color, border and size of
   graphical elements.
@@ -67,7 +67,7 @@ color_pal(qtennis) <- div_gradient_pal()  # change to diverging gradient palette
 
 color_var(qtennis) <- "First.Serves"  # change color variable from Aces to First.Serves
 
-color_label(qtennis) <- "First Serves"  # change label; to be used in legend
+color_title(qtennis) <- "First Serves"  # change title; to be used in legend
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

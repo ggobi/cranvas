@@ -66,7 +66,7 @@ qdata(data, color = "gray15", border = color, size = 1,
   \code{attr(data, 'Scales')} is attached to the returned
   mutaframe, which will help specific plots to generate
   legends. This attribute is of the form \code{list(color =
-  list(label, variable, palette))}. Whenever any component
+  list(title, variable, palette))}. Whenever any component
   is changed, the corresponding aesthetics will be updated
   automatically; for example, if we change the palette
   function for \code{color}, the colors \code{data$.color}

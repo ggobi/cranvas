@@ -21,7 +21,7 @@
 ##' continuous. An attribute \code{attr(data, 'Scales')} is attached
 ##' to the returned mutaframe, which will help specific plots to
 ##' generate legends. This attribute is of the form \code{list(color =
-##' list(label, variable, palette))}. Whenever any component is
+##' list(title, variable, palette))}. Whenever any component is
 ##' changed, the corresponding aesthetics will be updated
 ##' automatically; for example, if we change the palette function for
 ##' \code{color}, the colors \code{data$.color} will be updated using
@@ -104,7 +104,7 @@ qdata =
                 pal(v)
             } else stop(sQuote('size'), ' must be numeric!')
             l[[i]] =
-                list(label = deparse(z[[i]]), variable = deparse(z[[i]]),
+                list(title = deparse(z[[i]]), variable = deparse(z[[i]]),
                      palette = pal)
         } else {
             if ((i == 'border') && is.null(z[[i]])) mf$.border = mf$.color else
@@ -416,7 +416,7 @@ check_data = function(data, convert = TRUE) {
 ##' Set palettes and variables to map data to aesthetics
 ##'
 ##' These functions provide ways to modify the palettes, variables to
-##' create aesthetics and their labels in a data object created by
+##' create aesthetics and their titles in a data object created by
 ##' \code{\link{qdata}}. Currently supported aesthetics are about
 ##' color, border and size of graphical elements.
 ##'
@@ -426,7 +426,7 @@ check_data = function(data, convert = TRUE) {
 ##' @param data the data object
 ##' @param value the palette (as a function mapping a data variable to
 ##' graphical properties), the variable name (as a character scalar),
-##' or the label (as a character scalar)
+##' or the title (as a character scalar)
 ##' @return The corresponding scale information in \code{data} is set
 ##' to \code{value}.
 ##' @author Yihui Xie <\url{http://yihui.name}>
@@ -444,14 +444,14 @@ check_data = function(data, convert = TRUE) {
 ##' @export
 `color_var<-` = function(data, value) {
     .data_scales(data, 'color', 'variable') = value
-    color_label(data) = value  # should change label too when variable is changed
+    color_title(data) = value  # should change title too when variable is changed
     data
 }
 ##' @rdname set_scales
-##' @usage color_label(data) <- value
+##' @usage color_title(data) <- value
 ##' @export
-`color_label<-` = function(data, value) {
-    .data_scales(data, 'color', 'label') = value
+`color_title<-` = function(data, value) {
+    .data_scales(data, 'color', 'title') = value
     data
 }
 ##' @rdname set_scales
@@ -466,14 +466,14 @@ check_data = function(data, convert = TRUE) {
 ##' @export
 `border_var<-` = function(data, value) {
     .data_scales(data, 'border', 'variable') = value
-    border_label(data) = value
+    border_title(data) = value
     data
 }
 ##' @rdname set_scales
-##' @usage border_label(data) <- value
+##' @usage border_title(data) <- value
 ##' @export
-`border_label<-` = function(data, value) {
-    .data_scales(data, 'border', 'label') = value
+`border_title<-` = function(data, value) {
+    .data_scales(data, 'border', 'title') = value
     data
 }
 ##' @rdname set_scales
@@ -488,13 +488,13 @@ check_data = function(data, convert = TRUE) {
 ##' @export
 `size_var<-` = function(data, value) {
     .data_scales(data, 'size', 'variable') = value
-    size_label(data) = value
+    size_title(data) = value
     data
 }
 ##' @rdname set_scales
-##' @usage size_label(data) <- value
+##' @usage size_title(data) <- value
 ##' @export
-`size_label<-` = function(data, value) {
-    .data_scales(data, 'size', 'label') = value
+`size_title<-` = function(data, value) {
+    .data_scales(data, 'size', 'title') = value
     data
 }
