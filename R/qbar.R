@@ -43,6 +43,8 @@
 ##' direction will be reversed (i.e. from larger values to small
 ##' values)
 ##' @param ylim y-axis limits; similar to \code{xlim}
+##' @param xlab x-axis title
+##' @param ylab y-axis title
 ##' @return A bar plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
@@ -50,7 +52,7 @@
 ##' @example inst/examples/qbar-ex.R
 qbar =
     function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE,
-             standardize = FALSE, xlim = NULL, ylim = NULL) {
+             standardize = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL) {
     data = check_data(data)
     b = brush(data)
     s = attr(data, 'Scales')
@@ -72,8 +74,8 @@ qbar =
         meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = rownames(tmp)
         meta$ylabels = format(meta$yat)
-        meta$xlab = meta$var
-        meta$ylab = ''
+        meta$xlab = if (is.null(xlab)) meta$var else xlab
+        meta$ylab = if (is.null(ylab)) '' else ylab
         w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
         meta$xleft = meta$xat - w; meta$xright = meta$xat + w
         meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2])); meta$ytop = meta$y

@@ -38,7 +38,8 @@
 ##' @example inst/examples/qhist-ex.R
 qhist =
     function(x, data = last_data(), bins = 30, binwidth = NULL, freq = TRUE,
-             main = '', horizontal = FALSE, spine = FALSE, xlim = NULL, ylim = NULL) {
+             main = '', horizontal = FALSE, spine = FALSE, xlim = NULL, ylim = NULL,
+             xlab = NULL, ylab = NULL) {
     data = check_data(data)
     b = brush(data)
     meta =
@@ -75,8 +76,10 @@ qhist =
         meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = format(meta$xat)
         meta$ylabels = format(meta$yat)
-        meta$xlab = meta$var
-        meta$ylab = if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
+        meta$xlab = if (is.null(xlab)) meta$var else xlab
+        meta$ylab = if (is.null(ylab)) {
+            if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
+        } else ylab
         if (meta$spine) {
             meta$xright = cumsum(table(meta$value[idx])) / sum(idx)  # [0,1], prop counts
             meta$xleft = c(0, meta$xright[-meta$nlevel])
