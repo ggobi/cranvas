@@ -64,7 +64,7 @@
 ##' @export
 ##' @example inst/examples/qdata-ex.R
 qdata =
-    function(data, color = "gray15", border = color, size = 1,
+    function(data, color = "gray15", border = color, size = 4,
              brushed = FALSE, visible = TRUE, copy = TRUE) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
