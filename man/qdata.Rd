@@ -2,7 +2,7 @@
 \alias{qdata}
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
-qdata(data, color = "gray15", border = color, size = 1, 
+qdata(data, color = "gray15", border = color, size = 4, 
     brushed = FALSE, visible = TRUE, copy = TRUE)
 }
 \arguments{

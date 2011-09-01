@@ -5,7 +5,7 @@
 \usage{
 qhist(x, data = last_data(), bins = 30, binwidth = NULL, 
     freq = TRUE, main = "", horizontal = FALSE, spine = FALSE, 
-    xlim = NULL, ylim = NULL)
+    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
 
 qspine(x, data = last_data(), ...)
 }
@@ -43,6 +43,10 @@ qspine(x, data = last_data(), ...)
   small values)}
 
   \item{ylim}{y-axis limits; similar to \code{xlim}}
+
+  \item{xlab}{x-axis title}
+
+  \item{ylab}{y-axis title}
 }
 \value{
   A histogram or a spine plot

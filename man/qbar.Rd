@@ -3,7 +3,8 @@
 \title{Draw a bar plot}
 \usage{
 qbar(x, data = last_data(), space = 0.1, main = "", 
-    horizontal = FALSE, standardize = FALSE, xlim = NULL, ylim = NULL)
+    horizontal = FALSE, standardize = FALSE, xlim = NULL, ylim = NULL, 
+    xlab = NULL, ylab = NULL)
 }
 \arguments{
   \item{x}{a variable name (will be coerced to a factor if
@@ -33,6 +34,10 @@ qbar(x, data = last_data(), space = 0.1, main = "",
   small values)}
 
   \item{ylim}{y-axis limits; similar to \code{xlim}}
+
+  \item{xlab}{x-axis title}
+
+  \item{ylab}{y-axis title}
 }
 \value{
   A bar plot
