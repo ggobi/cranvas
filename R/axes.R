@@ -63,6 +63,12 @@ qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL,
             }
             if (is.null(labels)) labels = format(at)
         }
+        if (!is.null(meta)) {
+            r = sort(meta$limits[, c(2, 1)[xside + 1]])
+            idx = (at > r[1]) & (at < r[2])  # censor locations out of limits
+            at = at[idx]; labels = labels[idx]
+        }
+        if (!length(at)) return()
         xat = yat = at
         xalign = yalign = "center"
         xshift1 = yshift1 = xshift2 = yshift2 = 0
