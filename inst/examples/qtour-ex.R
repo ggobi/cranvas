@@ -5,8 +5,9 @@ qflea = qdata(flea, color = species)
 flea_tour = qtour(1:6, data = qflea, tour_path = grand_tour(3))
 flea_tour$start()
 
+qscatter(tour_1, tour_2, xlim = c(-.8, .8), ylim = c(-.8, .8))
 qparallel(~tour_1+tour_2+tour_3)
-qhist(tour_1, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0, 16))
+qhist(tour_1, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0, 10))
 
 flea_tour$pause()
 
