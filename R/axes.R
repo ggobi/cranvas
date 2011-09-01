@@ -48,17 +48,18 @@
 ##' print(qplotView(scene = s)) # default layout is ugly; tune in r$gridLayout()
 ##'
 qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL, ...) {
+    xside = side%%2
     gen_limits = function () {
         lims = as.matrix(meta$limits)
-        qrect(if (side%%2) cbind(lims[, 1], 0:1) else cbind(0:1, lims[, 2]))
+        qrect(if (xside) cbind(lims[, 1], 0:1) else cbind(0:1, lims[, 2]))
     }
     draw_axis = function(layer, painter) {
         if (is.null(at)) {
-            at = if (side%%2) meta$xat else meta$yat
+            at = if (xside) meta$xat else meta$yat
         }
         if (is.null(labels)) {
             labels = if (!is.null(meta)) {
-                if (side%%2) meta$xlabels else meta$ylabels
+                if (xside) meta$xlabels else meta$ylabels
             }
             if (is.null(labels)) labels = format(at)
         }
