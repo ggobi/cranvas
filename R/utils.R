@@ -311,12 +311,9 @@ common_mouse_press = function(layer, event, data, meta) {
     b = brush(data)
     meta$start = as.numeric(event$pos())
     ## on right click, we can resize the brush; left click: only move the brush
-    if (event$button() == Qt$Qt$RightButton) {
-        b$cursor = 2L
-        meta$brush.move = FALSE
-    } else if (event$button() == Qt$Qt$LeftButton) {
-        b$cursor = 0L
-        meta$brush.move = TRUE
+    if (length(i <- which(event$button() == c(Qt$Qt$LeftButton, Qt$Qt$RightButton)))) {
+        b$cursor = c(0L, 2L)[i]
+        meta$brush.move = i == 1
     }
 }
 ##' @rdname common_events
