@@ -100,7 +100,9 @@ qdata =
                          ' must be either a factor or a numeric variable or valid colors!')
                 }
             } else if (is.numeric(v)) {
-                pal = area_pal()
+                pal = (function(range = c(1, 6)) {
+                    function(x) scales::rescale(x, range, range(x, na.rm = TRUE))
+                })()
                 pal(v)
             } else stop(sQuote('size'), ' must be numeric!')
             l[[i]] =
