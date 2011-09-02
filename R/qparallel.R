@@ -411,14 +411,16 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
                })
     })
 
-    layout = layer.root$gridLayout()
-    layout$setRowPreferredHeight(0, prefer_height(meta$main))
-    layout$setRowPreferredHeight(2, prefer_height(meta$xlabels))
-    layout$setColumnPreferredWidth(0, prefer_width(meta$ylabels))
-    layout$setColumnMaximumWidth(2, 10)
-    layout$setRowStretchFactor(0, 0)
-    layout$setColumnStretchFactor(0, 0)
-    layout$setRowStretchFactor(2, 0)
+    set_layout = function() {
+        fix_dimension(layer.root,
+                      row = list(id = c(0, 2), value = c(prefer_height(meta$main),
+                                                  prefer_height(meta$xlabels))),
+                      column = list(id = c(0, 2), value = c(prefer_width(meta$ylabels),
+                                                  10)))
+    }
+    set_layout()
+    meta$mainChanged$connect(set_layout)
+    meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout);
 
     view = qplotView(scene = scene)
     view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', ')))
