@@ -1,3 +1,7 @@
+## an environment to store cranvas options
+.cranvasEnv = new.env()
+
+
 ##' Interactive statistical graphics based on Qt
 ##'
 ##' This package was designed mainly for interactions in statistical

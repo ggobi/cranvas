@@ -1,7 +1,3 @@
-## an environment to store cranvas options
-.cranvasEnv = new.env()
-
-
 ##' Graphical parameters in cranvas
 ##'
 ##' This function can set or query the graphical parameters in the
@@ -23,13 +19,13 @@ qpar = function(...) {
     if (length(p)) {
         if (is.null(names(p)) && !is.list(p[[1]])) {
             p = unlist(p)
-            if (length(p) == 1) 
+            if (length(p) == 1)
                 .opts[[p]]
             else .opts[p]
         }
         else {
             omf = .opts
-            if (is.list(p[[1]])) 
+            if (is.list(p[[1]]))
                 p = p[[1]]
             if (length(p) > 0) {
                 .opts[names(p)] = p
@@ -41,4 +37,4 @@ qpar = function(...) {
     else {
         .opts
     }
-} 
+}
