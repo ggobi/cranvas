@@ -44,7 +44,7 @@ qscatter(RIDGE, CRACK, data = qpollen)
 
 
 ### (4) pressure test; run with care!
-n = 5e+05  # half a million still works (at least for me)
+n = 1e+06  # a million still works (at least for me)
 df = qdata(data.frame(x = rnorm(n), y = rnorm(n),
     z = gl(4, n/4)), color = z)
 qscatter(x, y)
