@@ -30,23 +30,7 @@
 ##' reference object, and an event will be attached on
 ##' \code{meta$limits} so that the limits of the axis layer will sync
 ##' with \code{meta$limits} dynamically.
-##' @examples
-##' library(cranvas)
-##' library(qtbase)
-##' library(qtpaint)
-##'
-##' s = qscene()
-##' r = qlayer(s)
-##' r[1, 1] = qlayer(paintFun = function(layer, painter) {
-##' qdrawCircle(painter, runif(1000, 0, 10), runif(1000, -5, 3), r = 2)
-##' qdrawRect(painter, 0, 10, -5, 3)
-##' }, limits = qrect(c(0, 10), c(-5, 3))) # main layer
-##' ## note the vertical limits of x-axis and horizontal limits of y-axis are [0, 1]
-##' r[2, 1] = qaxis(side = 1, at = c(0, 1, 3, 7, 8), limits = qrect(c(0, 10), c(0, 1))) # x-axis
-##' r[1, 0] = qaxis(side = 2, at = c(-4.5, -1, 0, 1.5, 2.5), limits = qrect(c(0, 1), c(-5, 3))) # y-axis
-##' r[0, 1] = qaxis(side = 3, meta = list(xat = c(1, 3, 7), xlabels = c('a', 'b', 'c'), limits = matrix(c(0, 10, -5, 3), 2))) # top x-axis
-##' print(qplotView(scene = s)) # default layout is ugly; tune in r$gridLayout()
-##'
+##' @example inst/examples/qaxis-ex.R
 qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL, ...) {
     xside = side%%2
     gen_limits = function () {
