@@ -72,3 +72,6 @@ pigGP[,2:3] <- rescaler(pigGP[,2:3])
 pigGP <- melt(pigGP,1)
 qpigGP <- qdata(pigGP)
 print(qtime(TIME,~value,qpigGP,group=variable,shift=c(1,4)))
+
+link_var(qpigGP) <- "variable"   # ON
+link_type(qpigGP) <- "self"
