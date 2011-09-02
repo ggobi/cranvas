@@ -23,8 +23,9 @@
 ##' category.
 ##'
 ##' The x-axis (or y-axis when \code{horizontal = TRUE}) tickmark
-##' locations are from 1 to \code{n} where \code{n} is the number of
-##' levels of the factor variable to be plotted.
+##' locations are from 1 to \code{n} shifted to the right by 0.5
+##' (i.e. 1.5, 2.5, ...), where \code{n} is the number of levels of
+##' the factor variable to be plotted.
 ##' @param x a variable name (will be coerced to a factor if it is
 ##' not; \code{NA} will also be a level of the factor if the variable
 ##' has any \code{NA}'s)
@@ -70,7 +71,7 @@ qbar =
         if (meta$standardize) tmp = tmp / tmp[, meta$nlevel2, drop = ncol(tmp) > 1]
         tmp[!is.finite(tmp)] = 0  # consider division by 0
         meta$y = c(tmp)
-        meta$x = rep(meta$xat <- seq(meta$nlevel), meta$nlevel2)
+        meta$x = rep(meta$xat <- seq(meta$nlevel) + .5, meta$nlevel2)
         meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = rownames(tmp)
         meta$ylabels = format(meta$yat)
