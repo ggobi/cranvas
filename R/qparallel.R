@@ -453,16 +453,17 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
 
 Parallel.meta =
     setRefClass("Parallel_meta",
-                fields = signalingFields(list(
-                pos = 'numeric', start = 'numeric', brush.move = 'logical',
-                alpha = 'numeric', main = 'character', vars = 'character',
-                glyph = 'character', order = 'character', draw.range = 'logical',
-                plot.data = 'matrix', numeric.col = 'logical', p = 'numeric', n = 'numeric',
-                jitter = 'character', amount = 'numeric', x = 'matrix', y = 'matrix',
-                xr = 'numeric', yr = 'numeric', names = 'character',
-                xat = 'numeric', yat = 'numeric',
-                xlabels = 'character', ylabels = 'character', limits = 'matrix',
-                segx0 = 'numeric', segx1 = 'numeric', segy0 = 'numeric', segy1 = 'numeric',
-                x0 = 'numeric', y0 = 'numeric', brush.size = 'numeric',
-                identified = 'numeric', manual.brush = 'function',
-                identify.labels = 'character')))
+                fields = signalingFields(c(
+
+                Common.meta,
+
+                list(vars = 'character', glyph = 'character',
+                     order = 'character', draw.range = 'logical',
+                     plot.data = 'matrix', numeric.col = 'logical',
+                     p = 'numeric', n = 'numeric',
+                     jitter = 'character', amount = 'numeric', x = 'matrix', y = 'matrix',
+                     xr = 'numeric', yr = 'numeric', names = 'character',
+                     segx0 = 'numeric', segx1 = 'numeric',
+                     segy0 = 'numeric', segy1 = 'numeric',
+                     x0 = 'numeric', y0 = 'numeric')
+                )))
