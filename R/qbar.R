@@ -276,7 +276,6 @@ Bar.meta =
 }
 .bar_flip_coords = function(data, meta) {
     if (!meta$horizontal) return()
-    switch_value('x', 'y', meta)
     switch_value('xat', 'yat', meta)
     switch_value('xlabels', 'ylabels', meta)
     switch_value('xlab', 'ylab', meta)
