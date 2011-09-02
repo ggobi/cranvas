@@ -703,3 +703,30 @@ var_names.formula = function(vars, data) {
     if (identical(v, '.')) v = grep('^[^.]', names(data), value = TRUE)
     v
 }
+
+##' Set the dimensions of child layers to fixed values
+##'
+##' This function makes use of the grid layout of a root layer to set
+##' the size of its child layers.
+##' @param root the root layer
+##' @param row a list containing the row id's and the corresponding
+##' height values
+##' @param column a list containing column id's and width values
+##' @return The dimensions of child layers are set to given values,
+##' and their stretch factors are set to 0.
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## see ?qaxis
+fix_dimension =
+    function(root, row = list(id = NULL, value = NULL),
+             column = list(id = NULL, value = NULL)) {
+    layout = root$gridLayout()
+    for (i in seq_along(row$id)) {
+        layout$setRowPreferredHeight(row$id[i], row$value[i])
+        layout$setRowStretchFactor(row$id[i], 0)
+    }
+    for (j in seq_along(column$id)) {
+        layout$setColumnPreferredWidth(column$id[j], column$value[j])
+        layout$setColumnStretchFactor(column$id[j], 0)
+    }
+}

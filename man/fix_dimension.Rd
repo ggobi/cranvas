@@ -1,0 +1,30 @@
+\name{fix_dimension}
+\alias{fix_dimension}
+\title{Set the dimensions of child layers to fixed values}
+\usage{
+fix_dimension(root, row = list(id = NULL, value = NULL), 
+    column = list(id = NULL, value = NULL))
+}
+\arguments{
+  \item{root}{the root layer}
+
+  \item{row}{a list containing the row id's and the
+  corresponding height values}
+
+  \item{column}{a list containing column id's and width
+  values}
+}
+\value{
+  The dimensions of child layers are set to given values,
+  and their stretch factors are set to 0.
+}
+\description{
+  This function makes use of the grid layout of a root
+  layer to set the size of its child layers.
+}
+\examples{
+## see ?qaxis
+}
+\author{
+  Yihui Xie <\url{http://yihui.name}>
+}
