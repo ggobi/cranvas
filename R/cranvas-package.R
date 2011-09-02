@@ -170,6 +170,38 @@ NULL
 ##' qtime(TimeIndx,~ts,qnasa,shift=c(1,12))
 NULL
 
+##' Temporal measurements on UK Pig production
+##'
+##' Multivariate time series data originally from Andrews and Herzberg (1985).
+##' @name pigs
+##' @docType data
+##' @usage data(pigs)
+##' @format data.frame: 48 obs. of 11 variables
+##' @keywords datasets
+##' @source http://lib.stat.cmu.edu/datasets/Andrews/
+##' @examples library(cranvas)
+##' data(pigs)
+##' qpig <- qdata(pigs)
+##' qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
+NULL
+
+##' Coordinates of the world map
+##'
+##' An shortened version of the map coordinates for all the countries
+##' on the globe. Polygon edges will be a bit rough, but the speed is
+##' improved for interaction.
+##' @name nasa
+##' @docType data
+##' @usage data(world)
+##' @format data.frame: 48 obs. of 11 variables
+##' @keywords datasets
+##' @source maps package
+##' @examples library(cranvas)
+##' data(world)
+##' qworld <- qdata(world)
+##' qmap(qworld, long, lat, group, label = id)
+NULL
+
 ## set options(cranvas_debug = TRUE) to print the debug message
 cranvas_debug = function(msg) {
     if (isTRUE(getOption("cranvas_debug"))) {
