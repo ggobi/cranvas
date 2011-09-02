@@ -61,11 +61,11 @@ library(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 
-print(qdensity(First.Serve.Pct, qtennis))
-print(qdensity(Second.Serve.Pts, qtennis))
-print(qdensity(Serve.Speed, qtennis))
+print(qdensity(first.serve.pct, qtennis))
+print(qdensity(second.serve.pts, qtennis))
+print(qdensity(serve.speed, qtennis))
 
-record_selector("Name", qtennis)
+record_selector("name", qtennis)
 
 ####
 if (require("animation")) {

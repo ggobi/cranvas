@@ -3,13 +3,13 @@ data(tennis)
 str(tennis)
 
 ## the first step is always to create the data object
-qtennis = qdata(tennis, color = Serve.Speed, size = Aces)
+qtennis = qdata(tennis, color = serve.speed, size = aces)
 
 ## then create plots
-qhist(Serve.Speed, data = qtennis)
+qhist(serve.speed, data = qtennis)
 
-qbar(Country)
+qbar(country)
 
 qparallel(~.)  # all variables; you may need a large window
 
-record_selector(Name)  # a simple GUI to show the names
+record_selector(name)  # a simple GUI to show the names

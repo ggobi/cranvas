@@ -3,7 +3,7 @@ library(cranvas)
 data(tennis)
 
 qtennis = qdata(tennis)
-qbar(Matches)
+qbar(matches)
 
 ## NRC rankings
 data(nrcstat)
