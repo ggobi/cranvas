@@ -269,7 +269,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
       if (meta$wrap.mode) {
         if (meta$serie.mode & sum(selected(data))) {
-          meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] + diff(range(meta$time,na.rm=TRUE))/30
+          meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] + diff(range(meta$time,na.rm=TRUE))/nrow(data)
           if (min(meta$xtmp[selected(data)],na.rm=TRUE)>max(meta$time,na.rm=TRUE)) {
             meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] - 
               min(meta$xtmp[selected(data)],na.rm=TRUE) + max(meta$time,na.rm=TRUE)
@@ -302,7 +302,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         }
       } else {
         if (meta$wrapF_dragT) {
-          meta$limits[1:2] <- meta$limits[1:2] + diff(range(meta$time,na.rm=TRUE))/30
+          meta$limits[1:2] <- meta$limits[1:2] + diff(range(meta$time,na.rm=TRUE))/nrow(data)
           if (max(meta$limits[1:2])>max(meta$time,na.rm=TRUE)) {
             meta$limits[1:2] <- meta$limits[1:2] - max(meta$limits[1:2]) + max(meta$time,na.rm=TRUE)
           }
@@ -331,7 +331,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       } else {
       if (meta$wrap.mode) {
         if (meta$serie.mode & sum(selected(data))) {
-          meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] - diff(range(meta$time,na.rm=TRUE))/30
+          meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] - diff(range(meta$time,na.rm=TRUE))/nrow(data)
           if (max(meta$xtmp[selected(data)],na.rm=TRUE)<min(meta$time,na.rm=TRUE)) {
             meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] - 
               max(meta$xtmp[selected(data)],na.rm=TRUE) + min(meta$time,na.rm=TRUE)
@@ -364,7 +364,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         meta$limits[1:2] <- extend_ranges(meta$xtmp)       
       } else {
         if (meta$wrapF_dragT) {
-          meta$limits[1:2] <- meta$limits[1:2] - diff(range(meta$time,na.rm=TRUE))/30
+          meta$limits[1:2] <- meta$limits[1:2] - diff(range(meta$time,na.rm=TRUE))/nrow(data)
           if (min(meta$limits[1:2])<min(meta$time,na.rm=TRUE)) {
             meta$limits[1:2] <- meta$limits[1:2] - min(meta$limits[1:2]) + min(meta$time,na.rm=TRUE)
           }
