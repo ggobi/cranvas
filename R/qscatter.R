@@ -258,20 +258,15 @@ qscatter =
 }
 
 Scat.meta =
-    setRefClass("Scat_meta", fields =
-                signalingFields(list(xvar = 'character', yvar = 'character',
-                                     alpha = 'numeric', order = 'numeric',
-                                     x = 'numeric', y = 'numeric',
-                                     xat = 'numeric', yat = 'numeric',
-                                     xlab = 'character', ylab = 'character',
-                                     xlabels = 'character', ylabels = 'character',
-                                     breaks = 'numeric', limits = 'matrix',
-                                     border = 'character', color = 'character',
-                                     start = 'numeric', pos = 'numeric',
-                                     brush.move = 'logical', brush.size = 'numeric',
-                                     main = 'character', asp = 'numeric',
-                                     size = 'numeric', samesize = 'logical',
-                                     identified = 'numeric', identify.labels = 'character',
-                                     manual.brush = 'function')))
+    setRefClass("Scat_meta",
+                fields = signalingFields(c(
+
+                Common.meta,
+
+                list(xvar = 'character', yvar = 'character', order = 'numeric',
+                     x = 'numeric', y = 'numeric',
+                     breaks = 'numeric', asp = 'numeric', samesize = 'logical')
+
+                )))
 
 ## order is for keeping track of the original order of data
