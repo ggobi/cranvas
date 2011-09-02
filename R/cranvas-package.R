@@ -99,7 +99,6 @@ NULL
 ##' @example inst/examples/wages-ex.R
 NULL
 
-
 ##' Dataset of 2006 Australian Open mens tennis matches
 ##'
 ##' The data contains statistics from the 2006 Australian Open mens
@@ -117,17 +116,67 @@ NULL
 ##' qscatter(matches, sets, data = qtennis)
 NULL
 
-##' Dataset of Pig Production in United Kingdom 1967-1978
+##' Subset of data from the Behavioral Risk Factor Surveillance System
 ##'
-##' The data collected the quarterly production and profits for raising gilts during 1967-1978. 
+##' Part of the largest, on-going telephone health survey system,
+##' tracking health conditions and risk behaviors in the United States
+##' yearly since 1984. This data has a lot of missing values, so it is
+##' used for testing the missing value plots.
+##' @name brfss
+##' @docType data
+##' @usage data(brfss)
+##' @format data.frame: 245 obs. of  409 variables
+##' @keywords datasets
+##' @source http://www.cdc.gov/BRFSS/
+##' @examples library(cranvas)
+##' data(brfss); qbrfss = qdata(brfss)
+##'
+##' qmval(names(brfss)[40:50])
+##' qmval(51:68)
+##' qmval(~POORHLTH+FRUIT+GREENSAL)
+NULL
+
+##' US Crimes data from 2009
+##'
+##' Counts of different crimes by state across the USA
+##' @name crimes
+##' @docType data
+##' @usage data(crimes)
+##' @format data.frame: 50 obs. of 13 variables
+##' @keywords datasets
+##' @source http://www.fbi.gov/about-us/cjis/ucr/ucr
+##' @examples library(cranvas)
+##' data(crimes)
+##' crimes$State <- factor(tolower(crimes$State))
+##' qcrimes <- qdata(crimes)
+##' qparallel(data=qcrimes)
+NULL
+
+##' Spatiotemporal measurements of climate variables
+##'
+##' Monthly measurements from 1995-2000 of temperature, pressure
+##' ozone and clouds over central America. The data was provided
+##' for the 2006 ASA Stat Computing and Graphics Data Expo competition.
+##' @name nasa
+##' @docType data
+##' @usage data(nasa)
+##' @format data.frame: 50 obs. of 13 variables
+##' @keywords datasets
+##' @source http://stat-computing.org/dataexpo/2006/
+##' @examples library(cranvas)
+##' data(nasa)
+##' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
+##' qnasa <- qdata(nasa11)
+##' qtime(TimeIndx,~ts,qnasa,shift=c(1,12))
+NULL
+
+##' Temporal measurements on UK Pig production
+##'
+##' Multivariate time series data originally from Andrews and Herzberg (1985).
 ##' @name pigs
 ##' @docType data
 ##' @usage data(pigs)
 ##' @format data.frame: 48 obs. of 11 variables
-##' @keywords datasets
-##' @source Andrews, D.F. and Herzberg, A.M. (1985), \emph{Data -
-##' A Collection of Problems from Many Fields for the Student and
-##' Research Worker}, Springer-Verlag, New York, NY.
 ##' \describe{\item{\code{TIME}}{Time index, from 1 to 48}
 ##' \item{\code{YEAR}}{Year, from 1967 to 1978}
 ##' \item{\code{QUARTER}}{Quarter index, take value in 1,2,3,4}
@@ -139,8 +188,33 @@ NULL
 ##' \item{\code{S.HERDSZ}}{Ratio of sow and boar slaughter to total breeding herd size}
 ##' \item{\code{PRODUCTION}}{Number of clean pig meat slaughtered}
 ##' \item{\code{HERDSZ}}{Actual breeding herd size}}
+##' @keywords datasets
+##' @source Andrews, D.F. and Herzberg, A.M. (1985), \emph{Data -
+##' A Collection of Problems from Many Fields for the Student and
+##' Research Worker}, Springer-Verlag, New York, NY.
+##' URL: \url{http://lib.stat.cmu.edu/datasets/Andrews/}
+##' @examples library(cranvas)
+##' data(pigs)
+##' qpig <- qdata(pigs)
+##' qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
 NULL
 
+##' Coordinates of the world map
+##'
+##' An shortened version of the map coordinates for all the countries
+##' on the globe. Polygon edges will be a bit rough, but the speed is
+##' improved for interaction.
+##' @name nasa
+##' @docType data
+##' @usage data(world)
+##' @format data.frame: 48 obs. of 11 variables
+##' @keywords datasets
+##' @source maps package
+##' @examples library(cranvas)
+##' data(world)
+##' qworld <- qdata(world)
+##' qmap(qworld, long, lat, group, label = id)
+NULL
 
 ## set options(cranvas_debug = TRUE) to print the debug message
 cranvas_debug = function(msg) {

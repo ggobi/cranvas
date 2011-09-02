@@ -49,23 +49,22 @@ link_var(wage) <- "id"   # ON
 link_type(wage) <- "self"
 link_var(wage) <- NULL  # OFF
 
-
-## example 4: Lynx
+## example 4: Lynx - for posterity
+# Good to show off wrapping to investigate irregular series
 data(lynx)
 qlynx<-qdata(data.frame(Time=1:114, lynx))
-qtime(Time, ~lynx, qlynx, shift=1:12)
+print(qtime(Time, ~lynx, qlynx, shift=1:12))
 
-
-## example 5: Sunspots
+## example 5: Sunspots - for posterity
+# Good to show off wrapping to investigate irregular series
 data(sunspots)
 qsun<-qdata(data.frame(Time=1:2820, sunspots))
-qtime(Time, ~sunspots, qsun, shift=c(1,(1:10)*10))
-
+print(qtime(Time, ~sunspots, qsun, shift=c(1,(1:10)*10)))
 
 ## example 6: Pigs
 data(pigs)
 qpig<-qdata(pigs)
-qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
+print(qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4)))
 
 library(reshape)
 pigGP <- pigs[,c(1,7,8)]
@@ -73,3 +72,6 @@ pigGP[,2:3] <- rescaler(pigGP[,2:3])
 pigGP <- melt(pigGP,1)
 qpigGP <- qdata(pigGP)
 print(qtime(TIME,~value,qpigGP,group=variable,shift=c(1,4)))
+
+link_var(qpigGP) <- "variable"   # ON
+link_type(qpigGP) <- "self"
