@@ -131,7 +131,7 @@ NULL
 ##' @usage data(brfss)
 ##' @format data.frame: 245 obs. of  409 variables
 ##' @keywords datasets
-##' @source http://www.cdc.gov/BRFSS/
+##' @source \url{http://www.cdc.gov/BRFSS/}
 ##' @examples library(cranvas)
 ##' data(brfss); qbrfss = qdata(brfss)
 ##'
@@ -148,7 +148,7 @@ NULL
 ##' @usage data(crimes)
 ##' @format data.frame: 50 obs. of 13 variables
 ##' @keywords datasets
-##' @source http://www.fbi.gov/about-us/cjis/ucr/ucr
+##' @source \url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
 ##' @examples library(cranvas)
 ##' data(crimes)
 ##' crimes$State <- factor(tolower(crimes$State))
@@ -166,7 +166,7 @@ NULL
 ##' @usage data(nasa)
 ##' @format data.frame: 50 obs. of 13 variables
 ##' @keywords datasets
-##' @source http://stat-computing.org/dataexpo/2006/
+##' @source \url{http://stat-computing.org/dataexpo/2006/}
 ##' @examples library(cranvas)
 ##' data(nasa)
 ##' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
