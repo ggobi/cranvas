@@ -268,23 +268,19 @@ qhist =
 }
 
 Hist.meta =
-    setRefClass("Hist_meta", fields =
-                signalingFields(list(var = 'character', alpha = 'numeric',
-                                     x = 'numeric', y = 'numeric',
-                                     xat = 'numeric', yat = 'numeric',
-                                     xlab = 'character', ylab = 'character',
-                                     xlabels = 'character', ylabels = 'character',
-                                     breaks = 'numeric', limits = 'matrix',
-                                     xleft = 'numeric', xright = 'numeric',
-                                     ybottom = 'numeric', ytop = 'numeric',
-                                     border = 'character', color = 'character',
-                                     start = 'numeric', pos = 'numeric',
-                                     brush.move = 'logical', brush.size = 'numeric',
-                                     manual.brush = 'function', horizontal = 'logical',
-                                     main = 'character', value = 'factor',
-                                     var2 = 'character', value2 = 'factor',
-                                     split.type = 'character', spine = 'logical',
-                                     nlevel = 'integer', nlevel2 = 'integer',
-                                     freq = 'logical', standardize = 'logical',
-                                     binwidth = 'numeric', multiplier = 'numeric',
-                                     identified = 'numeric', identify.labels = 'character')))
+    setRefClass("Hist_meta", fields = signalingFields(c(
+
+                             Common.meta,
+
+                             list(var = 'character', value = 'factor',
+                                  var2 = 'character', value2 = 'factor',
+                                  x = 'numeric', y = 'numeric',
+                                  breaks = 'numeric', horizontal = 'logical',
+                                  xleft = 'numeric', xright = 'numeric',
+                                  ybottom = 'numeric', ytop = 'numeric',
+                                  split.type = 'character', spine = 'logical',
+                                  nlevel = 'integer', nlevel2 = 'integer',
+                                  freq = 'logical', standardize = 'logical',
+                                  binwidth = 'numeric', multiplier = 'numeric')
+
+                             )))
