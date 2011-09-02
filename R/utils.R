@@ -356,8 +356,8 @@ common_mouse_release = function(layer, event, data, meta) {
 sync_limits = function(meta, ...) {
     l = list(...)
     meta$limitsChanged$connect(function() {
-        meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
-        meta$pos = apply(meta$limits, 2, mean)
+        meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 30
+        meta$pos = meta$limits[2:3]
         r = qrect(meta$limits)
         sapply(l, function(x) x$setLimits(r))
     })
