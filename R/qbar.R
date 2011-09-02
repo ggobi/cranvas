@@ -70,14 +70,14 @@ qbar =
         if (meta$standardize) tmp = tmp / tmp[, meta$nlevel2, drop = ncol(tmp) > 1]
         tmp[!is.finite(tmp)] = 0  # consider division by 0
         meta$y = c(tmp)
-        meta$xat = meta$x = rep(seq(meta$nlevel), meta$nlevel2)
+        meta$x = rep(meta$xat <- seq(meta$nlevel), meta$nlevel2)
         meta$yat = axis_loc(c(0, meta$y))
         meta$xlabels = rownames(tmp)
         meta$ylabels = format(meta$yat)
         meta$xlab = if (is.null(xlab)) meta$var else xlab
         meta$ylab = if (is.null(ylab)) '' else ylab
         w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
-        meta$xleft = meta$xat - w; meta$xright = meta$xat + w
+        meta$xleft = meta$x - w; meta$xright = meta$x + w
         meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2])); meta$ytop = meta$y
         meta$limits =
             extend_ranges(cbind(if (is.null(xlim))
