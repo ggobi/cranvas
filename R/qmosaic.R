@@ -68,6 +68,7 @@ qprodcalc <- function(data, formula, divider = mosaic(), cascade = 0, scale_max 
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
+##' @family plots
 ##' @example inst/examples/qmosaic-ex.R
 qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE,
     na.rm = FALSE, subset = NULL,  main = NULL, cache= T, ...) {

@@ -54,6 +54,7 @@ setMapColorByLabel <- function(qmap, qdata, label, scale = scale_colour_gradient
 ##' @return NULL
 ##' @author Heike Hofmann
 ##' @export
+##' @family plots
 ##' @example inst/examples/qmap-ex.R
 qmap <- function(data, longitude, latitude, group, label = group,
     main = NULL, filled = TRUE, ...) {

@@ -23,6 +23,7 @@
 #' @param ylab label on vertical axis, default is name of y variable
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @export
+#' @family plots
 #' @example inst/examples/qdensity-ex.R
 qdensity <- function(x, data, main = NULL, binwidth = NULL,
   size = 4, alpha = 0.5, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL,
