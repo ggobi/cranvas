@@ -2,7 +2,7 @@
 ##'
 ##' Creates a choropleth map from an interactive map generated with qmap.
 ##'
-##' 'C' computes a cartogram representation 
+##' 'C' computes a cartogram representation
 ##' @param qmap a mutaframe for the ap representation
 ##' @param qdata is the mutaframe containing the variable to be displayed as colour
 ##' @param label is the variable in the qdata mutaframe to be displayed
@@ -269,17 +269,17 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
       # helper functions
       df2map <- function(mapdf) {
-        res <- ddply(mapdf, .(group), summarize, 
+        res <- ddply(mapdf, .(group), summarize,
           x = c(long, NA),
           y = c(lat, NA)
         )
         x <- res$x
         y <- res$y
-        chr <- ddply(mapdf, .(group), summarize, 
+        chr <- ddply(mapdf, .(group), summarize,
           names = region[1]
         )
-        
-        return(list(x=x, y=y, 
+
+        return(list(x=x, y=y,
                     range=c(range(mapdf$long), range(mapdf$lat)),
                     names=as.character(chr$names)))
       }
@@ -287,7 +287,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
       map2df <- function(map) {
         pls <- slot(map, "polygons")
         n <- length(pls)
-      
+
         res <- ldply(pls, function(x) {
           pl <- slot(x, "Polygons")
           id <- slot(x, "ID")
@@ -322,10 +322,10 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
           qupdate(root_layer)
 
-        } 
+        }
         if (event$key() == Qt$Qt$Key_F) {
           filled <<- !filled
-          qupdate(root_layer)         
+          qupdate(root_layer)
         }
         if (event$key() == Qt$Qt$Key_C) {
           print("calculate cartogram:\n")
@@ -333,7 +333,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
             # need to check that it is a continuous color scheme
             if (is.numeric(attr(data, "col.scale")$coldf[,"values"])) {
 
-## create choropleth map            
+## create choropleth map
               # first example was from usacrimes
               usacrimes <- attr(data, "col.scale")$coldf
               usacrimes <- unique(merge(usacrimes, data.frame(label=groupdata$label), by.x="regions", by.y="label", all.y=T))
@@ -353,7 +353,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
               cartdf$x <- states$long
               cartdf$y <- states$lat
-              cartdf <- transform(cartdf, 
+              cartdf <- transform(cartdf,
                 cartx = (long-min(long))/diff(range(long))*diff(range(x))+min(x),
                 carty = (lat-min(lat))/diff(range(lat))*diff(range(y))+min(y)
               )
@@ -367,19 +367,19 @@ qmap <- function(data, longitude, latitude, group, label = group,
               data$cartx <- cartdf$cartx
               data$carty <- cartdf$carty
 
-                            
+
             }
-          }          
+          }
         }
         if (event$key() == Qt$Qt$Key_M) {
           at_map <<- TRUE
           cartstep <<- 0
           x <- eval(arguments$longitude, df.data)
           y <- eval(arguments$latitude, df.data)
-          qupdate(root_layer)          
+          qupdate(root_layer)
         }
 
-        if (event$key() %in% c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)) {  
+        if (event$key() %in% c(Qt$Qt$Key_Right, Qt$Qt$Key_Left)) {
           if (cartogram_this) {
             if (event$key() == Qt$Qt$Key_Right) {
             # move one step closer from map to cartogram
@@ -390,7 +390,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
                 y <- eval(arguments$latitude, df.data)
                 diffx <- (data$cartx-x)/cartmaxstep
                 diffy <- (data$carty-y)/cartmaxstep
-                
+
                 x <<- x + cartstep*diffx
                 y <<- y + cartstep*diffy
                 qupdate(root_layer)
@@ -406,16 +406,16 @@ qmap <- function(data, longitude, latitude, group, label = group,
                 y <- eval(arguments$latitude, df.data)
                 diffx <- (data$cartx-x)/cartmaxstep
                 diffy <- (data$carty-y)/cartmaxstep
-                
+
                 x <<- x + cartstep*diffx
                 y <<- y + cartstep*diffy
                 qupdate(root_layer)
                 qupdate(datalayer)
               }
-            }          
+            }
           }
-        } 
-        
+        }
+
     }
 
 
@@ -517,7 +517,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
             groupdata$color[i] <<- cc[1]
           }
           # change legend accordingly
-  
+
           qupdate(datalayer)
           qupdate(brushing_layer)
         }, carty={
@@ -539,16 +539,16 @@ qmap <- function(data, longitude, latitude, group, label = group,
         }, {
         print(sprintf("uncovered event in map: %s", j))
             df.data <<- data.frame(data)
-        
+
             x <<- eval(arguments$longitude, df.data)
             y <<- eval(arguments$latitude, df.data)
-        
+
             qupdate(root_layer)
             qupdate(datalayer)
             qupdate(brushing_layer)
         })
-      } else 
-        print(sprintf("qmap::add_listener length(j) == %d", length(j)))      
+      } else
+        print(sprintf("qmap::add_listener length(j) == %d", length(j)))
     })
 
     ## update the brush layer if brush attributes change
