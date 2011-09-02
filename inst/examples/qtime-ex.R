@@ -48,3 +48,19 @@ wage$id <- as.factor(wage$id)
 link_var(wage) <- "id"   # ON
 link_type(wage) <- "self"
 link_var(wage) <- NULL  # OFF
+
+# example 4: Sunspots - for posterity
+# Good to show off wrapping to investigate irregular series
+data(sunspots)
+head(sunspots)
+str(sunspots)
+qsun<-qdata(data.frame(Time=1:2820, sunspots))
+qtime(Time, ~sunspots, qsun)
+
+# example 4: lynx - for posterity
+# Good to show off wrapping to investigate irregular series
+data(lynx)
+head(lynx)
+str(lynx)
+qlynx<-qdata(data.frame(Time=1:114, lynx))
+qtime(Time, ~lynx, qlynx)
