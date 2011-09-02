@@ -87,3 +87,10 @@ print(qdensity(aede3, qflea))
 qflea <- qdata(flea, color = species)
 print(qdensity(tars1, qflea))
 }
+\seealso{
+  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
+  \code{\link{qhist}}, \code{\link{qmap}},
+  \code{\link{qmosaic}}, \code{\link{qmval}},
+  \code{\link{qparallel}}, \code{\link{qspine}},
+  \code{\link{qtime}}
+}
