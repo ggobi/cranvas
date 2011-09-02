@@ -220,25 +220,21 @@ qbar =
 }
 
 Bar.meta =
-    setRefClass("Bar_meta", fields =
-                signalingFields(list(var = 'character', value = 'factor', alpha = 'numeric',
-                                     x = 'numeric', y = 'numeric',
-                                     xat = 'numeric', yat = 'numeric',
-                                     xlab = 'character', ylab = 'character',
-                                     xlabels = 'character', ylabels = 'character',
-                                     space = 'numeric', limits = 'matrix',
-                                     xleft = 'numeric', xright = 'numeric',
-                                     ybottom = 'numeric', ytop = 'numeric',
-                                     color = 'character', border = 'character',
-                                     start = 'numeric', pos = 'numeric',
-                                     brush.move = 'logical', brush.size = 'numeric',
-                                     manual.brush = 'function', horizontal = 'logical',
-                                     main = 'character', freq = 'logical',
-                                     var2 = 'character', value2 = 'factor',
-                                     split.type = 'character', identified = 'integer',
-                                     identify.labels = 'character',
-                                     standardize = 'logical',
-                                     nlevel = 'integer', nlevel2 = 'integer')))
+    setRefClass("Bar_meta",
+                fields = signalingFields(c(
+
+                Common.meta,
+
+                list(var = 'character', value = 'factor',
+                var2 = 'character', value2 = 'factor',
+                nlevel = 'integer', nlevel2 = 'integer',
+                x = 'numeric', y = 'numeric', space = 'numeric',
+                xleft = 'numeric', xright = 'numeric',
+                ybottom = 'numeric', ytop = 'numeric',
+                horizontal = 'logical', freq = 'logical', standardize = 'logical',
+                split.type = 'character')
+
+                )))
 
 .find_split_var = function(data, meta) {
     s = attr(data, 'Scales')
