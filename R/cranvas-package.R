@@ -134,7 +134,22 @@ NULL
 ##' qmval(names(brfss)[40:50])
 ##' qmval(51:68)
 ##' qmval(~POORHLTH+FRUIT+GREENSAL)
+NULL
 
+##' US Crimes data from 2009
+##'
+##' Counts of different crimes by state across the USA
+##' @name crimes
+##' @docType data
+##' @usage data(crimes)
+##' @format data.frame: 50 obs. of 13 variables
+##' @keywords datasets
+##' @source http://www.fbi.gov/about-us/cjis/ucr/ucr
+##' @examples library(cranvas)
+##' data(crimes)
+##' crimes$State <- factor(tolower(crimes$State))
+##' qcrimes <- qdata(crimes)
+##' qparallel(data=qcrimes)
 NULL
 
 ## set options(cranvas_debug = TRUE) to print the debug message
