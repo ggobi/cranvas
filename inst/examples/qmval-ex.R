@@ -6,7 +6,7 @@ data(brfss)
 qbrfss <- qdata(brfss)
 qmval(names(brfss)[40:50])
 qmval(51:68)
-qmval(~POORHLTH+FRUIT+GREENSAL)
+qmval(~poorhlth+fruit+greensal)
 
 qparallel(100:110)
 
