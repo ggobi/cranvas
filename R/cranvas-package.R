@@ -117,6 +117,32 @@ NULL
 ##' qscatter(matches, sets, data = qtennis)
 NULL
 
+##' Float monitoring of salinity and temperature during BP Oil Spill
+##'
+##' The data contains measurements of date, latitude and longitude
+##' salinity and temperature in the Gulf of Mexico.
+##' @name floats
+##' @docType data
+##' @usage data(floats)
+##' @format data.frame: 10332 obs. of  13 variables
+##' @keywords datasets
+##' @source http://www.noaa.gov/sciencemissions/bpoilspill.html
+##' provided through http://streaming.stat.iastate.edu/dataexpo/2011/
+##' @examples library(cranvas)
+##' data(floats)
+##' floats$call <- as.numeric(floats$callSign)
+##' floats <- na.omit(floats)
+##' floats <- subset(floats, (callSign != "Q4901044"))
+##' floats$callSign <- factor(floats$callSign)
+##' floats$date <- as.Date(floats$Date_Time, format="%Y-%m-%d")
+##' floats$day <- as.numeric(floats$date - as.Date("2010-04-20", format="%Y-%m-%d"))
+##' floats$week <- (floats$day %/% 7) + 1
+##' qfl <- qdata(floats)
+##' qfl$.color <- "grey20"
+##'
+##' qhist(Depth, qfl, binwidth=10, horizontal=FALSE)
+##' qscatter(Longitude, Latitude, data=qfl)
+NULL
 
 ## set options(cranvas_debug = TRUE) to print the debug message
 cranvas_debug = function(msg) {
