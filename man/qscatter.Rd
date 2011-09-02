@@ -118,9 +118,9 @@ qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile)
 library(animation)
 data(pollen, package = "animation")
 head(pollen)
-qpollen <- qdata(pollen, color = rgb(0, 0, 0, 0.2), size = 2)
+qpollen <- qdata(pollen, size = 2)
 qscatter(RIDGE, CRACK, data = qpollen)
-## try zooming into the center
+## try zooming into the center or press +/-
 
 
 
