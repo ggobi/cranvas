@@ -24,14 +24,14 @@ data(tennis)
 
 qtennis = qdata(tennis, color = 'white', border = 'black')
 
-qhist(First.Serve.Pct)
-qbar(Matches)
-qspine(Matches)
+qhist(first.serve.pct)
+qbar(matches)
+qspine(matches)
 
-qhist(First.Serve.Pct, horizontal = TRUE)
+qhist(first.serve.pct, horizontal = TRUE)
 
-qhist(Serve.Speed)
-qhist(Serve.Speed, freq = FALSE)  # density
+qhist(serve.speed)
+qhist(serve.speed, freq = FALSE)  # density
 
 
 #### see help(wages) for yet another example
