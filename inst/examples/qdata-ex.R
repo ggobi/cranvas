@@ -2,9 +2,9 @@ library(cranvas)
 data(tennis)
 str(tennis)
 ## more Aces, closer to red; less, blue; higher speed, larger points
-qtennis = qdata(tennis, color = Aces, size = Serve.Speed)
+qtennis = qdata(tennis, color = aces, size = serve.speed)
 
-qhist(Aces, data = qtennis, main = 'Number of Aces')
+qhist(aces, data = qtennis, main = 'Number of Aces')
 ls.str(attr(qtennis, 'Scales'))  # the scales information
 
 selected(qtennis)[1:10] = TRUE  # brush the first 10 cases
@@ -23,4 +23,4 @@ attr(qtennis, 'Shadow')  # should be NULL, since no misssing values here
 
 ## we can also use the default dark gray
 qtennis = qdata(tennis)
-qhist(Double.Faults, data = qtennis)
+qhist(double.faults, data = qtennis)

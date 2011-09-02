@@ -73,7 +73,9 @@ qboxplot(tars1 ~ species, data = qflea)
   Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  Other plots: \code{\link{qbar}}, \code{\link{qhist}},
-  \code{\link{qmval}}, \code{\link{qparallel}},
-  \code{\link{qspine}}, \code{\link{qtime}}
+  Other plots: \code{\link{qbar}}, \code{\link{qdensity}},
+  \code{\link{qhist}}, \code{\link{qmap}},
+  \code{\link{qmosaic}}, \code{\link{qmval}},
+  \code{\link{qparallel}}, \code{\link{qspine}},
+  \code{\link{qtime}}
 }

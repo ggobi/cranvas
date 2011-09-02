@@ -23,6 +23,7 @@
 #' @param ylab label on vertical axis, default is name of y variable
 #' @param cache boolean to turn cache on for layers, defaults to TRUE
 #' @export
+#' @family plots
 #' @example inst/examples/qdensity-ex.R
 qdensity <- function(x, data, main = NULL, binwidth = NULL,
   size = 4, alpha = 0.5, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL,
@@ -52,7 +53,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
   # Initalize binwidth to default for the density function
   if (is.null(binwidth))
     binwidth <- density(x)$bw
-  
+
   ## parameters for dataRanges
   if (is.null(xlab)) xlab <- deparse(arguments$x)
   ylab <- ""
@@ -79,7 +80,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
   ## brush range: horizontal and vertical
   .bsize <- c(diff(dataRanges[c(1, 2)])/15, diff(dataRanges[c(3, 4)])/30)
   .bsizestart <- .bsize # For brush resizing
-  
+
   n <- nrow(data)
 
   # For accessing the global brush parameters
@@ -271,7 +272,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
     #}
 
   }
-  
+
   handle_zoom <- function() {
     print("zoom action")
     print(.zstart)
@@ -419,7 +420,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
       hits <- order(dx, decreasing=F)[1]
     else
       hits <- NULL
-     
+
     # Nothing under mouse?
     if (length(hits) == 0)
       return()
@@ -598,7 +599,7 @@ qdensity <- function(x, data, main = NULL, binwidth = NULL,
 
   brushlayer <- qlayer(parent = root, paintFun = brush_draw, limits = lims,
     cache=cache, row=1, col=1, clip=FALSE)
-  
+
   querylayer <- qlayer(parent = root, query_draw, limits = lims,
      hoverMoveFun = query_hover, hoverLeaveFun = query_hover_leave,
      cache=cache, row=1, col=1, clip=FALSE)

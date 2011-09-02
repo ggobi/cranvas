@@ -123,6 +123,7 @@ qhist(Serve.Speed, freq = FALSE)  # density
 }
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
-  \code{\link{qmval}}, \code{\link{qparallel}},
-  \code{\link{qtime}}
+  \code{\link{qdensity}}, \code{\link{qmap}},
+  \code{\link{qmosaic}}, \code{\link{qmval}},
+  \code{\link{qparallel}}, \code{\link{qtime}}
 }

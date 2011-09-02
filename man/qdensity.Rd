@@ -61,11 +61,11 @@ library(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 
-print(qdensity(First.Serve.Pct, qtennis))
-print(qdensity(Second.Serve.Pts, qtennis))
-print(qdensity(Serve.Speed, qtennis))
+print(qdensity(first.serve.pct, qtennis))
+print(qdensity(second.serve.pts, qtennis))
+print(qdensity(serve.speed, qtennis))
 
-record_selector("Name", qtennis)
+record_selector("name", qtennis)
 
 ####
 if (require("animation")) {
@@ -86,4 +86,11 @@ print(qdensity(aede3, qflea))
 #### test colors
 qflea <- qdata(flea, color = species)
 print(qdensity(tars1, qflea))
+}
+\seealso{
+  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
+  \code{\link{qhist}}, \code{\link{qmap}},
+  \code{\link{qmosaic}}, \code{\link{qmval}},
+  \code{\link{qparallel}}, \code{\link{qspine}},
+  \code{\link{qtime}}
 }

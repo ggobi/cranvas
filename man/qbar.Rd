@@ -68,9 +68,9 @@ qbar(x, data = last_data(), space = 0.1, main = "",
   presence of this category.
 
   The x-axis (or y-axis when \code{horizontal = TRUE})
-  tickmark locations are from 1 to \code{n} where \code{n}
-  is the number of levels of the factor variable to be
-  plotted.
+  tickmark locations are from 1 to \code{n} shifted to the
+  right by 0.5 (i.e. 1.5, 2.5, ...), where \code{n} is the
+  number of levels of the factor variable to be plotted.
 }
 \examples{
 library(cranvas)
@@ -78,7 +78,7 @@ library(cranvas)
 data(tennis)
 
 qtennis <- qdata(tennis)
-qbar(Matches)
+qbar(matches)
 
 ## NRC rankings
 data(nrcstat)
@@ -101,7 +101,9 @@ qbar(Regional.Code)
   Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  Other plots: \code{\link{qboxplot}}, \code{\link{qhist}},
+  Other plots: \code{\link{qboxplot}},
+  \code{\link{qdensity}}, \code{\link{qhist}},
+  \code{\link{qmap}}, \code{\link{qmosaic}},
   \code{\link{qmval}}, \code{\link{qparallel}},
   \code{\link{qspine}}, \code{\link{qtime}}
 }
