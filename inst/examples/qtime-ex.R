@@ -21,25 +21,25 @@ qnasaTsCa <- qdata(nasaTsCa)
 print(qtime(TimeIndx,~value,qnasaTsCa,group=variable,shift=c(1,12)))
 
 
-## example 2: Remifentanil in the nlme package
+u## example 2: Remifentanil in the nlme package
 require(nlme)
 Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
                           Remifentanil$ID==1,])
 Remi <- Remifentanil[complete.cases(Remifentanil),]
-qRemi$ID <- factor(qRemi$ID,levels=65:1)
+Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
 print(qtime(Time,~conc,Rem))
 print(qtime(Time,~conc,qRemi,group=ID))
 print(qtime(Time,~conc,qRemi,group=ID,wrap=FALSE))
 
 # for categorical brushing self-link dataset by ID:
-link_var(Remi) <- "ID"   # ON
-link_type(Remi) <- "self"
+link_var(qRemi) <- "ID"   # ON
+link_type(qRemi) <- "self"
 
-link_var(Remi) <- NULL  # OFF
+link_var(qRemi) <- NULL  # OFF
 
                           
-## example 3: Wages data
+## example 3: Wages
 data(wages)
 wage <- qdata(wages[wages$id<2000,1:3])
 print(qtime(exper,~lnw,wage,group=id))
@@ -48,3 +48,28 @@ wage$id <- as.factor(wage$id)
 link_var(wage) <- "id"   # ON
 link_type(wage) <- "self"
 link_var(wage) <- NULL  # OFF
+
+
+## example 4: Lynx
+data(lynx)
+qlynx<-qdata(data.frame(Time=1:114, lynx))
+qtime(Time, ~lynx, qlynx, shift=1:12)
+
+
+## example 5: Sunspots
+data(sunspots)
+qsun<-qdata(data.frame(Time=1:2820, sunspots))
+qtime(Time, ~sunspots, qsun, shift=c(1,(1:10)*10))
+
+
+## example 6: Pigs
+data(pigs)
+qpig<-qdata(pigs)
+qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
+
+library(reshape)
+pigGP <- pigs[,c(1,7,8)]
+pigGP[,2:3] <- rescaler(pigGP[,2:3])
+pigGP <- melt(pigGP,1)
+qpigGP <- qdata(pigGP)
+print(qtime(TIME,~value,qpigGP,group=variable,shift=c(1,4)))
