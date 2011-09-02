@@ -97,6 +97,25 @@ NULL
 ##' Survey of Youth (NLSY) described at
 ##' \url{http://www.bls.gov/nls/nlsdata.htm}.
 ##' @example inst/examples/wages-ex.R
+NULL
+
+
+##' Dataset of 2006 Australian Open mens tennis matches
+##'
+##' The data contains statistics from the 2006 Australian Open mens
+##' tennis matches.
+##' @name tennis
+##' @docType data
+##' @usage data(tennis)
+##' @format data.frame: 25 obs. of  18 variables
+##' @keywords datasets
+##' @source 2006 Australian Open mens tennis matches.
+##' @examples library(cranvas)
+##' data(tennis); qtennis = qdata(tennis)
+##'
+##' qscatter(first.serve.pts, second.serve.pts, data = qtennis)
+##' qscatter(matches, sets, data = qtennis)
+NULL
 
 
 ## set options(cranvas_debug = TRUE) to print the debug message
