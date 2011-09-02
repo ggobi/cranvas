@@ -217,18 +217,20 @@ qhist =
     layer.root[1, 2] = layer.brush
     layer.root[1, 2] = layer.identify
     layer.root[1, 3] = qlayer()
-    layout = layer.root$gridLayout()
-    layout$setRowPreferredHeight(0, prefer_height(meta$main))
-    layout$setRowPreferredHeight(2, prefer_height(meta$xlabels))
-    layout$setRowPreferredHeight(3, prefer_height(meta$xlab))
-    layout$setColumnPreferredWidth(0, prefer_width(meta$ylab, FALSE))
-    layout$setColumnPreferredWidth(1, prefer_width(meta$ylabels))
-    layout$setColumnMaximumWidth(3, 10)
-    layout$setRowStretchFactor(0, 0)
-    layout$setRowStretchFactor(2, 0)
-    layout$setRowStretchFactor(3, 0)
-    layout$setColumnStretchFactor(0, 0)
-    layout$setColumnStretchFactor(1, 0)
+    set_layout = function() {
+        fix_dimension(layer.root,
+                      row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
+                                                  prefer_height(meta$xlabels),
+                                                  prefer_height(meta$xlab))),
+                      column = list(id = c(1, 0, 3), value = c(prefer_width(meta$ylabels),
+                                                     prefer_width(meta$ylab, FALSE),
+                                                     10)))
+    }
+    set_layout()
+    meta$mainChanged$connect(set_layout)
+    meta$xlabChanged$connect(set_layout); meta$ylabChanged$connect(set_layout)
+    meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout);
+
     view = qplotView(scene = scene)
     view$setWindowTitle(paste(ifelse(meta$spine, "Spine plot:", "Histogram:"), meta$var))
     meta$varChanged$connect(function() {
