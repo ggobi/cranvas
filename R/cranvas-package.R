@@ -208,7 +208,7 @@ NULL
 ##' An shortened version of the map coordinates for all the countries
 ##' on the globe. Polygon edges will be a bit rough, but the speed is
 ##' improved for interaction.
-##' @name nasa
+##' @name world
 ##' @docType data
 ##' @usage data(world)
 ##' @format data.frame: 48 obs. of 11 variables
