@@ -14,12 +14,12 @@ Type: Package
 LazyLoad: yes
 Author: Hadley Wickham, Michael Lawrence, Heike Hofmann, Di
     Cook, Barret Schloerke, Marie Vendettuoli, Tengfei Yin,
-    Yihui Xie
+    Yihui Xie, Xiaoyue Cheng
 Description: Experiments with interactive graphics based on
     the pipeline design pattern and a layered canvas.
     Features include coordinated multiple views, linked
     brushing, ...
-Version: 0.1-0
+Version: 0.7.5
 URL: http://github.com/ggobi/cranvas
 BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
