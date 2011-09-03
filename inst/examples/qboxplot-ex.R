@@ -1,21 +1,32 @@
 library(cranvas)
 
-df = matrix(rnorm(1000), 200)
-colnames(df) <- c("V1", "V2", "V3", "V4", "V5")
-qboxplot(df)
-qboxplot(df, horizontal = TRUE)
-qboxplot(df, at = (1:5)^2)  # at different locations
-qboxplot(df, width = .1*sample(5))  # different widths
-qboxplot(rnorm(100))
-qboxplot(Sepal.Length~Species,data=iris)
+### (1) some test cases
+df = qdata(as.data.frame(matrix(rnorm(1000), 200)))
+qboxplot(~., df)
+qboxplot(~., df, horizontal = TRUE)
+qboxplot(~., df, at = (1:5)^2)  # at different locations
+qboxplot(~., df, width = .1*sample(5))  # different widths
 
-df = qdata(round(data.frame(x = rnorm(100), y = runif(100), z = rbeta(100, 1, .8)), 2))
 
-qboxplot(data = df)
-qparallel(~ ., data = df)  # brush on par-coords and you see little boxplots
-
+### (2) flea data
 data(flea, package = 'tourr')
 qflea <- qdata(flea)
-qboxplot(tars1 ~  species, data = qflea)
-# qparallel(~ ., data=qflea) #This doesn't work yet, linkng a bit odd
-          
+
+## continuous vs categorical variable
+qboxplot(tars1 ~ species, data = qflea)
+
+## side-by-side boxplots for several continuous variables
+qboxplot(~aede1+aede2+aede3, data = qflea)
+
+## brush on other plots and we see little boxplots
+qparallel(~ ., data = qflea)
+
+qscatter(tars1, tars2, data = qflea)
+
+
+## we can turn on the point layer too
+qboxplot(tars1 ~ species, data = qflea, points = TRUE)
+
+## show points with colors
+qflea2 = qdata(flea, color = species)
+qboxplot(~aede1+aede2+aede3, data = qflea2, points = TRUE)
