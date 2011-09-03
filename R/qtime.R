@@ -202,6 +202,20 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     if (event$button() != Qt$Qt$NoButton) {
       b$cursor <- 0L
     }
+    meta$pos <- as.numeric(event$pos())
+    if (meta$wrapF_dragT) {     
+      meta$limits[1:2] <- meta$limits[1:2] - meta$pos[1] + meta$start[1]
+      if (meta$limits[1,1]<extend_ranges(meta$time)[1]) {
+        meta$limits[1:2] <- meta$limits[1:2] - meta$limits[1,1] + extend_ranges(meta$time)[1]
+      } else if (meta$limits[2,1]>extend_ranges(meta$time)[2]) {
+        meta$limits[1:2] <- meta$limits[1:2] - meta$limits[2,1] + extend_ranges(meta$time)[2]
+      }
+      meta$xat <- axis_loc(meta$limits[1:2])
+      meta$xlabels <- format(meta$xat)
+      
+      qupdate(main_circle_layer)
+      qupdate(main_line_layer)
+    }
     .new.brushed <- rep(FALSE, nrow(data))
     rect <- qrect(update_brush_size(meta))
     hits <- layer$locate(rect) + 1
@@ -215,20 +229,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     
     selected(data) <- meta$orderEnter[meta$hitsrow]
     if (!is.null(meta$group)) self_link(data)
-    
-    if (meta$wrapF_dragT) {
-      meta$limits[1:2] <- meta$limits[1:2] - meta$pos[1] + meta$start[1]
-      if (meta$limits[1,1]<extend_ranges(meta$time)[1]) {
-        meta$limits[1:2] <- meta$limits[1:2] - meta$limits[1,1] + extend_ranges(meta$time)[1]
-      } else if (meta$limits[2,1]>extend_ranges(meta$time)[2]) {
-        meta$limits[1:2] <- meta$limits[1:2] - meta$limits[2,1] + extend_ranges(meta$time)[2]
-      }
-      meta$xat <- axis_loc(meta$limits[1:2])
-      meta$xlabels <- format(meta$xat)
-      
-      qupdate(main_circle_layer)
-      qupdate(main_line_layer)
-    }
   }
 
   key_press <- function(layer, event){
