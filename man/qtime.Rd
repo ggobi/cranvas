@@ -116,8 +116,8 @@ link_var(qRemi) <- NULL  # OFF
 
 ## example 3: Wages
 data(wages)
-wage <- qdata(wages[wages$id < 2000, 1:3])
-wage$id <- as.factor(wage$id)
+wage <- qdata(wages[as.integer(as.character(wages$id)) < 
+    2000, 1:3])
 print(qtime(exper, ~lnw, wage, group = id))
 link_var(wage) <- "id"  # ON
 link_type(wage) <- "self"

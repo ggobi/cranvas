@@ -4,21 +4,30 @@ Imports:
     qtpaint,
     reshape,
     plyr,
-    tourr,
-    plumbr (>= 0.6.2),
-    objectSignals
+    tourr (>= 0.5),
+    plumbr (>= 0.6.3),
+    objectSignals (>= 0.9.5)
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
 Title: Interactive statistical graphics based on Qt
 Type: Package
 LazyLoad: yes
-Author: Hadley Wickham, Michael Lawrence, Heike Hofmann, Di
-    Cook, Barret Schloerke, Marie Vendettuoli, Tengfei Yin,
-    Yihui Xie, Xiaoyue Cheng
-Description: Experiments with interactive graphics based on
-    the pipeline design pattern and a layered canvas.
-    Features include coordinated multiple views, linked
-    brushing, ...
+Author: Yihui Xie, Heike Hofmann, Di Cook, Xiaoyue Cheng,
+    Barret Schloerke, Marie Vendettuoli, Tengfei Yin,
+    Hadley Wickham, Michael Lawrence
+Description: This is an R package as the next generation of
+    GGobi, a software package for interactive and dynamic
+    statistical graphics. It includes most of features in
+    GGobi such as brushing, zooming, panning, identifying
+    and linking, as well as common types of statistical
+    graphics, e.g. bar plot, scatter plot, boxplot,
+    histogram, density plot, spine plot, parallel
+    coordinates plot, mosaic plot, maps, missing value
+    plot, time series plot, tour, scatter plot matrix,
+    hexagons and tiles (color images), etc. Based on the
+    support of several other packages, cranvas aims for
+    speed (from Qt) and flexibility (from R), with the
+    style and design borrowed from ggplot2.
 Version: 0.7.5
 URL: http://github.com/ggobi/cranvas
 BugReports: https://github.com/ggobi/cranvas/issues
