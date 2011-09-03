@@ -1,14 +1,16 @@
-##' Boxplots for variables in the data or a continuous variable vs a
-##' categorical variable
+##' Draw boxplots for several variables in the data or a continuous
+##' variable vs a categorical variable
 ##'
 ##' This function can draw side-by-side boxplots for all the variables
 ##' in a data frame or boxplots for a continous variable vs a
 ##' categorical variable.
 ##'
-##' The boxplots can respond to changes in the brushed rows, i.e., in
-##' \code{selected(data)}. When we brush in other plots which are
-##' based on the same data, there will be ``child'' boxplots in this
-##' plot showing the distributions of the brushed data.
+##' Common interactions are documented in
+##' \code{\link{common_key_press}}. Note boxplots  also supports
+##' brushing and can respond to brushing in other plots. When we brush
+##' in other plots which are based on the same data, there will be
+##' ``child'' boxplots in this plot showing the distributions of the
+##' brushed data.
 ##' @param vars a list of variables (a character vector), or a
 ##' formula; a one-sided formula like \code{~ x1 + x2 + x3} means to
 ##' draw side-by-side boxplots for the variables in the right hand
@@ -22,199 +24,271 @@
 ##' provided as a numeric vector); by default it is about 1/10 of the
 ##' screen width
 ##' @param horizontal horizontal or vertical boxplots
-##' @return NULL
+##' @param points whether to add data points to the boxplot
+##' @return A boxplot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @example inst/examples/qboxplot-ex.R
 ##' @export
 ##' @family plots
-qboxplot = function(vars, data = last_data(), at = NULL, width = NULL, horizontal = FALSE) {
+qboxplot =
+    function(vars, data = last_data(), at = NULL, width = NULL, horizontal = FALSE,
+             main = '', xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL,
+             points = FALSE) {
     data = check_data(data)
+    b = brush(data)
+    meta = Box.meta$new(horizontal = horizontal, main = main, alpha = 1, points = points)
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
-    if (inherits(vars, 'formula')) {
-        vars.n = length(vars)  # 2 means one-sided formula, 3 means two-sided
-        vars.a = all.vars(vars)  # all variables in the formula
-        if (vars.n == 2) {
-            vars = all.vars(vars)
-            y = as.matrix(data[, vars])
-            xlabels = vars
-        } else if (vars.n == 3) {
-            r = range(data[, vars.a[1]], na.rm = TRUE)
-            p = length(unique(data[, vars.a[2]]))
-            y = as.vector(data[, vars.a[1]])
-            xlabels = levels(factor(data[, vars.a[2]]))
+
+    compute_coords = function(brush = FALSE) {
+        idx = visible(data)
+        if (brush) idx = idx & selected(data)
+        if (inherits(vars, 'formula')) {
+            vars.n = length(vars)  # 2 means one-sided formula, 3 means two-sided
+            vars.a = all.vars(vars)     # all variables in the formula
+            if (vars.n == 2) {
+                meta$vars = all.vars(vars)
+                if (identical(meta$vars, '.'))
+                    meta$vars = grep('^[^.]', names(data), value = TRUE)
+                ylist = lapply(as.data.frame(data[idx, meta$vars, drop = FALSE]), as.numeric)
+                if (!brush) {
+                    meta$xlab = if (is.null(xlab)) 'variable' else xlab
+                    meta$ylab = if (is.null(ylab)) 'value' else ylab
+                }
+            } else if (vars.n == 3) {
+                meta$xvar = vars.a[2]; meta$yvar = vars.a[1]
+                ylist = split(data[idx, meta$yvar], data[idx, meta$xvar])
+                if (!brush) {
+                    meta$xlab = if (is.null(xlab)) vars.a[2] else xlab
+                    meta$ylab = if (is.null(ylab)) vars.a[1] else ylab
+                }
+            }
+        } else {
+            ylist = lapply(as.data.frame(data[idx, vars, drop = FALSE]), as.numeric)
+            if (!brush) {
+                meta$vars = names(data[, vars, drop = FALSE])
+                meta$xlab = if (is.null(xlab)) 'variable' else xlab
+                meta$ylab = if (is.null(ylab)) 'value' else ylab
+            }
         }
-    } else {
-        r = range(if (is.mutaframe(data)) as.data.frame(data)[, vars] else data[, vars],
-                  na.rm = TRUE)
-        p = length(vars)
-        y = as.matrix(as.data.frame(data[, vars]))
-        xlabels = vars
+        bxp.data = lapply(ylist, boxplot.stats, do.conf = FALSE)
+        bxp.stats = sapply(bxp.data, `[[`, 'stats')  # quantiles
+        bxp.out = lapply(bxp.data, `[[`, 'out')  # outliers
+        if (brush) {
+            meta$bxp.stats2 = bxp.stats
+            return()
+        }
+
+        meta$bxp.stats = bxp.stats; meta$bxp.out = bxp.out
+        meta$xlabels = if (length(meta$vars)) meta$vars else names(ylist)
+        meta$yat = axis_loc(range(ylist)); meta$ylabels = format(meta$yat)
+        meta$xat = meta$at = if (is.null(at)) seq_along(meta$xlabels) else at
+        meta$width = if (is.null(width)) max(0.1 * diff(range(meta$at)), 0.2) else width
+        meta$limits =
+            extend_ranges(cbind(if (is.null(xlim))
+                                range(meta$xat) + c(-1, 1) * max(meta$width)/2 else xlim,
+                                if (is.null(ylim)) range(ylist) else ylim))
+        if (length(meta$vars)) {
+            meta$y =
+                c(vapply(as.data.frame(data[, meta$vars, drop = FALSE]), as.numeric,
+                         numeric(nrow(data))))
+            meta$x = rep(meta$at, each = nrow(data))
+        } else {
+            meta$y = data[, meta$yvar]; meta$x = meta$at[as.integer(data[, meta$xvar])]
+        }
     }
-    #data = data[, vars, drop = FALSE]
-    if (is.null(at)) at = 1:p
-    if (is.null(width)) width = max(0.1 * diff(range(at)), 0.2)
-    lims = matrix(c(range(at) + c(-1, 1) * max(width)/2, r), 2)
-    ext = matrix(c(0.1, 0.1, 0.05, 0.05), 2)
-    if (horizontal) {
-        lims = lims[, 2:1]
-        ext = ext[, 2:1]
+    compute_coords()
+    compute_colors = function() {
+        if (!meta$points) {
+            meta$color = NA; meta$border = NA
+        } else {
+            if (length(meta$vars)) {
+                idx = !visible(data)
+                meta$color = data$.color; meta$border = data$.border
+                meta$color[idx] = NA; meta$border[idx] = NA
+            } else {
+                meta$color = meta$border = 'gray15'
+            }
+        }
     }
-    lims = extend_ranges(lims, ext)  # extend the limits here
-    layer.main = qbxp(vars = vars, data = data, at = at, width = width,
-                            horizontal = horizontal, limits = qrect(lims))
-    xat = at
-    yat = axis_loc(y)
-    ylabels = format(yat)
-    if (horizontal) {
-        tmp = xat; xat = yat; yat = tmp
-        tmp = xlabels; xlabels = ylabels; ylabels = tmp
+    compute_colors()
+    flip_coords = function() {
+        if (!meta$horizontal) return()
+        switch_value('x', 'y', meta)
+        switch_value('xat', 'yat', meta)
+        switch_value('xlabels', 'ylabels', meta)
+        switch_value('xlab', 'ylab', meta)
+        meta$limits = meta$limits[, 2:1]
+    }
+    flip_coords()
+    meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+
+    main_draw = function(layer, painter) {
+        qdrawGlyph(painter, qglyphCircle(r = data$.size[1]), meta$x, meta$y,
+                   stroke = meta$border, fill = meta$color)
+    }
+
+    brush_mouse_press = function(layer, event) {
+        common_mouse_press(layer, event, data, meta)
+    }
+    brush_mouse_move = function(layer, event) {
+        rect = qrect(update_brush_size(meta, event))
+        hits = layer$locate(rect)
+        if (length(hits)) {
+            if (length(meta$vars))
+                hits = hits %% nrow(data)
+            hits = hits + 1
+        }
+        selected(data) = mode_selection(selected(data), hits, mode = b$mode)
+        common_mouse_move(layer, event, data, meta)
+    }
+    brush_mouse_release = function(layer, event) {
+        brush_mouse_move(layer, event)
+        common_mouse_release(layer, event, data, meta)
+    }
+    key_press = function(layer, event) {
+        common_key_press(layer, event, data, meta)
+    }
+    key_release = function(layer, event) {
+        common_key_release(layer, event, data, meta)
     }
 
     scene = qscene()
+    layer.bxp = qbxp(data, meta, limits = qrect(meta$limits))
+    layer.main =
+        qlayer(paintFun = main_draw, mousePressFun = brush_mouse_press,
+               mouseReleaseFun = brush_mouse_release,
+               mouseMove = brush_mouse_move,
+               keyPressFun = key_press, keyReleaseFun = key_release,
+               limits = qrect(meta$limits), clip = TRUE)
+
     layer.root = qlayer(scene)
-    layer.xaxis = qaxis(at = xat, labels = xlabels, side = 1, sister = layer.main)
-    layer.yaxis = qaxis(at = yat, labels = ylabels, side = 2, sister = layer.main)
-    layer.grid = qgrid(xat = xat, yat = yat, sister = layer.main,
-                       minor = ifelse(horizontal, 'x', 'y'))
-    layer.brush = qbxp(vars = vars, data = data, at = at, width = width,
-                             subset = TRUE, horizontal = horizontal, sister = layer.main)
-    layer.root[1, 1] = layer.grid
-    layer.root[1, 1] = layer.main
-    layer.root[1, 1] = layer.brush
-    layer.root[1, 0] = layer.yaxis
-    layer.root[2, 1] = layer.xaxis
-    layer.root[1, 2] = qlayer()  # place-holder
+    layer.brush = qbxp(data, meta, subset = TRUE, limits = qrect(meta$limits))
+    layer.title = qmtext(meta = meta, side = 3)
+    layer.xlab = qmtext(meta = meta, side = 1)
+    layer.ylab = qmtext(meta = meta, side = 2)
+    layer.xaxis = qaxis(meta = meta, side = 1)
+    layer.yaxis = qaxis(meta = meta, side = 2)
+    layer.grid = qgrid(meta = meta, minor = ifelse(meta$horizontal, 'x', 'y'))
+    layer.root[0, 2] = layer.title
+    layer.root[2, 2] = layer.xaxis
+    layer.root[3, 2] = layer.xlab
+    layer.root[1, 1] = layer.yaxis
+    layer.root[1, 0] = layer.ylab
+    layer.root[1, 2] = layer.grid
+    layer.root[1, 2] = layer.bxp
+    layer.root[1, 2] = layer.main
+    layer.root[1, 2] = layer.brush
+    layer.root[1, 3] = qlayer()
 
-    layout = layer.root$gridLayout()
-    layout$setRowPreferredHeight(0, 30)
-    layout$setColumnPreferredWidth(0, prefer_width(ylabels))
-    layout$setRowPreferredHeight(2, prefer_height(xlabels))
-    layout$setColumnMaximumWidth(2, 10)
-    layout$setRowStretchFactor(0, 0)
-    layout$setColumnStretchFactor(0, 0)
-    layout$setRowStretchFactor(2, 0)
-
-    if (is.mutaframe(data)) {
-        add_listener(data, function(i, j) {
-            ## layer.main$setLimits(qrect(matrix(c(0, 3, -3, 10), 2)))
-            qupdate(layer.main)
-        })
+    set_layout = function() {
+        fix_dimension(layer.root,
+                      row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
+                                                  prefer_height(meta$xlabels),
+                                                  prefer_height(meta$xlab))),
+                      column = list(id = c(1, 0, 3), value = c(prefer_width(meta$ylabels),
+                                                     prefer_width(meta$ylab, FALSE),
+                                                     10)))
     }
+    set_layout()
+    meta$mainChanged$connect(set_layout)
+    meta$xlabChanged$connect(set_layout); meta$ylabChanged$connect(set_layout)
+    meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout)
+
     view = qplotView(scene = scene)
-    ## view$setWindowTitle(main)
+    view$setWindowTitle(paste("Boxplot:", if (length(meta$vars))
+                              paste(meta$vars, collapse = ', ') else
+                              paste(meta$yvar, meta$xvar, sep = ' ~ ')))
+
+    d.idx = add_listener(data, function(i, j) {
+        idx = which(j == c('.brushed', '.color', '.border'))
+        if (length(idx) < 1) {
+            compute_coords(); compute_colors()
+            qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+            layer.main$invalidateIndex(); qupdate(layer.main)
+            return()
+        } else idx = c(1, 2, 2)[idx]
+        switch(idx, {compute_coords(brush = TRUE); qupdate(layer.brush)},
+           {compute_color(); qupdate(layer.main)})
+    })
+    qconnect(layer.main, 'destroyed', function(x) {
+        remove_listener(data, d.idx)
+    })
+
+    b$cursorChanged$connect(function() {
+        set_cursor(view, b$cursor)
+    })
+    sync_limits(meta, layer.main, layer.brush, layer.bxp)  # sync limits
+    meta$manual.brush = function(pos) {
+        brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+    }
+
+    attr(view, 'meta') = meta
     view
 }
 
+Box.meta =
+    setRefClass("Box_meta", fields = signalingFields(c(
+
+                            Common.meta,
+
+                            list(vars = 'character', x = 'numeric', y = 'numeric',
+                                 xvar = 'character', yvar = 'character',
+                                 at = 'numeric', width = 'numeric', horizontal = 'logical',
+                                 bxp.stats = 'matrix', bxp.out = 'list', points = 'logical',
+                                 bxp.stats2 = 'matrix')
+
+                            )))
 
 ##' Create a boxplot layer
 ##'
 ##' A ``low-level'' plotting function to create a boxplot layer.
 ##'
-##' @param parent the parent layer in which to embed this boxplot
-##' layer
-##' @param vars see \code{\link{qboxplot}}
-##' @param data the data (a data frame or mutaframe or a list
-##' containing child elements \code{plot.data} and \code{numeric.col})
+##' @inheritParams qbar
+##' @param meta the meta data
 ##' @param subset whether to draw boxplots based on selected rows
-##' @param at the locations at which to draw the boxplots
-##' @param width width(s) of boxes
-##' @param horizontal direction of boxplots (\code{TRUE} means
-##' horizontal)
-##' @param sister a sister layer on top of which to put the boxplot
-##' layer
 ##' @param ... other arguments passed to \code{\link[qtpaint]{qlayer}}
 ##' @return a layer object
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
-##' @examples
-##' library(cranvas)
-##' library(qtbase)
-##' library(qtpaint)
-##' library(plumbr)
-##'
-##' s = qscene()
-##' r = qlayer(s)
-##' x = as.data.frame(matrix(rnorm(100), 20))
-##' m = qlayer(paintFun = function(layer, painter) {
-##'     qdrawCircle(painter, as.vector(col(x)), as.vector(as.matrix(x)), r = 2, stroke = 'gray')
-##' }, limits = qrect(matrix(c(0, 6, range(x)), 2)))  # main layer
-##' b = qbxp(vars = c('V1', 'V3', 'V5'), data = x, at = c(1, 3, 5), width = 1, sister = m)
-##' r[1, 1] = b
-##' r[1, 1] = m
-##' print(qplotView(scene = s))
-##'
-##' ## when the data argument is a list
-##' s = qscene()
-##' r = qlayer(s)
-##' m = qlayer(paintFun = function(layer, painter) {
-##'     qdrawCircle(painter, as.vector(col(x)), as.vector(as.matrix(x)), r = 2, stroke = 'gray')
-##' }, limits = qrect(matrix(c(0, 6, range(x)), 2)))  # main layer
-##' b = qbxp(data = list(plot.data = x, numeric.col = rep(TRUE, 5)), width = 0.6, sister = m)
-##' r[1, 1] = b
-##' r[1, 1] = m
-##' print(qplotView(scene = s))
-##'
-qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
-                horizontal = FALSE, sister = NULL, ...) {
+##' @examples ## see source code of qboxplot()
+qbxp = function(data, meta, subset = FALSE, ...) {
     draw_boxplot = function(layer, painter) {
         .boxcol = 'black'
+        width = meta$width
         if (subset) {
-            if (all(!selected(data))) return()
+            bxp.stats = meta$bxp.stats2
+            if (!nrow(bxp.stats)) return()
             .boxcol = 'gray'
-            data2 = data[selected(data), , drop = FALSE]
             width = mean(selected(data)) * width
-        }
-        if (!is.null(vars) && inherits(vars, 'formula') && length(vars) == 3) {
-            vars.a = all.vars(vars)
-            data2 = tapply(data[, vars.a[1]], data[, vars.a[2]], I, simplify = FALSE)  # reshape
-            vars = names(data2)
-        } else if (is.character(vars))
-            data2 = as.data.frame((if (subset) data2 else data)[, vars, drop = FALSE])
-        ## if meta data is passed here, use it
-        if (!is.mutaframe(data) && !is.null(data$plot.data) && !is.null(data$numeric.col)) {
-            data2 = as.data.frame(data$plot.data)[, data$numeric.col, drop = FALSE]
-            at = which(data$numeric.col)
-        }
-        ## boxplots statistics
-        bxp.data = sapply(data2, boxplot.stats, do.conf = FALSE, simplify = FALSE)
-        bxp.stats = sapply(bxp.data, `[[`, 'stats')  # quantiles
-        bxp.out = sapply(bxp.data, `[[`, 'out', simplify = FALSE)  # outliers
+        } else bxp.stats = meta$bxp.stats
+        if (!subset) bxp.out = meta$bxp.out
+        at = meta$at; horizontal = meta$horizontal
+        x0 = rep(at, each = 2); y0 = as.vector(bxp.stats[c(1, 4), ])
+        x1 = x0; y1 = as.vector(bxp.stats[c(2, 5), ])
         if (horizontal) {
-            y0 = rep(at, each = 2)
-            x0 = as.vector(bxp.stats[c(1, 4), ])
-            y1 = y0
-            x1 = as.vector(bxp.stats[c(2, 5), ])
-        } else {
-            x0 = rep(at, each = 2)
-            y0 = as.vector(bxp.stats[c(1, 4), ])
-            x1 = x0
-            y1 = as.vector(bxp.stats[c(2, 5), ])
+            switch_value('x0', 'y0', sys.frame(1))
+            switch_value('x1', 'y1', sys.frame(1))
         }
         qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # whiskers
+
+        x0 = at - width/2; x1 = at + width/2
+        y0 = bxp.stats[2, ]; y1 = bxp.stats[4, ]
         if (horizontal) {
-            y0 = at - width/2
-            y1 = at + width/2
-            x0 = bxp.stats[2, ]
-            x1 = bxp.stats[4, ]
-        } else {
-            x0 = at - width/2
-            x1 = at + width/2
-            y0 = bxp.stats[2, ]
-            y1 = bxp.stats[4, ]
+            switch_value('x0', 'y0', sys.frame(1))
+            switch_value('x1', 'y1', sys.frame(1))
         }
         qdrawRect(painter, x0, y0, x1, y1, fill = ifelse(subset, '#FFFF0099', 'white'),
                   stroke = .boxcol)  # box
-        if (horizontal) {
-            y = rep(at, sapply(bxp.out, length))
-            x = unlist(bxp.out)
-        } else {
-            x = rep(at, sapply(bxp.out, length))
-            y = unlist(bxp.out)
-        }
+
         if (!subset) {
-            circle = qglyphCircle()
-            qdrawGlyph(painter, circle, x, y, cex = .6, stroke = 'black', fill = 'black')
+            x = unlist(bxp.out); y = rep(at, sapply(bxp.out, length))
+            if (horizontal) {
+                switch_value('x', 'y', sys.frame(1))
+            }
+            circle = qglyphCircle(r = data$.size[1])
+            qdrawGlyph(painter, circle, x, y, stroke = 'black', fill = 'black')
         }
+
         qlineWidth(painter) = 3
         if (horizontal) {
             x0 = x1 = bxp.stats[3, ]
@@ -223,8 +297,8 @@ qbxp = function(parent = NULL, vars = NULL, data, subset = FALSE, at, width,
         }
         qdrawSegment(painter, x0, y0, x1, y1, stroke = .boxcol)  # median bar
         qlineWidth(painter) = 1
+
+        if (subset) draw_brush(layer, painter, data, meta)
     }
-    if (!('limits' %in% names(list(...))) && !is.null(sister))
-        qlayer(parent, paintFun = draw_boxplot, limits = sister$limits(), ...) else
-    qlayer(parent, paintFun = draw_boxplot, ...)
+    qlayer(paintFun = draw_boxplot, ...)
 }
