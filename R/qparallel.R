@@ -48,8 +48,8 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     na.action = na_impute,
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
-    boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    main = '', draw.range = TRUE) {
+    boxplot = FALSE, width, jitter = NULL, amount = NULL,
+    main = '') {
 
     data = check_data(data)
     b = brush(data)    # the brush attached to the data
@@ -61,7 +61,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     ## meta data used to store useful information
     meta = Parallel.meta$new(brush.move = TRUE, alpha = 1,
                     main = main, vars = vars, glyph = match.arg(glyph),
-                    order = match.arg(order), draw.range = draw.range,
+                    order = match.arg(order), draw.range = FALSE,
                     jitter = jitter, amount = amount, names = names)
 
     data_preprocess = function() {
@@ -162,8 +162,8 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     meta$brush.size = c(meta$xr, -meta$yr)/15
 
     ## automatic box width
-    if (missing(boxwex))
-        boxwex = max(1/meta$p, 0.2)
+    if (missing(width))
+        width = max(1/meta$p, 0.2)
 
     ## convention of notation:
     ## *_draw means a drawing function for a layer; *_event is an even callback; *_layer is a layer object
@@ -377,7 +377,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     layer.root[1, 1] = layer.grid
 
     layer.boxplot = if (boxplot) {
-        qbxp(data = meta, width = boxwex, horizontal = !horizontal, sister = layer.main)
+        qbxp(data = meta, width = width, horizontal = !horizontal, sister = layer.main)
     } else qlayer()
     layer.root[1, 1] = layer.boxplot
 
