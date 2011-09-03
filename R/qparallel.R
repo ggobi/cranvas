@@ -41,7 +41,6 @@
 ##' variables (usually those categorical vars)
 ##' @param amount jitter amount
 ##' @param main the title
-##' @param alpha the opacity value
 ##' @param draw.range whether to draw the range values (min and max
 ##' for each variable)
 ##' @return a plot object with attributes
@@ -54,7 +53,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
     glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
     boxplot = FALSE, boxwex, jitter = NULL, amount = NULL,
-    main = '', alpha = 1, draw.range = TRUE) {
+    main = '', draw.range = TRUE) {
 
     data = check_data(data)
     b = brush(data)    # the brush attached to the data
@@ -69,7 +68,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
         stop("parallel coordinate plots need at least 2 variables!")
 
     ## meta data used to store useful information
-    meta = Parallel.meta$new(brush.move = TRUE, alpha = alpha,
+    meta = Parallel.meta$new(brush.move = TRUE, alpha = 1,
                     main = main, vars = vars, glyph = match.arg(glyph),
                     order = match.arg(order), draw.range = draw.range,
                     jitter = jitter, amount = amount, names = names)
