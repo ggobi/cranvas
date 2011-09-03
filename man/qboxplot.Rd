@@ -1,10 +1,11 @@
 \name{qboxplot}
 \alias{qboxplot}
-\title{Boxplots for variables in the data or a continuous variable vs a
-categorical variable}
+\title{Draw boxplots for several variables in the data or a continuous
+variable vs a categorical variable}
 \usage{
 qboxplot(vars, data = last_data(), at = NULL, width = NULL, 
-    horizontal = FALSE)
+    horizontal = FALSE, main = "", xlim = NULL, ylim = NULL, 
+    xlab = NULL, ylab = NULL, points = FALSE)
 }
 \arguments{
   \item{vars}{a list of variables (a character vector), or
@@ -25,12 +26,29 @@ qboxplot(vars, data = last_data(), at = NULL, width = NULL,
 
   \item{horizontal}{horizontal or vertical boxplots}
 
+  \item{points}{whether to add data points to the boxplot}
+
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly
   used data)}
+
+  \item{main}{the main title}
+
+  \item{xlim}{a numeric vector of length 2 (like
+  \code{c(x0, x1)}) for x-axis limits; it will be
+  calculated from the data limits if not specified
+  (\code{NULL}). Note when \code{x0 > x1}, the axis
+  direction will be reversed (i.e. from larger values to
+  small values)}
+
+  \item{ylim}{y-axis limits; similar to \code{xlim}}
+
+  \item{xlab}{x-axis title}
+
+  \item{ylab}{y-axis title}
 }
 \value{
-  NULL
+  A boxplot
 }
 \description{
   This function can draw side-by-side boxplots for all the
@@ -38,36 +56,46 @@ qboxplot(vars, data = last_data(), at = NULL, width = NULL,
   variable vs a categorical variable.
 }
 \details{
-  The boxplots can respond to changes in the brushed rows,
-  i.e., in \code{selected(data)}. When we brush in other
-  plots which are based on the same data, there will be
-  ``child'' boxplots in this plot showing the distributions
-  of the brushed data.
+  Common interactions are documented in
+  \code{\link{common_key_press}}. Note boxplots also
+  supports brushing and can respond to brushing in other
+  plots. When we brush in other plots which are based on
+  the same data, there will be ``child'' boxplots in this
+  plot showing the distributions of the brushed data.
 }
 \examples{
 library(cranvas)
 
-df <- matrix(rnorm(1000), 200)
-colnames(df) <- c("V1", "V2", "V3", "V4", "V5")
-qboxplot(df)
-qboxplot(df, horizontal = TRUE)
-qboxplot(df, at = (1:5)^2)  # at different locations
-qboxplot(df, width = 0.1 * sample(5))  # different widths
-qboxplot(rnorm(100))
-qboxplot(Sepal.Length ~ Species, data = iris)
+### (1) some test cases
+df <- qdata(as.data.frame(matrix(rnorm(1000), 200)))
+qboxplot(~., df)
+qboxplot(~., df, horizontal = TRUE)
+qboxplot(~., df, at = (1:5)^2)  # at different locations
+qboxplot(~., df, width = 0.1 * sample(5))  # different widths
 
-df <- qdata(round(data.frame(x = rnorm(100), y = runif(100), 
-    z = rbeta(100, 1, 0.8)), 2))
 
-qboxplot(data = df)
-qparallel(~., data = df)  # brush on par-coords and you see little boxplots
-
+### (2) flea data
 data(flea, package = "tourr")
 qflea <- qdata(flea)
-qboxplot(tars1 ~ species, data = qflea)
-# qparallel(~ ., data=qflea) #This doesn't work yet, linkng
-#   a bit odd
 
+## continuous vs categorical variable
+qboxplot(tars1 ~ species, data = qflea)
+
+## side-by-side boxplots for several continuous variables
+qboxplot(~aede1 + aede2 + aede3, data = qflea)
+
+## brush on other plots and we see little boxplots
+qparallel(~., data = qflea)
+
+qscatter(tars1, tars2, data = qflea)
+
+
+## we can turn on the point layer too
+qboxplot(tars1 ~ species, data = qflea, points = TRUE)
+
+## show points with colors
+qflea2 <- qdata(flea, color = species)
+qboxplot(~aede1 + aede2 + aede3, data = qflea2, points = TRUE)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
