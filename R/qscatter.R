@@ -15,7 +15,7 @@
 ##' \code{Shift} key, \code{Up} and \code{Down} will increase/decrease
 ##' the sizes of points; with the \code{Shift} key being pressed,
 ##' \code{Up}, \code{Down}, \code{Left} and \code{Right} will move the
-##' points to the corresponding direction.
+##' (background of) plot to the corresponding direction.
 ##'
 ##' Mouse wheel is used to zoom in and zoom out the plot. Together
 ##' with keyboard interactions, this will enable us to see details in
