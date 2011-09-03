@@ -8,11 +8,7 @@
 ##' par-coords: press \code{R} to toggle the min/max labels; the arrow
 ##' keys are used to adjust the order of the variables and flip the
 ##' values of variables (like a mirror reflection).
-##' @param vars variables to show; can be a character vector (column
-##' names), an integer vector (column indices) or a formula like '~ x1
-##' + x2'; if missing or it is a formula that contains a dot
-##' (e.g. \code{ ~ .}), all variables in the data except those whose
-##' names start with a dot will be used
+##' @inheritParams qmval
 ##' @inheritParams qbar
 ##' @param scale data standardizing method; possible values are
 ##' \code{'range'} (scale columns individually to [0, 1]), \code{'I'}
@@ -58,12 +54,7 @@ qparallel = function(vars, data = last_data(), scale = "range", names = break_st
     data = check_data(data)
     b = brush(data)    # the brush attached to the data
 
-    if (missing(vars)) vars = grep('^[^.]', colnames(data), value = TRUE)
-    if (class(vars) == "formula") {
-        vars = all.vars(vars)
-        if ('.' %in% vars) vars = grep('^[^.]', colnames(data), value = TRUE)
-    }
-    if (is.numeric(vars)) vars = colnames(data)[vars]
+    vars = var_names(vars, data)
     if (length(vars) <= 1L)
         stop("parallel coordinate plots need at least 2 variables!")
 
