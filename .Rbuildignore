@@ -1,5 +1,4 @@
 .git
-load.R
 formatR.R
 roxygenize.R
-readme.Rd
+readme.md
