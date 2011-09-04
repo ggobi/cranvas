@@ -730,3 +730,18 @@ fix_dimension =
         layout$setColumnStretchFactor(column$id[j], 0)
     }
 }
+
+
+##' Get a Qt glyph (point shapes)
+##'
+##' This function create a Qt glyph based on shape and size.
+##' @param shape an integer to be mapped to different shapes (1:
+##' circle; 2: square; 3: triangle)
+##' @param size the size of the glyph
+##' @return A Qt glyph
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @noRd
+##' @examples ## TODO
+get_glyph = function(shape, size = 4) {
+    switch(shape, qglyphCircle(size), qglyphSquare(size), qglyphTriangle(size))
+}
