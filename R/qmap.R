@@ -191,9 +191,7 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
         .startBrush <<- NULL
         .endBrush <<- NULL
-				focused(data) <- TRUE
         setSelected()
-				focused(data) <- FALSE
     }
 
     setHiliting <- function() {
@@ -218,7 +216,6 @@ qmap <- function(data, longitude, latitude, group, label = group,
 			brushed <- group %in% bdata$group
 
 #			.new.brushed[hits] = TRUE
-#			focused(data) <- TRUE
 			selected(data) = mode_selection(selected(data), brushed, mode = brush(data)$mode)
 	  }
     # Wheel events -------------------------------------------------------------
@@ -482,14 +479,6 @@ qmap <- function(data, longitude, latitude, group, label = group,
 
     bglayer = qlayer(NULL, coords, limits = lims, clip = FALSE)
     datalayer = qlayer(NULL, draw, limits = lims,
-        focusInFun = function(...) {
-          print("focus map on")
-          focused(data) <- TRUE
-        },
-        focusOutFun = function(...) {
-          print("focus map off")
-          focused(data) <- FALSE
-        },
         wheelFun = handle_wheel_event,
         clip = FALSE)
     legendlayer = qlegend(parent=NULL, data=data, vertical=TRUE)
