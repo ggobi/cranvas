@@ -12,7 +12,7 @@ qnrc = qdata(nrcstat, color = Control)  # Control: public or private univ
 qbar(Regional.Code, main = 'Number of public and private colleges in each region')
 
 qparallel(vars = 13:10, main = "Overview of Rankings", glyph = "tick",
-    horizontal = FALSE, boxplot = TRUE)
+    horizontal = TRUE, boxplot = TRUE)
 
 qbar(Regional.Code, horizontal = TRUE)  # horizontal plot
 qbar(Regional.Code, standardize = TRUE)  # standardize to 1

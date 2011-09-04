@@ -35,14 +35,17 @@
   \item{main}{the main title} \item{xat, yat}{the tickmarks
   locations on the x and y axis} \item{xlat, ylab}{x and y
   axis titles} \item{xlabels, ylabels}{the tickmarks
-  labels} \item{limits}{the limits of the main plot layer
-  (it is often the case that some other layers need to sync
-  with the main plot layer in limits, so this component is
-  very important)} \item{color, border, size}{the real
-  color, border and size vectors used to draw the graphical
-  elements, which can be different from the corresponding
-  columns in the original data} \item{start, pos}{the
-  starting position and the current position of the cursor}
+  labels} \item{minor}{possible values are \code{''},
+  \code{'x'}, \code{'y'} and 'xy', indicating which axis to
+  draw minor grid lines} \item{limits}{the limits of the
+  main plot layer (it is often the case that some other
+  layers need to sync with the main plot layer in limits,
+  so this component is very important)} \item{color,
+  border, size}{the real color, border and size vectors
+  used to draw the graphical elements, which can be
+  different from the corresponding columns in the original
+  data} \item{start, pos}{the starting position and the
+  current position of the cursor}
   \item{brush.move}{indicating if the brush is in the move
   mode (if not, the brush will be resized when mouse moves}
   \item{brush.size}{the size of the brush rectangle (a
