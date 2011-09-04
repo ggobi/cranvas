@@ -226,8 +226,9 @@ qparallel =
                 movedir = switch(i, NULL, NULL, -1, 1)
                 flipdir = switch(i, -1, 1, NULL, NULL)
             }
-            xs = which((1:meta$p) > meta$pos[j] - meta$brush.size[j] & (1:meta$p) < meta$pos[j] + meta$brush.size[j])
+            xs = discard(1:meta$p, sort(meta$pos[j] - c(0, 1) * meta$brush.size[j]))
             if ((nxs <- length(xs))) {
+                update.all = FALSE
                 if (!is.null(movedir)) {
                     vars0 = meta$vars
                     if (xs[1] > 1 & movedir == -1){
@@ -239,24 +240,19 @@ qparallel =
                         meta$pos[j] = meta$pos[j] + 1
                     }
                     if (any(vars0 != meta$vars)) {
-                        data_reorder(vars0)
-                        data_primitives()
-                        qupdate(layer.xaxis)
-                        qupdate(layer.yaxis)
-                        layer.main$invalidateIndex()
-                        qupdate(layer.main)
-                        qupdate(layer.brush)
-                        qupdate(layer.boxplot)
+                        data_reorder(vars0); update.all = TRUE
                     }
                 }
                 if (!is.null(flipdir)) {
-                    meta$plot.data[, xs] = apply(meta$plot.data[, xs, drop = FALSE], 2,
-                                              function(xx) {
-                                                  meta$limits[c(3,1)[j]] + meta$limits[c(4,2)[j]] - xx
-                                              })
-                    data_primitives()
-                    qupdate(layer.xaxis)
-                    qupdate(layer.yaxis)
+                    meta$plot.data[, xs] =
+                        apply(meta$plot.data[, xs, drop = FALSE], 2,
+                              function(xx) {
+                                  meta$limits[c(3,1)[j]] + meta$limits[c(4,2)[j]] - xx
+                              })
+                    data_primitives(); update.all = TRUE
+                }
+                if (update.all) {
+                    qupdate(layer.xaxis); qupdate(layer.yaxis)
                     layer.main$invalidateIndex()
                     qupdate(layer.main); qupdate(layer.brush); qupdate(layer.boxplot)
                 }
