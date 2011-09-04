@@ -440,13 +440,13 @@ Parallel.meta =
 
                 Common.meta,
 
-                list(vars = 'character', glyph = 'character',
+                list(vars = 'character', glyph = 'character', names = 'character',
                      order = 'character', draw.range = 'logical',
                      plot.data = 'matrix', numeric.col = 'logical',
                      p = 'numeric', n = 'numeric', horizontal = 'logical',
                      jitter = 'character', amount = 'numeric', x = 'matrix', y = 'matrix',
-                     xr = 'numeric', yr = 'numeric', names = 'character',
                      segx0 = 'numeric', segx1 = 'numeric',
                      segy0 = 'numeric', segy1 = 'numeric',
-                     x0 = 'numeric', y0 = 'numeric')
+                     x0 = 'numeric', y0 = 'numeric', at = 'numeric',
+                     width = 'numeric', bxp.stats = 'matrix', bxp.out = 'list')
                 )))
