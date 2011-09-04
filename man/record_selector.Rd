@@ -41,17 +41,17 @@ library(cranvas)
 
 ## old iris as the toy example
 qiris <- qdata(iris)
-qparallel()
-record_selector()
+qparallel(~., data = qiris)
+record_selector(Species, data = qiris)
 
 ## NRC rankings
 data(nrcstat)
 qnrc <- qdata(nrcstat)
-qparallel(vars = 10:13, main = "Overview of Rankings", 
+qparallel(10:13, data = qnrc, main = "Overview of Rankings", 
     horizontal = FALSE)
-record_selector(Institution.Name)
-qparallel(vars = 14:19, main = "Research, Student Support, Diversity")
-qparallel(vars = 20:26, main = "Publication, Award, Time to Degree")
+record_selector(Institution.Name, data = qnrc)
+qparallel(14:19, data = qnrc, main = "Research, Student Support, Diversity")
+qparallel(20:26, data = qnrc, main = "Publication, Award, Time to Degree")
 }
 \author{
   Yihui Xie and Jason Crowley
