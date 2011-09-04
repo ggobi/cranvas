@@ -138,7 +138,7 @@ qdata =
 
     ## specifies which variable is used for (hot/cold) linking
     ## use link_var(data) to access the linking variable
-    attr(mf, "Link") = mutalist(linkvar = NULL, type = "hot", focused = FALSE)
+    attr(mf, "Link") = mutalist(linkvar = NULL, type = "hot")
 
     shadow = is.na(data)  # shadow matrix for missing values
     ## add shadow matrix to 'shadow' attribute
@@ -206,36 +206,6 @@ last_data = function() {
         stop('No data object was created by qdata() yet') else .cranvasEnv$.last.data
 }
 
-##' Set or query the focus status
-##'
-##' The plot on top of all the rest of plots is on focus, and the
-##' corresponding mutaframe is said to be on focus too.
-##' @param data the mutaframe
-##' @return The function \code{\link{focused}} returns a logical
-##' value: whether the plot corresponding to \code{data} is on focus
-##' or not
-##' @author Yihui Xie <\url{http://yihui.name}>
-##' @seealso \code{\link{qdata}}
-##' @export
-##' @examples
-##' mf = qdata(head(iris))
-##'
-##' focused(mf)
-##'
-##' focused(mf) = TRUE
-##'
-focused = function(data) {
-    attr(data, "Link")[["focused"]]
-}
-
-##' @rdname focused
-##' @usage focused(data) <- value
-##' @param value a logical value: whether on focus or not
-##' @export "focused<-"
-`focused<-` = function(data, value) {
-    attr(data, "Link")[["focused"]] = value
-    data
-}
 
 ##' Set or query the visibility of observations
 ##'
