@@ -44,12 +44,12 @@
 ##' @export
 ##' @family plots
 ##' @example inst/examples/qparallel-ex.R
-qparallel = function(vars, data = last_data(), scale = "range", names = break_str(vars),
-    na.action = na_impute,
-    center = NULL, order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = TRUE,
-    glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
-    boxplot = FALSE, width, jitter = NULL, amount = NULL,
-    main = '') {
+qparallel =
+    function(vars = ~., data = last_data(), scale = "range", names = break_str(vars),
+             na.action = na_impute, center = NULL,
+             order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = FALSE,
+             glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
+             boxplot = FALSE, width = NULL, jitter = NULL, amount = NULL, main = '') {
 
     data = check_data(data)
     b = brush(data)    # the brush attached to the data
