@@ -280,7 +280,7 @@ qbxp = function(data, meta, subset = FALSE, ...) {
         qdrawRect(painter, x0, y0, x1, y1, fill = ifelse(subset, '#FFFF0099', 'white'),
                   stroke = .boxcol)  # box
 
-        if (!subset) {
+        if (!subset && length(bxp.out)) {
             x = unlist(bxp.out); y = rep(at, sapply(bxp.out, length))
             if (horizontal) {
                 switch_value('x', 'y', sys.frame(1))
