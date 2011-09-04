@@ -71,7 +71,7 @@ qparallel =
             stop('there are less than 2 variables in the data')
         ## which columns are numeric? we don't want boxplots for non-numeric vars
         meta$numeric.col = sapply(tmp, is.numeric)
-
+        names(meta$numeric.col) = names(meta$names) = meta$vars
         meta$plot.data = sapply(tmp, as.numeric)
         meta$p = ncol(meta$plot.data)
         meta$n = nrow(meta$plot.data)
@@ -134,12 +134,8 @@ qparallel =
     ## given orders, rearrange the data
     ## need to update: numcol, plot_data, vars, boxplot data, primitives data
     data_reorder = function(vars) {
-        tmp = meta$numeric.col
-        names(tmp) = colnames(meta$plot.data)
-        meta$numeric.col = tmp[vars]
-        tmp = meta$names
-        names(tmp) = colnames(meta$plot.data)
-        meta$names = tmp[vars]
+        meta$numeric.col = meta$numeric.col[vars]
+        meta$names = meta$names[vars]
         meta$plot.data = meta$plot.data[, vars]
         meta$vars = colnames(meta$plot.data)
         data_primitives()
