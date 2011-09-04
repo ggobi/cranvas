@@ -180,7 +180,7 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
         if (!is.null(meta)) {
             lims = meta$limits
             xlim = lims[, 1]; ylim = lims[, 2]
-            xat = meta$xat; yat = meta$yat
+            xat = meta$xat; yat = meta$yat; minor = meta$minor
         }
         qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor,
             fill = .bgcolor)
