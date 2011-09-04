@@ -129,6 +129,15 @@ qparallel =
             meta$x0 = as.vector(t.default(meta$x))
             meta$y0 = as.vector(t.default(meta$y))
         }
+        if (boxplot) {
+            ## automatic box width
+            meta$width = if (is.null(width)) max(1/meta$p, 0.2) else width
+            meta$at = which(meta$numeric.col)
+            bxp.data =
+                lapply(as.data.frame(meta$plot.data[idx, meta$numeric.col]), boxplot.stats,
+                       do.conf = FALSE)
+            meta$bxp.stats = sapply(bxp.data, `[[`, 'stats')
+        }
     }
 
     ## given orders, rearrange the data
@@ -151,9 +160,6 @@ qparallel =
     ## brush range: horizontal and vertical
     meta$brush.size = c(meta$xr, -meta$yr)/15
 
-    ## automatic box width
-    if (missing(width))
-        width = max(1/meta$p, 0.2)
 
     ## convention of notation:
     ## *_draw means a drawing function for a layer; *_event is an even callback; *_layer is a layer object
@@ -365,7 +371,7 @@ qparallel =
     layer.root[1, 1] = layer.grid
 
     layer.boxplot = if (boxplot) {
-        qbxp(data = meta, width = width, horizontal = !horizontal, sister = layer.main)
+        qbxp(data, meta, limits = qrect(meta$limits))
     } else qlayer()
     layer.root[1, 1] = layer.boxplot
 
