@@ -1,13 +1,14 @@
 ##' Draw a parallel coordinates plot
 ##'
-##' Create a parallel coordinates plot (par-coords) from a data frame,
-##' with each line representing a row.
+##' This function creates a parallel coordinates plot (par-coords) for
+##' variables in a data, with each line representing a row.
 ##'
 ##' See \code{\link{common_key_press}} for a series of common
-##' interactions. There are also some interactions specific to
-##' par-coords: press \code{R} to toggle the min/max labels; the arrow
-##' keys are used to adjust the order of the variables and flip the
-##' values of variables (like a mirror reflection).
+##' interactions. Interactions specific to par-coords include: press
+##' \code{R} to toggle the min/max labels; the arrow keys are used to
+##' adjust the order of the variables and flip the values of variables
+##' (like a mirror reflection) when the axes are selected by the
+##' brush.
 ##' @inheritParams qmval
 ##' @inheritParams qbar
 ##' @param scale data standardizing method; possible values are
@@ -24,22 +25,20 @@
 ##' @param center the function to calculate where to center all the
 ##' variables (e.g. center at the medians), or a numeric value, or
 ##' \code{NULL} (do not center)
-##' @param order methods to reorder the variables; see \code{\link{reorder_var}}
-##' @param horizontal logical: arrange variables in horizontal or
-##' vertical direction
+##' @param order methods to reorder the variables; see
+##' \code{\link{reorder_var}}
+##' @param horizontal logical: direction of axes (horizontal or
+##' vertical)
 ##' @param glyph draw complete segments for all observations or other
-##' types of glyphs to represent observations (the latter can be more
-##' efficient in case of large data)
+##' types of glyphs to represent observations (the latter has speed
+##' gain in case of large data)
 ##' @param boxplot logical: overlay boxplots on top of the par-coords
 ##' plot or not
-##' @param boxwex width of boxplots
-##' @param jitter NULL (no jittering) or a character vector to jitter
-##' variables (usually those categorical vars)
+##' @param width width of boxplots
+##' @param jitter \code{NULL} (no jittering) or a character vector to
+##' jitter variables (usually those categorical variables)
 ##' @param amount jitter amount
-##' @param main the title
-##' @param draw.range whether to draw the range values (min and max
-##' for each variable)
-##' @return a plot object with attributes
+##' @return A par-coords plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @family plots
