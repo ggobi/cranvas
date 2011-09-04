@@ -81,7 +81,8 @@ qparallel =
         if (length(meta$jitter)) {
             meta$plot.data[, meta$jitter] =
                 apply(meta$plot.data[, meta$jitter, drop = FALSE],
-                      2, base::jitter, amount = meta$amount)  # jittering
+                      2, base::jitter,
+                      amount = if (length(meta$amount)) meta$amount else NULL)  # jittering
         }
 
         scale = switch(scale, range = function(x) {
