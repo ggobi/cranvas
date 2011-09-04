@@ -64,13 +64,16 @@ record_selector = function(vars, data = last_data()) {
     lst$setModel(model)
     selModel = lst$selectionModel()
 
+    change1 = change2 = FALSE
     # set up a handler to update the .brushed column when the index is
     # changed in the table
     qconnect(selModel, "selectionChanged", function(filler1, filler2) {
-        if (focused(data)) return()
+        if (change1) return()
+        change2 <<- TRUE
         currLvls = sapply(selModel$selectedIndexes(),
                            function(i) i$data())
         selected(data) = (x %in% currLvls)
+        change2 <<- FALSE
     })
 
     # set up a search bar and attach an auto-completer to it that is
@@ -94,15 +97,19 @@ record_selector = function(vars, data = last_data()) {
     # return is pressed in the line edit field. clears selection if the
     # text doesn't match a level of the variable. updates .brushed
     qconnect(le, "returnPressed", function() {
+        if (change1) return()
+        change2 <<- TRUE
         idx = if (le$text != "") {
             grep(le$text, as.character(xx[, 1]))
         } else integer(0)
 
         if(length(idx) > 1) select_items(idx-1) else selModel$clear()
+        change2 <<- FALSE
     })
     ## let the GUI respond to changes in .brushed too
     d.idx = add_listener(data, function(i, j) {
-        if (!focused(data)) return()
+        if (change2) return()
+        change1 <<- TRUE
         if (j == '.brushed') {
             idx = which(xx[, 1] %in% x[selected(data)])
             if (length(idx)) {
@@ -110,6 +117,7 @@ record_selector = function(vars, data = last_data()) {
                 lst$scrollTo(model$index(idx[1], 0), Qt$QAbstractItemView$EnsureVisible)
             } else selModel$clear()
         }
+        change1 <<- FALSE
     })
     qconnect(w, 'destroyed', function(x) {
         remove_listener(data, d.idx)
