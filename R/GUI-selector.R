@@ -25,21 +25,7 @@
 ##' @author Yihui Xie and Jason Crowley
 ##' @seealso \code{\link{qdata}}
 ##' @export
-##' @examples library(cranvas)
-##'
-##' ## old iris as the toy example
-##' qiris = qdata(iris)
-##' qparallel()
-##' record_selector()
-##'
-##' ## NRC rankings
-##' data(nrcstat)
-##' qnrc = qdata(nrcstat)
-##' qparallel(vars = 10:13, main = 'Overview of Rankings', horizontal=FALSE)
-##' record_selector(Institution.Name)
-##' qparallel(vars = 14:19, main = 'Research, Student Support, Diversity')
-##' qparallel(vars = 20:26, main = 'Publication, Award, Time to Degree')
-##'
+##' @example inst/examples/record_selector-ex.R
 record_selector = function(vars, data = last_data()) {
     l = as.list(match.call()[-1])
     if (is.null(l$vars)) {
