@@ -2,21 +2,14 @@
 \alias{qparallel}
 \title{Draw a parallel coordinates plot}
 \usage{
-qparallel(vars, data = last_data(), scale = "range", 
+qparallel(vars = ~., data = last_data(), scale = "range", 
     names = break_str(vars), na.action = na_impute, center = NULL, 
-    order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = TRUE, 
+    order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = FALSE, 
     glyph = c("auto", "line", "tick", "circle", "square", "triangle"), 
-    boxplot = FALSE, boxwex, jitter = NULL, amount = NULL, main = "", 
-    alpha = 1, draw.range = TRUE)
+    boxplot = FALSE, width = NULL, jitter = NULL, amount = NULL, 
+    main = "")
 }
 \arguments{
-  \item{vars}{variables to show; can be a character vector
-  (column names), an integer vector (column indices) or a
-  formula like '~ x1 + x2'; if missing or it is a formula
-  that contains a dot (e.g. \code{ ~ .}), all variables in
-  the data except those whose names start with a dot will
-  be used}
-
   \item{scale}{data standardizing method; possible values
   are \code{'range'} (scale columns individually to [0,
   1]), \code{'I'} (do not transform; use original values),
@@ -40,63 +33,113 @@ qparallel(vars, data = last_data(), scale = "range",
   \item{order}{methods to reorder the variables; see
   \code{\link{reorder_var}}}
 
-  \item{horizontal}{logical: arrange variables in
-  horizontal or vertical direction}
+  \item{horizontal}{logical: direction of axes (horizontal
+  or vertical)}
 
   \item{glyph}{draw complete segments for all observations
   or other types of glyphs to represent observations (the
-  latter can be more efficient in case of large data)}
+  latter has speed gain in case of large data)}
 
   \item{boxplot}{logical: overlay boxplots on top of the
   par-coords plot or not}
 
-  \item{boxwex}{width of boxplots}
+  \item{width}{width of boxplots}
 
-  \item{jitter}{NULL (no jittering) or a character vector
-  to jitter variables (usually those categorical vars)}
+  \item{jitter}{\code{NULL} (no jittering) or a character
+  vector to jitter variables (usually those categorical
+  variables)}
 
   \item{amount}{jitter amount}
 
-  \item{main}{the title}
-
-  \item{alpha}{the opacity value}
-
-  \item{draw.range}{whether to draw the range values (min
-  and max for each variable)}
+  \item{vars}{variables to show in the plot: a character
+  vector of variable names, or a numeric vector of column
+  indices, or a two-sided formula like \code{~ x1 + x2 +
+  x3} (without the left-hand side); see
+  \code{\link{var_names}}}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly
   used data)}
+
+  \item{main}{the main title}
 }
 \value{
-  a plot object with attributes
+  A par-coords plot
 }
 \description{
-  Create a parallel coordinates plot (par-coords) from a
-  data frame, with each line representing a row.
+  This function creates a parallel coordinates plot
+  (par-coords) for variables in a data, with each line
+  representing a row.
 }
 \details{
   See \code{\link{common_key_press}} for a series of common
-  interactions. There are also some interactions specific
-  to par-coords: press \code{R} to toggle the min/max
-  labels; the arrow keys are used to adjust the order of
-  the variables and flip the values of variables (like a
-  mirror reflection).
+  interactions. Interactions specific to par-coords
+  include: press \code{R} to toggle the min/max labels; the
+  arrow keys are used to adjust the order of the variables
+  and flip the values of variables (like a mirror
+  reflection) when the axes are selected by the brush.
 }
 \examples{
 library(cranvas)
 
+### (1) flea data
+data(flea, package = "tourr")
+qflea <- qdata(flea, color = species)
+
+## input variables
+qparallel(~., data = qflea)  # all variables
+qparallel(~aede1 + aede2 + aede3, data = qflea)  # 3 variables
+qparallel(1:4, data = qflea)  # first 4 variables
+qparallel(c("head", "aede1", "tars2", "aede3"), data = qflea)  # input variables by names
+
+## scaling
+qparallel(~., data = qflea, main = "scale columns individually to [0, 1]")
+qparallel(~., data = qflea, scale = "I", main = "unscaled data")
+qparallel(~., data = qflea, scale = "var", main = "mean 0 variance 1")
+qparallel(~., data = qflea, scale = "global", main = "scale globally to [0, 1]")
+
+## centering by median; add boxplots to assist
+#   understanding
+qparallel(~., data = qflea, center = median, boxplot = TRUE)
+
+## ordering
+qparallel(~., data = qflea, order = "MDS")  # similar variables together
+qparallel(~., data = qflea, order = "ANOVA")  # color is covariate, order by ANOVA p-value
+## we can use arrow keys to manually order the variables
+
+## horizontal direction
+qparallel(~., data = qflea, horizontal = TRUE)
+
+## use glyphs instead of segments
+qparallel(~., data = qflea, glyph = "tick")
+qparallel(~., data = qflea, glyph = "circle")
+
+## jittering
+qparallel(~., data = qflea, jitter = "species")
+
+## categorical linking
+id <- link_cat(qflea, "species")
+## now brush on plots; will see all rows in the same
+#   category brushed
+
+## stop categorical linking
+remove_listener(qflea, id)
+
+
+
+### (2) NRC rankings
 data(nrcstat)
-qnrc <- qdata(nrcstat)
-rownames(qnrc) <- abbreviate(paste(nrcstat$Institution.Name, 
-    nrcstat$Program.Name, sep = " -> "))
+qnrc <- qdata(nrcstat, color = Regional.Code)
 
 ## Overview: type, rankings
 qparallel(13:10, main = "Overview of Rankings", glyph = "tick", 
-    horizontal = FALSE, boxplot = TRUE)
+    horizontal = TRUE, boxplot = TRUE)
 
-qnrc$.color <- "red"
+## link to a droplist (institution names)
+record_selector(Institution.Name, qnrc)
 
+## TODO: we need keyboard interactions here instead of
+#   command line
 brush(qnrc, "persistent") <- TRUE  # begin persistent brushing
 brush(qnrc, "color") <- "brown"
 ## select other objects now
@@ -105,189 +148,37 @@ brush(qnrc, "color") <- "green"
 brush(qnrc, "color") <- "yellow"
 brush(qnrc, "persistent") <- FALSE  # transient brushing
 
-record_selector(Institution.Name, qnrc)
-
-## How to find out ISU by intersection and negation?
-#   public, midwest, large program
-
-## brush one row, and the whole category gets brushed
-id <- link_cat(qnrc, "Regional.Code")
-
-## remove categorical linking
-remove_listener(qnrc, id)
-
 
 qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity", 
-    center = median, horizontal = FALSE, glyph = "tick")
-
-qparallel(vars = 20:68, data = qnrc, main = "Other Indicators", 
-    center = median, horizontal = FALSE, glyph = "tick", boxplot = TRUE, 
-    boxwex = 0.8)
-
-# Find ISU, and sort by best rank to least on ISU
-median.centering <- function(x) {
-    x <- (x - min(x, na.rm = T))/(max(x, na.rm = T) - min(x, 
-        na.rm = T))
-    x <- x - median(x, na.rm = T)
-}
-nrc.medctr <- apply(nrcstat[, 20:68], 2, median.centering)
-var.ord <- order(nrc.medctr[13, ]) + 19
-qparallel(vars = var.ord, data = qnrc, main = "Other Indicators", 
-    center = median, horizontal = FALSE, glyph = "tick", boxplot = TRUE, 
-    boxwex = 0.8)
-
-## color palette
-qnrc <- qdata(nrcstat, color = Control)  # public or private
-qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", 
-    boxplot = TRUE)
+    center = median, horizontal = TRUE, glyph = "tick")
 
 
-## old iris...
-qiris <- qdata(iris, color = Species)
+### (3) Missing values are imputed by 20\% below the mean
+df <- as.data.frame(replicate(5, sample(c(rep(NA, 
+    10), rnorm(100)))))
+mf <- qdata(df)
+qparallel(~., data = mf)
 
-qparallel(data = qiris, main = "scale columns individually to [0, 1]")
-qparallel(data = qiris, scale = "I", main = "unscaled data")
-qparallel(data = qiris, scale = "var", main = "mean 0 variance 1")
-qparallel(1:4, data = qiris, scale = "global", main = "scale globally to [0, 1]")
-
-# try other standardizing methods
-st2 <- function(x) ((x - min(x))/(max(x) - min(x)))^2
-qparallel(data = qiris, scale = "st2")
-
-## subsetting
-qparallel(c("Sepal.Length", "Sepal.Width", "Species"), 
-    data = qiris)
-## or formula interface
-qparallel(~Sepal.Length + Sepal.Width, data = qiris)
-# '.' means all variables in the data frame as usual
-qparallel(~., data = qiris)
-
-## vertical
-qparallel(data = qiris, horizontal = FALSE)
-
-## jitter
-qparallel(data = qiris, jitter = "Species", amount = 0.3)
-
-## with boxplots
-qparallel(data = qiris, boxplot = TRUE)
-qparallel(data = qiris, scale = "I", boxplot = TRUE)
-qparallel(data = qiris, boxplot = TRUE, horizontal = FALSE)
-
-## with points rather than whole lines
-qparallel(data = qiris, glyph = "tick")
-qparallel(data = qiris, glyph = "circle")
-qparallel(data = qiris, glyph = "square")
-qparallel(data = qiris, glyph = "triangle")
-
-## order variables by MDS or ANOVA
-qparallel(data = qiris, order = "MDS")
-qparallel(data = qiris, scale = "I", order = "MDS")
-qparallel(data = qiris, order = "ANOVA")
-qparallel(data = qiris, scale = "I", order = "ANOVA")
-
-## set color
-qiris$.color <- rgb(1, 0, 0, 0.5)
-
-## the plot will be updated if we modify the mutaframe
-qparallel(data = qiris)
-for (i in 1:30) {
-    qiris$Sepal.Length[1] <- i
-    qiris$.color[1] <- sample(colors(), 1)
-    Sys.sleep(0.5)
-}
-
-## what if there are missing values?
-xna <- qdata(sapply(iris, function(x) {
-    x[sample(length(x), 50)] <- NA
-    x
-}))
-qparallel(data = xna)
-
-## centering
-qparallel(data = qiris, scale = "I", center = median)
-qparallel(data = qiris, scale = "I", center = mean)
-## to check we are really centered at the medians
-qparallel(data = qiris, center = median, boxplot = TRUE)
-
-## labeling
-brush(qiris, "identify") <- TRUE
-## we can also change the row names and the labels will
-#   change accordingly
-rownames(qiris) <- paste(abbreviate(iris$Species), 
-    1:50, sep = "")
-
-qmtcars <- qdata(mtcars)
-qparallel(data = qmtcars)
-qparallel(data = qmtcars, center = median)
-qparallel(data = qmtcars, order = "MDS")
-qparallel(data = qmtcars, order = "ANOVA")
-
-## test speed
-test.mat1 <- qdata(matrix(rnorm(1000 * 10), ncol = 10), 
-    color = rgb(1, 0, 0, 0.2))
-qparallel(data = test.mat1)
-
-test.mat2 <- qdata(matrix(rnorm(1000 * 15), ncol = 15), 
-    color = rgb(1, 0, 0, 0.2))
-qparallel(data = test.mat2, boxplot = TRUE)
-
-## slow for brushing in my laptop
-test.mat3 <- qdata(matrix(rnorm(5000 * 10), ncol = 10), 
-    color = rgb(1, 0, 0, 0.05))
-
-options(cranvas_debug = TRUE)
-qparallel(data = test.mat3)
-
-## speed tests
-## on my laptop, 10000x10 takes 5 secs to build the
-#   brushing cache
-## identifying is generally very fast once the cache was
-#   built
-qhuge1 <- qdata(matrix(rbeta(10000 * 10, 5, 30), ncol = 10))
-qparallel(data = qhuge1)
-## 30000x10 takes 45 seconds
-qhuge2 <- qdata(matrix(rbeta(30000 * 10, 5, 30), ncol = 10))
-qparallel(data = qhuge2)
-## 1 million points to torture Qt!!
-qhuge3 <- qdata(matrix(rbeta(1e+05 * 10, 5, 30), ncol = 10))
-qparallel(data = qhuge3)
-
-options(cranvas_debug = FALSE)
+## see this by missing value plot
+qmval(~., data = mf)
 
 
-## for large data, glyphs (short ticks) are automatically
-#   used instead of
-#   segments
 
-## residential data: 18221x8
-if (!require("YaleToolkit")) install.packages("YaleToolkit")
-library(YaleToolkit)
-data(NewHavenResidential)
-qnhr <- qdata(NewHavenResidential, color = rgb(1, 
-    0, 0, 0.1))
-qparallel(data = qnhr)
-
-qparallel(1:4, data = qnhr)
-qparallel(5:8, data = qnhr)
-
-
-qnhr <- qdata(NewHavenResidential, color = zone)
-qparallel(data = qnhr)
-
-qparallel(data = qnhr, horizontal = FALSE)
-
-# jitter is hopeless for huge data...
-qnhr$.color <- rgb(1, 0, 0, 0.01)
-qparallel(data = qnhr, jitter = "zone", amount = 0.3)
-qparallel(data = qnhr, jitter = c("bedrms", "zone"), 
-    amount = 0.2)
-
+### (4) alpha transparency
 if (require("animation")) {
     data(pollen, package = "animation")
-    qpollen <- qdata(pollen, color = rgb(0, 0, 1, 0.01))
-    qparallel(~.)
+    qpollen <- qdata(pollen)
+    qparallel(~.)  # hold the minus key (-) till the plot is semi-transparent
 }
 
+
+
+### (5) pressure test
+test.mat <- qdata(matrix(rnorm(30000 * 10), ncol = 10), 
+    color = rgb(1, 0, 0, 0.05))
+qparallel(~., data = test.mat)
+## for large data, short ticks are automatically used
+#   instead of segments
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
