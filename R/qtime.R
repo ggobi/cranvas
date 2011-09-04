@@ -52,7 +52,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
   call <- as.list(match.call()[-1])
   b <- brush(data)
-  meta <- Time.meta$new(varname = list(x = as.character(call$time)))
+  meta <- Time.meta$new(varname = list(x = as.character(call$time)), minor = 'xy')
  
   ## X axis setting
   meta$time <- eval(call$time, as.data.frame(data))
@@ -780,7 +780,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   layer.ylab = qmtext(meta = meta, side = 2)
   layer.xaxis = qaxis(meta = meta, side = 1)
   layer.yaxis = qaxis(meta = meta, side = 2)
-  layer.grid = qgrid(meta = meta, minor = 'xy')
+  layer.grid = qgrid(meta = meta)
   main_circle_layer <- qlayer(paintFun=main_circle_draw,
                               mousePressFun=brush_mouse_press, mouseReleaseFun=brush_mouse_move,
                               mouseMove = brush_mouse_move, keyPressFun=key_press,

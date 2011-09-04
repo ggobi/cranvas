@@ -137,6 +137,7 @@ qparallel =
                        do.conf = FALSE)
             meta$bxp.stats = sapply(bxp.data, `[[`, 'stats')
         }
+        meta$minor = ifelse(meta$horizontal, 'y', 'x')
     }
 
     ## given orders, rearrange the data
@@ -353,7 +354,7 @@ qparallel =
     layer.title = qmtext(meta = meta, side = 3)
     layer.xaxis = qaxis(meta = meta, side = 1)
     layer.yaxis = qaxis(meta = meta, side = 2)
-    layer.grid = qgrid(meta = meta, minor = ifelse(horizontal, 'y', 'x'))
+    layer.grid = qgrid(meta = meta)
     layer.legend = qlayer()  # legend layer (currently only acts as place holder)
 
     layer.root[0, 1] = layer.title

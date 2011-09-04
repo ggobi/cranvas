@@ -52,7 +52,7 @@ qscatter =
     z = as.list(match.call()[-1])
     meta =
         Scat.meta$new(xvar = as.character(z$x), yvar = as.character(z$y),
-                      alpha = 1, main = main, asp = asp,
+                      alpha = 1, main = main, asp = asp, minor = 'xy',
                       samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
     if (is.null(xlab)) meta$xlab = meta$xvar
     if (is.null(ylab)) meta$ylab = meta$yvar
@@ -200,7 +200,7 @@ qscatter =
     layer.ylab = qmtext(meta = meta, side = 2)
     layer.xaxis = qaxis(meta = meta, side = 1)
     layer.yaxis = qaxis(meta = meta, side = 2)
-    layer.grid = qgrid(meta = meta, minor = 'xy')
+    layer.grid = qgrid(meta = meta)
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab

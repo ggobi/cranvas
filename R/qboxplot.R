@@ -40,6 +40,7 @@ qboxplot =
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
 
     compute_coords = function(brush = FALSE) {
+        meta$minor = ifelse(meta$horizontal, 'x', 'y')
         idx = visible(data)
         if (brush) idx = idx & selected(data)
         if (inherits(vars, 'formula')) {
@@ -168,7 +169,7 @@ qboxplot =
     layer.ylab = qmtext(meta = meta, side = 2)
     layer.xaxis = qaxis(meta = meta, side = 1)
     layer.yaxis = qaxis(meta = meta, side = 2)
-    layer.grid = qgrid(meta = meta, minor = ifelse(meta$horizontal, 'x', 'y'))
+    layer.grid = qgrid(meta = meta)
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab

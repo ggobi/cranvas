@@ -107,6 +107,7 @@ qhist =
                                 range(c(meta$xleft, meta$xright)) else xlim,
                                 if (is.null(ylim))
                                 range(c(meta$ybottom, meta$ytop)) else ylim))
+        meta$minor = ifelse(meta$spine, ifelse(meta$horizontal, 'x', 'y'), 'xy')
     }
     compute_coords()
     compute_colors = function() {
@@ -205,8 +206,7 @@ qhist =
     layer.ylab = qmtext(meta = meta, side = 2)
     layer.xaxis = qaxis(meta = meta, side = 1)
     layer.yaxis = qaxis(meta = meta, side = 2)
-    layer.grid = qgrid(meta = meta, minor = ifelse(meta$spine,
-                                    ifelse(meta$horizontal, 'x', 'y'), 'xy'))
+    layer.grid = qgrid(meta = meta)
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab
