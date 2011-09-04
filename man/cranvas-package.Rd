@@ -54,9 +54,15 @@ qtennis <- qdata(tennis, color = serve.speed, size = aces)
 ## then create plots
 qhist(serve.speed, data = qtennis)
 
-qbar(country)
+qbar(country, data = qtennis)
 
-qparallel(~.)  # all variables; you may need a large window
+qscatter(first.serve.pts, second.serve.pts, data = qtennis)
 
-record_selector(name)  # a simple GUI to show the names
+qboxplot(~points + first.serve.pts + second.serve.pts, 
+    data = qtennis)
+
+qparallel(~., data = qtennis, names = names(tennis), 
+    horizontal = TRUE)  # all variables; you may need a large window
+
+record_selector(name, data = qtennis)  # a simple GUI to show the names
 }
