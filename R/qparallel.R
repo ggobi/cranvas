@@ -175,7 +175,10 @@ qparallel =
                          stroke = segcol)
         } else {
             main.col = rep(.color, each = meta$p)
-            qdrawGlyph(painter, draw.glyph, meta$x0, meta$y0, stroke = main.col)
+            .border = data$.border; .border[!visible(data)] = NA
+            .border = rep(.border, each = meta$p)
+            qdrawGlyph(painter, draw.glyph, meta$x0, meta$y0, fill = main.col,
+                       stroke = .border)
         }
         cranvas_debug()
     }
