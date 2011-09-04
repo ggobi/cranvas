@@ -35,7 +35,8 @@ Depends:
     scales
 Suggests:
     productplots,
-    animation
+    animation,
+    randomForest
 Collate:
     'cranvas-package.R'
     'zzz.R'
