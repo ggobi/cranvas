@@ -61,7 +61,7 @@ qparallel =
     ## meta data used to store useful information
     meta = Parallel.meta$new(brush.move = TRUE, alpha = 1,
                     main = main, vars = vars, glyph = match.arg(glyph),
-                    order = match.arg(order), draw.range = FALSE,
+                    order = match.arg(order), draw.range = FALSE, horizontal = horizontal,
                     jitter = jitter, amount = amount, names = names)
 
     data_preprocess = function() {
@@ -102,26 +102,19 @@ qparallel =
     ## final calculations for graphical primitives, e.g. segments, axis labels
     data_primitives = function() {
         ## switch x and y according to the direction
-        if (horizontal) {
-            meta$x = col(meta$plot.data)
-            meta$y = meta$plot.data
-            meta$xat = 1:meta$p
-            meta$xlabels = meta$names
-            meta$yat = axis_loc(meta$y)
-            meta$ylabels = format(meta$yat)
-        } else {
-            meta$y = col(meta$plot.data)
-            meta$x = meta$plot.data
-            meta$yat = 1:meta$p
-            meta$ylabels = meta$names
-            meta$xat = axis_loc(meta$x)
-            meta$xlabels = format(meta$xat)
+        idx = visible(data)
+        meta$x = col(meta$plot.data); meta$y = meta$plot.data
+        meta$xat = 1:meta$p; meta$xlabels = meta$names
+        meta$yat = axis_loc(meta$y); meta$ylabels = format(meta$yat)
+        lims = extend_ranges(matrix(c(range(meta$x[idx, ]), range(meta$y[idx, ])), 2))
+        if (!identical(lims, meta$limits) && !meta$horizontal) meta$limits = lims
+        if (meta$horizontal) {
+            switch_value('x', 'y', meta)
+            switch_value('xat', 'yat', meta)
+            switch_value('xlabels', 'ylabels', meta)
+            switch_value('xlab', 'ylab', meta)
+            if (!identical(meta$limits, lims[, 2:1])) meta$limits = lims[, 2:1]
         }
-        meta$xr = diff(range(meta$x))
-        meta$yr = diff(range(meta$y))
-        ## extend margins
-        meta$limits = extend_ranges(matrix(c(range(meta$x), range(meta$y)), 2))
-
         ## 'auto' means 'line's when n*p<=5000*10, and 'tick's otherwise
         if (meta$glyph == 'auto')
             meta$glyph = ifelse(meta$n * meta$p <= 50000, 'line', 'tick')
@@ -450,7 +443,7 @@ Parallel.meta =
                 list(vars = 'character', glyph = 'character',
                      order = 'character', draw.range = 'logical',
                      plot.data = 'matrix', numeric.col = 'logical',
-                     p = 'numeric', n = 'numeric',
+                     p = 'numeric', n = 'numeric', horizontal = 'logical',
                      jitter = 'character', amount = 'numeric', x = 'matrix', y = 'matrix',
                      xr = 'numeric', yr = 'numeric', names = 'character',
                      segx0 = 'numeric', segx1 = 'numeric',
