@@ -156,7 +156,7 @@ qbar =
                mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
                mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
-               limits = qrect(meta$limits), clip = TRUE)
+               limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
