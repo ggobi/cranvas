@@ -161,9 +161,6 @@ qparallel =
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
 
 
-    ## convention of notation:
-    ## *_draw means a drawing function for a layer; *_event is an even callback; *_layer is a layer object
-
     draw.glyph = switch(meta$glyph, tick = qglyphSegment(d = ifelse(horizontal, pi/2, 0)),
                         circle = qglyphCircle(), square = qglyphSquare(),
                         triangle = qglyphTriangle())
@@ -171,9 +168,7 @@ qparallel =
     ## par-coords segments
     main_draw = function(layer, painter) {
         cranvas_debug()
-        .color = data$.color
-        .color[!visible(data)] = NA
-        layer$setOpacity(meta$alpha)
+        .color = data$.color; .color[!visible(data)] = NA
         if (meta$glyph == 'line') {
             segcol = rep(.color, each = meta$p - 1)
             qdrawSegment(painter, meta$segx0, meta$segy0, meta$segx1, meta$segy1,
@@ -265,7 +260,6 @@ qparallel =
                 }
             }
         }
-        ## data range labels
     }
     brush_key_release = function(layer, event) {
         common_key_release(layer, event, data, meta)
