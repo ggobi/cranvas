@@ -164,7 +164,7 @@ qparallel =
     ## convention of notation:
     ## *_draw means a drawing function for a layer; *_event is an even callback; *_layer is a layer object
 
-    draw.glyph = switch(meta$glyph, tick = qglyphSegment(d = ifelse(horizontal, 0, pi/2)),
+    draw.glyph = switch(meta$glyph, tick = qglyphSegment(d = ifelse(horizontal, pi/2, 0)),
                         circle = qglyphCircle(), square = qglyphSquare(),
                         triangle = qglyphTriangle())
 
