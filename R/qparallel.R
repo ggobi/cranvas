@@ -190,8 +190,7 @@ qparallel =
             dat = as.data.frame(data)[, meta$vars][, meta$numeric.col]
             range.d = round(as.matrix(apply(dat, 2, range, na.rm=TRUE)), 2)
             numcol = which(meta$numeric.col)
-            qstrokeColor(painter) = data$.color[1]
-            if (horizontal) {
+            if (!meta$horizontal) {
                 qdrawText(painter, range.d[1, ], numcol, meta$limits[3], valign = 'bottom')
                 qdrawText(painter, range.d[2, ], numcol, meta$limits[4], valign = 'top')
             } else {
@@ -218,7 +217,7 @@ qparallel =
         }
         i = which(match_key(c('Left', 'Right', 'Down', 'Up')))
         if (length(i) && length(meta$pos)) {
-            if (horizontal) {
+            if (!meta$horizontal) {
                 j = 1
                 movedir = switch(i, -1, 1, NULL, NULL)
                 flipdir = switch(i, NULL, NULL, -1, 1)
