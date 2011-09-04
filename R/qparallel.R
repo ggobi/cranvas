@@ -158,7 +158,7 @@ qparallel =
                              numcol = meta$numeric.col, x = data$.color))
 
     ## brush range: horizontal and vertical
-    meta$brush.size = c(meta$xr, -meta$yr)/15
+    meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
 
 
     ## convention of notation:
