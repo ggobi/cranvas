@@ -258,9 +258,7 @@ qparallel =
                     qupdate(layer.xaxis)
                     qupdate(layer.yaxis)
                     layer.main$invalidateIndex()
-                    qupdate(layer.main)
-                    qupdate(layer.brush)
-                    qupdate(layer.boxplot)
+                    qupdate(layer.main); qupdate(layer.brush); qupdate(layer.boxplot)
                 }
             }
         }
@@ -384,13 +382,9 @@ qparallel =
     d.idx = add_listener(data, function(i, j) {
         switch(j, .brushed = qupdate(layer.brush),
                .color = qupdate(layer.main), {
-                   data_preprocess()
-                   data_primitives()
-                   qupdate(layer.grid)
-                   qupdate(layer.xaxis)
-                   qupdate(layer.yaxis)
-                   qupdate(layer.main)
-                   qupdate(layer.boxplot)
+                   data_preprocess(); data_primitives()
+                   qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+                   layer.main$invalidateIndex(); qupdate(layer.main)
                })
     })
 
