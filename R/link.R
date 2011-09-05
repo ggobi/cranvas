@@ -65,19 +65,58 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
 ##' When a number of elements in a data are brushed, their k-nearest
 ##' neighbors (based on a certain distance measure) are brushed as
 ##' well.
+##'
+##' A center point for the variables based on the selected rows is
+##' calculated in the first dataset, then the k nearest rows in the
+##' second dataset (if not provided, it will be the same as the first
+##' dataset) to this center are selected. Only the Euclidean distance
+##' has been implemented at the moment.
 ##' @inheritParams link_cat
 ##' @param var1 the variable names or column indices of the first
 ##' mutaframe to be used to calculate distances
 ##' @param var2 (optional) variable names or column indices of the
-##' second mutaframe
+##' second mutaframe (by default the same as \code{var1})
+##' @param k the number of nearest neighbors to select
 ##' @return Similar to categorical linking (\code{\link{link_cat}}),
 ##' this function also links two mutaframes together (or one mutaframe
 ##' to itself), and id's of listeners are returned.
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
-##' @examples ## TODO
-link_knn = function(mf1, var1, mf2 = NULL, var2 = NULL, ...) {
-
+##' @example inst/examples/link_knn-ex.R
+link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10, ...) {
+    link2 = !is.null(mf2)
+    if (!check_data(mf1, FALSE) || (link2 && !check_data(mf2, FALSE)))
+        stop('the mutaframes must be created from qdata()')
+    if (is.null(var1) || (link2 && is.null(var2)))
+        stop("must specify linking variables")
+    if (link2 && (length(var1) != length(var2)))
+        stop("'var1' and 'var2' must have the same length")
+    change1 = change2 = FALSE
+    c(add_listener(mf1, function(i, j) {
+        if (j != '.brushed' || ifelse(link2, change1, change2)) return()
+        change2 <<- TRUE
+        df1 = as.matrix(as.data.frame(mf1[, var1, drop = FALSE]))
+        if (any(idx <- selected(mf1))) {
+            sf1 = df1[idx, , drop = FALSE]
+            cf1 = colMeans(sf1)         # center
+            if (link2) {
+                df2 = as.matrix(as.data.frame(mf2[, var2, drop = FALSE]))
+                selected(mf2) = rank(apply(sweep(df2, 2, cf1)^2, 1, sum)) <= k
+            } else selected(mf1) = rank(apply(sweep(df1, 2, cf1)^2, 1, sum)) <= k
+        } else if (link2) selected(mf2) = FALSE
+        change2 <<- FALSE
+    }), if (link2) add_listener(mf2, function(i, j) {
+        if (j != '.brushed' || change2) return()
+        change1 <<- TRUE
+        df2 = as.matrix(as.data.frame(mf2[, var2, drop = FALSE]))
+        if (any(idx <- selected(mf2))) {
+            sf2 = df2[idx, , drop = FALSE]
+            cf2 = colMeans(sf2)
+            df1 = as.matrix(as.data.frame(mf1[, var1, drop = FALSE]))
+            selected(mf1) = rank(apply(sweep(df1, 2, cf2)^2, 1, sum)) <= k
+        } else if (link2) selected(mf2) = FALSE
+        change1 <<- FALSE
+    }))
 }
 
 ##' Remove the linking between mutaframes
