@@ -83,11 +83,12 @@ qboxplot =
         meta$xlabels = if (length(meta$vars)) meta$vars else names(ylist)
         meta$yat = axis_loc(range(ylist)); meta$ylabels = format(meta$yat)
         meta$xat = meta$at = if (is.null(at)) seq_along(meta$xlabels) else at
-        meta$width = if (is.null(width)) max(0.1 * diff(range(meta$at)), 0.2) else width
+        meta$width = if (is.null(width)) max(0.2 * diff(range(meta$at)), 0.3) else width
         meta$limits =
-            extend_ranges(cbind(if (is.null(xlim))
+            cbind(extend_ranges(if (is.null(xlim))
                                 range(meta$xat) + c(-1, 1) * max(meta$width)/2 else xlim,
-                                if (is.null(ylim)) range(ylist) else ylim))
+                                ifelse(length(meta$xat) == 1, 5, 2) * qpar('mar')),
+                  extend_ranges(if (is.null(ylim)) range(ylist) else ylim))
         if (length(meta$vars)) {
             meta$y =
                 c(vapply(as.data.frame(data[, meta$vars, drop = FALSE]), as.numeric,
