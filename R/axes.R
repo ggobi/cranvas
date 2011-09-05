@@ -112,7 +112,7 @@ axis_loc = function(x) {
         return(seq_along(levels(x)))
     }
     at = pretty(x)
-    at[at <= max(x) & at >= min(x)]
+    at[at <= max(x, na.rm = TRUE) & at >= min(x, na.rm = TRUE)]
 }
 
 ##' Create a background grid layer
