@@ -49,6 +49,7 @@
 ##' new_tour path_curves path_dist path_index paths_index pda_pp
 ##' planned_tour save_history planned_tour holes cmass
 ##' @import plumbr
+##' @export remove_listener
 ##' @import objectSignals
 ##' @name cranvas-package
 ##' @aliases cranvas
