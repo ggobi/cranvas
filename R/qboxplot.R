@@ -282,7 +282,7 @@ qbxp = function(data, meta, subset = FALSE, ...) {
                   stroke = .boxcol)  # box
 
         if (!subset && length(bxp.out)) {
-            x = unlist(bxp.out); y = rep(at, sapply(bxp.out, length))
+            y = unlist(bxp.out); x = rep(at, sapply(bxp.out, length))
             if (horizontal) {
                 switch_value('x', 'y', sys.frame(1))
             }
