@@ -171,9 +171,9 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
         at = (at[-1] + at[-n])/2
         n = n - 1
         if (at[1] > lim[1])
-            at = c(seq(at[1], lim[1], l)[-1], at)
+            at = c(seq(at[1], lim[1], l/2)[-1], at)
         if (at[n] < lim[2])
-            at = c(at, seq(at[n], lim[2], r)[-1])
+            at = c(at, seq(at[n], lim[2], r/2)[-1])
         at[at < lim[2] & at > lim[1]]
     }
     draw_grid = function(layer, painter) {
