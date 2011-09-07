@@ -125,8 +125,7 @@ qdata =
     ## use brush(data) to access this brush
     attr(mf, "Brush") =
         brushGen$new(style = list(color = "yellow", linewidth = 2, linetype = NULL),
-                     color = "yellow", color.gen = function(...) NULL,
-                     size = 1.5, size.gen = function(...) NULL,
+                     color = "yellow", size = 1.5,
                      mode = "none", identify = FALSE, label.gen = function(...) {
                          paste(capture.output(print(...)), collapse = '\n')
                      }, label.color = "darkgray",
