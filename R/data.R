@@ -135,9 +135,7 @@ qdata =
 
     ## here 'mode' is explained in the documentation of mode_selection()
 
-    ## specifies which variable is used for (hot/cold) linking
-    ## use link_var(data) to access the linking variable
-    attr(mf, "Link") = mutalist(linkvar = NULL, type = "hot")
+    attr(mf, "Link") = mutalist(linkid = NULL)
 
     shadow = is.na(data)  # shadow matrix for missing values
     ## add shadow matrix to 'shadow' attribute
