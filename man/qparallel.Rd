@@ -123,7 +123,7 @@ id <- link_cat(qflea, "species")
 #   category brushed
 
 ## stop categorical linking
-remove_listener(qflea, id)
+remove_link(qflea, id)
 
 
 

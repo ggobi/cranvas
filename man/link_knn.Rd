@@ -50,7 +50,7 @@ qscatter(tars1, tars2, data = qflea)
 id <- link_knn(qflea, c("tars1", "tars2"), k = 10)
 
 ## remove the linking
-remove_listener(qflea, id)
+remove_link(qflea, id)
 
 
 ### (2) variables on the same scale
@@ -60,7 +60,7 @@ qscatter(x, y, data = mf)
 
 id <- link_knn(mf, c("x", "y"), k = 20)
 
-remove_listener(mf, id)
+remove_link(mf, id)
 
 
 ### (3) link two datasets
@@ -74,8 +74,8 @@ qscatter(tars1, tars2, data = mf2)
 id <- link_knn(mf1, c("tars1", "tars2"), mf2, c("tars1", 
     "tars2"))
 
-remove_listener(mf1, id[1])
-remove_listener(mf2, id[2])
+remove_link(mf1, id[1])
+remove_link(mf2, id[2])
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

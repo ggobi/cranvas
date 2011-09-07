@@ -45,8 +45,7 @@ link_cat(mf1, var1, mf2 = NULL, var2 = NULL)
   track of the id's of listeners to avoid unnecessary
   burden of updating data objects in a linking chain.
   Listeners can be detached from mutaframes by
-  \code{\link[plumbr]{remove_listener}} (see examples
-  below).
+  \code{\link{remove_link}} (see examples below).
 }
 \examples{
 library(cranvas)
@@ -60,7 +59,7 @@ qhist(tars1)  # an ordinary histogram; try brushing
 id <- link_cat(qflea, "species")
 ## brush the plot and see what happens
 
-remove_listener(qflea, id)  # remove this linking; back to normal linking again
+remove_link(qflea, id)  # remove this linking; back to normal linking again
 
 
 ### (2) link the original data with a frequency table
@@ -77,8 +76,8 @@ qbar(type, data = qflea2, standardize = TRUE)
 
 
 ## remove the linking on two datasets respectively
-remove_listener(qflea, id[1])
-remove_listener(qflea2, id[2])
+remove_link(qflea, id[1])
+remove_link(qflea2, id[2])
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
