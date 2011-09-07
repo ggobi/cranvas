@@ -151,4 +151,15 @@ remove_link = function(..., id) {
     }
 }
 
+##' Get the id's of listeners on linking
+##'
+##' This function returns the id's of listeners attached on a data for
+##' linking, and these id's can be used to remove the linking.
+##' @inheritParams qbar
+##' @return A character vector of id's.
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @examples ## see ?link_cat
+link_id = function(data) {
+    attr(data, 'Link')$linkid
 }
