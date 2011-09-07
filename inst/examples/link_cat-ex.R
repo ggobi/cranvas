@@ -9,7 +9,7 @@ qhist(tars1)  # an ordinary histogram; try brushing
 id = link_cat(qflea, 'species')
 ## brush the plot and see what happens
 
-remove_listener(qflea, id)  # remove this linking; back to normal linking again
+remove_link(qflea, id)  # remove this linking; back to normal linking again
 
 
 ### (2) link the original data with a frequency table
@@ -25,5 +25,5 @@ qbar(type, data = qflea2, standardize = TRUE)
 
 
 ## remove the linking on two datasets respectively
-remove_listener(qflea, id[1])
-remove_listener(qflea2, id[2])
+remove_link(qflea, id[1])
+remove_link(qflea2, id[2])

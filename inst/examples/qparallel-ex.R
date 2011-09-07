@@ -39,7 +39,7 @@ id = link_cat(qflea, 'species')
 ## now brush on plots; will see all rows in the same category brushed
 
 ## stop categorical linking
-remove_listener(qflea, id)
+remove_link(qflea, id)
 
 
 

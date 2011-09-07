@@ -16,7 +16,7 @@ id = link_cat(qflea, 'species')  # linking by categorical variable
 
 
 ## remove linking
-remove_listener(qflea, id)
+remove_link(qflea, id)
 
 
 #### (2) tennis data: without a splitting variable

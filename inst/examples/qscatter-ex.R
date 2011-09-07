@@ -12,7 +12,7 @@ id = link_cat(qflea, 'species')
 
 
 ## remove linking
-remove_listener(qflea, id)
+remove_link(qflea, id)
 
 
 ## a bubble chart
