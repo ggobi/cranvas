@@ -33,19 +33,22 @@ print(qtime(Time,~conc,qRemi,group=ID))
 print(qtime(Time,~conc,qRemi,group=ID,wrap=FALSE))
 
 # for categorical brushing self-link dataset by ID:
-link_var(qRemi) <- "ID"   # ON
-link_type(qRemi) <- "self"
-
-link_var(qRemi) <- NULL  # OFF
+#link_var(qRemi) <- "ID"   # ON
+#link_type(qRemi) <- "self"
+#link_var(qRemi) <- NULL  # OFF
+id <- link_cat(qRemi, "ID")
+remove_listener(qRemi, id)
 
                           
 ## example 3: Wages
 data(wages)
 wage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
 print(qtime(exper,~lnw,wage,group=id))
-link_var(wage) <- "id"   # ON
-link_type(wage) <- "self"
-link_var(wage) <- NULL  # OFF
+#link_var(wage) <- "id"   # ON
+#link_type(wage) <- "self"
+#link_var(wage) <- NULL  # OFF
+id <- link_cat(wage, "id")
+remove_listener(wage, id)
 
 
 ## example 4: Lynx - for posterity
@@ -74,5 +77,7 @@ pigGP <- melt(pigGP,1)
 qpigGP <- qdata(pigGP)
 print(qtime(TIME,~value,qpigGP,group=variable,shift=c(1,4)))
 
-link_var(qpigGP) <- "variable"   # ON
-link_type(qpigGP) <- "self"
+id <- link_cat(qpigGP, "variable")
+remove_listener(qpigGP, id)
+#link_var(qpigGP) <- "variable"   # ON
+#link_type(qpigGP) <- "self"

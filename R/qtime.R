@@ -117,6 +117,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   meta$hitscol <- 1
   meta$hitsrow <- NULL
   meta$vertconst <- 0
+  meta$linkID <- NULL
 
   ## Range etc.
   meta$zoomsize <- diff(range(meta$xtmp, na.rm = TRUE))
@@ -143,7 +144,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   meta$start <- c(NA, NA)
   meta$brush.move <- TRUE
   meta$brush.size <- c(diff(meta$limits[1:2]),
-                       diff(meta$limits[3:4]))/30
+                       -diff(meta$limits[3:4]))/30
 
   ## Title
   meta$main <- if (is.null(main)) 
@@ -228,7 +229,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     meta$hitscol <- (hits-0.0000001)%/%nrow(data)+1
     
     selected(data) <- meta$orderEnter[meta$hitsrow]
-    if (!is.null(meta$group)) self_link(data)
+    #if (length(meta$group)) self_link(data)
   }
 
   key_press <- function(layer, event){
@@ -243,11 +244,14 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       if (length(meta$group)){
         meta$serie.mode <- !meta$serie.mode
         if (!meta$serie.mode) {
-          link_type(data) <- NULL
+          #link_type(data) <- NULL
+          remove_listener(data,meta$linkID)
+          meta$linkID <- NULL
         } else {
           if (class(data[,meta$varname$g])=='factor'){
-            link_var(data) <- meta$varname$g
-            link_type(data) <- "self"
+            #link_var(data) <- meta$varname$g
+            #link_type(data) <- "self"
+            meta$linkID <- link_cat(data, meta$varname$g)
           } else {
             message("The group variable is not a factor. Please change to factor before pressing M.")
             meta$serie.mode <- FALSE
@@ -534,8 +538,9 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     
     if (meta$serie.mode){
       selected(data) <- meta$orderEnter[hitsrow]
-      self_link(data)
-      if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+      #self_link(data)
+      #if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+      if (!is.null(meta$linkID)){
         meta$hitsrow <- meta$orderBack[selected(data)]
         meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
       }
@@ -649,8 +654,9 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       hitsrow[hitsrow==0] <- nrow(data)
       hitscol <- (hits-0.0000001)%/%nrow(data)+1
       selected(data) <- meta$orderEnter[hitsrow]
-      self_link(data)
-      if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+      #self_link(data)
+      #if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+      if (!is.null(meta$linkID)){
         meta$hitsrow <- meta$orderBack[selected(data)]
         meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
       }
@@ -696,15 +702,10 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       return()
     }
     
-    qlineWidth(painter) <- b$style$linewidth
-    qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
-              meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
-              stroke = b$style$color)
-    qdrawCircle(painter, meta$pos[1], meta$pos[2],
-                r = 1.5 * b$style$linewidth,
-                stroke = b$style$color, fill = b$style$color)    
+    draw_brush(layer, painter, data, meta)  
     if (!any(selected(data))) return()
-    if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+    #if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+    if (!is.null(link_id(data))){
       meta$hitsrow <- meta$orderBack[selected(data)]
       meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
     }
@@ -868,7 +869,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
 Time.meta =
     setRefClass("Time_meta", fields =
-                signalingFields(list(varname = 'list',
+                signalingFields(c(Common.meta,
+                                  list(varname = 'list',
                                      time = 'numeric',
                                      y = 'data.frame',
                                      yorig = 'data.frame',
@@ -882,23 +884,11 @@ Time.meta =
                                      wrap.shift = 'numeric',
                                      wrapF_dragT = 'logical',
                                      vargroup = 'numeric',
-                                     xat = 'numeric',
-                                     yat = 'numeric',
-                                     xlabels = 'character',
-                                     ylabels = 'character',
-                                     xlab = 'character',
-                                     ylab = 'character',
-                                     main = 'character',
                                      zoomsize = 'numeric',
                                      limits = 'matrix',
                                      radius = 'numeric',
-                                     alpha = 'numeric',
                                      stroke = 'character',
                                      fill = 'character',
-                                     start = 'numeric',
-                                     pos = 'numeric',
-                                     brush.move = 'logical',
-                                     brush.size = 'numeric',
                                      query.pos = 'numeric',
                                      serie.mode = 'logical',
-                                     serie.pos = 'numeric')))
+                                     serie.pos = 'numeric'))))
