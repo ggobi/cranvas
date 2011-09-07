@@ -160,6 +160,6 @@ remove_link = function(..., id) {
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples ## see ?link_cat
-link_id = function(data) {
+link_id = function(data = last_data()) {
     attr(data, 'Link')$linkid
 }
