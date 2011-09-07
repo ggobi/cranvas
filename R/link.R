@@ -18,7 +18,7 @@
 ##' \pkg{plumbr} package. It may be important keep track of the id's
 ##' of listeners to avoid unnecessary burden of updating data objects
 ##' in a linking chain. Listeners can be detached from mutaframes by
-##' \code{\link[plumbr]{remove_listener}} (see examples below).
+##' \code{\link{remove_link}} (see examples below).
 ##' @param mf1 the first mutaframe
 ##' @param var1 the name of the linking variable of \code{mf1}
 ##' @param mf2 (optional) the second mutaframe; default \code{NULL}
@@ -129,25 +129,25 @@ link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10, ...) {
     id
 }
 
-##' Remove the linking between mutaframes
+##' Remove the linking in mutaframes
 ##'
-##' This is the reverse operation to \code{\link{link}}, i.e., this
-##' function removes the linking (listeners) between mutaframes.
+##' This function removes the linking (listeners) in mutaframes.
 ##'
-##' @param ... the mutaframes from which the linking will be removed
-##' @param id a list of the id's of listeners (can be obtained as the
-##' returned value of \code{\link{link}})
+##' @inheritParams qbar
+##' @param id a character vector of id's of linking listeners (can be
+##' obtained as the returned value of \code{\link{link_cat}} and
+##' \code{\link{link_knn}}); by default it is a vector of all id's for
+##' linking
 ##' @return the listeners are removed
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link{link}}
 ##' @export
-##' @examples ## see ?link
-remove_link = function(..., id) {
-    s = list(...)
-    if (!is.list(id) || (n <- length(s)) != length(id))
-        stop('id must be a list of the same length as the number of mutaframes passed in')
-    for (i in 1:n) {
-        for (j in id[[i]]) remove_listener(s[[i]], j)
+##' @examples ## see ?link_cat
+remove_link = function(data = last_data(), id = link_id(data)) {
+    l = attr(data, 'Link')
+    for (j in id) {
+        remove_listener(data, j)
+        l$linkid = setdiff(l$linkid, j)
     }
 }
 
