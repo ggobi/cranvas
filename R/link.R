@@ -42,7 +42,7 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
         stop("must specify linking variables")
     ## is a mutaframe changed? a token to control the listener and avoid infinite recursion
     change1 = change2 = FALSE
-    c(add_listener(mf1, function(i, j) {
+    id = c(add_listener(mf1, function(i, j) {
         if (j != '.brushed' || ifelse(link2, change1, change2)) return()
         change2 <<- TRUE
         ## mf1 changed --> query var1 --> match var2 --> change mf2$.brushed
@@ -58,6 +58,11 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
         mf1$.brushed = mf1[, var1] %in% unique(mf2[, var2][mf2$.brushed])
         change1 <<- FALSE
     }))
+    l1 = attr(mf1, 'Link'); l1$linkid = c(l1$linkid, id[1])
+    if (link2) {
+        l2 = attr(mf2, 'Link'); l2$linkid = c(l2$linkid, id[2])
+    }
+    id
 }
 
 ##' k-Nearest neighbor linking
@@ -92,7 +97,7 @@ link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10, ...) {
     if (link2 && (length(var1) != length(var2)))
         stop("'var1' and 'var2' must have the same length")
     change1 = change2 = FALSE
-    c(add_listener(mf1, function(i, j) {
+    id = c(add_listener(mf1, function(i, j) {
         if (j != '.brushed' || ifelse(link2, change1, change2)) return()
         change2 <<- TRUE
         df1 = as.matrix(as.data.frame(mf1[, var1, drop = FALSE]))
@@ -117,6 +122,11 @@ link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10, ...) {
         } else if (link2) selected(mf2) = FALSE
         change1 <<- FALSE
     }))
+    l1 = attr(mf1, 'Link'); l1$linkid = c(l1$linkid, id[1])
+    if (link2) {
+        l2 = attr(mf2, 'Link'); l2$linkid = c(l2$linkid, id[2])
+    }
+    id
 }
 
 ##' Remove the linking between mutaframes
