@@ -151,7 +151,4 @@ remove_link = function(..., id) {
     }
 }
 
-self_link = function(data) {
-    if ((!('self' %in% link_type(data))) || is.null(v <- link_var(data))) return()
-    selected(data) = data[, v] %in% unique(data[selected(data), v])
 }
