@@ -30,8 +30,7 @@
 ##' (first element for the first mutaframe; second element for the
 ##' second one).
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @seealso \code{\link{qdata}}, \code{\link{link_var}},
-##' \code{\link{link_type}}
+##' @seealso \code{\link{qdata}}
 ##' @export
 ##' @example inst/examples/link_cat-ex.R
 link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {

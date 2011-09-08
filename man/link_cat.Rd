@@ -83,6 +83,5 @@ remove_link(qflea2, id[2])
   Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{qdata}}, \code{\link{link_var}},
-  \code{\link{link_type}}
+  \code{\link{qdata}}
 }

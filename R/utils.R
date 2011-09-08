@@ -244,8 +244,11 @@ match_key = function(key, event) {
 ##'
 ##' @section Mouse Events: Left click to brush the plot with a
 ##' rectangle brush, and right click to resize the brush (the cursor
-##' shape will become a cross). When the mouse is released, the brush
-##' history will be saved (\code{\link{save_brush_history}}).
+##' shape will become a cross). The middle button is used to toggle
+##' between two types of brushes: one type is to keep the brush on the
+##' plot when the mouse is released, and the other type is to hide it
+##' on mouse release. When the mouse is released, the brush history
+##' will be saved (\code{\link{save_brush_history}}).
 ##'
 ##' @section Key Events: The keys A, O, X, N and C corresponds to the
 ##' selection mode AND, OR, XOR, NOT and COMPLEMENT respectively.
