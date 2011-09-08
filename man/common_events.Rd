@@ -36,13 +36,6 @@ common_mouse_release(layer, event, data, meta)
   related to brushing and identifying cases. These
   functions implement these common processes.
 }
-\note{
-  For developers: all functions can be called anywhere
-  inside an event callback function, except
-  \code{common_mouse_move} which must be called
-  \emph{after} the \code{.brushed} column has been set via
-  \code{\link{selected<-}}.
-}
 \section{Mouse Events}{
   Left click to brush the plot with a rectangle brush, and
   right click to resize the brush (the cursor shape will

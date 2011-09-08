@@ -65,8 +65,15 @@ brush(data, attr) <- value
   color vector to store the colors of persistently brushed
   elements} \item{persistent.list}{the persistent brushing
   history (a list of indices of the brushed elements)}
-  \item{cursor}{the cursor type (an integer; see
-  \code{\link{set_cursor}})}}
+  \item{select.only}{is the mouse used to brush graphical
+  elements ((\code{FALSE})) or select elements only
+  (\code{TRUE}); the subtle difference here is whether the
+  brush should stay on the plot or not when the mouse is
+  released} \item{draw.brush}{whether to draw the brush
+  (when the mouse is released and \code{select.only} is
+  \code{TRUE}, then \code{draw.brush} will be \code{FALSE}
+  so the brush will go away)} \item{cursor}{the cursor type
+  (an integer; see \code{\link{set_cursor}})}}
 }
 \examples{
 library(cranvas)
