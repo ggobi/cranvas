@@ -232,6 +232,10 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     #if (length(meta$group)) self_link(data)
   }
 
+  mouse_wheel = function(layer, event) {
+    meta$limits = extend_ranges(meta$limits, -sign(event$delta()) * 0.05)
+  }
+  
   key_press <- function(layer, event){
     crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
     
@@ -785,6 +789,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   main_circle_layer <- qlayer(paintFun=main_circle_draw,
                               mousePressFun=brush_mouse_press, mouseReleaseFun=brush_mouse_move,
                               mouseMove = brush_mouse_move, keyPressFun=key_press,
+                              wheelFun = mouse_wheel,
                               limits=qrect(meta$limits),clip=TRUE)
   main_line_layer <- qlayer(paintFun=main_line_draw,
                             limits=qrect(meta$limits),clip=TRUE)
