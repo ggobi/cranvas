@@ -7,6 +7,7 @@ brushGen =
                 history.size = 'numeric', history.index = 'numeric', history.list = 'list',
                 persistent = 'logical', persistent.color = 'character',
                 persistent.list = 'list',
+                select.only = 'logical', draw.brush = 'logical',
                 cursor = 'numeric')))
 
 
@@ -42,8 +43,14 @@ brushGen =
 ##' \item{persistent.color}{a color vector to store the colors of
 ##' persistently brushed elements} \item{persistent.list}{the
 ##' persistent brushing history (a list of indices of the brushed
-##' elements)} \item{cursor}{the cursor type (an integer; see
-##' \code{\link{set_cursor}})}}
+##' elements)} \item{select.only}{is the mouse used to brush graphical
+##' elements ((\code{FALSE})) or select elements only (\code{TRUE});
+##' the subtle difference here is whether the brush should stay on the
+##' plot or not when the mouse is released} \item{draw.brush}{whether
+##' to draw the brush (when the mouse is released and
+##' \code{select.only} is \code{TRUE}, then \code{draw.brush} will be
+##' \code{FALSE} so the brush will go away)} \item{cursor}{the cursor
+##' type (an integer; see \code{\link{set_cursor}})}}
 ##' @param data the mutaframe created by \code{\link{qdata}},
 ##' with an attribute \code{Brush}
 ##' @param attr the name of the brush attribute (a character scalar),
@@ -291,6 +298,7 @@ manual_brush = function(obj, pos, pause = 0) {
 draw_brush = function(layer, painter, data, meta) {
     if (length(meta$pos) == 0) return()
     b = brush(data)
+    if (!b$draw.brush) return()
     ## shift the brush shadow by 1 pixel
     d = (1 + b$style$linewidth / 2) * one_pixel(painter)
     qlineWidth(painter) = 1
