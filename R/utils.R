@@ -271,10 +271,6 @@ match_key = function(key, event) {
 ##' @return \code{NULL}
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @seealso \code{\link{brush}}
-##' @note For developers: all functions can be called anywhere inside
-##' an event callback function, except \code{common_mouse_move} which
-##' must be called \emph{after} the \code{.brushed} column has been
-##' set via \code{\link{selected<-}}.
 ##' @export
 ##' @examples ## see the source code of qbar() or qparallel()
 common_key_press = function(layer, event, data, meta) {
