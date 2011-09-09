@@ -753,3 +753,31 @@ fix_dimension =
 get_glyph = function(shape, size = 4) {
     switch(shape, qglyphCircle(size), qglyphSquare(size), qglyphTriangle(size))
 }
+
+##' Save the plot to a file
+##'
+##' This function saves a plot view to a image file like PNG or JPEG,
+##' etc.
+##' @param filename the file name (must have an explicit extension;
+##' see the references for supported image formats)
+##' @param view the view object (usually returned by a plotting function)
+##' @param width the desired width (pixels)
+##' @param height the desired height
+##' @return \code{TRUE} if the plot is successfully saved; otherwise
+##' \code{FALSE}
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @references Supported image formats:
+##' \url{http://doc.qt.nokia.com/latest/qimagewriter.html#supportedImageFormats}
+##' @export
+##' @examples library(cranvas); data(tennis); qtennis = qdata(tennis)
+##' v = qbar(matches, data = qtennis); qsave('tennis_bar.png', v, 480, 320)
+qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
+    filename = file.path(normalizePath(dirname(filename)), basename(filename))
+    size = as.numeric(view$size)  # original size
+    view$resize(width, height)
+    qimg = Qt$QImage(view$sceneRect$size()$toSize(), Qt$QImage$Format_ARGB32_Premultiplied)
+    pt = Qt$QPainter(qimg)
+    view$scene()$render(pt)
+    view$resize(size[1], size[2])  # restore size
+    qimg$save(filename)
+}
