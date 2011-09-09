@@ -50,18 +50,26 @@ qscatter =
     data = check_data(data)
     b = brush(data)
     z = as.list(match.call()[-1])
+
+    ## initialize meta
     meta =
         Scat.meta$new(xvar = as.character(z$x), yvar = as.character(z$y),
                       alpha = 1, main = main, asp = asp, minor = 'xy',
                       samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
+
+    ## set default xlab/ylab if not provided
     if (is.null(xlab)) meta$xlab = meta$xvar
     if (is.null(ylab)) meta$ylab = meta$yvar
+
+    ## reorder the points according to color/border for drawing speed
     compute_order = function() {
         ord = order(data$.color, data$.border)  # the ideal order to draw
         names(ord) = seq(nrow(data))  # orignal order is in names
         meta$order = ord
     }
     compute_order()
+
+    ## compute coordinates/axes-related stuff
     compute_coords = function() {
         if (is.null(z$y)) {
             meta$yvar = meta$xvar  # when y is missing, make it x
@@ -86,13 +94,14 @@ qscatter =
                 ## expand ylim
                 cbind(r[, 1], extend_ranges(r[, 2], (rx * asp / ry - 1) / 2))
             } else {
-                ## DOUBLE CHECK HERE
                 cbind(extend_ranges(r[, 1], (ry / (rx * asp) - 1) / 2), r[, 2])
             }
         }
         meta$limits = extend_ranges(r)
     }
     compute_coords()
+
+    ## aesthetics (colors)
     compute_aes = function() {
         idx = !visible(data)[meta$order]
         meta$color = data$.color[meta$order]; meta$border = data$.border[meta$order]
@@ -100,7 +109,11 @@ qscatter =
         meta$size = data$.size[meta$order]; meta$size[idx] = NA
     }
     compute_aes()
+
+    ## initialize brush size (1/15 of the layer size)
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+
+    ## draw points
     main_draw = function(layer, painter) {
         if (meta$samesize) {
             qdrawGlyph(painter, qglyphCircle(r = data$.size[1]), meta$x, meta$y,
@@ -110,6 +123,8 @@ qscatter =
                         stroke = meta$border, fill = meta$color)
         }
     }
+
+    ## draw brushed points
     brush_draw = function(layer, painter) {
         if (b$identify) return()
         idx = visible(data) & selected(data)
@@ -126,6 +141,8 @@ qscatter =
         }
         draw_brush(layer, painter, data, meta)
     }
+
+    ## events
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
     }
@@ -184,6 +201,8 @@ qscatter =
                         r = b$size * meta$size, stroke = b$color, fill = NA)
         }
     }
+
+    ## create layers
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
@@ -212,6 +231,7 @@ qscatter =
     layer.root[1, 2] = layer.identify
     layer.root[1, 3] = qlayer()
 
+    ## set sizes of layers (arrange the layout)
     set_layout = function() {
         fix_dimension(layer.root,
                       row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
@@ -222,15 +242,20 @@ qscatter =
                                                      10)))
     }
     set_layout()
+
+    ## layout is dynamic (listen to changes in xlab/ylab/xlabels/ylabels...)
     meta$mainChanged$connect(set_layout)
     meta$xlabChanged$connect(set_layout); meta$ylabChanged$connect(set_layout)
     meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout)
 
+    ## finally create the view and set window title
     view = qplotView(scene = scene)
     view$setWindowTitle(paste("Scatterplot:", meta$xvar, meta$yvar))
     meta$xvarChanged$connect(function() {
         view$setWindowTitle(paste("Scatterplot:", meta$xvar, meta$yvar))
     })
+
+    ## listeners on the data (which column updates which layer(s))
     d.idx = add_listener(data, function(i, j) {
         idx = which(j == c(meta$xvar, meta$yvar, '.brushed', '.color', '.border'))
         if (length(idx) < 1) {
@@ -244,18 +269,27 @@ qscatter =
             compute_order(); compute_aes(); qupdate(layer.main)
         })
     })
+
+    ## when layer is destroyed, remove the listener from data
     qconnect(layer.main, 'destroyed', function(x) {
         ## b$colorChanged$disconnect(b.idx)
         remove_listener(data, d.idx)
     })
 
+    ## when b$cursor is changed, update cursor on screen
     b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
     })
-    sync_limits(meta, layer.main, layer.brush, layer.identify)  # sync limits
+
+    ## these layers have the same limits from meta$limits
+    sync_limits(meta, layer.main, layer.brush, layer.identify)
+
+    ## simulate brushing
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
+
+    ## attach meta to the returned value (for post-processing or debugging)
     attr(view, 'meta') = meta
     view
 }
