@@ -146,14 +146,13 @@ NULL
 ##' @name crimes
 ##' @docType data
 ##' @usage data(crimes)
-##' @format data.frame: 50 obs. of 13 variables
+##' @format data.frame: 50 obs. of 12 variables
 ##' @keywords datasets
 ##' @source \url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
 ##' @examples library(cranvas)
 ##' data(crimes)
-##' crimes$State <- factor(tolower(crimes$State))
 ##' qcrimes <- qdata(crimes)
-##' qparallel(data=qcrimes)
+##' qparallel(names(crimes)[-c(1,2)], data=qcrimes)
 NULL
 
 ##' Spatiotemporal measurements of climate variables
