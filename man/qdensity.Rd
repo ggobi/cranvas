@@ -2,9 +2,9 @@
 \alias{qdensity}
 \title{Draw a univariate density plot}
 \usage{
-qdensity(x, data, main = NULL, binwidth = NULL, size = 4, 
-    alpha = 0.5, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, 
-    cache = T, ...)
+qdensity(x, data = last_data(), main = NULL, binwidth = NULL, 
+    size = 4, alpha = 0.5, xlim = NULL, ylim = NULL, xlab = NULL, 
+    ylab = NULL, asp = NULL, ...)
 }
 \arguments{
   \item{x}{which designates variable displayed on the
