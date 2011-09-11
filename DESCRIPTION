@@ -32,7 +32,8 @@ Version: 0.7.5
 URL: http://github.com/ggobi/cranvas
 BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
-    scales
+    scales,
+    maps
 Suggests:
     productplots,
     animation,
@@ -62,3 +63,4 @@ Collate:
     'qtime.R'
     'qspine.R'
     'qtour.R'
+    'qmap2.R'
