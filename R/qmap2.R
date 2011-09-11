@@ -56,15 +56,13 @@ qmap2 =
     compute_coords()
 
     compute_colors = function() {
-        ## FIXME: may not need to recycle here; ask Michael
-        n = length(md$x)
-        meta$border = rep(data$.border, length = n)
+        meta$border = data$.border
         if (is.null(linkto)) {
-            meta$color = rep(data$.color, length = n)
+            meta$color = data$.color
         } else {
             if (is.null(linkby)) stop("must specify a linking variable in 'linkto'")
             tmp = tapply(linkto$.color, linkto[, as.character(z$linkby)], `[`, 1)
-            meta$color = rep(tmp[data$labels], length = n)  # use labels to find colors
+            meta$color = tmp[data$labels]  # use labels to find colors
         }
     }
     compute_colors()
