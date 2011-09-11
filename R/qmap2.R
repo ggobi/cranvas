@@ -200,7 +200,7 @@ qmap2 =
     })
 
     if (!is.null(linkto)) {
-        id = link_cat(linkto, as.character(z$linkto), data, 'labels')
+        id = link_cat(linkto, as.character(z$linkby), data, 'labels')
     }
     ## when layer is destroyed, remove the listener from data
     qconnect(layer.main, 'destroyed', function(x) {
