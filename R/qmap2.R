@@ -260,8 +260,7 @@ Map.meta =
 ##' @examples library(cranvas); map_qdata('state'); map_qdata('county', 'iowa')
 map_qdata = function(database, regions = '.', color = NA, border = 'black') {
     df = map(database, regions, plot = FALSE, fill = TRUE)
-    ## FIXME: I've reported the inconsistency in the county data to maps author --
-    ## ',' is the separator in county data while other datasets uses ':'
+    ## usually ':' is the separator but sometimes it is ','
     labels =
         if (any(grepl(':', df$names, fixed = TRUE))) {
             sapply(strsplit(df$names, ':', fixed = TRUE), `[`, 1)
