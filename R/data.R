@@ -287,7 +287,6 @@ selected = function(data) {
 ##' @return \code{\link{link_var}} returns the name of the linking
 ##' variable
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @export
 ##' @seealso \code{\link{qdata}}, \code{\link{link}}
 ##' @examples
 ##' mf = qdata(head(iris))
@@ -304,7 +303,6 @@ link_var = function(data) {
 ##' @param value the name of the linking variable (or \code{NULL} to
 ##' disable linking); the variable must be a factor (i.e. categorical
 ##' variable)
-##' @export "link_var<-"
 `link_var<-` = function(data, value) {
     if (!is.null(value)) {
         if (!(value %in% colnames(data)))
@@ -329,7 +327,6 @@ link_var = function(data) {
 ##' \code{\link{qdata}}), with an attribute \code{Link}
 ##' @return \code{\link{link_type}} returns the type of linking
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @export
 ##' @examples
 ##' mf = qdata(iris)
 ##' link_type(mf)
@@ -342,7 +339,6 @@ link_type = function(data) {
 ##' @usage link_type(data) <- value
 ##' @param value the type of linking (possible values are \code{hot},
 ##' \code{cold} and \code{self})
-##' @export "link_type<-"
 `link_type<-` = function(data, value) {
     attr(data, 'Link')$type = value
     data
