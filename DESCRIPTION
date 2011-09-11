@@ -1,7 +1,7 @@
 Package: cranvas
 Imports:
-    qtbase,
-    qtpaint,
+    qtbase (>= 0.99.2),
+    qtpaint (>= 0.8.1),
     reshape,
     plyr,
     tourr (>= 0.5),
