@@ -25,7 +25,7 @@
 #' @export
 #' @family plots
 #' @example inst/examples/qdensity-ex.R
-qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
+qdensity <- function(x, data = last_data(), main = '', binwidth = NULL,
   size = 4, alpha = 0.5, xlim=NULL, ylim=NULL, xlab=NULL, ylab=NULL, asp = NULL, ...)
 {
 
@@ -84,6 +84,8 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
           }
     }
     meta$limits = extend_ranges(r)
+    message("limits ", meta$limits[1], " ", meta$limits[2])
+
   }
   compute_coords()
 
@@ -91,17 +93,20 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
   compute_aes = function() {
     idx = !visible(data)[meta$order]
     meta$color = data$.color[meta$order]; meta$border = data$.border[meta$order]
+    message("2 idx ", length(idx), " ", length(meta$color), " ", length(meta$border))
     meta$color[idx] = NA; meta$border[idx] = NA
     meta$size = data$.size[meta$order]; meta$size[idx] = NA
+    message("size ", length(meta$size))
   }
   compute_aes()
 
   ## initialize brush size (1/15 of the layer size)
   meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+  message("brush size ", meta$brush.size)
 
   ## draw points & density
   main_draw = function(layer, painter) {
-    message("here 1 ", length(meta$x), " ", length(meta$y), " ", range(meta$x), " ", meta$limits[1])
+    message("main draw ", length(meta$x), " ", length(meta$y), " ", range(meta$x), " ", meta$limits[1])
     message(meta$ylab, " ", length(meta$color), " ", length(meta$xlabels), " ", length(meta$ylabels))
     if (meta$samesize) {
       qdrawGlyph(painter, qglyphCircle(r = data$.size[1]), meta$x, meta$y,
@@ -111,17 +116,23 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
         stroke = meta$border, fill = meta$color)
     }
     ncol <- unique(meta$color)
-    for (i in 1:length(ncol)) {
-      sc <- ncol[i]
-      dx <- density(meta$x[meta$.color == sc], bw=meta$binwidth)
-      qlineWidth(painter) <- 3
-      qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(sc, 1))
-    }
-    message("here 2")
+    if (length(ncol) > 1) {
+      for (i in 1:length(ncol)) {
+        sc <- ncol[i]
+        dx <- density(meta$x[meta$.color == sc], bw=meta$binwidth)
+        qlineWidth(painter) <- 3
+        qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(sc, 1))
+      }
+    } else {
+        dx <- density(meta$x, bw=meta$binwidth)
+        qlineWidth(painter) <- 3
+        qdrawLine(painter, x=dx$x, y=dx$y, stroke = alpha(ncol, 1))
+    }      
   }
   
   ## draw brushed points
   brush_draw = function(layer, painter) {
+    message("brush_draw ", b$identify, " ", b$mode, " ", b$color)
     if (b$identify) return()
     idx = visible(data) & selected(data)
     if (any(idx)) {
@@ -146,6 +157,7 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
   brush_mouse_move = function(layer, event) {
     rect = qrect(update_brush_size(meta, event))
     hits = layer$locate(rect) + 1
+    message("brush_mouse_move ", hits)
     if (length(hits)) {
       hits = intersect(meta$order[as.character(hits)],  which(visible(data)))
     }
@@ -154,9 +166,11 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
   }
   brush_mouse_release = function(layer, event) {
     brush_mouse_move(layer, event)
+    message("brush_mouse_release ")
     common_mouse_release(layer, event, data, meta)
   }
   key_press = function(layer, event) {
+    message("key_press ")
     common_key_press(layer, event, data, meta)
     shift = event$modifiers() == Qt$Qt$ShiftModifier
     if (shift && length(i <- which(match_key(c('Left', 'Right', 'Up', 'Down'))))) {
@@ -168,12 +182,15 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
     }
   }
   key_release = function(layer, event) {
+    message("key release ")
     common_key_release(layer, event, data, meta)
   }
   mouse_wheel = function(layer, event) {
+    message("mouse_wheel ")
     meta$limits = extend_ranges(meta$limits, -sign(event$delta()) * 0.05)
   }
   identify_hover = function(layer, event) {
+    message("identify_hover ")
     if (!b$identify) return()
     b$cursor = 2L
     meta$pos = as.numeric(event$pos())
@@ -182,7 +199,10 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
     qupdate(layer.identify)
   }
   identify_draw = function(layer, painter) {
+    message("identify_draw ",b$identify)
     if (!b$identify || !length(idx <- meta$identified)) return()
+    message("idx ", idx)
+    message("identified ", meta$identified)
     meta$identify.labels =
       sprintf('row id: %s\n%s: %s\n%s: %s',
         paste(rownames(data)[idx], collapse = ', '),
@@ -213,6 +233,7 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
       limits = qrect(meta$limits), clip = TRUE)
   layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
   layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
+  message("axes ", meta$xlab, " ", meta$ylab, " ", meta$main)
   layer.title = qmtext(meta = meta, side = 3)
   layer.xlab = qmtext(meta = meta, side = 1)
   layer.ylab = qmtext(meta = meta, side = 2)
@@ -259,6 +280,7 @@ qdensity <- function(x, data = last_data(), main = NULL, binwidth = NULL,
     idx = which(j == c(meta$xvar, '.brushed', '.color', '.border'))
     if (length(idx) < 1) {
       compute_coords(); compute_aes()
+      message("in add listener")
       meta$samesize = diff(range(data$.size, na.rm = TRUE, finite = TRUE)) < 1e-7
       qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
         layer.main$invalidateIndex(); qupdate(layer.main)
