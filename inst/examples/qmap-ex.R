@@ -15,22 +15,21 @@ qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
 #######################
 
 data(crimes)
-crimes$State <- factor(tolower(crimes$State))
 
 qcrimes <- qdata(crimes)
 print(qparallel(data=qcrimes))
 
 # now link map and crimes data set
 
-link_cat(qcrimes, 'State', qstates, 'region')
-print(qscatter(Population, Robbery, qcrimes))
+link_cat(qcrimes, 'state', qstates, 'region')
+print(qscatter(population, robbery, qcrimes))
 
 # Choropleth maps
-setMapColorByLabel(qstates, qcrimes, Robbery/Population, scale_colour_gradient())
+setMapColorByLabel(qstates, qcrimes, robbery/population, scale_colour_gradient())
 
 # change to different choropleth map:
-setMapColorByLabel(qstates, qcrimes, log(100000*Robbery/Population + 1), scale_colour_gradient2())
-setMapColorByLabel(qstates, qcrimes, log(100000*Burglary/Population + 1), scale_colour_gradient2())
+setMapColorByLabel(qstates, qcrimes, log(100000*robbery/population + 1), scale_colour_gradient2())
+setMapColorByLabel(qstates, qcrimes, log(100000*burglary/population + 1), scale_colour_gradient2())
 
 ##############
 

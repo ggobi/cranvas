@@ -2,7 +2,7 @@
 \name{crimes}
 \alias{crimes}
 \title{US Crimes data from 2009}
-\format{data.frame: 50 obs. of 13 variables}
+\format{data.frame: 50 obs. of 12 variables}
 \source{
   \url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
 }
@@ -15,8 +15,7 @@ data(crimes)
 \examples{
 library(cranvas)
 data(crimes)
-crimes$State <- factor(tolower(crimes$State))
 qcrimes <- qdata(crimes)
-qparallel(data = qcrimes)
+qparallel(names(crimes)[-c(1, 2)], data = qcrimes)
 }
 \keyword{datasets}

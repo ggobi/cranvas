@@ -9,7 +9,6 @@
 ##' @param scale is a color scheme from the scales package, options include scale_colour_gradient(), scale_colour_gradient2(), ...
 ##' @author Heike Hofmann
 ##' @export
-##' @example inst/examples/qmap-ex.R
 
 setMapColorByLabel <- function(qmap, qdata, label, scale = scale_colour_gradient()) {
 	if (is.null(link_var(qmap)) | is.null(link_var(qdata)))
