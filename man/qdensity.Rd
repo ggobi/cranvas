@@ -2,90 +2,83 @@
 \alias{qdensity}
 \title{Draw a univariate density plot}
 \usage{
-qdensity(x, data = last_data(), main = NULL, binwidth = NULL, 
-    size = 4, alpha = 0.5, xlim = NULL, ylim = NULL, xlab = NULL, 
-    ylab = NULL, asp = NULL, ...)
+qdensity(x, data = last_data(), binwidth = NULL, main = "", 
+    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
 }
 \arguments{
-  \item{x}{which designates variable displayed on the
-  horizontal axis}
+  \item{x}{variable name which designates variable
+  displayed on the horizontal axis}
 
-  \item{data}{mutaframe data to use}
+  \item{data}{a mutaframe created by \code{\link{qdata}}
+  (default to be \code{\link{last_data}()}, i.e. the lastly
+  used data)}
 
-  \item{size}{point size}
+  \item{main}{the main title}
 
-  \item{alpha}{transparency level, 1=completely opaque}
+  \item{xlim}{a numeric vector of length 2 (like
+  \code{c(x0, x1)}) for x-axis limits; it will be
+  calculated from the data limits if not specified
+  (\code{NULL}). Note when \code{x0 > x1}, the axis
+  direction will be reversed (i.e. from larger values to
+  small values)}
 
-  \item{xlim}{= c(min, max) user specifed data range for
-  the x axis, by default range(x)}
+  \item{ylim}{y-axis limits; similar to \code{xlim}}
 
-  \item{ylim}{= c(min, max) user specifed data range for
-  the y axis, by default range(y)}
+  \item{xlab}{x-axis title}
 
-  \item{xlab}{label on horizontal axis, default is name of
-  x variable}
-
-  \item{ylab}{label on vertical axis, default is name of y
-  variable}
-
-  \item{cache}{boolean to turn cache on for layers,
-  defaults to TRUE}
+  \item{ylab}{y-axis title}
 }
 \description{
   Draw a univariate density plot, with a rug plot
   underneath.
 }
 \details{
-  arrow up/down: in-/de-crease size of points
-
-  arrow -/+: de-/in-crease alpha level (starts at alpha=1
-  by default)
-
-  arrow left/right: de-/in-crease binwidth for density
-
-  Key 'z' toggle zoom on/off (default is off): mouse click
-  & drag will specify a zoom window, reset to default
-  window by click/no drag
-
-  Key 'x' toggle focal zoom on/off (default is off): mouse
-  click & drag will specify a zoom window, zoom out by
-  pressing shift key
-
-  Key 'r' resets data range to original scale
+  Common interactions are documented in
+  \code{\link{common_key_press}}. Specific interactions
+  include: Arrow \code{Up}/\code{Down} in-/de-creases size
+  of points; Arrow \code{Left}/\code{Right} de-/in-creases
+  binwidth for density; Key \code{Z} toggle zoom on/off
+  (default is off); mouse click & drag will specify a zoom
+  window, reset to default window by click/no drag; Key
+  \code{X} toggles focal zoom on/off (default is off);
+  mouse click & drag will specify a zoom window, zoom out
+  by pressing \code{Shift} key; Key \code{R} resets data
+  range to original scale.
 }
 \examples{
-# Examples for qdensity
 library(cranvas)
 
-####
+### (1) tennis data
 data(tennis)
 qtennis <- qdata(tennis)
 
-print(qdensity(first.serve.pct, qtennis))
-print(qdensity(second.serve.pts, qtennis))
-print(qdensity(serve.speed, qtennis))
+qdensity(first.serve.pct, data = qtennis)
 
-record_selector("name", qtennis)
+qdensity(second.serve.pts, data = qtennis)
+qdensity(serve.speed, data = qtennis)
 
-####
+record_selector(name, data = qtennis)
+
+### (2) pollen data
 if (require("animation")) {
     data(pollen, package = "animation")
     qpollen <- qdata(pollen)
     print(qdensity(RIDGE, data = qpollen))
 }
 
-####
+### (3) flea (with colors)
 data(flea, package = "tourr")
-qflea <- qdata(flea)
+qflea <- qdata(flea, color = species)
 
-print(qdensity(tars1, qflea))
-print(qdensity(tars2, qflea))
-print(qdensity(aede1, qflea))
-print(qdensity(aede3, qflea))
+qdensity(tars1, data = qflea)
+
+qdensity(tars2, data = qflea)
+qdensity(aede1, data = qflea)
+qdensity(aede3, data = qflea)
 
 #### test colors
 qflea <- qdata(flea, color = species)
-print(qdensity(tars1, qflea))
+qdensity(tars1, data = qflea)
 }
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
