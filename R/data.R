@@ -131,7 +131,8 @@ qdata =
                      }, label.color = "darkgray",
                      history.size = 30, history.index = 0, history.list = list(),
                      persistent = FALSE, persistent.color = character(0),
-                     persistent.list = list(), select.only = FALSE, cursor = 0L)
+                     persistent.list = list(), select.only = FALSE, draw.brush = TRUE,
+                     cursor = 0L)
 
     ## here 'mode' is explained in the documentation of mode_selection()
 
