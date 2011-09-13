@@ -1,32 +1,33 @@
-# Examples for qdensity
 library(cranvas)
 
-####
+### (1) tennis data
 data(tennis)
 qtennis <- qdata(tennis)
 
-print(qdensity(first.serve.pct, qtennis))
-print(qdensity(second.serve.pts, qtennis))
-print(qdensity(serve.speed, qtennis))
+qdensity(first.serve.pct, data = qtennis)
 
-record_selector("name", qtennis)
+qdensity(second.serve.pts, data = qtennis)
+qdensity(serve.speed, data = qtennis)
 
-####
+record_selector(name, data = qtennis)
+
+### (2) pollen data
 if (require('animation')) {
   data(pollen, package = 'animation')
   qpollen <- qdata(pollen)
   print(qdensity(RIDGE, data = qpollen))
 }
 
-####
+### (3) flea (with colors)
 data(flea, package = 'tourr')
-qflea <- qdata(flea)
+qflea <- qdata(flea, color = species)
 
-print(qdensity(tars1, qflea))
-print(qdensity(tars2, qflea))
-print(qdensity(aede1, qflea))
-print(qdensity(aede3, qflea))
+qdensity(tars1, data = qflea)
+
+qdensity(tars2, data = qflea)
+qdensity(aede1, data = qflea)
+qdensity(aede3, data = qflea)
 
 #### test colors
 qflea <- qdata(flea, color = species)
-print(qdensity(tars1, qflea))
+qdensity(tars1, data = qflea)
