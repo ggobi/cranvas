@@ -242,7 +242,8 @@ Map.meta =
 ##' Create data for drawing maps
 ##'
 ##' This function converts maps data in the \pkg{maps} package to a
-##' suitable format for \pkg{cranvas}.
+##' suitable format for \pkg{cranvas}. Optionally it transforms the
+##' data to make cartograms.
 ##'
 ##' The function \code{\link[maps]{map}} is used to convert maps data
 ##' to a list, then the region names are stored in a mutaframe created
@@ -253,12 +254,20 @@ Map.meta =
 ##' @param database see \code{\link[maps]{map}}
 ##' @param regions see \code{\link[maps]{map}}
 ##' @inheritParams qdata
+##' @param cartogram whether to transform the map data in order to
+##' create a cartogram; if \code{TRUE}, the shape of the cartogram
+##' will be determined by the \code{size} parameter in the data
+##' (i.e. \code{data$.size}); see \code{\link{cart_polygon}} for
+##' details
+##' @param ... passed to \code{\link{cart_polygon}}
 ##' @return A mutaframe of region names and labels, with an attribute
 ##' \code{MapData} containing the coordinates of polygons.
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples library(cranvas); map_qdata('state'); map_qdata('county', 'iowa')
-map_qdata = function(database, regions = '.', color = NA, border = 'black') {
+map_qdata =
+    function(database, regions = '.', color = NA, border = 'black', size = 4,
+             cartogram = FALSE, ...) {
     df = map(database, regions, plot = FALSE, fill = TRUE)
     ## usually ':' is the separator but sometimes it is ','
     labels =
@@ -269,8 +278,15 @@ map_qdata = function(database, regions = '.', color = NA, border = 'black') {
         } else df$names
     mf =
         qdata(data.frame(names = df$names, labels = labels, stringsAsFactors = FALSE),
-              color = color, border = border)
-    attr(mf, 'MapData') = as.data.frame(df[1:2])
+              color = color, border = border, size = size)
+    xy = as.data.frame(df[1:2])
+    if (cartogram && length(size) > 1 && !all(diff(size) < 1e-7)) {
+        if (!require('Rcartogram'))
+            message('Rcartogram package not available; map data not transformed')
+        ## FIXME: cartogram() depends on the magnitude of size!!! so I did not use mf$.size
+        xy = cart_polygon(xy$x, xy$y, size, ...)
+    }
+    attr(mf, 'MapData') = xy
     mf
 }
 
