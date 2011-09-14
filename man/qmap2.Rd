@@ -3,7 +3,7 @@
 \title{Draw a map}
 \usage{
 qmap2(data = last_data(), linkto = NULL, linkby = NULL, 
-    main = "", xlab = NULL, ylab = NULL, xlim = NULL, ylim = NULL)
+    main = "", xlim = NULL, ylim = NULL)
 }
 \arguments{
   \item{data}{the map data created by
@@ -17,10 +17,6 @@ qmap2(data = last_data(), linkto = NULL, linkby = NULL,
   \code{\link{link_cat}})}
 
   \item{main}{the main title}
-
-  \item{xlab}{x-axis title}
-
-  \item{ylab}{y-axis title}
 
   \item{xlim}{a numeric vector of length 2 (like
   \code{c(x0, x1)}) for x-axis limits; it will be
