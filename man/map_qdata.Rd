@@ -2,12 +2,21 @@
 \alias{map_qdata}
 \title{Create data for drawing maps}
 \usage{
-map_qdata(database, regions = ".", color = NA, border = "black")
+map_qdata(database, regions = ".", color = NA, border = "black", 
+    size = 4, cartogram = FALSE, ...)
 }
 \arguments{
   \item{database}{see \code{\link[maps]{map}}}
 
   \item{regions}{see \code{\link[maps]{map}}}
+
+  \item{cartogram}{whether to transform the map data in
+  order to create a cartogram; if \code{TRUE}, the shape of
+  the cartogram will be determined by the \code{size}
+  parameter in the data (i.e. \code{data$.size}); see
+  \code{\link{cart_polygon}} for details}
+
+  \item{...}{passed to \code{\link{cart_polygon}}}
 
   \item{color}{colors of graphical elements (default dark
   gray) corresponding to rows of data; it can be a vector
@@ -19,6 +28,10 @@ map_qdata(database, regions = ".", color = NA, border = "black")
   \item{border}{colors for the border of graphical elements
   (e.g. rectangles); \code{NA} means to suppress the
   border}
+
+  \item{size}{sizes of rows (default 1); possible values
+  are similar to \code{color}, but when using a variable to
+  generate sizes, it must be a numeric variable}
 }
 \value{
   A mutaframe of region names and labels, with an attribute
@@ -27,6 +40,7 @@ map_qdata(database, regions = ".", color = NA, border = "black")
 \description{
   This function converts maps data in the \pkg{maps}
   package to a suitable format for \pkg{cranvas}.
+  Optionally it transforms the data to make cartograms.
 }
 \details{
   The function \code{\link[maps]{map}} is used to convert
