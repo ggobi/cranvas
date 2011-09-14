@@ -273,3 +273,63 @@ map_qdata = function(database, regions = '.', color = NA, border = 'black') {
     attr(mf, 'MapData') = as.data.frame(df[1:2])
     mf
 }
+
+##' Calculate coordinates of transformed polygons to make cartograms
+##'
+##' Based on the given sizes of polygons, this function calculates the
+##' transformed coordinates using the \pkg{Rcartogram} package.
+##' @param x,y the x and y coordinates of original polygons (polygons
+##' are separated by \code{NA}'s)
+##' @param size the size vector of polygons (length must be equal to
+##' the number of polygons, i.e. the number of \code{NA}'s plus 1)
+##' @param nrow,ncol numbers to define a grid for the cartogram
+##' algorithm (see references in \pkg{Rcartogram}); this can affect
+##' the convergence and speed of the algorithm, so may need to be
+##' adjusted for a few times
+##' @param ... other arguments passed to
+##' \code{\link[Rcartogram]{cartogram}}
+##' @return A data frame of two columns \code{x} and \code{y}
+##' (coordinates of transformed polygons)
+##' @author Yihui Xie <\url{http://yihui.name}>
+##' @export
+##' @example inst/examples/cart_polygon-ex.R
+cart_polygon = function(x, y, size, nrow = 100, ncol = 100, ...) {
+    if (!require('Rcartogram')) {
+        message("this function requires the Rcartogram package")
+        return(data.frame(x, y))
+    }
+    if (length(size) != sum(is.na(x)) + 1)
+        stop("the length of 'size' vector must be the same as the number of polygons")
+
+    xlim = range(x, na.rm = TRUE); ylim = range(y, na.rm = TRUE)
+    dx = c(0, diff(xlim)/1000); dy = c(0, diff(ylim)/1000)  # to construct query rectangle
+    grid = matrix(NA, nrow = nrow, ncol = ncol)
+    gx = seq(xlim[1], xlim[2], length = ncol); gy = seq(ylim[1], ylim[2], length = nrow)
+
+    ## we use Qt to query the sizes for grid points
+    h = qlayer(paintFun = function(layer, painter) {
+        qdrawPolygon(painter, x, y)
+    }, limits = qrect(xlim, ylim))
+    ## generate the population density matrix (time consuming)
+    message('Generating the population density grid...')
+    pb = txtProgressBar(min = 0, max = nrow, style = 3)
+    for (i in seq_len(nrow)) {
+        for (j in seq_len(ncol)) {
+            hit = h$locate(qrect(gx[j] + dx, gy[i] + dy))
+            if (length(hit)) grid[i, j] = size[hit[1] + 1]
+        }
+        setTxtProgressBar(pb, i)
+    }
+    close(pb)
+    f = min(grid, na.rm = TRUE)
+    grid[is.na(grid)] = f  # fill NA's with mean; add margin with mean too later
+    grid = addBoundary(grid, land.mean = f)
+    extra = attr(grid, 'extra')  # extra rows/cols added
+    message('Calculating cartogram coordinates...')
+    res = cartogram(grid, ...)
+    pred =
+        predict(res, (x - xlim[1]) / (diff(xlim)) * (ncol - 1) + 1 + extra[1],
+                (y - ylim[1]) / (diff(ylim)) * (nrow - 1) + 1 + extra[2])
+    data.frame(x = (pred$x - extra[1] - 1) / (ncol - 1) * diff(xlim) + xlim[1],
+               y = (pred$y - extra[2] - 1) / (nrow - 1) * diff(ylim) + ylim[1])
+}
