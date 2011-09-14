@@ -27,7 +27,7 @@
 ##' @example inst/examples/qmap2-ex.R
 qmap2 =
     function(data = last_data(), linkto = NULL, linkby = NULL,
-             main = '', xlab = NULL, ylab = NULL, xlim = NULL, ylim = NULL) {
+             main = '', xlim = NULL, ylim = NULL) {
     data = check_data(data)
     if (is.null(md <- attr(data, 'MapData')))
         stop('data must be created from map_qdata()')
@@ -36,17 +36,11 @@ qmap2 =
 
     ## initialize meta
     meta =
-        Map.meta$new(alpha = 1, main = main, minor = 'xy',
+        Map.meta$new(alpha = 1, main = main,
                      group = cumsum(is.na(md$x) & is.na(md$y)) + 1)
-
-    ## set default xlab/ylab if not provided
-    if (is.null(xlab)) meta$xlab = 'longitude'
-    if (is.null(ylab)) meta$ylab = 'latitude'
 
     ## compute coordinates/axes-related stuff
     compute_coords = function() {
-        meta$xat = axis_loc(md$x); meta$yat = axis_loc(md$y)
-        meta$xlabels = format(meta$xat); meta$ylabels = format(meta$yat)
         r =
             cbind(if (is.null(xlim))
                   range(md$x, na.rm = TRUE, finite = TRUE) else xlim,
@@ -147,38 +141,22 @@ qmap2 =
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
-    layer.xlab = qmtext(meta = meta, side = 1)
-    layer.ylab = qmtext(meta = meta, side = 2)
-    layer.xaxis = qaxis(meta = meta, side = 1)
-    layer.yaxis = qaxis(meta = meta, side = 2)
-    layer.grid = qgrid(meta = meta)
-    layer.root[0, 2] = layer.title
-    layer.root[2, 2] = layer.xaxis
-    layer.root[3, 2] = layer.xlab
-    layer.root[1, 1] = layer.yaxis
-    layer.root[1, 0] = layer.ylab
-    layer.root[1, 2] = layer.grid
-    layer.root[1, 2] = layer.main
-    layer.root[1, 2] = layer.brush
-    layer.root[1, 2] = layer.identify
-    layer.root[1, 3] = qlayer()
+    layer.root[0, 0] = layer.title
+    layer.root[1, 0] = layer.main
+    layer.root[1, 0] = layer.brush
+    layer.root[1, 0] = layer.identify
+    layer.root[1, 1] = qlayer()
 
     ## set sizes of layers (arrange the layout)
     set_layout = function() {
         fix_dimension(layer.root,
-                      row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
-                                                  prefer_height(meta$xlabels),
-                                                  prefer_height(meta$xlab))),
-                      column = list(id = c(1, 0, 3), value = c(prefer_width(meta$ylabels),
-                                                     prefer_width(meta$ylab, FALSE),
-                                                     10)))
+                      row = list(id = 0, value = prefer_height(meta$main)),
+                      column = list(id = 1, value = 10))
     }
     set_layout()
 
     ## layout is dynamic (listen to changes in xlab/ylab/xlabels/ylabels...)
     meta$mainChanged$connect(set_layout)
-    meta$xlabChanged$connect(set_layout); meta$ylabChanged$connect(set_layout)
-    meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout)
 
     ## finally create the view and set window title
     view = qplotView(scene = scene)
@@ -189,7 +167,6 @@ qmap2 =
         idx = which(j == c('.brushed', '.color', '.border'))
         if (length(idx) < 1) {
             compute_coords()
-            qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
             layer.main$invalidateIndex(); qupdate(layer.main)
             return()
         } else idx = c(1, 2, 2)[idx]
