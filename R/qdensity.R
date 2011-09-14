@@ -19,7 +19,7 @@
 ##' @family plots
 ##' @example inst/examples/qdensity-ex.R
 qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
-                     xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL) {
+                     xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, size=4) {
 
     ################################
     # data processing & parameters #
@@ -33,7 +33,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     meta =
         Dens.meta$new(xvar = as.character(z$x),
                       alpha = .5, main = main, minor = 'xy',
-                      samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
+                      samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7, size = size)
     ## set default xlab if not provided
     if (is.null(xlab)) meta$xlab = meta$xvar
 
@@ -74,7 +74,9 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
                   range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
                   if (is.null(ylim))
                   c(0.00, max(y.all, na.rm = TRUE)) else ylim * 100 + 0.00)
-        meta$limits = extend_ranges(r)
+        message("r ", length(r), " ", r[1], " ", r[2], " ", r[3], " ", r[4])
+        meta$limits = extend_ranges(r, f=c(0.15, 0.15))
+        message("lims ", length(meta$limits), " ", meta$limits[1], " ", meta$limits[2], " ", meta$limits[3], " ", meta$limits[4])
         meta$x = meta$x[meta$order]
         meta$y = diff(meta$limits[, 2]) / 80  # ugly clipping bug
     }
@@ -96,10 +98,10 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     main_draw = function(layer, painter) {
         if (meta$samesize) {
             qdrawGlyph(painter, qglyphCircle(r = data$.size[1]), meta$x, meta$y,
-                       stroke = meta$border, fill = meta$color)
+                       stroke = alpha(meta$border, meta$alpha), fill = alpha(meta$color, meta$alpha))
         } else {
             qdrawCircle(painter, meta$x, meta$y, r = meta$size,
-                        stroke = meta$border, fill = meta$color)
+                        stroke = alpha(meta$border, meta$alpha), fill = alpha(meta$color, meta$alpha))
         }
     }
     ## density lines
