@@ -37,7 +37,8 @@ Depends:
 Suggests:
     productplots,
     animation,
-    randomForest
+    randomForest,
+    Rcartogram
 Collate:
     'cranvas-package.R'
     'zzz.R'
