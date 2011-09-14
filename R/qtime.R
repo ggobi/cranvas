@@ -233,7 +233,15 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   }
 
   mouse_wheel = function(layer, event) {
-    meta$limits = extend_ranges(meta$limits, -sign(event$delta()) * 0.05)
+    meta$limits[1:2] <- extend_ranges(meta$limits[1:2], -sign(event$delta()) * 0.05)
+    meta$limits[1,1] <- max(meta$limits[1,1],min(meta$xtmp,na.rm=TRUE))
+    meta$limits[2,1] <- min(meta$limits[2,1],max(meta$xtmp,na.rm=TRUE))
+    if (meta$limits[1,1]<=min(meta$xtmp,na.rm=TRUE) & meta$limits[2,1]>=max(meta$xtmp,na.rm=TRUE)){
+      meta$wrapF_dragT <- FALSE
+    } else {
+      meta$wrapF_dragT <- TRUE
+      meta$wrap.mode <- FALSE
+    }
   }
   
   key_press <- function(layer, event){
