@@ -32,6 +32,7 @@ qmap2 =
     if (is.null(md <- attr(data, 'MapData')))
         stop('data must be created from map_qdata()')
     b = brush(data)
+    b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
     z = as.list(match.call()[-1])
 
     ## initialize meta
