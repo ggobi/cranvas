@@ -19,7 +19,7 @@
 ##' @family plots
 ##' @example inst/examples/qdensity-ex.R
 qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
-                     xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, size=4) {
+                     xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL) {
 
     ################################
     # data processing & parameters #
@@ -33,7 +33,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     meta =
         Dens.meta$new(xvar = as.character(z$x),
                       alpha = .5, main = main, minor = 'xy',
-                      samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7, size = size)
+                      samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
     ## set default xlab if not provided
     if (is.null(xlab)) meta$xlab = meta$xvar
 
