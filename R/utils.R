@@ -111,7 +111,8 @@ extend_ranges = function(x, f = qpar("mar")) {
     if (!is.null(d <- dim(x))) {
         if (length(d) != 2L) stop("x must be of 2 dimensions")
         if (d[2] != 2L) stop("x must be of 2 columns")
-        return(apply(x, 2, extend_ranges, f = f))
+        f = rep(f, length = 4)
+        return(cbind(extend_ranges(x[, 1], f = f[1:2]), extend_ranges(x[, 2], f = f[3:4])))
     }
     if (length(x) != 2) x = range(x, na.rm = TRUE, finite = TRUE)
     x + c(-1, 1) * f * (x[2] - x[1])
