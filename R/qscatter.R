@@ -174,7 +174,12 @@ qscatter =
         common_key_release(layer, event, data, meta)
     }
     mouse_wheel = function(layer, event) {
-        meta$limits = extend_ranges(meta$limits, -sign(event$delta()) * 0.05)
+        pos = as.numeric(event$pos())
+        lim = meta$limits
+        p = (pos - lim[1, ]) / (lim[2, ] - lim[1, ])  # proportions to left/bottom
+        meta$limits =
+            extend_ranges(meta$limits,
+                          -sign(event$delta()) * 0.1 * c(p[1], 1 - p[1], p[2], 1 - p[2]))
     }
     identify_hover = function(layer, event) {
         if (!b$identify) return()
