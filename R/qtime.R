@@ -233,10 +233,14 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   }
 
   mouse_wheel = function(layer, event) {
-    meta$limits[1:2] <- extend_ranges(meta$limits[1:2], -sign(event$delta()) * 0.05)
-    meta$limits[1,1] <- max(meta$limits[1,1],min(meta$xtmp,na.rm=TRUE))
-    meta$limits[2,1] <- min(meta$limits[2,1],max(meta$xtmp,na.rm=TRUE))
-    if (meta$limits[1,1]<=min(meta$xtmp,na.rm=TRUE) & meta$limits[2,1]>=max(meta$xtmp,na.rm=TRUE)){
+    pos <- as.numeric(event$pos())
+    lim <- meta$limits
+    p <- (pos - lim[1, ]) / (lim[2, ] - lim[1, ])
+    meta$limits[1:2] <- extend_ranges(meta$limits[1:2], -sign(event$delta()) * 0.05 * c(p[1], 1 - p[1]))
+    tmprange <- extend_ranges(meta$xtmp)
+    meta$limits[1,1] <- max(meta$limits[1,1],min(tmprange))
+    meta$limits[2,1] <- min(meta$limits[2,1],max(tmprange))
+    if (meta$limits[1,1]<=min(tmprange) & meta$limits[2,1]>=max(tmprange)){
       meta$wrapF_dragT <- FALSE
     } else {
       meta$wrapF_dragT <- TRUE
