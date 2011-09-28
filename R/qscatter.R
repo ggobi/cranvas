@@ -45,7 +45,7 @@
 ##' @example inst/examples/qscatter-ex.R
 qscatter =
     function(x, y, data = last_data(), main = '', xlim = NULL, ylim = NULL,
-             xlab = NULL, ylab = NULL, asp = NULL) {
+             xlab = NULL, ylab = NULL, asp = 1) {
 
     data = check_data(data)
     b = brush(data)
@@ -88,15 +88,6 @@ qscatter =
                   range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
                   if (is.null(ylim))
                   range(meta$y[idx], na.rm = TRUE, finite = TRUE) else ylim)
-        if (!is.null(asp)) {
-            asp = asp / 1.5  # 1.5 = 600/400 from the default window size
-            r = if (asp * (rx <- abs(r[2, 1] - r[1, 1])) > (ry <- abs(r[2, 2] - r[1, 2]))) {
-                ## expand ylim
-                cbind(r[, 1], extend_ranges(r[, 2], (rx * asp / ry - 1) / 2))
-            } else {
-                cbind(extend_ranges(r[, 1], (ry / (rx * asp) - 1) / 2), r[, 2])
-            }
-        }
         meta$limits = extend_ranges(r)
     }
     compute_coords()
@@ -259,6 +250,7 @@ qscatter =
     meta$xvarChanged$connect(function() {
         view$setWindowTitle(paste("Scatterplot:", meta$xvar, meta$yvar))
     })
+    if (!is.null(asp)) view$resize(480, 480 * asp)  # aspect ratio
 
     ## listeners on the data (which column updates which layer(s))
     d.idx = add_listener(data, function(i, j) {
