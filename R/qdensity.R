@@ -287,6 +287,10 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
 
+    meta$binwidthChanged$connect(function () {
+        compute_coords(); layer.main$invalidateIndex()
+    })
+
     ## attach meta to the returned value (for post-processing or debugging)
     attr(view, 'meta') = meta
     view
