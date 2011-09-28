@@ -12,6 +12,9 @@
 ##' mouse click & drag will specify a zoom window, zoom out by
 ##' pressing \code{Shift} key; Key \code{R} resets data range to
 ##' original scale.
+##'
+##' Note there are two short tickmarks in the plot denoting the
+##' binwidth.
 ##' @param x variable name which designates variable displayed on the
 ##' horizontal axis
 ##' @inheritParams qbar
