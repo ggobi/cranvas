@@ -25,11 +25,9 @@
 ##' plotted against its indices, i.e., \code{y} will become \code{x}
 ##' and \code{x} will be indices)
 ##' @inheritParams qbar
-##' @param asp aspect ratio (\code{NULL} means to use the data ranges
-##' directly, and a positive value of the aspect ratio will change the
-##' limits of one of the two axes); the implementation is not perfect
-##' yet, since resizing the plotting window will change the aspect
-##' ratio (different to other R graphics systems)
+##' @param asp aspect ratio (ratio of the physical height of a plot to
+##' its width; unlike other R graphics systems, this will \emph{not}
+##' affect the ranges of axes)
 ##' @return A scatter plot
 ##' @author Heike Hofmann, Di Cook, Yihui Xie
 ##' @note Using more than one color (including border colors) can lead

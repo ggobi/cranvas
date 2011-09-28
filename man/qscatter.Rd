@@ -3,7 +3,7 @@
 \title{Draw a scatter plot}
 \usage{
 qscatter(x, y, data = last_data(), main = "", xlim = NULL, 
-    ylim = NULL, xlab = NULL, ylab = NULL, asp = NULL)
+    ylim = NULL, xlab = NULL, ylab = NULL, asp = 1)
 }
 \arguments{
   \item{x}{the name of the x variable}
@@ -12,12 +12,9 @@ qscatter(x, y, data = last_data(), main = "", xlim = NULL,
   will be plotted against its indices, i.e., \code{y} will
   become \code{x} and \code{x} will be indices)}
 
-  \item{asp}{aspect ratio (\code{NULL} means to use the
-  data ranges directly, and a positive value of the aspect
-  ratio will change the limits of one of the two axes); the
-  implementation is not perfect yet, since resizing the
-  plotting window will change the aspect ratio (different
-  to other R graphics systems)}
+  \item{asp}{aspect ratio (ratio of the physical height of
+  a plot to its width; unlike other R graphics systems,
+  this will \emph{not} affect the ranges of axes)}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly
@@ -85,7 +82,7 @@ data(flea, package = "tourr")
 qflea <- qdata(flea, color = species)  # use species to create colors
 
 qscatter(tars1, aede1)
-qscatter(tars1, tars2, asp = 1)  # aspect ratio
+qscatter(tars1, tars2, asp = 0.7)  # aspect ratio
 
 ## link qflea to itself using species
 id <- link_cat(qflea, "species")
