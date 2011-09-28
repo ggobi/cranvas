@@ -48,8 +48,11 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     ## compute coordinates/axes-related stuff
     compute_coords = function() {
         meta$x = data[, meta$xvar]
-        if (is.null(binwidth))
-            meta$binwidth <- density(meta$x)$bw # Get density to estimate the best binwidth
+        if (!length(meta$binwidth)) {
+            meta$binwidth <- if (is.null(binwidth)) {
+                density(meta$x)$bw  # Get density to estimate the best binwidth
+            } else binwidth
+        }
         idx = visible(data)
         grp = data$.color
         if (length(nm <- s$color$variable) && (nm %in% names(data))) {
