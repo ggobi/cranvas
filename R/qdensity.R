@@ -112,6 +112,9 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
             qlineWidth(painter) = 2
             qdrawLine(painter, x = xy$x, y = xy$y * 100, stroke = i)
         }
+        bin.x = meta$xat[1] + c(0, 1) * meta$binwidth
+        bin.y = meta$yat[1] + c(0, 1) * meta$y
+        qdrawSegment(painter, bin.x, bin.y[1], bin.x, bin.y[2], stroke = 'gray15')
     }
     ## draw brushed points
     brush_draw = function(layer, painter) {
