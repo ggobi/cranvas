@@ -161,6 +161,8 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
         } else if (length(i <- which(match_key(c('Up', 'Down'))))) {
             ## change size
             data$.size = pmax(0.1, c(1.1, 0.9)[i] * data$.size)
+        } else if (length(i <- which(match_key(c('Left', 'Right'))))) {
+            meta$binwidth = c(.95, 1.05)[i] * meta$binwidth
         }
     }
     key_release = function(layer, event) {
