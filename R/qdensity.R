@@ -77,9 +77,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
                   range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
                   if (is.null(ylim))
                   c(0.00, max(y.all, na.rm = TRUE)) else ylim * 100 + 0.00)
-        message("r ", length(r), " ", r[1], " ", r[2], " ", r[3], " ", r[4])
         meta$limits = extend_ranges(r, f=c(0.15, 0.15))
-        message("lims ", length(meta$limits), " ", meta$limits[1], " ", meta$limits[2], " ", meta$limits[3], " ", meta$limits[4])
         meta$x = meta$x[meta$order]
         meta$y = diff(meta$limits[, 2]) / 80  # ugly clipping bug
     }
