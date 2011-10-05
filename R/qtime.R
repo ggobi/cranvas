@@ -579,10 +579,12 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       radius <- meta$radius
       for (i in 1:ncol(meta$y)){
         if (any(shadowmatrix[,i])) {
-          qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
-                      y = meta$ytmp[shadowmatrix[,i],i],
-                      r = meta$radius*2, fill = fill,
-                      stroke = stroke)
+          qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[shadowmatrix[,i]], 
+                     meta$ytmp[shadowmatrix[,i],i], stroke = stroke, fill = fill)
+          #qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
+          #            y = meta$ytmp[shadowmatrix[,i],i],
+          #            r = meta$radius*2, fill = fill,
+          #            stroke = stroke)
           if (sum(shadowmatrix[,i])>1) {
             for (k in unique(meta$vargroup)) {
               for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
@@ -625,12 +627,17 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       for (k in unique(meta$vargroup)) {
         for (i in 1:max(meta$wrap.group,na.rm=TRUE)) {
           if (sum(meta$wrap.group==i & meta$vargroup==k)){
-            qdrawCircle(painter,
-                        meta$xtmp[meta$wrap.group==i & meta$vargroup==k],
-                        meta$ytmp[meta$wrap.group==i & meta$vargroup==k,j],
-                        r=meta$radius,
-                        fill=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha),
-                        stroke=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha))
+            qdrawGlyph(painter, qglyphCircle(r = meta$radius), 
+                       meta$xtmp[meta$wrap.group==i & meta$vargroup==k],
+                       meta$ytmp[meta$wrap.group==i & meta$vargroup==k,j],
+                       fill=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha),
+                       stroke=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha))
+            #qdrawCircle(painter,
+            #            meta$xtmp[meta$wrap.group==i & meta$vargroup==k],
+            #            meta$ytmp[meta$wrap.group==i & meta$vargroup==k,j],
+            #            r=meta$radius,
+            #            fill=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha),
+            #            stroke=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha))
           }
         }
       }
@@ -697,10 +704,12 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       for (i in 1:ncol(meta$y)){
         if (any(shadowmatrix[,i])) {
           meta$xtmp[shadowmatrix[,i]] <- meta$xtmp[shadowmatrix[,i]] + meta$pos[1] - meta$start[1]
-          qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
-                      y = meta$ytmp[shadowmatrix[,i],i],
-                      r = meta$radius*2, fill = fill,
-                      stroke = stroke)
+          qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[shadowmatrix[,i]], 
+                     meta$ytmp[shadowmatrix[,i],i], stroke = stroke, fill = fill)
+          #qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
+          #            y = meta$ytmp[shadowmatrix[,i],i],
+          #            r = meta$radius*2, fill = fill,
+          #            stroke = stroke)
           if (sum(shadowmatrix[,i])>1) {
             for (k in unique(meta$vargroup)) {
               for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
@@ -745,10 +754,12 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
     for (i in 1:ncol(meta$y)){
       if (any(shadowmatrix[,i])) {
-         qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
-                    y = meta$ytmp[shadowmatrix[,i],i],
-                    r = meta$radius*2, fill = fill,
-                    stroke = stroke)
+         qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[shadowmatrix[,i]], 
+                    meta$ytmp[shadowmatrix[,i],i], stroke = stroke, fill = fill)
+         #qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
+         #            y = meta$ytmp[shadowmatrix[,i],i],
+         #            r = meta$radius*2, fill = fill,
+         #            stroke = stroke)
          if (sum(shadowmatrix[,i])>1) {
            for (k in unique(meta$vargroup)) {
              for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
