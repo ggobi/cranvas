@@ -225,7 +225,7 @@ qbar =
 
 Bar.meta =
     setRefClass("Bar_meta",
-                fields = signalingFields(c(
+                fields = properties(c(
 
                 Common.meta,
 

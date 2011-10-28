@@ -229,7 +229,7 @@ qboxplot =
 }
 
 Box.meta =
-    setRefClass("Box_meta", fields = signalingFields(c(
+    setRefClass("Box_meta", fields = properties(c(
 
                             Common.meta,
 

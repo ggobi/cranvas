@@ -1,7 +1,7 @@
 ## template to generate a brush
 brushGen =
     setRefClass('BRUSH',
-                fields = signalingFields(list(style = 'list',
+                fields = properties(list(style = 'list',
                 color = 'character', size = 'numeric', mode = 'character',
                 identify = 'logical', label.gen = 'function', label.color = 'character',
                 history.size = 'numeric', history.index = 'numeric', history.list = 'list',

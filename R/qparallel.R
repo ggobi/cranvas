@@ -425,7 +425,7 @@ qparallel =
 
 Parallel.meta =
     setRefClass("Parallel_meta",
-                fields = signalingFields(c(
+                fields = properties(c(
 
                 Common.meta,
 

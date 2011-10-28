@@ -301,7 +301,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
 
 Dens.meta =
   setRefClass("Dens_meta",
-    fields = signalingFields(c(
+    fields = properties(c(
       Common.meta,
 
       list(xvar = 'character', order = 'numeric',

@@ -6,7 +6,8 @@ Imports:
     plyr,
     tourr (>= 0.5),
     plumbr (>= 0.6.3),
-    objectSignals (>= 0.9.5)
+    objectSignals (>= 0.9.5),
+    objectProperties
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
 Title: Interactive statistical graphics based on Qt

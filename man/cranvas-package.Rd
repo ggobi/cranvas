@@ -22,7 +22,7 @@
   and reference classes are used extensively in this
   package. Usually there are listeners
   (\code{\link[plumbr]{add_listener}}) and signaling fields
-  (\code{\link[objectSignals]{signalingFields}}) attached
+  (\code{\link[objectProperties]{properties}}) attached
   to data objects (created by \code{\link{qdata}}), so the
   plots can listen to the changes in data (hence get
   updated). Note all the plots based on the same data

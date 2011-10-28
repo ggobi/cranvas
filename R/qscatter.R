@@ -291,7 +291,7 @@ qscatter =
 
 Scat.meta =
     setRefClass("Scat_meta",
-                fields = signalingFields(c(
+                fields = properties(c(
 
                 Common.meta,
 

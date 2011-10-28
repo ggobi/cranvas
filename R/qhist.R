@@ -270,7 +270,7 @@ qhist =
 }
 
 Hist.meta =
-    setRefClass("Hist_meta", fields = signalingFields(c(
+    setRefClass("Hist_meta", fields = properties(c(
 
                              Common.meta,
 

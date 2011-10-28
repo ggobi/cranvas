@@ -4,15 +4,15 @@
 \description{
   A meta data is created with reference classes
   (\code{\link[methods]{setRefClass}}) in the \pkg{methods}
-  and signaling fields in the \pkg{plumbr} package
-  (\code{\link[plumbr]{signalingFields}}). It is used to
+  and signaling fields in the \pkg{objectProperties} package
+  (\code{\link[objectProperties]{properties}}). It is used to
   make several plotting routines more modularized (e.g. the
   axes and background layers).
 }
 \details{
   This object only provides a template for the common meta
   data, we have to call
-  \code{\link[plumbr]{signalingFields}} in order to
+  \code{\link[objectProperties]{properties}} in order to
   \emph{really} create a meta object.
 
   We can use \code{Meta.template$new()} to generate an
@@ -57,7 +57,7 @@
 }
 \examples{
 library(objectSignals)
-My.meta <- setRefClass("My_meta", fields = signalingFields(c(Common.meta, 
+My.meta <- setRefClass("My_meta", fields = properties(c(Common.meta, 
     list(horizontal = "logical", xleft = "numeric"))))
 meta <- My.meta$new(alpha = 1)
 meta$alpha

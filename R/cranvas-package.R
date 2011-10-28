@@ -18,7 +18,7 @@
 ##' \code{\link[plumbr]{mutaframe}}s and reference classes are used
 ##' extensively in this package. Usually there are listeners
 ##' (\code{\link[plumbr]{add_listener}}) and signaling fields
-##' (\code{\link[objectSignals]{signalingFields}}) attached to data
+##' (\code{\link[objectProperties]{properties}}) attached to data
 ##' objects (created by \code{\link{qdata}}), so the plots can listen
 ##' to the changes in data (hence get updated). Note all the plots
 ##' based on the same data object are linked by default, so the
@@ -50,6 +50,7 @@
 ##' planned_tour save_history planned_tour holes cmass
 ##' @import plumbr
 ##' @import objectSignals
+##' @import objectProperties
 ##' @name cranvas-package
 ##' @aliases cranvas
 ##' @docType package

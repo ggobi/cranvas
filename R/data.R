@@ -179,7 +179,7 @@ qdata =
 }
 Scales.meta =
     setRefClass("Scales_meta", fields =
-                signalingFields(list(color = 'list', border = 'list', size = 'list')))
+                properties(list(color = 'list', border = 'list', size = 'list')))
 
 
 .cranvasEnv$.last.data = NULL

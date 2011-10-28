@@ -95,10 +95,10 @@ qtour =
 
 Tour.meta =
     setRefClass("Tourr_meta", fields =
-                signalingFields(list(vars = 'character',
-                                     tour_path = 'tour_path',
-                                     aps = 'numeric', fps = 'numeric',
-                                     rescale = 'logical', sphere = 'logical',
-                                     start = 'function', stop = 'function',
-                                     slower = 'function', faster = 'function')))
+                properties(list(vars = 'character',
+                                tour_path = 'tour_path',
+                                aps = 'numeric', fps = 'numeric',
+                                rescale = 'logical', sphere = 'logical',
+                                start = 'function', stop = 'function',
+                                slower = 'function', faster = 'function')))
 

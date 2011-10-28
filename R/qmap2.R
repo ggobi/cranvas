@@ -213,7 +213,7 @@ qmap2 =
 
 Map.meta =
     setRefClass("Map_meta",
-                fields = signalingFields(c(
+                fields = properties(c(
 
                 Common.meta,
 
