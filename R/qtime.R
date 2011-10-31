@@ -202,16 +202,16 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     if (event$button() == Qt$Qt$LeftButton) {
       meta$brush.move <- TRUE
       if (meta$serie.mode | meta$wrapF_dragT) {
-        b$cursor <- 18L
+        #b$cursor <- 18L
       } else {
-        b$cursor <- 0L
+        #b$cursor <- 0L
       }    
     }
   }
 
   brush_mouse_move <- function(layer, event) {
     if (event$button() != Qt$Qt$NoButton) {
-      b$cursor <- 0L
+      #b$cursor <- 0L
     }
     meta$pos <- as.numeric(event$pos())
     if (meta$wrapF_dragT) {     
@@ -782,24 +782,48 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     j <- is.null(call$period) & is.null(call$group)
     if (!j) return()
     if (ncol(meta$ytmp)>1) {
-      ytmpacf <- round(unlist(lapply(apply(meta$ytmp,2,acf,plot=F),function(z)z$acf[meta$wrap.shift[1]+1])),2)
+      tmp <- unique(meta$wrap.group)
+      if (length(tmp)==1){
+          ytmpacf <- round(unlist(lapply(apply(meta$ytmp,2,acf,plot=F),function(z)z$acf[meta$wrap.shift[1]+1])),2)
+          tmpprint <- paste(meta$varname$y,": ACF(lag=",meta$wrap.shift[1],"):",ytmpacf,sep="")
+      } else if (length(tmp)==2) {
+          ytmpcor <- unlist(apply(meta$ytmp,2,function(x)cor(x[meta$wrap.group==1][1:sum(meta$wrap.group==2)],
+                    x[meta$wrap.group==2])))
+          tmpprint <- paste(meta$varname$y,"Corr. of two series = ",round(ytmpcor,2),sep="")
+      } else {
+          ytmpR2 <- unlist(apply(meta$ytmp,2,function(x)summary(lm(x~meta$xtmp))$r.squared))
+          tmpprint <- paste("R square = ",round(ytmpR2,2),sep="")
+      }
       if (meta$shiftUP) {
-        qdrawText(painter,paste(meta$varname$y,": ACF(lag=",meta$wrap.shift[1],"):",
-                                ytmpacf,sep=""),
+        qdrawText(painter,tmpprint,
                   rep(meta$limits[1,1],ncol(meta$ytmp)),meta$yat-0.5, 
                   halign='left',valign='bottom')
       } else {
-        qdrawText(painter,paste(paste(meta$varname$y,": ACF(lag=",meta$wrap.shift[1],"):",
-                                ytmpacf,sep=""),collapse="\n"),
+          qdrawText(painter,paste(tmpprint,collapse="\n"),
                   meta$limits[1,1],meta$limits[1,2], 
                   halign='left',valign='bottom')
       }
     } else{
+      tmp <- unique(meta$wrap.group)
+      if (length(tmp)==1){
       qdrawText(painter,paste("ACF(lag=",meta$wrap.shift[1],"):",
-                              round(acf(meta$ytmp,na.action=na.pass,plot=FALSE)$acf[meta$wrap.shift[1]+1],2),
+                              round(acf(meta$ytmp[,1],na.action=na.pass,plot=FALSE)$acf[meta$wrap.shift[1]+1],2),
                               sep=""),
                 meta$limits[1,1],meta$limits[1,2], 
                 halign='left',valign='bottom')
+      } else if (length(tmp)==2) {
+        qdrawText(painter,paste("Corr. of two series = ",
+                                round(cor(meta$ytmp[meta$wrap.group==1,1][1:sum(meta$wrap.group==2)],
+                                        meta$ytmp[meta$wrap.group==2,1]),2),
+                                sep=""),
+                  meta$limits[1,1],meta$limits[1,2], 
+                  halign='left',valign='bottom')
+      } else {
+        tmp <- summary(lm(meta$ytmp[,1]~meta$xtmp))$r.squared
+        qdrawText(painter,paste("R square = ",round(tmp,2),sep=""),
+                  meta$limits[1,1],meta$limits[1,2], 
+                  halign='left',valign='bottom')
+      }
     }
   }
 
