@@ -118,6 +118,10 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   }
   meta$ytmp <- meta$y
   meta$ylab <- ifelse(is.null(ylab), paste(meta$varname$y,collapse=', '), ylab)
+  meta$mxtmp <- meta$ytmp
+  for (i in 1:ncol(meta$y)){
+    meta$mxtmp[,i] <- meta$xtmp
+  }
 
   ## Other settings
   meta$wrap.mode <- wrap
@@ -283,6 +287,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
             meta$serie.mode <- FALSE
           }
         }
+      } else if (ncol(meta$y)>1) {
+        meta$serie.mode <- !meta$serie.mode
       }
       if (!meta$wrap.mode) {
         if (meta$limits[1,1]>extend_ranges(meta$time)[1] | meta$limits[2,1]<extend_ranges(meta$time)[2]) {
@@ -298,7 +304,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       ## arrow right
 
       if (meta$wrap.mode) {
-        if (meta$serie.mode & sum(selected(data))) {
+        if (meta$serie.mode & length(meta$group) & sum(selected(data))) {
           meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] + diff(range(meta$time,na.rm=TRUE))/nrow(data)
           if (min(meta$xtmp[selected(data)],na.rm=TRUE)>max(meta$time,na.rm=TRUE)) {
             meta$xtmp[selected(data)] <- meta$xtmp[selected(data)] - 
@@ -563,16 +569,22 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
               valign = ifelse(vflag, "top", "bottom"))
     
     if (meta$serie.mode){
-      selected(data) <- meta$orderEnter[hitsrow]
-      #self_link(data)
-      #if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
-      if (!is.null(meta$linkID)){
-        meta$hitsrow <- meta$orderBack[selected(data)]
-        meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
-      }
       shadowmatrix <- matrix(FALSE,nrow=nrow(data),ncol=ncol(meta$y))
-      for (i in 1:length(meta$hitsrow)) {
-        shadowmatrix[meta$hitsrow[i],meta$hitscol[i]] <- TRUE
+      if (length(meta$group)) {
+        selected(data) <- meta$orderEnter[hitsrow]
+        #self_link(data)
+        #if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+        if (!is.null(meta$linkID)){
+          meta$hitsrow <- meta$orderBack[selected(data)]
+          meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
+        }
+        for (i in 1:length(meta$hitsrow)) {
+          shadowmatrix[meta$hitsrow[i],meta$hitscol[i]] <- TRUE
+        }
+      } else if (ncol(meta$y)>1) {
+        for (i in 1:length(hitscol)) {
+          shadowmatrix[,hitscol[i]] <- TRUE
+        }
       }
       fill <- b$color
       stroke <- b$color
@@ -686,25 +698,30 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
       hitsrow <- round(hits %% nrow(data))
       hitsrow[hitsrow==0] <- nrow(data)
       hitscol <- (hits-0.0000001)%/%nrow(data)+1
-      selected(data) <- meta$orderEnter[hitsrow]
-      #self_link(data)
-      #if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
-      if (!is.null(meta$linkID)){
-        meta$hitsrow <- meta$orderBack[selected(data)]
-        meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
-      }
       shadowmatrix <- matrix(FALSE,nrow=nrow(data),ncol=ncol(meta$y))
-      for (i in 1:length(meta$hitsrow)) {
-        shadowmatrix[meta$hitsrow[i],meta$hitscol[i]] <- TRUE
+      if (length(meta$group)){
+        selected(data) <- meta$orderEnter[hitsrow]
+        #self_link(data)
+        #if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
+        if (!is.null(meta$linkID)){
+          meta$hitsrow <- meta$orderBack[selected(data)]
+          meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
+        }
+        for (i in 1:length(meta$hitsrow)) {
+          shadowmatrix[meta$hitsrow[i],meta$hitscol[i]] <- TRUE
+        }
+      } else if (ncol(meta$y)>1) {
+        for (i in 1:length(hitscol)) {
+          shadowmatrix[,hitscol[i]] <- TRUE
+        }
       }
       fill <- b$color
       stroke <- b$color
-      radius <- meta$radius
-      #meta$xtmp <- meta$time 
+      radius <- meta$radius       
       for (i in 1:ncol(meta$y)){
         if (any(shadowmatrix[,i])) {
-          meta$xtmp[shadowmatrix[,i]] <- meta$xtmp[shadowmatrix[,i]] + meta$pos[1] - meta$start[1]
-          qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[shadowmatrix[,i]], 
+          meta$mxtmp[shadowmatrix[,i],i] <- meta$mxtmp[shadowmatrix[,i],i] + meta$pos[1] - meta$start[1]
+          qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$mxtmp[shadowmatrix[,i],i], 
                      meta$ytmp[shadowmatrix[,i],i], stroke = stroke, fill = fill)
           #qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
           #            y = meta$ytmp[shadowmatrix[,i],i],
@@ -715,7 +732,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
               for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
                 idxtmp <- (meta$wrap.group==j & meta$vargroup==k & shadowmatrix[,i])
                 if (sum(idxtmp)){                 
-                  xtmp <- meta$xtmp
+                  xtmp <- meta$mxtmp[,i]
                   ytmp <- meta$ytmp[,i]
                   xtmp[!idxtmp] <- NA
                   ytmp[!idxtmp] <- NA
@@ -726,8 +743,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
           }
         }
       }
-      qupdate(main_circle_layer)
-      qupdate(main_line_layer)
+      #qupdate(main_circle_layer)
+      #qupdate(main_line_layer)
       return()
     }
     
