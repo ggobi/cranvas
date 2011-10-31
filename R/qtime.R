@@ -808,7 +808,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
                     x[meta$wrap.group==2])))
           tmpprint <- paste(meta$varname$y,"Corr. of two series = ",round(ytmpcor,2),sep="")
       } else {
-          ytmpR2 <- unlist(apply(meta$ytmp,2,function(x)summary(lm(x~meta$xtmp))$r.squared))
+          ytmpR2 <- unlist(apply(meta$ytmp,2,function(x)summary(lm(x~factor(meta$xtmp)))$r.squared))
           tmpprint <- paste("R square = ",round(ytmpR2,2),sep="")
       }
       if (meta$shiftUP) {
@@ -836,7 +836,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
                   meta$limits[1,1],meta$limits[1,2], 
                   halign='left',valign='bottom')
       } else {
-        tmp <- summary(lm(meta$ytmp[,1]~meta$xtmp))$r.squared
+        tmp <- summary(lm(meta$ytmp[,1]~factor(meta$xtmp)))$r.squared
         qdrawText(painter,paste("R square = ",round(tmp,2),sep=""),
                   meta$limits[1,1],meta$limits[1,2], 
                   halign='left',valign='bottom')
