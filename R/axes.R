@@ -192,12 +192,12 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
         if (minor %in% c('x', 'xy')) {
             xat = minor_at(xat, xlim)
             if (length(xat))
-                qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
+                qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "grey95")
         }
         if (minor %in% c('y', 'xy')) {
             yat = minor_at(yat, ylim)
             if (length(yat))
-                qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
+                qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "grey95")
         }
     }
     if (!('limits' %in% names(list(...))) && !is.null(meta)) {
