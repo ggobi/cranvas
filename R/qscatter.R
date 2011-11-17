@@ -52,6 +52,7 @@ qscatter =
     ## initialize meta
     meta =
         Scat.meta$new(xvar = as.character(z$x), yvar = as.character(z$y),
+                      xy = matrix(nrow = nrow(data), ncol = 2),
                       alpha = 1, main = main, asp = asp, minor = 'xy',
                       samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
 
@@ -61,9 +62,7 @@ qscatter =
 
     ## reorder the points according to color/border for drawing speed
     compute_order = function() {
-        ord = order(data$.color, data$.border)  # the ideal order to draw
-        names(ord) = seq(nrow(data))  # orignal order is in names
-        meta$order = ord
+        meta$order = order(data$.color, data$.border)  # the ideal order to draw
     }
     compute_order()
 
@@ -71,31 +70,34 @@ qscatter =
     compute_coords = function() {
         if (is.null(z$y)) {
             meta$yvar = meta$xvar  # when y is missing, make it x
-            meta$xvar = 'index'; meta$x = seq(sum(idx))
+            meta$xvar = 'index'; meta$xy[, 1] = seq(sum(idx))
         } else {
-            meta$x = data[meta$order, meta$xvar]
+            meta$xy[, 1] = data[, meta$xvar]
         }
-        meta$y = data[meta$order, meta$yvar]
+        meta$xy[, 2] = data[, meta$yvar]
         idx = visible(data)[meta$order]
-        meta$xat = axis_loc(meta$x[idx]); meta$yat = axis_loc(meta$y[idx])
+        x = meta$xy[idx, 1]; y = meta$xy[idx, 2]
+        meta$xat = axis_loc(x); meta$yat = axis_loc(y)
         meta$xlabels = format(meta$xat); meta$ylabels = format(meta$yat)
         meta$xlab = if (is.null(xlab)) meta$xvar else xlab
         meta$ylab = if (is.null(ylab)) meta$yvar else ylab
         r =
             cbind(if (is.null(xlim))
-                  range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
+                  range(x, na.rm = TRUE, finite = TRUE) else xlim,
                   if (is.null(ylim))
-                  range(meta$y[idx], na.rm = TRUE, finite = TRUE) else ylim)
+                  range(y, na.rm = TRUE, finite = TRUE) else ylim)
         meta$limits = extend_ranges(r)
     }
     compute_coords()
 
     ## aesthetics (colors)
     compute_aes = function() {
-        idx = !visible(data)[meta$order]
-        meta$color = data$.color[meta$order]; meta$border = data$.border[meta$order]
-        meta$color[idx] = NA; meta$border[idx] = NA
-        meta$size = data$.size[meta$order]; meta$size[idx] = NA
+        ord = meta$order; idx = visible(data)[ord]  # reorder aesthetics according to vis
+        meta$color = data$.color[ord][idx]; meta$border = data$.border[ord][idx]
+        meta$size = data$.size[ord][idx]
+        if (length(unique(meta$color)) == 1) meta$color = meta$color[1]
+        if (length(unique(meta$border)) == 1) meta$border = meta$border[1]
+        if (meta$samesize) meta$size = meta$size[1]
     }
     compute_aes()
 
@@ -104,11 +106,13 @@ qscatter =
 
     ## draw points
     main_draw = function(layer, painter) {
+        ord = meta$order; idx = visible(data)[ord]
         if (meta$samesize) {
-            qdrawGlyph(painter, qglyphCircle(r = data$.size[1]), meta$x, meta$y,
+            qdrawGlyph(painter, qglyphCircle(r = meta$size),
+                       meta$xy[ord, 1][idx], meta$xy[ord, 2][idx],
                        stroke = meta$border, fill = meta$color)
         } else {
-            qdrawCircle(painter, meta$x, meta$y, r = meta$size,
+            qdrawCircle(painter, meta$xy[ord, 1][idx], meta$xy[ord, 2][idx], r = meta$size,
                         stroke = meta$border, fill = meta$color)
         }
     }
@@ -116,14 +120,14 @@ qscatter =
     ## draw brushed points
     brush_draw = function(layer, painter) {
         if (b$identify) return()
-        idx = visible(data) & selected(data)
+        idx = selected(data)
         if (any(idx)) {
             if (meta$samesize) {
-                qdrawGlyph(painter, qglyphCircle(r = b$size * meta$size[1]),
-                           data[idx, meta$xvar], data[idx, meta$yvar],
+                qdrawGlyph(painter, qglyphCircle(r = b$size * meta$size),
+                           meta$xy[idx, 1], meta$xy[idx, 2],
                            stroke = b$color, fill = b$color)
             } else {
-                qdrawCircle(painter, data[idx, meta$xvar], data[idx, meta$yvar],
+                qdrawCircle(painter, meta$xy[idx, 1], meta$xy[idx, 2],
                             r = b$size * data$.size[idx],
                             stroke = b$color, fill = b$color)
             }
@@ -135,18 +139,19 @@ qscatter =
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
     }
+
+    tree = createIndex(meta$xy)  # build a search tree
     brush_mouse_move = function(layer, event) {
-        rect = qrect(update_brush_size(meta, event))
-        hits = layer$locate(rect) + 1
-        if (length(hits)) {
-            hits = intersect(meta$order[as.character(hits)],  which(visible(data)))
-        }
-        selected(data) = mode_selection(selected(data), hits, mode = b$mode)
+        rect = update_brush_size(meta, event)
+        if (!(b$select.only && b$draw.brush)) {
+            hits = getPointsInRect(tree, rect[1, ], rect[2, ], meta$xy)
+            selected(data) = mode_selection(selected(data), hits, mode = b$mode)
+        } else qupdate(layer.brush)
         common_mouse_move(layer, event, data, meta)
     }
     brush_mouse_release = function(layer, event) {
-        brush_mouse_move(layer, event)
         common_mouse_release(layer, event, data, meta)
+        brush_mouse_move(layer, event)
     }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
@@ -174,8 +179,8 @@ qscatter =
         if (!b$identify) return()
         b$cursor = 2L
         meta$pos = as.numeric(event$pos())
-        hits = layer$locate(identify_rect(meta)) + 1
-        meta$identified = intersect(meta$order[as.character(hits)], which(visible(data)))
+        rect = as.matrix(identify_rect(meta))
+        meta$identified = getPointsInRect(tree, rect[1, ], rect[2, ], meta$xy)
         qupdate(layer.identify)
     }
     identify_draw = function(layer, painter) {
@@ -183,21 +188,21 @@ qscatter =
         meta$identify.labels =
             sprintf('row id: %s\n%s: %s\n%s: %s',
                     paste(rownames(data)[idx], collapse = ', '),
-                    meta$xvar, paste(data[idx, meta$xvar], collapse = ', '),
-                    meta$yvar, paste(data[idx, meta$yvar], collapse = ', '))
+                    meta$xvar, paste(meta$xy[idx, 1], collapse = ', '),
+                    meta$yvar, paste(meta$xy[idx, 2], collapse = ', '))
         draw_identify(layer, painter, data, meta)
         if (meta$samesize) {
-            qdrawGlyph(painter, qglyphCircle(r = 2 * b$size * data$.size[1]),
-                       data[idx, meta$xvar], data[idx, meta$yvar],
-                       stroke = b$color, fill = NA)
+            qdrawGlyph(painter, qglyphCircle(r = 2 * b$size * meta$size),
+                       meta$xy[idx, 1], meta$xy[idx, 2], stroke = b$color, fill = NA)
         } else {
-            qdrawCircle(painter, data[idx, meta$xvar], data[idx, meta$yvar],
-                        r = b$size * meta$size, stroke = b$color, fill = NA)
+            qdrawCircle(painter, meta$xy[idx, 1], meta[idx, 2],
+                        r = b$size * data$.size[idx], stroke = b$color, fill = NA)
         }
     }
 
     ## create layers
     scene = qscene()
+    scene$setItemIndexMethod(Qt$QGraphicsScene$NoIndex)
     layer.root = qlayer(scene)
     layer.main =
         qlayer(paintFun = main_draw,
@@ -252,15 +257,17 @@ qscatter =
 
     ## listeners on the data (which column updates which layer(s))
     d.idx = add_listener(data, function(i, j) {
-        idx = which(j == c(meta$xvar, meta$yvar, '.brushed', '.color', '.border'))
+        idx = which(j == c(meta$xvar, meta$yvar, '.brushed', '.visible', '.color', '.border'))
         if (length(idx) < 1) {
             compute_coords(); compute_aes()
             meta$samesize = diff(range(data$.size, na.rm = TRUE, finite = TRUE)) < 1e-7
             qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
-            layer.main$invalidateIndex(); qupdate(layer.main)
+            qupdate(layer.main)
             return()
-        } else idx = c(1, 1, 2, 3, 3)[idx]
+        } else idx = c(1, 1, 2, 3, 4, 4)[idx]
         switch(idx, compute_coords(), qupdate(layer.brush), {
+            compute_coords(); selected(data)[!visible(data)] = FALSE
+        }, {
             compute_order(); compute_aes(); qupdate(layer.main)
         })
     })
@@ -296,8 +303,7 @@ Scat.meta =
                 Common.meta,
 
                 list(xvar = 'character', yvar = 'character', order = 'numeric',
-                     x = 'numeric', y = 'numeric',
-                     breaks = 'numeric', asp = 'numeric', samesize = 'logical')
+                     xy = 'matrix', asp = 'numeric', samesize = 'logical')
 
                 )))
 
