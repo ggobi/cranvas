@@ -88,6 +88,6 @@ if (require('animation')) {
 
 
 ### (5) pressure test
-test.mat = qdata(matrix(rnorm(30000 * 10), ncol = 10), color = rgb(1, 0, 0, 0.05))
+test.mat = qdata(matrix(rnorm(300000 * 10), ncol = 10))
 qparallel(~., data  = test.mat)
 ## for large data, short ticks are automatically used instead of segments
