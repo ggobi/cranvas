@@ -143,7 +143,7 @@ qmap2 =
                mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
                wheelFun = mouse_wheel,
-               limits = qrect(meta$limits), clip = TRUE)
+               limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
