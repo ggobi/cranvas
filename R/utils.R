@@ -601,7 +601,7 @@ lighter = function(color, factor = 0.2) {
 prefer_height = function(text) {
     if (all(!nzchar(text))) return(10)  # 10 pixels if text is empty
     15 * max(sapply(gregexpr('\n', text),
-                    function(xx) ifelse(any(xx < 0), 0, length(xx)) + 2))
+                    function(xx) ifelse(any(xx < 0), 0, length(xx)) + 1))
 }
 ##' @param horizontal logical: the text is drawn horizontally
 ##' (\code{TRUE}) or vertically (\code{FALSE})
