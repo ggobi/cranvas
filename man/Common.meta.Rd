@@ -1,13 +1,38 @@
+\docType{data}
 \name{Common.meta}
 \alias{Common.meta}
 \title{Common meta data structure in cranvas}
+\format{List of 20
+ $ alpha          : chr "numeric"
+ $ main           : chr "character"
+ $ xat            : chr "numeric"
+ $ yat            : chr "numeric"
+ $ xlab           : chr "character"
+ $ ylab           : chr "character"
+ $ xlabels        : chr "character"
+ $ ylabels        : chr "character"
+ $ limits         : chr "matrix"
+ $ color          : chr "character"
+ $ border         : chr "character"
+ $ size           : chr "numeric"
+ $ start          : chr "numeric"
+ $ pos            : chr "numeric"
+ $ brush.move     : chr "logical"
+ $ brush.size     : chr "numeric"
+ $ manual.brush   : chr "function"
+ $ minor          : chr "character"
+ $ identified     : chr "integer"
+ $ identify.labels: chr "character"}
+\usage{
+Common.meta
+}
 \description{
   A meta data is created with reference classes
   (\code{\link[methods]{setRefClass}}) in the \pkg{methods}
-  and signaling fields in the \pkg{objectProperties} package
-  (\code{\link[objectProperties]{properties}}). It is used to
-  make several plotting routines more modularized (e.g. the
-  axes and background layers).
+  and signaling fields in the \pkg{objectProperties}
+  package (\code{\link[objectProperties]{properties}}). It
+  is used to make several plotting routines more
+  modularized (e.g. the axes and background layers).
 }
 \details{
   This object only provides a template for the common meta
@@ -80,4 +105,5 @@ ls(meta)  # list all the objects in it
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+\keyword{datasets}
 \keyword{internal}

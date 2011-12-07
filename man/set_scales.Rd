@@ -58,7 +58,7 @@ library(cranvas)
 data(tennis)
 qtennis <- qdata(tennis, color = aces)
 
-qscatter(Server.Pts, First.Serves)
+qscatter(server.pts, first.serves)
 qparallel(10:14)  # variables including Aces
 qscatter(Server.Pts, Aces)
 

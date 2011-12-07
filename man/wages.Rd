@@ -52,3 +52,4 @@ qwage2 <- qdata(wage2, color = hispanic)
 qhist(lnw0, main = "Wages on the first day")
 qhist(lnw6, main = "Wages after 6 years")
 }
+\keyword{datasets}

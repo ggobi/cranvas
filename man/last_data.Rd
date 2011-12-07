@@ -1,6 +1,9 @@
 \name{last_data}
 \alias{last_data}
 \title{Get the last used data object}
+\usage{
+last_data()
+}
 \value{
   The last data object created by \code{\link{qdata}}.
 }
