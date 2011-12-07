@@ -255,6 +255,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     meta$xvarChanged$connect(function() {
         view$setWindowTitle(paste("Density plot:", meta$xvar))
     })
+    view$resize(480, 480)
 
     ## listeners on the data (which column updates which layer(s))
     d.idx = add_listener(data, function(i, j) {

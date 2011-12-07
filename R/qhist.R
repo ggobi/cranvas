@@ -236,6 +236,7 @@ qhist =
     meta$varChanged$connect(function() {
         view$setWindowTitle(paste(ifelse(meta$spine, "Spine plot:", "Histogram:"), meta$var))
     })
+    view$resize(480, 480)
     d.idx = add_listener(data, function(i, j) {
         idx = which(j == c(meta$var, '.brushed', '.color', '.border'))
         if (length(idx) < 1) {

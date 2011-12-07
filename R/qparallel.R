@@ -399,6 +399,7 @@ qparallel =
     meta$varsChanged$connect(function() {
         view$setWindowTitle(sprintf('Par-coords plot: %s', paste(meta$vars, collapse = ', ')))
     })
+    view$resize(480 * sqrt(length(meta$vars)/3), 480)
 
     ## update the brush layer if brush attributes change
     b.idx = b$colorChanged$connect(function() {
