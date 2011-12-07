@@ -848,9 +848,32 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   ## draw the canvas ##----------
 #####################
 
-  xWidth <- 800
-  yWidth <- 500
-  if (!is.null(asp)) xWidth <- round(yWidth*asp)
+  asp_ratio <- function(x,y){    
+    if (length(x)!=length(y)) return(0.5)
+    
+    x <- (x-min(x,na.rm=TRUE))/(max(x,na.rm=TRUE)-min(x,na.rm=TRUE))
+    y <- (y-min(y,na.rm=TRUE))/(max(y,na.rm=TRUE)-min(y,na.rm=TRUE))
+    r <- diff(y)/diff(x)
+    f <- function(a,r){
+      mean(abs(atan(a*r)))-pi/4
+    }   
+    a <- uniroot(f,c(0.1,1),r)$root
+    return(a)
+  }
+  
+  #a <- asp_ratio(meta$time,meta$y[,1])
+  a <- 0.5
+  if (a<0.35) {
+    xWidth <- 960
+    yWidth <- round(xWidth*a)
+  } else {
+    yWidth <- 480
+    xWidth <- round(yWidth/a)
+  }
+  if (!is.null(asp)) {
+    yWidth <- 480
+    xWidth <- round(yWidth*asp)
+  }
 
   scene <- qscene()
   layer.root <- qlayer(scene)
