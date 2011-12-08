@@ -64,7 +64,18 @@ qtime(time, y, data, period = NULL, group = NULL,
   the series groups by shifting them up and down. Shift +
   'u'/'d': for multivariate y's, separate/mix them by
   shifting up and down. Key 'g': change the wrapping speed
-  circularly in the values of parameter 'shift'.
+  circularly in the values of parameter 'shift'. Key 'm':
+  Switch the mode for series selecting. Default to be off.
+  When the argument 'group' is not null, users can turn it
+  on to hold a series and shift the series horizontally by
+  dragging with the mouse. When the wrapping mode is FALSE,
+  turning on the series selecting mode will make it
+  possible to pan the series which is zoomed in by dragging
+  with the mouse or pressing left/right arrows. Key 'w':
+  Switch the wrapping mode between TRUE and FALSE. When it
+  is TRUE, an indicator of 'wrapping period' will be shown
+  at the bottom right of the graph; otherwise there is not
+  any indicator on the bottom right.
 }
 \examples{
 library(cranvas)
