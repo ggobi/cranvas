@@ -861,8 +861,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     return(a)
   }
   
-  #a <- asp_ratio(meta$time,meta$y[,1])
-  a <- 0.5
+  a <- asp_ratio(meta$time,meta$y[,1])
+  #a <- 0.5
   if (a<0.35) {
     xWidth <- 960
     yWidth <- round(xWidth*a)
@@ -934,6 +934,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
   view <- qplotView(scene=scene)
   view$setWindowTitle(meta$main)
+  view$resize(xWidth,yWidth)
 
 ######################
   ## add some listeners #
