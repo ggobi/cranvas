@@ -249,7 +249,7 @@ update_brush_size = function(meta, event) {
             meta$start = meta$pos
         }
     }
-    matrix(c(meta$pos - meta$brush.size, meta$pos), 2, byrow = TRUE)
+    apply(rbind(meta$pos - meta$brush.size, meta$pos), 2, sort)
 }
 
 ##' Manually brush the plot via command line
