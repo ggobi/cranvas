@@ -32,7 +32,6 @@ qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile)
 
 
 
-\dontrun{
 ### (3) secrets in the pollen data
 library(animation)
 data(pollen, package = 'animation')
@@ -48,4 +47,4 @@ n = 1e+06  # a million still works (at least for me)
 df = qdata(data.frame(x = rnorm(n), y = rnorm(n),
     z = gl(4, n/4)), color = z)
 qscatter(x, y)
-}
+
