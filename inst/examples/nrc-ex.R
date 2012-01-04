@@ -32,5 +32,9 @@ qparallel(qnrc, vars = var.ord, main = "Other Indicators", center = median,
 var.ord.sub <- var.ord[-c(1, 6, 7, 10, 17, 19, 32:35, 39, 40, 41, 43:45, 
     47:49)]
 qparallel(qnrc, vars = var.ord.sub, main = "Other Indicators", center = median, 
-    horizontal = FALSE, glyph = "tick", boxplot = TRUE, boxwex = 0.6)
+    horizontal = TRUE, glyph = "tick", boxplot = TRUE)
+var.ord.sub <- var.ord[-c(1, 6, 7, 10, 17, 19, 32:35, 39, 40, 41, 43:45, 
+    47:49)]
+qparallel(qnrc, vars = var.ord.sub, main = "Other Indicators", center = median, 
+    horizontal = TRUE, glyph = "tick", boxplot = TRUE, names=colnames(qnrc[,var.ord.sub]))
  
