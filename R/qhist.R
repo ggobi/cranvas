@@ -59,7 +59,7 @@ qhist =
         }
     }
     initial_bins()
-    compute_coords = function() {
+    compute_coords = function(reset = TRUE) {
         if (meta$spine) meta$freq = meta$standardize = TRUE else meta$standardize = FALSE
         idx = visible(data)
         meta$value = cut(data[, meta$var], breaks = meta$breaks, include.lowest = TRUE)
@@ -73,9 +73,11 @@ qhist =
         tmp[!is.finite(tmp)] = 0  # consider division by 0
         meta$y = c(tmp)
         meta$x = rep(meta$breaks[-1] - meta$binwidth / 2, meta$nlevel2)
-        meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
-        meta$xlabels = format(meta$xat)
-        meta$ylabels = format(meta$yat)
+        if (reset) {
+            meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
+            meta$xlabels = format(meta$xat)
+            meta$ylabels = format(meta$yat)
+        }
         meta$xlab = if (is.null(xlab)) meta$var else xlab
         meta$ylab = if (is.null(ylab)) {
             if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
@@ -102,7 +104,7 @@ qhist =
             meta$ybottom = meta$ybottom * k; meta$ytop = meta$ytop * k
             meta$yat = meta$yat * k; if (!is.null(ylim)) ylim = ylim * k
         }
-        meta$limits =
+        if (reset) meta$limits =
             extend_ranges(cbind(if (is.null(xlim))
                                 range(c(meta$xleft, meta$xright)) else xlim,
                                 if (is.null(ylim))
@@ -262,7 +264,7 @@ qhist =
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     meta$breaksChanged$connect(function () {
-        compute_coords(); compute_colors(); flip_coords()
+        compute_coords(reset = FALSE); compute_colors(); flip_coords()
         layer.main$invalidateIndex()
         qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis); qupdate(layer.main)
     })
