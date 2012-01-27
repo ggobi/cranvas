@@ -100,5 +100,6 @@ Tour.meta =
                                 aps = 'numeric', fps = 'numeric',
                                 rescale = 'logical', sphere = 'logical',
                                 start = 'function', stop = 'function',
-                                slower = 'function', faster = 'function')))
+                                slower = 'function', faster = 'function')),
+                contains = "PropertySet")
 
