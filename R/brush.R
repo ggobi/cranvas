@@ -298,7 +298,7 @@ manual_brush = function(obj, pos, pause = 0) {
 draw_brush = function(layer, painter, data, meta) {
     if (length(meta$pos) == 0) return()
     b = brush(data)
-    if (!b$draw.brush) return()
+    if (!b$draw.brush || b$identify) return()
     qlineWidth(painter) = 1
     if (!b$select.only) {
         ## shift the brush shadow by 1 pixel
