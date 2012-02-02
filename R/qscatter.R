@@ -119,7 +119,6 @@ qscatter =
 
     ## draw brushed points
     brush_draw = function(layer, painter) {
-        if (b$identify) return()
         idx = selected(data)
         if (any(idx)) {
             if (meta$samesize) {

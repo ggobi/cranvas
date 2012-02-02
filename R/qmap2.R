@@ -73,7 +73,6 @@ qmap2 =
 
     ## draw brushed points
     brush_draw = function(layer, painter) {
-        if (b$identify) return()
         idx = selected(data)
         if (any(idx)) {
             i = meta$group %in% which(idx)

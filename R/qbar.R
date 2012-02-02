@@ -297,7 +297,6 @@ Bar.meta =
 }
 .bar_draw_brush = function(layer, painter, data, meta) {
     b = brush(data)
-    if (b$identify) return()
     if (any(idx <- selected(data) & (vis <- visible(data)))) {
         d = c(table(meta$value[idx], meta$value2[idx])) # brushed counts
         if (length(meta$freq) && !meta$freq)

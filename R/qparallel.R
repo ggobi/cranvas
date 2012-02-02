@@ -266,7 +266,6 @@ qparallel =
     ## identify segments being brushed when the mouse is moving
     brush_mouse_move = function(layer, event) {
         cranvas_debug()
-        if (b$identify) return()
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
@@ -289,7 +288,6 @@ qparallel =
     ## draw the segments under the brush with another appearance
     brush_draw = function(layer, painter) {
         cranvas_debug()
-        if (b$identify) return()
         .visible = which(visible(data))
         if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size

@@ -121,7 +121,6 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     }
     ## draw brushed points
     brush_draw = function(layer, painter) {
-        if (b$identify) return()
         idx = visible(data) & selected(data)
         if (any(idx)) {
             if (meta$samesize) {
