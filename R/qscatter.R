@@ -139,11 +139,11 @@ qscatter =
         common_mouse_press(layer, event, data, meta)
     }
 
-    tree = createIndex(meta$xy)  # build a search tree
+    tree = createTree(meta$xy)  # build a search tree
     brush_mouse_move = function(layer, event) {
         rect = update_brush_size(meta, event)
         if (!(b$select.only && b$draw.brush)) {
-            hits = getPointsInRect(tree, rect[1, ], rect[2, ], meta$xy)
+            hits = rectLookup(tree, rect[1, ], rect[2, ])
             selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         } else qupdate(layer.brush)
         common_mouse_move(layer, event, data, meta)
@@ -179,7 +179,7 @@ qscatter =
         b$cursor = 2L
         meta$pos = as.numeric(event$pos())
         rect = as.matrix(identify_rect(meta))
-        meta$identified = getPointsInRect(tree, rect[1, ], rect[2, ], meta$xy)
+        meta$identified = rectLookup(tree, rect[1, ], rect[2, ])
         qupdate(layer.identify)
     }
     identify_draw = function(layer, painter) {
