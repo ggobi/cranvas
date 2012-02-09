@@ -270,8 +270,9 @@ match_key = function(key, event) {
 ##' between two brush types).
 ##'
 ##' In a key release event, we set the selection mode to
-##' \code{'none'}. If PageUp or PageDown was pressed, we show the
-##' brush history step by step.
+##' \code{'none'}. If PageUp or PageDown is pressed (or equivalently
+##' use square brackets \samp{[} and \samp{]}), we show the brush
+##' history step by step.
 ##' @rdname common_events
 ##' @param layer the layer argument in the event callback
 ##' @param event the event argument in the event callback
@@ -299,8 +300,9 @@ common_key_press = function(layer, event, data, meta) {
 common_key_release = function(layer, event, data, meta) {
     b = brush(data)
     b$mode = 'none'    # set brush mode to 'none' when release the key
-    direction = which(match_key(c('PageUp', 'PageDown')))
+    direction = which(match_key(c('PageUp', 'PageDown', 'BracketLeft', 'BracketRight')))
     if (length(direction)) {
+        if (direction > 2L) direction = direction - 2L
         idx = b$history.index + c(-1, 1)[direction]
         idx = max(1, min(length(b$history.list), idx))
         b$history.index = idx
