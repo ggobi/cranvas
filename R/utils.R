@@ -266,6 +266,9 @@ match_key = function(key, event) {
 ##' cross cursor shape (+) indicates it is in the identify mode, and a
 ##' normal cursor indicates the brush mode.
 ##'
+##' The key S acts like the middle button of the mouse (toggles
+##' between two brush types).
+##'
 ##' In a key release event, we set the selection mode to
 ##' \code{'none'}. If PageUp or PageDown was pressed, we show the
 ##' brush history step by step.
@@ -305,6 +308,8 @@ common_key_release = function(layer, event, data, meta) {
     } else if (match_key('Question')) {
         b$identify = !b$identify
         b$cursor = if (b$identify) 2L else 0L
+    } else if (match_key('S')) {
+        b$select.only = !b$select.only
     }
 }
 ##' @rdname common_events
