@@ -62,9 +62,13 @@ common_mouse_release(layer, event, data, meta)
   identify mode, and a normal cursor indicates the brush
   mode.
 
+  The key S acts like the middle button of the mouse
+  (toggles between two brush types).
+
   In a key release event, we set the selection mode to
-  \code{'none'}. If PageUp or PageDown was pressed, we show
-  the brush history step by step.
+  \code{'none'}. If PageUp or PageDown is pressed (or
+  equivalently use square brackets \samp{[} and \samp{]}),
+  we show the brush history step by step.
 }
 \examples{
 ## see the source code of qbar() or qparallel()
