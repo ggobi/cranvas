@@ -5,6 +5,8 @@ data(flea, package = 'tourr')
 qflea <- qdata(flea, color = species)  # use species to create colors
 
 qscatter(tars1, aede1)
+qscatter(tars2, head)
+
 qscatter(tars1, tars2, asp = .7)  # aspect ratio
 
 ## link qflea to itself using species
