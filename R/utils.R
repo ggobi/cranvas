@@ -610,7 +610,7 @@ prefer_height = function(text) {
 prefer_width = function(text, horizontal = TRUE) {
     if (horizontal)
         9 * max(nchar(unlist(strsplit(text, '\n')))) + 5 else
-    10 * max(sapply(gregexpr('\n', text),
+    18 * max(sapply(gregexpr('\n', text),
                     function(xx) ifelse(any(xx < 0), 0, length(xx)) + 1))
 }
 
