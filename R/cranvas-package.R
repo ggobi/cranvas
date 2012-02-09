@@ -48,7 +48,7 @@
 ##' guided_tour holes lda_pp little_tour local_tour new_geodesic_path
 ##' new_tour path_curves path_dist path_index paths_index pda_pp
 ##' planned_tour save_history planned_tour holes cmass
-##' @importFrom SearchTrees createIndex getPointsInRect
+##' @importFrom SearchTrees rectLookup createTree
 ##' @import plumbr
 ##' @import objectSignals
 ##' @import objectProperties
