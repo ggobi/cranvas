@@ -87,7 +87,7 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/link_knn-ex.R
-link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10, ...) {
+link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10) {
     link2 = !is.null(mf2)
     if (!check_data(mf1, FALSE) || (link2 && !check_data(mf2, FALSE)))
         stop('the mutaframes must be created from qdata()')

@@ -53,8 +53,8 @@
 
 
 qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
-                  shift=c(1,7,12,24), size=2, alpha=1, asp=NULL, 
-                  main=NULL, xlab=NULL, ylab=NULL,...){
+                  shift=c(1,7,12,24), size=2, alpha=1, asp=NULL,
+                  main=NULL, xlab=NULL, ylab=NULL){
 
 #####################
   ## data processing ##----------
