@@ -3,23 +3,23 @@ library(cranvas)
 ### (1) simple maps
 ## the world map
 qworld = map_qdata('world')
-qmap2(qworld)
+qmap(qworld)
 
 ## US states
 qstate = map_qdata('state')
-qmap2(qstate)
+qmap(qstate)
 
 ## a simple demonstration of colors
 qstate$.color = sample(c("red", "blue"), nrow(qstate), replace=TRUE)
 
 ## US counties
 qcounty = map_qdata('county')
-qmap2(qcounty)
+qmap(qcounty)
 
 ## map of China
 if (require('mapdata')) {
     qchina = map_qdata('china')
-    qmap2(qchina)  # oh my! obviously china map needs more love
+    qmap(qchina)  # oh my! obviously china map needs more love
 }
 
 
@@ -33,7 +33,7 @@ qparallel(names(crimes)[-c(1, 2)], data = qcrimes)  # par-coords without first 2
 qscatter(population, robbery, data = qcrimes)
 
 ## categorical linking by states; now brush on any plot and see changes in other plots
-qmap2(qstate, linkto = qcrimes, linkby = 'state')
+qmap(qstate, linkto = qcrimes, linkby = 'state')
 
 ## linking should be automatically removed when map is closed; if not, try remove_link(qcrimes); remove_link(qstate)
 
@@ -51,7 +51,7 @@ vote.res = c("red", "red", "red", "blue", "blue", "blue", "blue",
   "blue", "blue", "red", "blue", "red")
 
 qstate = map_qdata('state', color = vote.res)
-qmap2(qstate)  # a normal map
+qmap(qstate)  # a normal map
 
 ## cartogram based on population
 
@@ -67,7 +67,7 @@ vote.pop = c(4708708, 6595778, 2889450, 36961664, 5024748, 3518288,
   544270)
 
 qstate2 = map_qdata('state', color = vote.res, size = vote.pop, cartogram = TRUE)
-qmap2(qstate2)
+qmap(qstate2)
 
 ## electoral votes for each state
 vote.num = c(9, 10, 6, 55, 9, 7, 3, 3, 27, 15, 4, 21, 11, 7, 6, 8, 9,
@@ -76,4 +76,4 @@ vote.num = c(9, 10, 6, 55, 9, 7, 3, 3, 27, 15, 4, 21, 11, 7, 6, 8, 9,
   11, 11, 11, 11, 11, 5, 10, 3)
 
 qstate3 = map_qdata('state', color = vote.res, size = vote.num, cartogram = TRUE)
-qmap2(qstate3)
+qmap(qstate3)

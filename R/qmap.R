@@ -24,8 +24,8 @@
 ##' @return A map
 ##' @export
 ##' @author Heike Hofmann and Yihui Xie
-##' @example inst/examples/qmap2-ex.R
-qmap2 =
+##' @example inst/examples/qmap-ex.R
+qmap =
     function(data = last_data(), linkto = NULL, linkby = NULL,
              main = '', xlim = NULL, ylim = NULL) {
     data = check_data(data)
