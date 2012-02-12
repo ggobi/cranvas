@@ -45,7 +45,7 @@
 ##' identify.labels}{the identified indices and the text label to draw
 ##' in the plot for the identified cases}}
 ##' @examples library(objectSignals)
-##' My.meta = setRefClass("My_meta", fields = properties(c(Common.meta,
+##' My.meta = setRefClass("My_meta", fields = objectProperties::properties(c(Common.meta,
 ##' list(horizontal = 'logical', xleft = 'numeric'))))
 ##' meta = My.meta$new(alpha = 1); meta$alpha; meta$xat = 1:5
 ##' meta$pos = c(1, 4); meta$horizontal = FALSE
