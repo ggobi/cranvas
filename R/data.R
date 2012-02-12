@@ -6,9 +6,9 @@
 ##' append these columns to the original data to create an augmented
 ##' data as a \code{\link[plumbr]{mutaframe}}; in the end add some
 ##' attributes to the mutaframe for the purpose of interaction (mainly
-##' the \code{\link{brush}} object and the \code{\link{link}}ing
-##' specification). A shadow matrix will be attached if any missing
-##' values are present in the original data.
+##' the \code{\link{brush}} object and the linking specification). A
+##' shadow matrix will be attached if any missing values are present
+##' in the original data.
 ##'
 ##' When the three arguments \code{color}, \code{border} and
 ##' \code{size} take values as variable names in \code{data}, default
@@ -52,8 +52,7 @@
 ##' to \code{\link{last_data}()}
 ##' @return a mutaframe with attributes for interaction
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @seealso \code{\link[plumbr]{mutaframe}}, \code{\link{brush}},
-##' \code{\link{link}}
+##' @seealso \code{\link[plumbr]{mutaframe}}, \code{\link{brush}}
 ##' @note The argument \code{copy} should be used with care. If we
 ##' only focus on one dataset and all plots are created from this
 ##' dataset, \code{copy = TRUE} can save some typing efforts. However,
@@ -288,7 +287,7 @@ selected = function(data) {
 ##' @return \code{\link{link_var}} returns the name of the linking
 ##' variable
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @seealso \code{\link{qdata}}, \code{\link{link}}
+##' @seealso \code{\link{qdata}}
 ##' @examples
 ##' mf = qdata(head(iris))
 ##' link_var(mf)  # NULL

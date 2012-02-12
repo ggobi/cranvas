@@ -139,7 +139,7 @@ link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10) {
 ##' linking
 ##' @return the listeners are removed
 ##' @author Yihui Xie <\url{http://yihui.name}>
-##' @seealso \code{\link{link}}
+##' @seealso \code{\link{link_knn}}, \code{\link{link_cat}}
 ##' @export
 ##' @examples ## see ?link_cat
 remove_link = function(data = last_data(), id = link_id(data)) {
