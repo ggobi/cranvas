@@ -11,7 +11,6 @@ Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
 Title: Interactive statistical graphics based on Qt
 Type: Package
-LazyLoad: yes
 Author: Yihui Xie, Heike Hofmann, Di Cook, Xiaoyue Cheng,
     Barret Schloerke, Marie Vendettuoli, Tengfei Yin,
     Hadley Wickham, Michael Lawrence
