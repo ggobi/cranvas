@@ -103,7 +103,6 @@ qboxplot(~aede1 + aede2 + aede3, data = qflea2, points = TRUE)
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qdensity}},
   \code{\link{qhist}}, \code{\link{qmap}},
-  \code{\link{qmosaic}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qspine}},
-  \code{\link{qtime}}
+  \code{\link{qmval}}, \code{\link{qparallel}},
+  \code{\link{qspine}}, \code{\link{qtime}}
 }

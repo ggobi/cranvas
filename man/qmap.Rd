@@ -140,7 +140,6 @@ for (i in 1:11) {
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
-  \code{\link{qmosaic}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qspine}},
-  \code{\link{qtime}}
+  \code{\link{qmval}}, \code{\link{qparallel}},
+  \code{\link{qspine}}, \code{\link{qtime}}
 }

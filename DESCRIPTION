@@ -59,7 +59,6 @@ Collate:
     'qhist.R'
     'qlegend.R'
     'qmap.R'
-    'qmosaic.R'
     'qmval.R'
     'qparallel.R'
     'qscatter.R'
