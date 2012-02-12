@@ -69,7 +69,7 @@ qtour =
             }
             data_proj = src %*% step$proj
             data_proj = scale(data_proj, center = TRUE, scale = FALSE)
-            colnames(data_proj) = paste("tour", 1:ncol(data_proj), sep = "_")
+            colnames(data_proj) = paste("proj", 1:ncol(data_proj), sep = "")
             for(col in colnames(data_proj)) {
                 data[[col]] = data_proj[, col]
             }
