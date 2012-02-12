@@ -50,6 +50,7 @@
 ##' planned_tour save_history planned_tour holes cmass
 ##' @importFrom SearchTrees rectLookup createTree
 ##' @import plumbr
+##' @importFrom methods setRefClass
 ##' @import objectSignals
 ##' @import objectProperties
 ##' @name cranvas-package

@@ -1,5 +1,6 @@
 Package: cranvas
 Imports:
+    methods,
     qtbase (>= 0.99.2),
     qtpaint (>= 0.8.1),
     tourr (>= 0.5),
