@@ -77,7 +77,8 @@ qscatter =
         meta$xy[, 2] = data[, meta$yvar]
         idx = visible(data)[meta$order]
         x = meta$xy[idx, 1]; y = meta$xy[idx, 2]
-        meta$xat = axis_loc(x); meta$yat = axis_loc(y)
+        meta$xat = axis_loc(if (is.null(xlim)) x else xlim)
+        meta$yat = axis_loc(if (is.null(ylim)) y else ylim)
         meta$xlabels = format(meta$xat); meta$ylabels = format(meta$yat)
         meta$xlab = if (is.null(xlab)) meta$xvar else xlab
         meta$ylab = if (is.null(ylab)) meta$yvar else ylab
