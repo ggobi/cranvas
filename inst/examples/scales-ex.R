@@ -4,7 +4,7 @@ qtennis = qdata(tennis, color = aces)
 
 qscatter(server.pts, first.serves)
 qparallel(10:14)  # variables including Aces
-qscatter(Server.Pts, Aces)
+qscatter(server.pts, aces)
 
 
 ## now notice the color changes in the plot
