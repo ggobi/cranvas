@@ -18,6 +18,7 @@
 ##' @param x variable name which designates variable displayed on the
 ##' horizontal axis
 ##' @inheritParams qbar
+##' @inheritParams qhist
 ##' @export
 ##' @family plots
 ##' @example inst/examples/qdensity-ex.R
