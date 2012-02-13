@@ -135,7 +135,7 @@ qdata =
 
     ## here 'mode' is explained in the documentation of mode_selection()
 
-    attr(mf, "Link") = mutalist(linkid = NULL)
+    attr(mf, "Link") = mutalist(linkid = NULL, linkvar = NULL, type = NULL)
 
     shadow = is.na(data)  # shadow matrix for missing values
     ## add shadow matrix to 'shadow' attribute
