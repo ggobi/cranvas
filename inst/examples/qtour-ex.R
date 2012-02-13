@@ -1,4 +1,5 @@
 library(cranvas)
+library(tourr)
 data(flea, package = 'tourr')
 
 qflea = qdata(flea, color = species)
