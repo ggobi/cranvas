@@ -211,7 +211,7 @@ qboxplot =
             return()
         } else idx = c(1, 2, 2)[idx]
         switch(idx, {compute_coords(brush = TRUE); qupdate(layer.brush)},
-           {compute_color(); qupdate(layer.main)})
+           {compute_colors(); qupdate(layer.main)})
     })
     qconnect(layer.main, 'destroyed', function(x) {
         remove_listener(data, d.idx)
