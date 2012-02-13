@@ -213,8 +213,8 @@ NULL
 ##' @source maps package
 ##' @examples library(cranvas)
 ##' data(world)
-##' qworld <- qdata(world)
-##' qmap(qworld, long, lat, group, label = id)
+##' qworld = map_qdata('world')
+##' qmap(qworld)
 NULL
 
 ## set options(cranvas_debug = TRUE) to print the debug message
