@@ -36,6 +36,9 @@ Depends:
     scales,
     maps
 Suggests:
+    nlme,
+    reshape,
+    mapdata,
     productplots,
     animation,
     randomForest,
@@ -64,4 +67,3 @@ Collate:
     'qtime.R'
     'qspine.R'
     'qtour.R'
-    'qmap2.R'
