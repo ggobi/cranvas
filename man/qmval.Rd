@@ -74,6 +74,6 @@ qscatter(longitude, latitude)
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
-  \code{\link{qmap}}, \code{\link{qparallel}},
-  \code{\link{qspine}}, \code{\link{qtime}}
+  \code{\link{qparallel}}, \code{\link{qspine}},
+  \code{\link{qtime}}
 }

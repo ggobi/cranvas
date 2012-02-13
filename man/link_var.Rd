@@ -33,5 +33,5 @@ link_var(mf) <- NULL  # disable linking
   Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{qdata}}, \code{\link{link}}
+  \code{\link{qdata}}
 }

@@ -82,7 +82,7 @@ Common.meta
 }
 \examples{
 library(objectSignals)
-My.meta <- setRefClass("My_meta", fields = properties(c(Common.meta, 
+My.meta <- setRefClass("My_meta", fields = objectProperties::properties(c(Common.meta, 
     list(horizontal = "logical", xleft = "numeric"))))
 meta <- My.meta$new(alpha = 1)
 meta$alpha

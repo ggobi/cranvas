@@ -28,5 +28,5 @@ remove_link(data = last_data(), id = link_id(data))
   Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{link}}
+  \code{\link{link_knn}}, \code{\link{link_cat}}
 }

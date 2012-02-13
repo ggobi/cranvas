@@ -1,8 +1,8 @@
-\name{qmap2}
-\alias{qmap2}
+\name{qmap}
+\alias{qmap}
 \title{Draw a map}
 \usage{
-qmap2(data = last_data(), linkto = NULL, linkby = NULL, 
+qmap(data = last_data(), linkto = NULL, linkby = NULL, 
     main = "", xlim = NULL, ylim = NULL)
 }
 \arguments{
@@ -57,11 +57,11 @@ library(cranvas)
 ### (1) simple maps
 ## the world map
 qworld <- map_qdata("world")
-qmap2(qworld)
+qmap(qworld)
 
 ## US states
 qstate <- map_qdata("state")
-qmap2(qstate)
+qmap(qstate)
 
 ## a simple demonstration of colors
 qstate$.color <- sample(c("red", "blue"), nrow(qstate), 
@@ -69,12 +69,12 @@ qstate$.color <- sample(c("red", "blue"), nrow(qstate),
 
 ## US counties
 qcounty <- map_qdata("county")
-qmap2(qcounty)
+qmap(qcounty)
 
 ## map of China
 if (require("mapdata")) {
     qchina <- map_qdata("china")
-    qmap2(qchina)  # oh my! obviously china map needs more love
+    qmap(qchina)  # oh my! obviously china map needs more love
 }
 
 
@@ -89,7 +89,7 @@ qscatter(population, robbery, data = qcrimes)
 
 ## categorical linking by states; now brush on any plot and
 #   see changes in other plots
-qmap2(qstate, linkto = qcrimes, linkby = "state")
+qmap(qstate, linkto = qcrimes, linkby = "state")
 
 ## linking should be automatically removed when map is
 #   closed; if not, try remove_link(qcrimes);
@@ -110,7 +110,7 @@ vote.res <- c("red", "red", "red", "blue", "blue",
     "blue", "red")
 
 qstate <- map_qdata("state", color = vote.res)
-qmap2(qstate)  # a normal map
+qmap(qstate)  # a normal map
 
 ## cartogram based on population
 
@@ -127,7 +127,7 @@ vote.pop <- c(4708708, 6595778, 2889450, 36961664,
 
 qstate2 <- map_qdata("state", color = vote.res, size = vote.pop, 
     cartogram = TRUE)
-qmap2(qstate2)
+qmap(qstate2)
 
 ## electoral votes for each state
 vote.num <- c(9, 10, 6, 55, 9, 7, 3, 3, 27, 15, 4, 
@@ -138,7 +138,7 @@ vote.num <- c(9, 10, 6, 55, 9, 7, 3, 3, 27, 15, 4,
 
 qstate3 <- map_qdata("state", color = vote.res, size = vote.num, 
     cartogram = TRUE)
-qmap2(qstate3)
+qmap(qstate3)
 }
 \author{
   Heike Hofmann and Yihui Xie

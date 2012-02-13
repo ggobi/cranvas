@@ -3,7 +3,7 @@
 \title{k-Nearest neighbor linking}
 \usage{
 link_knn(mf1, var1 = NULL, mf2 = NULL, var2 = var1, 
-    k = 10, ...)
+    k = 10)
 }
 \arguments{
   \item{var1}{the variable names or column indices of the

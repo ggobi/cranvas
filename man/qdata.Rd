@@ -48,8 +48,8 @@ qdata(data, color = "gray15", border = color, size = 4,
   as a \code{\link[plumbr]{mutaframe}}; in the end add some
   attributes to the mutaframe for the purpose of
   interaction (mainly the \code{\link{brush}} object and
-  the \code{\link{link}}ing specification). A shadow matrix
-  will be attached if any missing values are present in the
+  the linking specification). A shadow matrix will be
+  attached if any missing values are present in the
   original data.
 }
 \details{
@@ -116,6 +116,5 @@ qhist(double.faults, data = qtennis)
   Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link[plumbr]{mutaframe}}, \code{\link{brush}},
-  \code{\link{link}}
+  \code{\link[plumbr]{mutaframe}}, \code{\link{brush}}
 }

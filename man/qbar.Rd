@@ -103,7 +103,6 @@ qbar(Regional.Code)
 \seealso{
   Other plots: \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
-  \code{\link{qmap}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qspine}},
-  \code{\link{qtime}}
+  \code{\link{qmval}}, \code{\link{qparallel}},
+  \code{\link{qspine}}, \code{\link{qtime}}
 }

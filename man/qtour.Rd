@@ -65,18 +65,21 @@ qtour(vars = ~., data = last_data(), tour_path = grand_tour(),
 }
 \examples{
 library(cranvas)
+library(tourr)
 data(flea, package = "tourr")
 
 qflea <- qdata(flea, color = species)
 flea_tour <- qtour(1:6, data = qflea, tour_path = grand_tour(3))
 flea_tour$start()
 
-qscatter(proj1, proj2, data = qflea, xlim = c(-0.8, 
-    0.8), ylim = c(-0.8, 0.8))
+\dontrun{
+Sys.sleep(0.5)  # need a pause to generate projections
+qscatter(proj1, proj2, data = qflea, xlim = c(-0.8, 0.8), 
+    ylim = c(-0.8, 0.8))
 qparallel(~proj1 + proj2 + proj3, data = qflea)
 qhist(proj1, data = qflea, binwidth = 0.05, xlim = c(-1, 
     1), ylim = c(0, 10))
-
+}
 flea_tour$pause()
 
 ## adjust speed

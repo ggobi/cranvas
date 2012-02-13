@@ -27,6 +27,9 @@ qdensity(x, data = last_data(), binwidth = NULL, main = "",
   \item{xlab}{x-axis title}
 
   \item{ylab}{y-axis title}
+
+  \item{binwidth}{the bin width (\code{range(x) / bins} by
+  default)}
 }
 \description{
   Draw a univariate density plot, with a rug plot
@@ -85,7 +88,7 @@ qdensity(tars1, data = qflea)
 }
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
-  \code{\link{qhist}}, \code{\link{qmap}},
-  \code{\link{qmval}}, \code{\link{qparallel}},
-  \code{\link{qspine}}, \code{\link{qtime}}
+  \code{\link{qhist}}, \code{\link{qmval}},
+  \code{\link{qparallel}}, \code{\link{qspine}},
+  \code{\link{qtime}}
 }
