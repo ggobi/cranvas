@@ -444,16 +444,3 @@ draw_y_axes_with_labels_fun <- function(plotObj, dataRanges, axisLabels,
     #  bprint(labelVertPos)
 
 }
-
-#' add a title using qt
-#'
-#' @noRd
-add_title_fun <- function(plotObj, dataRanges, title) {
-
-    if (!is.null(title)) {
-        qstrokeColor(plotObj) <- "black"
-        qdrawText(plotObj, text = title, x = dataRanges[1] + 0.5 * diff(dataRanges[1:2]),
-            y = dataRanges[4] + 0.05 * diff(dataRanges[3:4]), valign = "top")
-    }
-}
-
