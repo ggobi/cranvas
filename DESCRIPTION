@@ -32,6 +32,7 @@ Version: 0.7.5
 URL: http://github.com/ggobi/cranvas
 BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
+    R (>= 2.10),
     scales,
     maps
 Suggests:
