@@ -28,65 +28,6 @@ find_y_label <- function(df) {
 }
 
 
-#' make the window ranges
-#'
-#' @param dataRanges ranges of the data so a buffer of space may be added
-#' @param xlab if xlab is replaced with somthing other than null, it will be assumed that an axis label will be used
-#' @param ylab if ylab is replaced with somthing other than null, it will be assumed that an axis label will be used
-#' @return returns a vector of four variables containing xmin, xmax, ymin, ymax
-#' @author Barret Schloerke \email{bigbear@@iastate.edu}
-#' @keywords hplot
-#' @examples
-#'  make_window_ranges(c(0,1,2,3))
-#' @noRd
-make_window_ranges <- function(dataRanges, xlab = NULL, ylab = NULL, xtickmarks = FALSE,
-    ytickmarks = FALSE, main = NULL) {
-
-    # add more space for the Y label
-    if (!is.null(ylab)) {
-        xmin = dataRanges[1] - 0.1 * diff(dataRanges[1:2])
-    }
-    else {
-        xmin = dataRanges[1] - 0.065 * diff(dataRanges[1:2])
-    }
-    xmax = dataRanges[2] + 0.05 * diff(dataRanges[1:2])
-
-
-    # add more space for the X label
-    if (!is.null(xlab)) {
-        ymin = dataRanges[3] - 0.1 * diff(dataRanges[3:4])
-    }
-    else {
-        ymin = dataRanges[3] - 0.065 * diff(dataRanges[3:4])
-    }
-    ymax = dataRanges[4] + 0.05 * diff(dataRanges[3:4])
-
-    # little extra space necessary for xtickmarks
-    if (xtickmarks) {
-        #    ymin = dataRanges[3]-0.05*diff(dataRanges[3:4])
-        ymin = ymin - 0.05 * diff(dataRanges[3:4])
-    }
-
-    # based on length of y tickmarks extra space
-    if (ytickmarks) {
-        #xwidth = max(str_length(as.character(ytickmarks)))
-        # each character gives 0.75% extra space
-        #    xmin = dataRanges[1] - 0.0075*xwidth*diff(dataRanges[1:2])
-        xmin = xmin - 0.0075 * diff(dataRanges[1:2])
-    }
-
-    # extra space for window title
-    if (!is.null(main)) {
-        if (length(main) > 0)
-            ymax = ymax + 0.05 * diff(dataRanges[3:4])
-    }
-
-    windowRanges <- c(xmin, xmax, ymin, ymax)
-
-    windowRanges
-}
-
-
 ##' Extend the range of data by an amount
 ##'
 ##' This is useful for setting a margin in the plot region.
