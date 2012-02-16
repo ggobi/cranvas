@@ -146,10 +146,12 @@ qhist =
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
         if (length(i <- which(match_key(c('Up', 'Down'))))) {
-            if (meta$binwidth >= 1e-7) {
-                meta$binwidth = c(1.05, 0.95)[i] * meta$binwidth  # larger/smaller bins
-                initial_bins(default = FALSE)  # use new binwidth
-            } else message('binwidth too small!')
+            meta$binwidth = c(1.05, 0.95)[i] * meta$binwidth  # larger/smaller bins
+            if (meta$binwidth < ifelse(length(meta$binmin), meta$binmin, 1e-7)) {
+                meta$binwidth = meta$binmin
+                message('binwidth too small!')
+            }
+            initial_bins(default = FALSE)  # use new binwidth
             return()
         } else if (length(i <- which(match_key(c('Left', 'Right'))))) {
             brk = meta$breaks
@@ -286,6 +288,7 @@ Hist.meta =
                                   split.type = 'character', spine = 'logical',
                                   nlevel = 'integer', nlevel2 = 'integer',
                                   freq = 'logical', standardize = 'logical',
-                                  binwidth = 'numeric', multiplier = 'numeric')
+                                  binwidth = 'numeric', multiplier = 'numeric',
+                                  binmin = 'numeric')
 
                              )))

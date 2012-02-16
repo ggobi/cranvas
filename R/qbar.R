@@ -234,7 +234,7 @@ Bar.meta =
                 nlevel = 'integer', nlevel2 = 'integer',
                 x = 'numeric', y = 'numeric', space = 'numeric',
                 xleft = 'numeric', xright = 'numeric',
-                ybottom = 'numeric', ytop = 'numeric',
+                ybottom = 'numeric', ytop = 'numeric', binmin = 'numeric',
                 horizontal = 'logical', freq = 'logical', standardize = 'logical',
                 split.type = 'character')
 
@@ -285,12 +285,15 @@ Bar.meta =
 }
 .bar_draw_main = function(layer, painter, meta) {
     ## deal with 0 pixel rect
+    u = one_pixel(painter)
     if (meta$horizontal) {
         if (any(idx <- meta$xright == 0))
-            meta$xright[idx] = one_pixel(painter)[1]
+            meta$xright[idx] = u[1]
+        meta$binmin = u[2]
     } else {
         if (any(idx <- meta$ytop == 0))
-            meta$ytop[idx] = one_pixel(painter)[2]
+            meta$ytop[idx] = u[2]
+        meta$binmin = u[1]
     }
     qdrawRect(painter, meta$xleft, meta$ybottom, meta$xright, meta$ytop,
               stroke = meta$border, fill = meta$color)
