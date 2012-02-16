@@ -274,13 +274,14 @@ Bar.meta =
                                 each = meta$nlevel)
     }
 }
-.bar_flip_coords = function(data, meta) {
+.bar_flip_coords = function(data, meta, bar.only = FALSE) {
     if (!meta$horizontal) return()
+    switch_value('xleft', 'ybottom', meta)
+    switch_value('xright', 'ytop', meta)
+    if (bar.only) return()
     switch_value('xat', 'yat', meta)
     switch_value('xlabels', 'ylabels', meta)
     switch_value('xlab', 'ylab', meta)
-    switch_value('xleft', 'ybottom', meta)
-    switch_value('xright', 'ytop', meta)
     meta$limits = meta$limits[, 2:1]
 }
 .bar_draw_main = function(layer, painter, meta) {

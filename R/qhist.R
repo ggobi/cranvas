@@ -116,8 +116,8 @@ qhist =
         .bar_compute_colors(data, meta)
     }
     compute_colors()
-    flip_coords = function() {
-        .bar_flip_coords(data, meta)
+    flip_coords = function(bar.only = FALSE) {
+        .bar_flip_coords(data, meta, bar.only)
     }
     flip_coords()
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
@@ -266,7 +266,7 @@ qhist =
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     meta$breaksChanged$connect(function () {
-        compute_coords(reset = FALSE); compute_colors(); flip_coords()
+        compute_coords(reset = FALSE); compute_colors(); flip_coords(bar.only = TRUE)
         layer.main$invalidateIndex()
         qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis); qupdate(layer.main)
     })
