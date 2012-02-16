@@ -134,7 +134,7 @@ qhist =
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect)
         if (length(hits)) {
-            hits = .find_intersect(meta$value, meta$value2, hits, meta$nlevel)
+            hits = .find_intersect(meta$value, hits, meta$nlevel)
         }
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
@@ -183,7 +183,7 @@ qhist =
     }
     identify_draw = function(layer, painter) {
         if (!b$identify || !length(idx <- meta$identified)) return()
-        k = .find_intersect(meta$value, meta$value2, idx, meta$nlevel)
+        k = .find_intersect(meta$value, idx, meta$nlevel)
         meta$identify.labels =
             sprintf('bin: (%s]\ncount: %s\nproportion: %.2f%%',
                     paste(meta$breaks[range(idx %% meta$nlevel) + c(1, 2)], collapse = ','),

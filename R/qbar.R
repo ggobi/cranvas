@@ -110,7 +110,7 @@ qbar =
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect)
         if (length(hits)) {
-            hits = .find_intersect(meta$value, meta$value2, hits, meta$nlevel)
+            hits = .find_intersect(meta$value, hits, meta$nlevel)
         }
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
@@ -134,7 +134,7 @@ qbar =
     }
     identify_draw = function(layer, painter) {
         if (!b$identify || !length(idx <- meta$identified)) return()
-        k = .find_intersect(meta$value, meta$value2, idx, meta$nlevel)
+        k = .find_intersect(meta$value, idx, meta$nlevel)
         vis = visible(data) & k
         meta$identify.labels =
             sprintf('%s = %s%s\ncounts: %s\nproportion: %.2f%%',
@@ -313,11 +313,9 @@ Bar.meta =
     }
     draw_brush(layer, painter, data, meta)
 }
-.find_intersect = function(x1, x2, idx, n) {
+.find_intersect = function(x1, idx, n) {
     h = logical(length(x1))
     for (i in idx)
-        h =
-            h | ((x1 %in% levels(x1)[(i %% n) + 1]) &
-                 (x2 %in% levels(x2)[ceiling((i + 1) / n)]))
+        h = h | (x1 %in% levels(x1)[(i %% n) + 1])
     h
 }
