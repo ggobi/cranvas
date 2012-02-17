@@ -170,10 +170,19 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
         l = at[1] - at[2]; r = at[n] - at[n - 1]
         at = (at[-1] + at[-n])/2
         n = n - 1
-        if (at[1] > lim[1])
-            at = c(seq(at[1], lim[1], l/2)[-1], at)
         if (at[n] < lim[2])
             at = c(at, seq(at[n], lim[2], r/2)[-1])
+        if (at[1] > lim[1])
+            at = c(seq(at[1], lim[1], l/2)[-1], at)
+        at[at < lim[2] & at > lim[1]]
+    }
+    major_at = function(at, lim) {
+        if ((n <- length(at)) <= 1) return(at)
+        l = at[1] - at[2]; r = at[n] - at[n - 1]
+        if (at[n] < lim[2])
+            at = c(at, seq(at[n], lim[2], r)[-1])
+        if (at[1] > lim[1])
+            at = c(rev(seq(at[1], lim[1], l)[-1]), at)
         at[at < lim[2] & at > lim[1]]
     }
     draw_grid = function(layer, painter) {
@@ -185,6 +194,7 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
         qdrawRect(painter, xlim[1], ylim[1], xlim[2], ylim[2], stroke = .bgcolor,
             fill = .bgcolor)
         qlineWidth(painter) = 2
+        xat = major_at(xat, xlim); yat = major_at(yat, ylim)
         qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
         qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
         ## minor grid
