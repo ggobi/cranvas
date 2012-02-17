@@ -195,8 +195,8 @@ qgrid = function(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = 'xy',
             fill = .bgcolor)
         qlineWidth(painter) = 2
         xat = major_at(xat, xlim); yat = major_at(yat, ylim)
-        qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
-        qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
+        if (length(xat)) qdrawSegment(painter, xat, ylim[1], xat, ylim[2], stroke = "white")
+        if (length(yat)) qdrawSegment(painter, xlim[1], yat, xlim[2], yat, stroke = "white")
         ## minor grid
         qlineWidth(painter) = 1
         if (minor %in% c('x', 'xy')) {
