@@ -71,7 +71,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
 
   ## Period for time series / Group for panel data
   if (is.null(call$period) & is.null(call$group)) {
-    meta$vargroup <- rep(1, nrow(data))
+    meta$vargroup <- factor(rep(1, nrow(data)))
     meta$orderEnter <- order(meta$time, decreasing=FALSE)
     meta$orderBack <- rank(meta$time,ties.method='first')
   } else {
@@ -84,7 +84,6 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
     meta$group <- factor(data[meta$orderEnter,meta$varname$g])
     meta$orderBack <- rank(meta$time+as.integer(as.factor(data[,meta$varname$g]))*(max(meta$time,na.rm=TRUE)+1),
                            ties.method='first')
-
     meta$vargroup <- meta$group
   }
   if (!all(meta$orderEnter==1:nrow(data))) {
@@ -986,7 +985,7 @@ Time.meta =
                                   wrap.group = 'numeric',
                                   wrap.shift = 'numeric',
                                   wrapF_dragT = 'logical',
-                                  vargroup = 'numeric',
+                                  vargroup = 'factor',
                                   zoomsize = 'numeric',
                                   limits = 'matrix',
                                   radius = 'numeric',
