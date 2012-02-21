@@ -188,6 +188,13 @@ qscatter =
         b$cursor = 2L
         meta$pos = as.numeric(event$pos())
         rect = as.matrix(identify_rect(meta))
+
+# increase rectangle by size of glyphs (only works, if glyphs have the same size)
+				xincrease = meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1]))
+				yincrease = meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2]))
+				rect[1,] <- rect[1,] - c(xincrease, yincrease)
+				rect[2,] <- rect[2,] + c(xincrease, yincrease)
+
         meta$identified = rectLookup(tree, rect[1, ], rect[2, ])
         qupdate(layer.identify)
     }
