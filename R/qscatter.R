@@ -148,6 +148,8 @@ qscatter =
             selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         } else qupdate(layer.brush)
         common_mouse_move(layer, event, data, meta)
+
+#browser()
     }
     brush_mouse_release = function(layer, event) {
         common_mouse_release(layer, event, data, meta)
@@ -265,7 +267,11 @@ qscatter =
             qupdate(layer.main)
             return()
         } else idx = c(1, 1, 2, 3, 4, 4)[idx]
-        switch(idx, compute_coords(), qupdate(layer.brush), {
+        switch(idx, { 
+        	# update at least one of the axes
+          compute_coords(); 
+          tree <<- createTree(meta$xy)
+        }, qupdate(layer.brush), {
             compute_coords(); selected(data)[!visible(data)] = FALSE
         }, {
             compute_order(); compute_aes(); qupdate(layer.main)
