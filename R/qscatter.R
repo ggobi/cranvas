@@ -143,6 +143,12 @@ qscatter =
     tree = createTree(meta$xy)  # build a search tree
     brush_mouse_move = function(layer, event) {
         rect = update_brush_size(meta, event)
+# increase rectangle by size of glyphs (only works, if glyphs have the same size)
+				xincrease = meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1]))
+				yincrease = meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2]))
+				rect[1,] <- rect[1,] - c(xincrease, yincrease)
+				rect[2,] <- rect[2,] + c(xincrease, yincrease)
+
         if (!(b$select.only && b$draw.brush)) {
             hits = rectLookup(tree, rect[1, ], rect[2, ])
             selected(data) = mode_selection(selected(data), hits, mode = b$mode)
@@ -270,6 +276,7 @@ qscatter =
         switch(idx, { 
         	# update at least one of the axes
           compute_coords(); 
+# maybe check whether tour is on and not change tree in that case ...
           tree <<- createTree(meta$xy)
         }, qupdate(layer.brush), {
             compute_coords(); selected(data)[!visible(data)] = FALSE
