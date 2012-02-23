@@ -56,6 +56,7 @@ qbar =
              standardize = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL) {
     data = check_data(data)
     b = brush(data)
+    b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
     s = attr(data, 'Scales')
     meta =
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,

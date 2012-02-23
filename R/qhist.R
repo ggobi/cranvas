@@ -42,6 +42,7 @@ qhist =
              xlab = NULL, ylab = NULL) {
     data = check_data(data)
     b = brush(data)
+    b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
                       alpha = 1, horizontal = horizontal, main = main, active = TRUE,

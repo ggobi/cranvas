@@ -36,6 +36,7 @@ qboxplot =
              points = FALSE) {
     data = check_data(data)
     b = brush(data)
+    b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
     meta = Box.meta$new(horizontal = horizontal, main = main, alpha = 1, points = points,
                         active = TRUE)
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
