@@ -58,7 +58,7 @@ qparallel =
         stop("parallel coordinate plots need at least 2 variables!")
 
     ## meta data used to store useful information
-    meta = Parallel.meta$new(brush.move = TRUE, alpha = 1,
+    meta = Parallel.meta$new(brush.move = TRUE, alpha = 1, active = TRUE,
                     main = main, vars = vars, glyph = match.arg(glyph),
                     order = match.arg(order), draw.range = FALSE, horizontal = horizontal,
                     jitter = jitter, amount = amount, names = names)
@@ -345,6 +345,11 @@ qparallel =
         mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
         mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
         keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
+        focusInFun = function(layer, event) {
+            common_focus_in(layer, event, data, meta)
+        }, focusOutFun = function(layer, event) {
+            common_focus_out(layer, event, data, meta)
+        },
         limits = qrect(meta$limits), cache = TRUE)
 
     layer.range = qlayer(paintFun = range_draw, limits = qrect(meta$limits))

@@ -35,7 +35,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     z = as.list(match.call()[-1])
     ## initialize meta
     meta =
-        Dens.meta$new(xvar = as.character(z$x),
+        Dens.meta$new(xvar = as.character(z$x), active = TRUE,
                       alpha = .5, main = main, minor = 'xy',
                       samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
     ## set default xlab if not provided
@@ -210,6 +210,11 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
                mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
                wheelFun = mouse_wheel,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
                limits = qrect(meta$limits), clip = TRUE)
     layer.lines = qlayer(paintFun = line_draw, limits = qrect(meta$limits), clip = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits), clip = TRUE)

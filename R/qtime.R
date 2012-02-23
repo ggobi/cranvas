@@ -63,6 +63,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
   call <- as.list(match.call()[-1])
   b <- brush(data)
   meta <- Time.meta$new(varname = list(x = as.character(call$time)), minor = 'xy')
+  meta$active <- TRUE
 
   ## X axis setting
   meta$time <- eval(call$time, as.data.frame(data))
@@ -886,6 +887,11 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
                               mousePressFun=brush_mouse_press, mouseReleaseFun=brush_mouse_move,
                               mouseMove = brush_mouse_move, keyPressFun=key_press,
                               wheelFun = mouse_wheel,
+                              focusInFun = function(layer, event) {
+                                  common_focus_in(layer, event, data, meta)
+                              }, focusOutFun = function(layer, event) {
+                                  common_focus_out(layer, event, data, meta)
+                              },
                               limits=qrect(meta$limits),clip=TRUE)
   main_line_layer <- qlayer(paintFun=main_line_draw,
                             limits=qrect(meta$limits),clip=TRUE)

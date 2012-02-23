@@ -52,7 +52,7 @@ qscatter =
     ## initialize meta
     meta =
         Scat.meta$new(xvar = as.character(z$x), yvar = as.character(z$y),
-                      xy = matrix(nrow = nrow(data), ncol = 2),
+                      xy = matrix(nrow = nrow(data), ncol = 2), active = TRUE,
                       alpha = 1, main = main, asp = asp, minor = 'xy',
                       samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
 
@@ -225,6 +225,11 @@ qscatter =
                mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
                wheelFun = mouse_wheel,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
                limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))

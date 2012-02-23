@@ -60,7 +60,7 @@ qbar =
     meta =
         Bar.meta$new(var = as.character(as.list(match.call()[-1])$x), space = space,
                      alpha = 1, horizontal = horizontal, main = main,
-                     standardize = standardize)
+                     standardize = standardize, active = TRUE)
     compute_coords = function() {
         meta$value = factor(data[, meta$var], exclude = NULL)
         meta$nlevel = length(levels(meta$value))
@@ -156,6 +156,11 @@ qbar =
                mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
                mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
                limits = qrect(meta$limits))
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))

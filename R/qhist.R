@@ -44,7 +44,7 @@ qhist =
     b = brush(data)
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
-                      alpha = 1, horizontal = horizontal, main = main,
+                      alpha = 1, horizontal = horizontal, main = main, active = TRUE,
                       standardize = spine, spine = spine, multiplier = 1)
     initial_bins = function(default = TRUE) {
         d = data[, meta$var]
@@ -202,6 +202,11 @@ qhist =
                mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
                mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
                limits = qrect(meta$limits), clip = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))

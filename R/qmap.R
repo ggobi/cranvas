@@ -37,7 +37,7 @@ qmap =
 
     ## initialize meta
     meta =
-        Map.meta$new(alpha = 1, main = main,
+        Map.meta$new(alpha = 1, main = main, active = TRUE,
                      group = cumsum(is.na(md$x) & is.na(md$y)) + 1)
 
     ## compute coordinates/axes-related stuff
@@ -142,6 +142,11 @@ qmap =
                mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
                wheelFun = mouse_wheel,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
                limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))

@@ -36,7 +36,8 @@ qboxplot =
              points = FALSE) {
     data = check_data(data)
     b = brush(data)
-    meta = Box.meta$new(horizontal = horizontal, main = main, alpha = 1, points = points)
+    meta = Box.meta$new(horizontal = horizontal, main = main, alpha = 1, points = points,
+                        active = TRUE)
     if (missing(vars)) vars = grep('^[^.]', names(data), value = TRUE)
 
     compute_coords = function(brush = FALSE) {
@@ -161,6 +162,11 @@ qboxplot =
                mouseReleaseFun = brush_mouse_release,
                mouseMove = brush_mouse_move,
                keyPressFun = key_press, keyReleaseFun = key_release,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
                limits = qrect(meta$limits), clip = TRUE)
 
     layer.root = qlayer(scene)
