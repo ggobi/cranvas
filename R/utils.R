@@ -259,6 +259,13 @@ common_mouse_release = function(layer, event, data, meta) {
     save_brush_history(data)  # store brushing history
 }
 
+common_focus_in = function(layer, event, data, meta) {
+    meta$active = TRUE
+}
+common_focus_out = function(layer, event, data, meta) {
+    meta$active = FALSE
+}
+
 ##' Sync layer limits
 ##'
 ##' The limits information is stored in the meta data as
