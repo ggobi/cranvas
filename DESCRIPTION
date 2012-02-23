@@ -1,5 +1,5 @@
 Package: cranvas
-Version: 0.7.5
+Version: 0.8
 Imports:
     methods,
     qtbase (>= 0.99.2),
