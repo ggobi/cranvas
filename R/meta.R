@@ -43,7 +43,8 @@
 ##' vector of length 2)} \item{manual.brush}{a function to manually
 ##' brush the plot given the mouse position} \item{identified,
 ##' identify.labels}{the identified indices and the text label to draw
-##' in the plot for the identified cases}}
+##' in the plot for the identified cases} \item{active}{logical: if
+##' the current plot window is active}}
 ##' @examples library(objectSignals)
 ##' My.meta = setRefClass("My_meta", fields = objectProperties::properties(c(Common.meta,
 ##' list(horizontal = 'logical', xleft = 'numeric'))))
@@ -66,7 +67,7 @@ Common.meta =
          xat = 'numeric', yat = 'numeric', xlab = 'character', ylab = 'character',
          xlabels = 'character', ylabels = 'character', limits = 'matrix',
          color = 'character', border = 'character', size = 'numeric',
-         start = 'numeric', pos = 'numeric',
+         start = 'numeric', pos = 'numeric', active = 'logical',
          brush.move = 'logical', brush.size = 'numeric',
          manual.brush = 'function', minor = 'character',
          identified = 'integer', identify.labels = 'character')
