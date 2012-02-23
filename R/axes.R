@@ -56,27 +56,29 @@ qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL,
         xat = yat = at
         xalign = yalign = "center"
         xshift1 = yshift1 = xshift2 = yshift2 = 0
+        one = one_pixel(painter)
+        s1 = 2 * one; s2 = 4 * s1 # locations of ticks/labels
         ## side = 1, 2, 3, 4
         switch(side, {
-            yat = 0.9
+            yat = 1 - s2[2]
             yalign = "top"
-            yshift1 = 0.01
-            yshift2 = 0.1
+            yshift1 = 1.5 * s1[2]
+            yshift2 = 1 - yat
         }, {
-            xat = 0.9
+            xat = 1 - s2[1]
             xalign = "right"
-            xshift1 = 0.01
-            xshift2 = 0.1
+            xshift1 = 1.5 * s1[1]
+            xshift2 = 1 - xat
         }, {
-            yat = 0.1
+            yat = s2[2]
             yalign = "bottom"
-            yshift1 = -0.01
-            yshift2 = -0.1
+            yshift1 = -1.5 * s1[2]
+            yshift2 = -xat
         }, {
-            xat = 0.1
+            xat = s2[1]
             xalign = "left"
-            xshift1 = -0.01
-            xshift2 = -0.1
+            xshift1 = -1.5 * s1[1]
+            xshift2 = -xat
         })
         qdrawText(painter, labels, x = xat, y = yat, halign = xalign, valign = yalign)
         qdrawSegment(painter, xat + xshift1, yat + yshift1, xat + xshift2, yat + yshift2)
