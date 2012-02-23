@@ -285,9 +285,9 @@ qscatter =
             qupdate(layer.main)
             return()
         } else idx = c(1, 1, 2, 3, 4, 4)[idx]
-        switch(idx, { 
+        switch(idx, {
         	# update at least one of the axes
-          compute_coords(); 
+          compute_coords();
 # maybe check whether tour is on and not change tree in that case ...
           tree <<- createTree(meta$xy)
         }, qupdate(layer.brush), {
