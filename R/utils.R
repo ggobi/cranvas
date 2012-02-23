@@ -526,7 +526,7 @@ lighter = function(color, factor = 0.2) {
 ##' prefer_width('multiple\nvertical\nlines', horizontal = FALSE)
 prefer_height = function(text) {
     if (all(!nzchar(text))) return(10)  # 10 pixels if text is empty
-    15 * max(sapply(gregexpr('\n', text),
+    30 * max(sapply(gregexpr('\n', text),
                     function(xx) ifelse(any(xx < 0), 0, length(xx)) + 1))
 }
 ##' @param horizontal logical: the text is drawn horizontally
@@ -535,8 +535,8 @@ prefer_height = function(text) {
 ##' @export
 prefer_width = function(text, horizontal = TRUE) {
     if (horizontal)
-        9 * max(nchar(unlist(strsplit(text, '\n')))) + 5 else
-    18 * max(sapply(gregexpr('\n', text),
+        9 * max(nchar(unlist(strsplit(text, '\n')))) + 10 else
+    15 * max(sapply(gregexpr('\n', text),
                     function(xx) ifelse(any(xx < 0), 0, length(xx)) + 1))
 }
 
