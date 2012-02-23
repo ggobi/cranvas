@@ -320,6 +320,7 @@ qparallel =
         meta$pos = as.numeric(event$pos())
         hits = layer$locate(identify_rect(meta)) + 1
         meta$identified = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
+        meta$identified = unique(meta$identified)
         qupdate(layer.identify)
     }
 
