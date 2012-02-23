@@ -296,7 +296,7 @@ manual_brush = function(obj, pos, pause = 0) {
 ##' @export
 ##' @examples ## see the source code of, e.g., qbar() for its usage
 draw_brush = function(layer, painter, data, meta) {
-    if (length(meta$pos) == 0) return()
+    if (!meta$active || length(meta$pos) == 0) return()
     b = brush(data)
     if (!b$draw.brush || b$identify) return()
     qlineWidth(painter) = 1
