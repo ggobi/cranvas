@@ -2,7 +2,7 @@
 \name{Common.meta}
 \alias{Common.meta}
 \title{Common meta data structure in cranvas}
-\format{List of 20
+\format{List of 21
  $ alpha          : chr "numeric"
  $ main           : chr "character"
  $ xat            : chr "numeric"
@@ -17,6 +17,7 @@
  $ size           : chr "numeric"
  $ start          : chr "numeric"
  $ pos            : chr "numeric"
+ $ active         : chr "logical"
  $ brush.move     : chr "logical"
  $ brush.size     : chr "numeric"
  $ manual.brush   : chr "function"
@@ -78,7 +79,8 @@ Common.meta
   function to manually brush the plot given the mouse
   position} \item{identified, identify.labels}{the
   identified indices and the text label to draw in the plot
-  for the identified cases}}
+  for the identified cases} \item{active}{logical: if the
+  current plot window is active}}
 }
 \examples{
 library(objectSignals)
