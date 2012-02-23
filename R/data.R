@@ -125,8 +125,9 @@ qdata =
     attr(mf, "Brush") =
         brushGen$new(style = list(color = "yellow", linewidth = 2, linetype = NULL),
                      color = "yellow", size = 2,
-                     mode = "none", identify = FALSE, label.gen = function(...) {
-                         paste(capture.output(print(...)), collapse = '\n')
+                     mode = "none", identify = FALSE, label.gen = function(x) {
+                         x = t(as.data.frame(x))
+                         paste(capture.output(print(x, quote = FALSE)), collapse = '\n')
                      }, label.color = "darkgray",
                      history.size = 30, history.index = 0, history.list = list(),
                      persistent = FALSE, persistent.color = character(0),
