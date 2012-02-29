@@ -8,7 +8,7 @@ Imports:
     plumbr (>= 0.6.3),
     objectSignals (>= 0.9.5),
     objectProperties,
-    SearchTrees (>= 0.5)
+    SearchTrees (>= 0.5.1)
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
 Title: Interactive statistical graphics based on Qt
