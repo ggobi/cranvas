@@ -103,7 +103,7 @@ qhist =
             ## there seems to be an ugly bug in qt: rectangles with small height not drawn
             meta$multiplier = k = 1 / max(meta$ytop) * 10
             meta$ybottom = meta$ybottom * k; meta$ytop = meta$ytop * k
-            meta$yat = meta$yat * k; if (!is.null(ylim)) ylim = ylim * k
+            if (reset) meta$yat = meta$yat * k; if (!is.null(ylim)) ylim = ylim * k
         }
         if (reset) meta$limits =
             extend_ranges(cbind(if (is.null(xlim))
