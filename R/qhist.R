@@ -130,6 +130,12 @@ qhist =
     }
     brush_draw = function(layer, painter) {
         .bar_draw_brush(layer, painter, data, meta)
+        if (meta$horizontal) {
+          y0 = min(meta$ybottom); x0 = x1 = min(meta$xleft); y1 = max(meta$ytop)
+        } else {
+          x0 = min(meta$xleft); y0 = y1 = min(meta$ybottom); x1 = max(meta$xright)
+        }
+        qdrawSegment(painter, x0, y0, x1, y1) # draw a baseline
     }
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
