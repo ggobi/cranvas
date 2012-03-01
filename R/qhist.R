@@ -78,20 +78,23 @@ qhist =
             meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
             meta$xlabels = format(meta$xat)
             meta$ylabels = format(meta$yat)
+            meta$xlab = if (is.null(xlab)) meta$var else xlab
+            meta$ylab = if (is.null(ylab)) {
+              if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
+            } else ylab
         }
-        meta$xlab = if (is.null(xlab)) meta$var else xlab
-        meta$ylab = if (is.null(ylab)) {
-            if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
-        } else ylab
         if (meta$spine) {
             meta$xright = cumsum(table(meta$value[idx])) / sum(idx)  # [0,1], prop counts
             meta$xleft = c(0, meta$xright[-meta$nlevel])
-            meta$xat = c(0, meta$xright)
-            meta$xlabels = unname(tapply(formatC(meta$breaks), meta$xat, function(x) {
-                if (length(x) <= 1) x else sprintf('%s%s(%s)',
-                          x[1], if (meta$horizontal) '' else '\n', x[length(x)])
-            }))
-            meta$xat = unique(meta$xat)
+            if (reset) {
+              meta$xat = c(0, meta$xright)
+              meta$xlabels = unname(tapply(formatC(meta$breaks), meta$xat, function(x) {
+                if (length(x) <= 1) x else {
+                  sprintf('%s%s(%s)', x[1], if (meta$horizontal) '' else '\n', x[length(x)])
+                }
+              }))
+              meta$xat = unique(meta$xat)
+            }
             meta$xleft = rep(meta$xleft, meta$nlevel2)
             meta$xright = rep(meta$xright, meta$nlevel2)
         } else {
