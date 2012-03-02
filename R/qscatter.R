@@ -123,12 +123,12 @@ qscatter =
         idx = selected(data)
         if (any(idx)) {
             if (meta$samesize) {
-                qdrawGlyph(painter, qglyphCircle(r = b$size * meta$size),
+                qdrawGlyph(painter, qglyphCircle(r = sqrt(b$size) * meta$size),
                            meta$xy[idx, 1], meta$xy[idx, 2],
                            stroke = b$color, fill = b$color)
             } else {
                 qdrawCircle(painter, meta$xy[idx, 1], meta$xy[idx, 2],
-                            r = b$size * data$.size[idx],
+                            r = sqrt(b$size) * data$.size[idx],
                             stroke = b$color, fill = b$color)
             }
         }
@@ -207,11 +207,11 @@ qscatter =
                     meta$yvar, paste(meta$xy[idx, 2], collapse = ', '))
         draw_identify(layer, painter, data, meta)
         if (meta$samesize) {
-            qdrawGlyph(painter, qglyphCircle(r = 2 * b$size * meta$size),
+            qdrawGlyph(painter, qglyphCircle(r = 2 * sqrt(b$size) * meta$size),
                        meta$xy[idx, 1], meta$xy[idx, 2], stroke = b$color, fill = NA)
         } else {
             qdrawCircle(painter, meta$xy[idx, 1], meta[idx, 2],
-                        r = b$size * data$.size[idx], stroke = b$color, fill = NA)
+                        r = sqrt(b$size) * data$.size[idx], stroke = b$color, fill = NA)
         }
     }
 
