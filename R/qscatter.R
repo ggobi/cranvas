@@ -139,7 +139,8 @@ qscatter =
 					if (meta$outofbounds[1,2])
 						qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
                      		 stroke = "red")
-					qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
+#					qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
+					# as soon as we get caching/clipping back, this has to be uncommented again, I believe. HH
 					if (meta$outofbounds[2,2])
 						qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
                      		 stroke = "red")
