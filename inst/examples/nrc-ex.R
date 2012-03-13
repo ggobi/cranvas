@@ -9,17 +9,17 @@ library(cranvas)
 # lookup text window
 data(nrcstat)
 nrcstat[, 26] <- -nrcstat[, 26]
-colnames(nrcstat)[26] <- "Neg.Median.Time.to.Degree"
+colnames(nrcstat)[26] <- "NegMedianTimetoDegree"
 
 qnrc = qdata(nrcstat)
-rownames(qnrc) = paste(nrcstat$Institution.Name, nrcstat$Program.Name, 
+rownames(qnrc) = paste(nrcstat$Institution, nrcstat$ProgramName, 
     sep = " -> ")
 qnrc$.color = "red"
 
-record_selector("Institution.Name", qnrc)
+record_selector("Institution", qnrc)
 
-qscatter(x = R.Rankings.95th.Percentile, y = R.Rankings.5th.Percentile, data = qnrc)
-qscatter(S.Rankings.95th.Percentile, S.Rankings.5th.Percentile, qnrc)
+qscatter(x = RRankings95th, y = RRankings5th, data = qnrc)
+qscatter(RRankings95th, RRankings5th, qnrc)
 
 median.centering <- function(x) {
     x <- (x - min(x, na.rm = T))/(max(x, na.rm = T) - min(x, na.rm = T))
