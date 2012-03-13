@@ -54,6 +54,22 @@
 ##' @example inst/examples/cranvas-ex.R
 NULL
 
+##' Ames housing statistics
+##'
+##' This data contains statistics for the housing market in Ames, Iowa
+##' from January 2008 to September 2012
+##'
+##' @name ameshousing
+##' @docType data
+##' @usage data(ameshousing)
+##' @format data.frame: 1615 obs. of  10 variables
+##' @keywords datasets
+##' @source \url{http://www.cityofames.org/Assessor/index.htm}
+##' @examples
+##' data(ameshousing)
+##' summary(ameshousing)
+NULL
+
 ##' NRC rankings data for the statistics departments in the US
 ##'
 ##' This data contains the NRC rankings for all the statistics
