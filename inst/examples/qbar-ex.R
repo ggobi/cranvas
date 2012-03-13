@@ -9,15 +9,14 @@ qbar(matches)
 data(nrcstat)
 
 qnrc = qdata(nrcstat, color = Control)  # Control: public or private univ
-qbar(Regional.Code, main = 'Number of public and private colleges in each region')
+qbar(RegCode, main = 'Number of public and private colleges in each region')
 
 qparallel(vars = 13:10, main = "Overview of Rankings", glyph = "tick",
     horizontal = TRUE, boxplot = TRUE)
 
-qbar(Regional.Code, horizontal = TRUE)  # horizontal plot
-qbar(Regional.Code, standardize = TRUE)  # standardize to 1
-
+qbar(RegCode, horizontal = TRUE)  # horizontal plot
+qbar(RegCode, standardize = TRUE)  # standardize to 1
 
 ## use border color to split the bars
 qnrc2 = qdata(nrcstat, color = 'white', border = Control)
-qbar(Regional.Code)
+qbar(RegCode)

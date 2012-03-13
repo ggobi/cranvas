@@ -41,18 +41,16 @@ id = link_cat(qflea, 'species')
 ## stop categorical linking
 remove_link(qflea, id)
 
-
-
 ### (2) NRC rankings
 data(nrcstat)
-qnrc = qdata(nrcstat, color = Regional.Code)
+qnrc = qdata(nrcstat, color = RegCode)
 
 ## Overview: type, rankings
 qparallel(13:10, main = "Overview of Rankings", glyph = "tick",
     horizontal = TRUE, boxplot = TRUE)
 
 ## link to a droplist (institution names)
-record_selector(Institution.Name, qnrc)
+record_selector(InstitutionName, qnrc)
 
 ## TODO: we need keyboard interactions here instead of command line
 brush(qnrc, 'persistent') = TRUE  # begin persistent brushing
@@ -63,8 +61,8 @@ brush(qnrc, 'color') = 'green'
 brush(qnrc, 'color') = 'yellow'
 brush(qnrc, 'persistent') = FALSE  # transient brushing
 
-
-qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity",
+qparallel(vars = 14:19, data = qnrc,
+    main = "Research, Student Support, Diversity",
     center = median, horizontal = TRUE, glyph = "tick")
 
 

@@ -1,9 +1,9 @@
 library(cranvas)
 data(nrcstat)
-qnrc = qdata(nrcstat, color = Regional.Code)
-(o1 = qbar(Regional.Code, qnrc))
-(o2 = qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
-    horizontal = FALSE, boxplot = TRUE))
+qnrc = qdata(nrcstat, color = RegCode)
+(o1 = qbar(RegCode, qnrc))
+(o2 = qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings",
+   glyph = "tick", horizontal = FALSE, boxplot = TRUE))
 
 ## automatically brush the bar plot
 brush(qnrc, 'style')$color = 'brown'
