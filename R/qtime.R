@@ -419,7 +419,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL, wrap=TRUE,
         }
       }
       }
-	  meta$xat <- axis_loc(meta$limits[1:2])
+      meta$xat <- axis_loc(meta$limits[1:2])
     meta$xlabels <- format(meta$xat)
 
     } else if (event$key() == Qt$Qt$Key_U) {

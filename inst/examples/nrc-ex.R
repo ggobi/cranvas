@@ -8,8 +8,6 @@ library(cranvas)
 # parallel coords of criteria
 # lookup text window
 data(nrcstat)
-nrcstat[, "MedianTimetoDegree"] <- -nrcstat[, "MedianTimetoDegree"]
-colnames(nrcstat)[26] <- "NegMedianTimetoDegree"
 
 qnrc = qdata(nrcstat)
 rownames(qnrc) = paste(nrcstat$Institution, nrcstat$ProgramName, 

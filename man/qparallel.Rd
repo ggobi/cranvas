@@ -129,14 +129,14 @@ remove_link(qflea, id)
 
 ### (2) NRC rankings
 data(nrcstat)
-qnrc <- qdata(nrcstat, color = Regional.Code)
+qnrc <- qdata(nrcstat, color = RegCode)
 
 ## Overview: type, rankings
 qparallel(13:10, main = "Overview of Rankings", glyph = "tick", 
     horizontal = TRUE, boxplot = TRUE)
 
 ## link to a droplist (institution names)
-record_selector(Institution.Name, qnrc)
+record_selector(Institution, qnrc)
 
 ## TODO: we need keyboard interactions here instead of
 #   command line

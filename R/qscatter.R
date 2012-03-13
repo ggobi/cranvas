@@ -66,8 +66,8 @@ qscatter =
     }
     compute_order()
 
-		update_limits = function(r) {
-			# r is new range of limits - 2 by 2 matrix
+        update_limits = function(r) {
+            # r is new range of limits - 2 by 2 matrix
         meta$limits = r
         meta$xat = axis_loc(meta$limits[,1])
         meta$yat = axis_loc(meta$limits[,2])
@@ -81,7 +81,7 @@ qscatter =
         meta$outofbounds[2,1] <- max(meta$xy[,1], na.rm=T) > meta$limits[2,1]
         meta$outofbounds[1,2] <- min(meta$xy[,2], na.rm=T) < meta$limits[1,2]
         meta$outofbounds[2,2] <- max(meta$xy[,2], na.rm=T) > meta$limits[2,2]
-		}
+        }
 
     ## compute coordinates/axes-related stuff
     compute_coords = function() {
@@ -101,8 +101,8 @@ qscatter =
                   range(x, na.rm = TRUE, finite = TRUE) else xlim,
                   if (is.null(ylim))
                   range(y, na.rm = TRUE, finite = TRUE) else ylim)
-				update_limits(extend_ranges(r))
-				
+                update_limits(extend_ranges(r))
+                
     }
     compute_coords()
 
@@ -132,25 +132,25 @@ qscatter =
                         stroke = meta$border, fill = meta$color)
         }
         # draw warning lines, if points are outside the drawing area
-				if (sum(meta$outofbounds) > 0) {
-					# at least one boundary is too tight					
-					if (meta$outofbounds[1,1])
-						qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[1,1], meta$limits[2,2],
-                     		 stroke = "red")
-					if (meta$outofbounds[1,2])
-						qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
-                     		 stroke = "red")
-#					qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
-					# as soon as we get caching/clipping back, this has to be uncommented again, I believe. HH
-					if (meta$outofbounds[2,2])
-						qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
-                     		 stroke = "red")
-					if (meta$outofbounds[2,1])
-						qdrawSegment(painter, meta$limits[2,1], meta$limits[1,2], meta$limits[2,1], meta$limits[2,2],
-                     		 stroke = "red")
-                     		 
-				}
-				
+                if (sum(meta$outofbounds) > 0) {
+                    # at least one boundary is too tight                    
+                    if (meta$outofbounds[1,1])
+                        qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[1,1], meta$limits[2,2],
+                              stroke = "red")
+                    if (meta$outofbounds[1,2])
+                        qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
+                              stroke = "red")
+#                    qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
+                    # as soon as we get caching/clipping back, this has to be uncommented again, I believe. HH
+                    if (meta$outofbounds[2,2])
+                        qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
+                              stroke = "red")
+                    if (meta$outofbounds[2,1])
+                        qdrawSegment(painter, meta$limits[2,1], meta$limits[1,2], meta$limits[2,1], meta$limits[2,2],
+                              stroke = "red")
+                              
+                }
+                
     }
 
     ## draw brushed points
@@ -179,10 +179,10 @@ qscatter =
     brush_mouse_move = function(layer, event) {
         rect = update_brush_size(meta, event)
 # increase rectangle by size of glyphs (only works, if glyphs have the same size)
-				xincrease = meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1]))
-				yincrease = meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2]))
-				rect[1,] <- rect[1,] - c(xincrease, yincrease)
-				rect[2,] <- rect[2,] + c(xincrease, yincrease)
+                xincrease = meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1]))
+                yincrease = meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2]))
+                rect[1,] <- rect[1,] - c(xincrease, yincrease)
+                rect[2,] <- rect[2,] + c(xincrease, yincrease)
 
         if (!(b$select.only && b$draw.brush)) {
             hits = rectLookup(tree, rect[1, ], rect[2, ])
@@ -225,10 +225,10 @@ qscatter =
         rect = as.matrix(identify_rect(meta))
 
 # increase rectangle by size of glyphs (only works, if glyphs have the same size)
-				xincrease = meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1]))
-				yincrease = meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2]))
-				rect[1,] <- rect[1,] - c(xincrease, yincrease)
-				rect[2,] <- rect[2,] + c(xincrease, yincrease)
+                xincrease = meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1]))
+                yincrease = meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2]))
+                rect[1,] <- rect[1,] - c(xincrease, yincrease)
+                rect[2,] <- rect[2,] + c(xincrease, yincrease)
 
         meta$identified = rectLookup(tree, rect[1, ], rect[2, ])
         qupdate(layer.identify)
@@ -322,7 +322,7 @@ qscatter =
             return()
         } else idx = c(1, 1, 2, 3, 4, 4)[idx]
         switch(idx, {
-        	# update at least one of the axes
+            # update at least one of the axes
           compute_coords();
 # maybe check whether tour is on and not change tree in that case ...
           tree <<- createTree(meta$xy)

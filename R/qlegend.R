@@ -17,12 +17,12 @@ qlegend = function(parent = NULL, data = NULL, vertical = TRUE, ...) {
     draw_legend = function(layer, painter) {
         scale <- attr(data,"col.scale")
         if (is.null(scale)) return (NULL)
-				xpos = if (vertical) 0 else 0.6
+        xpos = if (vertical) 0 else 0.6
         ypos = if (vertical) 0.6 else 0
 
-       qstrokeColor(painter) <- "black"
+        qstrokeColor(painter) <- "black"
         qdrawText(painter, scale$name, xpos, ypos, valign = "top",
-            halign = "left")
+                  halign = "left")
         fontHeight <- qstrHeight(painter, scale$name)
         # get 10 by 10 pixel rectangles for fill legend
         x <- c(0,10/layer$size$width())
@@ -38,19 +38,16 @@ qlegend = function(parent = NULL, data = NULL, vertical = TRUE, ...) {
         qval <- seq(scale$limits[1],scale$limits[2],length=5)
         qcol <- scale$map(qval)
 
-
         for (i in 1:length(qcol)) {
             qdrawRect(painter, r0[1], r0[2], r0[3], r0[4], fill = qcol[i],
-            	stroke = "black")
+                      stroke = "black")
             qdrawText(painter, as.character(round(qval[i],d)), xpos + 1.5 * (r0[3] - r0[1]),
-                ypos + fontHeight, valign = "top", halign = "left")
+                      ypos + fontHeight, valign = "top", halign = "left")
             ypos <- ypos - 1.5 * fontHeight
             r0[2] <- r0[2] - 1.5 * fontHeight
             r0[4] <- r0[4] - 1.5 * fontHeight
         }
-
-
     }
-        qlayer(parent, paintFun = draw_legend, limits = lims, ...)
+    qlayer(parent, paintFun = draw_legend, limits = lims, ...)
 }
 
