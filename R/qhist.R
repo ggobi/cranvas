@@ -205,6 +205,28 @@ qhist =
         qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
                   meta$ytop[idx], stroke = b$color, fill = NA)
     }
+    cue_hover = function(layer, event) {
+        meta$pos = as.numeric(event$pos())
+        hits = layer.cues$locate(identify_rect(meta))
+        if (length(hits > 0)) {
+          # change cursor shape
+          if (hits[1] == 0) b$cursor = 17L # OpenHandCursor # anchor
+          if (hits[1] == 1) b$cursor = 17L # OpenHandCursor # binwidth
+          
+        } else {
+          # pass hover on and reverse any changes to the cursor
+          b$cursor = 2L # CrossCursor
+          identify_hover(layer, painter)
+        }
+    }
+    cue_draw = function(layer, painter) {
+        ybottom = meta$limits[1,2]
+        binwidth = meta$xright[1]-meta$xleft[1] 
+        anchor <<- c(meta$xleft[1]-binwidth/20, meta$xleft[1]+binwidth/20, 0.25*ybottom, 0.75*ybottom)
+        bin <<- c(meta$xleft[2]-binwidth/20, meta$xleft[2]+binwidth/20, 0.25*ybottom, 0.75*ybottom)
+        qdrawRect(painter, anchor[1], anchor[3], anchor[2], anchor[4], stroke="black", fill="black")
+        qdrawRect(painter, bin[1], bin[3], bin[2], bin[4], stroke="black", fill="black")
+    }
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
@@ -220,6 +242,7 @@ qhist =
                limits = qrect(meta$limits), clip = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
+    layer.cues = qlayer(paintFun = cue_draw, hoverMoveFun = cue_hover, limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
     layer.xlab = qmtext(meta = meta, side = 1)
     layer.ylab = qmtext(meta = meta, side = 2)
@@ -235,6 +258,7 @@ qhist =
     layer.root[1, 2] = layer.main
     layer.root[1, 2] = layer.brush
     layer.root[1, 2] = layer.identify
+    layer.root[1, 2] = layer.cues
     layer.root[1, 3] = qlayer()
     set_layout = function() {
         fix_dimension(layer.root,
