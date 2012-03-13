@@ -70,16 +70,19 @@ qscatter =
     compute_coords = function() {
         if (is.null(z$y)) {
             meta$yvar = meta$xvar  # when y is missing, make it x
-            meta$xvar = 'index'; meta$xy[, 1] = seq(sum(idx))
+            meta$xvar = 'index'
+            meta$xy[, 1] = seq(sum(idx))
         } else {
             meta$xy[, 1] = data[, meta$xvar]
         }
         meta$xy[, 2] = data[, meta$yvar]
         idx = visible(data)[meta$order]
-        x = meta$xy[idx, 1]; y = meta$xy[idx, 2]
+        x = meta$xy[idx, 1]
+        y = meta$xy[idx, 2]
         meta$xat = axis_loc(if (is.null(xlim)) x else xlim)
         meta$yat = axis_loc(if (is.null(ylim)) y else ylim)
-        meta$xlabels = format(meta$xat); meta$ylabels = format(meta$yat)
+        meta$xlabels = format(meta$xat)
+        meta$ylabels = format(meta$yat)
         meta$xlab = if (is.null(xlab)) meta$xvar else xlab
         meta$ylab = if (is.null(ylab)) meta$yvar else ylab
         r =
@@ -230,15 +233,16 @@ qscatter =
                }, focusOutFun = function(layer, event) {
                    common_focus_out(layer, event, data, meta)
                },
-               limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
+               limits = qrect(meta$limits), clip = TRUE) #, cache = TRUE)
+    # cache=T commented out because it creates garbage drawing on Mac
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-    layer.title = qmtext(meta = meta, side = 3, cache = TRUE)
-    layer.xlab = qmtext(meta = meta, side = 1, cache = TRUE)
-    layer.ylab = qmtext(meta = meta, side = 2, cache = TRUE)
-    layer.xaxis = qaxis(meta = meta, side = 1, cache = TRUE)
-    layer.yaxis = qaxis(meta = meta, side = 2, cache = TRUE)
-    layer.grid = qgrid(meta = meta, cache = TRUE)
+    layer.title = qmtext(meta = meta, side = 3)#, cache = TRUE)
+    layer.xlab = qmtext(meta = meta, side = 1)#, cache = TRUE)
+    layer.ylab = qmtext(meta = meta, side = 2)#, cache = TRUE)
+    layer.xaxis = qaxis(meta = meta, side = 1)#, cache = TRUE)
+    layer.yaxis = qaxis(meta = meta, side = 2)#, cache = TRUE)
+    layer.grid = qgrid(meta = meta)#, cache = TRUE)
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab

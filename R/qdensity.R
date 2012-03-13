@@ -50,6 +50,8 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     compute_order()
 
     ## compute coordinates/axes-related stuff
+    # meta$x: data
+    # y.all: density values
     compute_coords = function() {
         meta$x = data[, meta$xvar]
         if (!length(meta$binwidth)) {
@@ -70,8 +72,10 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
                 density(v, meta$binwidth)[c('x', 'y')]
             }, simplify = FALSE)
         y.all = as.vector(sapply(meta$dxy, `[[`, 'y')) # all density values
-        meta$xat = axis_loc(meta$x[idx]); meta$yat = axis_loc(y.all)
-        meta$xlabels = format(meta$xat); meta$ylabels = format(meta$yat)
+        meta$xat = axis_loc(meta$x[idx])
+        meta$yat = axis_loc(y.all)
+        meta$xlabels = format(meta$xat)
+        meta$ylabels = format(meta$yat)
         meta$xlab = if (is.null(xlab)) meta$xvar else xlab
         meta$ylab = if (is.null(ylab)) "Density" else ylab
         y.all = y.all * 100 + 0.00  # due to Qt imprecision bug
