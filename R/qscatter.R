@@ -119,6 +119,36 @@ qscatter =
             qdrawCircle(painter, meta$xy[ord, 1][idx], meta$xy[ord, 2][idx], r = meta$size,
                         stroke = meta$border, fill = meta$color)
         }
+        # draw warning lines, if points are outside the drawing area
+				# r is current range
+				# 
+				# binary array with one column for each variable
+				# shouldn't need to check for every single draw, but I'm not sure where the boundaries are changed - compute coord is not called for every zooms e.g.
+        meta$outofbounds <- meta$limits
+        meta$outofbounds[1,1] <- min(meta$xy[,1], na.rm=T) < meta$limits[1,1]
+        meta$outofbounds[2,1] <- max(meta$xy[,1], na.rm=T) > meta$limits[2,1]
+        meta$outofbounds[1,2] <- min(meta$xy[,2], na.rm=T) < meta$limits[1,2]
+        meta$outofbounds[2,2] <- max(meta$xy[,2], na.rm=T) > meta$limits[2,2]
+
+
+				if (sum(meta$outofbounds) > 0) {
+					# at least one boundary is too tight					
+					if (meta$outofbounds[1,1])
+						qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[1,1], meta$limits[2,2],
+                     		 stroke = "red")
+					if (meta$outofbounds[1,2])
+						qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
+                     		 stroke = "red")
+					qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
+					if (meta$outofbounds[2,2])
+						qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
+                     		 stroke = "red")
+					if (meta$outofbounds[2,1])
+						qdrawSegment(painter, meta$limits[2,1], meta$limits[1,2], meta$limits[2,1], meta$limits[2,2],
+                     		 stroke = "red")
+                     		 
+				}
+				
     }
 
     ## draw brushed points
