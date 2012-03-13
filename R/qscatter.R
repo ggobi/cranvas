@@ -66,6 +66,23 @@ qscatter =
     }
     compute_order()
 
+		update_limits = function(r) {
+			# r is new range of limits - 2 by 2 matrix
+        meta$limits = r
+        meta$xat = axis_loc(meta$limits[,1])
+        meta$yat = axis_loc(meta$limits[,2])
+        meta$xlabels = format(meta$xat)
+        meta$ylabels = format(meta$yat)
+        meta$xlab = if (is.null(xlab)) meta$xvar else xlab
+        meta$ylab = if (is.null(ylab)) meta$yvar else ylab
+
+        meta$outofbounds <- meta$limits
+        meta$outofbounds[1,1] <- min(meta$xy[,1], na.rm=T) < meta$limits[1,1]
+        meta$outofbounds[2,1] <- max(meta$xy[,1], na.rm=T) > meta$limits[2,1]
+        meta$outofbounds[1,2] <- min(meta$xy[,2], na.rm=T) < meta$limits[1,2]
+        meta$outofbounds[2,2] <- max(meta$xy[,2], na.rm=T) > meta$limits[2,2]
+		}
+
     ## compute coordinates/axes-related stuff
     compute_coords = function() {
         if (is.null(z$y)) {
@@ -79,18 +96,13 @@ qscatter =
         idx = visible(data)[meta$order]
         x = meta$xy[idx, 1]
         y = meta$xy[idx, 2]
-        meta$xat = axis_loc(if (is.null(xlim)) x else xlim)
-        meta$yat = axis_loc(if (is.null(ylim)) y else ylim)
-        meta$xlabels = format(meta$xat)
-        meta$ylabels = format(meta$yat)
-        meta$xlab = if (is.null(xlab)) meta$xvar else xlab
-        meta$ylab = if (is.null(ylab)) meta$yvar else ylab
         r =
             cbind(if (is.null(xlim))
                   range(x, na.rm = TRUE, finite = TRUE) else xlim,
                   if (is.null(ylim))
                   range(y, na.rm = TRUE, finite = TRUE) else ylim)
-        meta$limits = extend_ranges(r)
+				update_limits(extend_ranges(r))
+				
     }
     compute_coords()
 
@@ -120,17 +132,6 @@ qscatter =
                         stroke = meta$border, fill = meta$color)
         }
         # draw warning lines, if points are outside the drawing area
-				# r is current range
-				# 
-				# binary array with one column for each variable
-				# shouldn't need to check for every single draw, but I'm not sure where the boundaries are changed - compute coord is not called for every zooms e.g.
-        meta$outofbounds <- meta$limits
-        meta$outofbounds[1,1] <- min(meta$xy[,1], na.rm=T) < meta$limits[1,1]
-        meta$outofbounds[2,1] <- max(meta$xy[,1], na.rm=T) > meta$limits[2,1]
-        meta$outofbounds[1,2] <- min(meta$xy[,2], na.rm=T) < meta$limits[1,2]
-        meta$outofbounds[2,2] <- max(meta$xy[,2], na.rm=T) > meta$limits[2,2]
-
-
 				if (sum(meta$outofbounds) > 0) {
 					# at least one boundary is too tight					
 					if (meta$outofbounds[1,1])
@@ -139,7 +140,8 @@ qscatter =
 					if (meta$outofbounds[1,2])
 						qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
                      		 stroke = "red")
-					qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
+#					qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
+					# as soon as we get caching/clipping back, this has to be uncommented again, I believe. HH
 					if (meta$outofbounds[2,2])
 						qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
                      		 stroke = "red")
@@ -200,6 +202,7 @@ qscatter =
         if (shift && length(i <- which(match_key(c('Left', 'Right', 'Up', 'Down'))))) {
             j = c(1, 1, 2, 2)[i]; k = c(1, -1, -1, 1)[i]
             meta$limits[, j] = extend_ranges(meta$limits[, j], k * c(1, -1) * 0.02)
+            update_limits(meta$limits)
         } else if (length(i <- which(match_key(c('Up', 'Down'))))) {
             ## change size
             data$.size = pmax(0.1, c(1.1, 0.9)[i] * data$.size)
@@ -212,9 +215,8 @@ qscatter =
         pos = as.numeric(event$pos())
         lim = meta$limits
         p = (pos - lim[1, ]) / (lim[2, ] - lim[1, ])  # proportions to left/bottom
-        meta$limits =
-            extend_ranges(meta$limits,
-                          -sign(event$delta()) * 0.1 * c(p[1], 1 - p[1], p[2], 1 - p[2]))
+        update_limits(extend_ranges(meta$limits,
+                          -sign(event$delta()) * 0.1 * c(p[1], 1 - p[1], p[2], 1 - p[2])))
     }
     identify_hover = function(layer, event) {
         if (!b$identify) return()
