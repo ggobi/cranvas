@@ -107,11 +107,11 @@ qscatter(tars1, tars2)
 ### (2) NRC rankings
 data(nrcstat)
 
-qnrc <- qdata(nrcstat, color = Regional.Code)
+qnrc <- qdata(nrcstat, color = RegCode)
 
-qscatter(R.Rankings.5th.Percentile, R.Rankings.95th.Percentile)
+qscatter(RRankings5th, RRankings95th)
 
-qscatter(S.Rankings.5th.Percentile, S.Rankings.95th.Percentile)
+qscatter(SRankings5th, SRankings95th)
 
 ### (3) secrets in the pollen data
 library(animation)
