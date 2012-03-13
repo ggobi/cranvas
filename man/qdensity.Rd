@@ -54,7 +54,13 @@ qdensity(x, data = last_data(), binwidth = NULL, main = "",
 \examples{
 library(cranvas)
 
-### (1) tennis data
+### (1) ames housing data
+data(ameshousing)
+qames <- qdata(ameshousing)
+
+qdensity(saleprice, data = qames)
+
+### (2) tennis data
 data(tennis)
 qtennis <- qdata(tennis)
 
@@ -65,14 +71,14 @@ qdensity(serve.speed, data = qtennis)
 
 record_selector(name, data = qtennis)
 
-### (2) pollen data
+### (3) pollen data
 if (require("animation")) {
     data(pollen, package = "animation")
     qpollen <- qdata(pollen)
     print(qdensity(RIDGE, data = qpollen))
 }
 
-### (3) flea (with colors)
+### (4) flea (with colors)
 data(flea, package = "tourr")
 qflea <- qdata(flea, color = species)
 
