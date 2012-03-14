@@ -78,7 +78,7 @@ NULL
 ##' @name nrcstat
 ##' @docType data
 ##' @usage data(nrcstat)
-##' @format data.frame: 61 obs. of  68 variables
+##' @format data.frame: 61 obs. of  72 variables
 ##' @keywords datasets
 ##' @source \url{http://sites.nationalacademies.org/pga/resdoc/index.htm}
 ##' @examples
@@ -115,6 +115,30 @@ NULL
 ##' Survey of Youth (NLSY) described at
 ##' \url{http://www.bls.gov/nls/nlsdata.htm}.
 ##' @example inst/examples/wages-ex.R
+NULL
+
+##' Demographic data for wages of male high-school dropouts
+##'
+##' This is just the demographic data for each person recorded  
+##' in the wages data. 
+##' @name wages-demog
+##' @docType data
+##' @usage data(wages-demog)
+##' @format Number of subjects: 888; Number of variables: 6; Number
+##' of observations, across all subjects: 888
+##'
+##' \describe{ \item{\code{id}}{id numbers for each subject}
+##' \item{\code{ged}}{if a graduate equivalency diploma ever
+##' is obtained} \item{\code{black}}{categorical indicator of race is
+##' black} \item{\code{hispanic}}{categorical indicator of race is
+##' hispanic} \item{\code{hgc}}{highest grade completed}
+##' \item{\code{race}}{categorical variable, either white, hispanic or black}}
+##' @source Singer, J. D. & Willett, J. B. (2003), \emph{Applied
+##' Longitudinal Data Analysis}, Oxford University Press, Oxford,
+##' UK. It is a subset of data collected in the National Longitudinal
+##' Survey of Youth (NLSY) described at
+##' \url{http://www.bls.gov/nls/nlsdata.htm}.
+##' @example inst/examples/link_cat-ex.R
 NULL
 
 ##' Dataset of 2006 Australian Open mens tennis matches
