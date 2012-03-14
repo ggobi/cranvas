@@ -38,6 +38,8 @@
 ##' @param jitter \code{NULL} (no jittering) or a character vector to
 ##' jitter variables (usually those categorical variables)
 ##' @param amount jitter amount
+##' @param main title of plot
+##' @param alpha value for alpha-blending
 ##' @return A par-coords plot
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
@@ -48,7 +50,7 @@ qparallel =
              na.action = na_impute, center = NULL,
              order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = FALSE,
              glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),
-             boxplot = FALSE, width = NULL, jitter = NULL, amount = NULL, main = '') {
+             boxplot = FALSE, width = NULL, jitter = NULL, amount = NULL, main = '', alpha=1) {
 
     data = check_data(data)
     b = brush(data)    # the brush attached to the data
@@ -58,7 +60,7 @@ qparallel =
         stop("parallel coordinate plots need at least 2 variables!")
 
     ## meta data used to store useful information
-    meta = Parallel.meta$new(brush.move = TRUE, alpha = 1, active = TRUE,
+    meta = Parallel.meta$new(brush.move = TRUE, alpha = alpha, active = TRUE,
                     main = main, vars = vars, glyph = match.arg(glyph),
                     order = match.arg(order), draw.range = FALSE, horizontal = horizontal,
                     jitter = jitter, amount = amount, names = names)
@@ -168,7 +170,12 @@ qparallel =
     ## par-coords segments
     main_draw = function(layer, painter) {
         cranvas_debug()
-        .color = data$.color; .color[!visible(data)] = NA
+        .color = data$.color; 
+        if (meta$alpha < 1) {
+          .color = rgb(t(col2rgb(.color))/255, alpha=meta$alpha)
+        }
+        .color[!visible(data)] = NA
+        
         if (meta$glyph == 'line') {
             segcol = rep(.color, each = meta$p - 1)
             qdrawSegment(painter, meta$segx0, meta$segy0, meta$segx1, meta$segy1,
