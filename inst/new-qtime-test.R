@@ -584,7 +584,11 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
                               mouseReleaseFun = brush_mouse_move,
                               mouseMove = brush_mouse_move,
                               wheelFun = mouse_wheel,
-                              clip=TRUE)
+                              focusInFun = function(layer, event) {
+                                common_focus_in(layer, event, data, meta)
+                              }, focusOutFun = function(layer, event) {
+                                common_focus_out(layer, event, data, meta)
+                              }, clip=TRUE)
   main_line_layer <- qlayer(paintFun=main_line_draw,limits=qrect(meta$limits),clip=TRUE)
   brush_layer <- qlayer(paintFun=brush_draw, limits=qrect(meta$limits))
   query_layer <- qlayer(paintFun=query_draw, limits=qrect(meta$limits))
