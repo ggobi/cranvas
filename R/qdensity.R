@@ -62,10 +62,9 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
             } else rep('gray15', length(meta$x))
         }
         ## densities by color groups
-        meta$dxy =
-            sapply(split(meta$x[idx], grp[idx]), function(v) {
-                density(v, meta$binwidth)[c('x', 'y')]
-            }, simplify = FALSE)
+        meta$dxy = lapply(split(meta$x[idx], grp[idx]), function(v) {
+            density(v, meta$binwidth)[c('x', 'y')]
+        })
         y.all = as.vector(sapply(meta$dxy, `[[`, 'y')) # all density values
         meta$xat = axis_loc(meta$x[idx])
         meta$yat = axis_loc(y.all)
