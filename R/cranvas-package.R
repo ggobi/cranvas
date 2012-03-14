@@ -121,9 +121,9 @@ NULL
 ##'
 ##' This is just the demographic data for each person recorded  
 ##' in the wages data. 
-##' @name wages-demog
+##' @name wages.demog
 ##' @docType data
-##' @usage data(wages-demog)
+##' @usage data(wages.demog)
 ##' @format Number of subjects: 888; Number of variables: 6; Number
 ##' of observations, across all subjects: 888
 ##'
