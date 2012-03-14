@@ -80,6 +80,9 @@ qaxis = function(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL,
             xshift1 = -1.5 * s1[1]
             xshift2 = -xat
         })
+        qfont(painter) = Qt$QFont('Palatino')
+        qstrokeColor(painter) = "grey50"
+
         qdrawText(painter, labels, x = xat, y = yat, halign = xalign, valign = yalign)
         qdrawSegment(painter, xat + xshift1, yat + yshift1, xat + xshift2, yat + yshift2)
     }
@@ -284,6 +287,8 @@ qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = 0.5, y = 
             if (side == 2) text = meta$ylab
             if (side == 3) text = meta$main
         }
+        qfont(painter) = Qt$QFont('Palatino')
+        qstrokeColor(painter) = "grey50"
         qdrawText(painter, text, x, y, rot = c(0, 90, 0, 90)[side], cex = cex)
     }
     if (!('limits' %in% names(list(...))))
