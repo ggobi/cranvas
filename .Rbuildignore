@@ -2,3 +2,5 @@
 formatR.R
 roxygenize.R
 readme.md
+^\.Rproj\.user$
+cranvas.Rproj
