@@ -128,7 +128,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
                             r = b$size * data$.size[idx], stroke = b$color, fill = b$color)
             }
             dxy = density(data[idx, meta$xvar], meta$binwidth)
-            qdrawLine(painter, dxy$x, dxy$y * 100, stroke = b$color)
+            qdrawLine(painter, dxy$x, dxy$y / max(dxy$y) * max(meta$yat), stroke = b$color)
         }
         draw_brush(layer, painter, data, meta)
     }
