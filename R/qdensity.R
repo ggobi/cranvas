@@ -97,7 +97,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     ## draw points & density
     main_draw = function(layer, painter) {
         if (meta$samesize) {
-            qdrawGlyph(painter, qglyphCircle(r = data$.size[1]), meta$x, meta$y,
+            qdrawGlyph(painter, qglyphSegment(data$.size[1], pi/2), meta$x, meta$y,
                        stroke = alpha(meta$border, meta$alpha), fill = alpha(meta$color, meta$alpha))
         } else {
             qdrawCircle(painter, meta$x, meta$y, r = meta$size,
@@ -119,15 +119,15 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     brush_draw = function(layer, painter) {
         idx = visible(data) & selected(data)
         if (any(idx)) {
+            qlineWidth(painter) = 3
             if (meta$samesize) {
-                qdrawGlyph(painter, qglyphCircle(r = b$size * meta$size[1]),
+                qdrawGlyph(painter, qglyphSegment(meta$size[1], pi/2),
                            data[idx, meta$xvar], meta$y, stroke = b$color, fill = b$color)
             } else {
                 qdrawCircle(painter, data[idx, meta$xvar], meta$y,
                             r = b$size * data$.size[idx], stroke = b$color, fill = b$color)
             }
             dxy = density(data[idx, meta$xvar], meta$binwidth)
-            qlineWidth(painter) = 3
             qdrawLine(painter, dxy$x, dxy$y * 100, stroke = b$color)
         }
         draw_brush(layer, painter, data, meta)
