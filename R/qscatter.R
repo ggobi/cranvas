@@ -66,22 +66,22 @@ qscatter =
     }
     compute_order()
 
-        update_limits = function(r) {
-            # r is new range of limits - 2 by 2 matrix
-        meta$limits = r
-        meta$xat = axis_loc(meta$limits[,1])
-        meta$yat = axis_loc(meta$limits[,2])
-        meta$xlabels = format(meta$xat)
-        meta$ylabels = format(meta$yat)
-        meta$xlab = if (is.null(xlab)) meta$xvar else xlab
-        meta$ylab = if (is.null(ylab)) meta$yvar else ylab
+    update_limits = function(r) {
+					# r is new range of limits - 2 by 2 matrix
+			meta$limits = r
+			meta$xat = axis_loc(meta$limits[,1])
+			meta$yat = axis_loc(meta$limits[,2])
+			meta$xlabels = format(meta$xat)
+			meta$ylabels = format(meta$yat)
+			meta$xlab = if (is.null(xlab)) meta$xvar else xlab
+			meta$ylab = if (is.null(ylab)) meta$yvar else ylab
 
-        meta$outofbounds <- meta$limits
-        meta$outofbounds[1,1] <- min(meta$xy[,1], na.rm=T) < meta$limits[1,1]
-        meta$outofbounds[2,1] <- max(meta$xy[,1], na.rm=T) > meta$limits[2,1]
-        meta$outofbounds[1,2] <- min(meta$xy[,2], na.rm=T) < meta$limits[1,2]
-        meta$outofbounds[2,2] <- max(meta$xy[,2], na.rm=T) > meta$limits[2,2]
-        }
+			meta$outofbounds <- meta$limits
+			meta$outofbounds[1,1] <- min(meta$xy[,1], na.rm=T) < meta$limits[1,1]
+			meta$outofbounds[2,1] <- max(meta$xy[,1], na.rm=T) > meta$limits[2,1]
+			meta$outofbounds[1,2] <- min(meta$xy[,2], na.rm=T) < meta$limits[1,2]
+			meta$outofbounds[2,2] <- max(meta$xy[,2], na.rm=T) > meta$limits[2,2]
+  	}
 
     ## compute coordinates/axes-related stuff
     compute_coords = function() {
