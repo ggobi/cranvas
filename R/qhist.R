@@ -153,6 +153,25 @@ qhist =
         brush_mouse_move(layer, event)
         common_mouse_release(layer, event, data, meta)
     }
+
+    shift_anchor = function(shift) {
+      brk = meta$breaks
+      r = range(data[, meta$var], na.rm = TRUE, finite = TRUE)
+      brk = brk + shift  # shift by +/-(2% bin)
+      if (min(brk) > r[1]) brk = c(brk[1] - meta$binwidth, brk)
+      if (max(brk) < r[2]) brk = c(brk, tail(brk, 1) + meta$binwidth)
+      if (length(brk) <= 2) return()
+      ## see if two breakpoints both < min or > max (remove one if so)
+      if (all(head(brk, 2) <= r[1])) {
+          brk = brk[-1]
+          message('removed one left-most bin because it does not contain data...')
+      }
+      if (all(tail(brk, 2) >= r[2])) {
+          brk = brk[-length(brk)]
+          message('removed one right-most bin because it does not contain data...')
+      }
+      return(brk)
+    }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
         if (length(i <- which(match_key(c('Up', 'Down'))))) {
@@ -164,22 +183,8 @@ qhist =
             initial_bins(default = FALSE)  # use new binwidth
             return()
         } else if (length(i <- which(match_key(c('Left', 'Right'))))) {
-            brk = meta$breaks
-            r = range(data[, meta$var], na.rm = TRUE, finite = TRUE)
-            brk = brk + c(-1, 1)[i] * meta$binwidth / 50  # shift by +/-(2% bin)
-            if (min(brk) > r[1]) brk = c(brk[1] - meta$binwidth, brk)
-            if (max(brk) < r[2]) brk = c(brk, tail(brk, 1) + meta$binwidth)
-            if (length(brk) <= 2) return()
-            ## see if two breakpoints both < min or > max (remove one if so)
-            if (all(head(brk, 2) <= r[1])) {
-                brk = brk[-1]
-                message('removed one left-most bin because it does not contain data...')
-            }
-            if (all(tail(brk, 2) >= r[2])) {
-                brk = brk[-length(brk)]
-                message('removed one right-most bin because it does not contain data...')
-            }
-            meta$breaks = brk
+            shift = c(-1, 1)[i] * meta$binwidth / 50  # shift by +/-(2% bin)
+            meta$breaks = shift_anchor(shift)
             return()
         }
     }
@@ -204,6 +209,38 @@ qhist =
         idx = idx + 1
         qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
                   meta$ytop[idx], stroke = b$color, fill = NA)
+    }
+    cue_mouse_move = function(layer, event) {
+      pos = as.numeric(event$pos())
+      eps = 1e-6
+      rect = qrect(pos[1]-eps, pos[2]-eps, pos[1]+eps, pos[2]+eps)
+      hits = layer$locate(rect)
+      if (length(hits)) {
+        b$cursor = 18L # ClosedHandCursor
+        if (hits[1]==0) {
+          shift = pos[1] - meta$xleft[1]
+          message(sprintf('anchor: %f', pos[1]))
+          meta$breaks = shift_anchor(shift)
+          layer.cues$invalidateIndex()
+          qupdate(layer.cues)
+          return()
+        }
+        if (hits[1]==1) {
+          meta$binwidth = pos[1] - meta$xleft[1]  # larger/smaller bin width
+          message(sprintf('binwidth: %f', meta$binwidth))
+          if (meta$binwidth < ifelse(length(meta$binmin), meta$binmin, 1e-7)) {
+              meta$binwidth = meta$binmin
+              message('binwidth too small!')
+          }
+          initial_bins(default = FALSE)  # use new binwidth
+          layer.cues$invalidateIndex()
+          qupdate(layer.cues)
+          return()
+        }
+      } else {
+        # pass mouse move on
+        brush_mouse_move(layer, event)
+      }
     }
     cue_hover = function(layer, event) {
         meta$pos = as.numeric(event$pos())
@@ -242,7 +279,7 @@ qhist =
                limits = qrect(meta$limits), clip = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-    layer.cues = qlayer(paintFun = cue_draw, hoverMoveFun = cue_hover, limits = qrect(meta$limits))
+    layer.cues = qlayer(paintFun = cue_draw, mouseMove = cue_mouse_move, hoverMoveFun = cue_hover, limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
     layer.xlab = qmtext(meta = meta, side = 1)
     layer.ylab = qmtext(meta = meta, side = 2)
