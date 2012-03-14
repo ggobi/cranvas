@@ -19,17 +19,9 @@ if (!("cranvas" %in% list.files("../"))) stop("the cranvas package not found und
 ## update git as well; someone wants to be really lazy
 if ("update" %in% commandArgs(TRUE)) system("git pull --rebase")
 
-if (NROW(old.packages(repos = 'http://cran.r-project.org')) && (!interactive() ||
-    select.list(c('Yes', 'No'), title = 'Update old R packages?', preselect = 'Yes') == 'Yes')) {
-    try(update.packages(ask = FALSE, repos = 'http://cran.r-project.org'))
-}
-## use Rd2roxygen to roxygenize cranvas
-if (!require("formatR")) install.packages("formatR", repos = "http://cran.r-project.org")
+try(update.packages(.libPaths()[1], ask = FALSE, repos = 'http://cran.r-project.org'))
 
-if (!grepl('roxygen2', packageDescription('Rd2roxygen', fields = 'Depends'))) {
-    install.packages('roxygen2', repos = "http://cran.r-project.org")
-    install.packages('Rd2roxygen', repos = "http://cran.r-project.org")
-}
+## use Rd2roxygen to roxygenize cranvas
 
 ## go up a level
 owd = setwd("..")
@@ -39,7 +31,6 @@ options(width = 80, replace.assign = TRUE)
 
 ## run roxygen and several cleaning up steps
 unlink('cranvas/man', recursive = TRUE)
-clear_caches()
 try(rab("cranvas", build = TRUE, install = TRUE, check = "check" %in% commandArgs(TRUE)))
 
 setwd(owd)
