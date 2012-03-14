@@ -2,7 +2,7 @@
 \name{nrcstat}
 \alias{nrcstat}
 \title{NRC rankings data for the statistics departments in the US}
-\format{data.frame: 61 obs. of  68 variables}
+\format{data.frame: 61 obs. of  72 variables}
 \source{
   \url{http://sites.nationalacademies.org/pga/resdoc/index.htm}
 }
