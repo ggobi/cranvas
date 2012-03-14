@@ -74,11 +74,8 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
         meta$ylab = if (is.null(ylab)) "Density" else ylab
         y.all = y.all * 100 + 0.00  # due to Qt imprecision bug
         meta$yat = meta$yat * 100 + 0.00
-        r =
-            cbind(if (is.null(xlim))
-                  range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
-                  if (is.null(ylim))
-                  c(0.00, max(y.all, na.rm = TRUE)) else ylim * 100 + 0.00)
+        r = cbind(if (is.null(xlim)) range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
+                  if (is.null(ylim)) c(0.00, max(y.all, na.rm = TRUE)) else ylim * 100 + 0.00)
         meta$limits = extend_ranges(r)
         meta$x = meta$x[meta$order]
         meta$y = diff(meta$limits[, 2]) / 80  # ugly clipping bug
