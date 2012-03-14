@@ -4,7 +4,7 @@ library(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 
-qscatter(first.serve.pct, second.serve.pts, data=qtennis)
+qscatter(first.serve.pct, second.serve.pts, data=qtennis, xlab="First Serve %", ylab="Second Serve Points")
 qscatter(return.games, first.serves, data=qtennis)
 
 ### (1) flea: color by categorical variable, and linking
