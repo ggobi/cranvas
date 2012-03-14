@@ -700,3 +700,5 @@ pixelToXY = function(layer, limits, px, py) {
 
 near_zero = function(x) diff(range(x, na.rm = TRUE, finite = TRUE)) < 1e-7
 
+# Is shift pressed in an event?
+shift_on = function(event) event$modifiers() == Qt$Qt$ShiftModifier

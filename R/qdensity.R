@@ -152,7 +152,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
-        shift = event$modifiers() == Qt$Qt$ShiftModifier
+        shift = shift_on(event)
         if (shift && length(i <- which(match_key(c('Left', 'Right', 'Up', 'Down'))))) {
             j = c(1, 1, 2, 2)[i]; k = c(1, -1, -1, 1)[i]
             meta$limits[, j] = extend_ranges(meta$limits[, j], k * c(1, -1) * 0.02)
