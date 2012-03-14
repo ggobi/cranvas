@@ -179,10 +179,9 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     }
     identify_draw = function(layer, painter) {
         if (!b$identify || !length(idx <- meta$identified)) return()
-        meta$identify.labels =
-            sprintf('row id: %s\n%s: %s',
-                    paste(rownames(data)[idx], collapse = ', '),
-                    meta$xvar, paste(meta$x[idx], collapse = ', '))
+        meta$identify.labels = sprintf('row id: %s\n%s: %s',
+                                       paste(rownames(data)[idx], collapse = ', '),
+                                       meta$xvar, paste(meta$x[idx], collapse = ', '))
         draw_identify(layer, painter, data, meta)
         if (meta$samesize) {
             qdrawGlyph(painter, qglyphCircle(r = 2 * b$size * data$.size[1]),
@@ -199,18 +198,17 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     scene <- qscene()
     layer.root <- qlayer(scene)
 
-    layer.main =
-        qlayer(paintFun = main_draw,
-               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-               mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
-               keyPressFun = key_press, keyReleaseFun = key_release,
-               wheelFun = mouse_wheel,
-               focusInFun = function(layer, event) {
-                   common_focus_in(layer, event, data, meta)
-               }, focusOutFun = function(layer, event) {
-                   common_focus_out(layer, event, data, meta)
-               },
-               limits = qrect(meta$limits), clip = TRUE)
+    layer.main = qlayer(paintFun = main_draw, mousePressFun = brush_mouse_press, 
+                        mouseReleaseFun = brush_mouse_release,
+                        mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
+                        keyPressFun = key_press, keyReleaseFun = key_release,
+                        wheelFun = mouse_wheel,
+                        focusInFun = function(layer, event) {
+                            common_focus_in(layer, event, data, meta)
+                        }, focusOutFun = function(layer, event) {
+                            common_focus_out(layer, event, data, meta)
+                        },
+                        limits = qrect(meta$limits), clip = TRUE)
     layer.lines = qlayer(paintFun = line_draw, limits = qrect(meta$limits), clip = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits), clip = TRUE)
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
@@ -235,12 +233,14 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     ## set sizes of layers (arrange the layout)
     set_layout = function() {
         fix_dimension(layer.root,
-                      row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
-                                                  prefer_height(meta$xlabels),
-                                                  prefer_height(meta$xlab))),
-                      column = list(id = c(1, 0, 3), value = c(prefer_width(meta$ylabels),
-                                                     prefer_width(meta$ylab, FALSE),
-                                                     10)))
+                      row = list(id = c(0, 2, 3), 
+                                 value = c(prefer_height(meta$main),
+                                           prefer_height(meta$xlabels),
+                                           prefer_height(meta$xlab))),
+                      column = list(id = c(1, 0, 3), 
+                                    value = c(prefer_width(meta$ylabels),
+                                              prefer_width(meta$ylab, FALSE),
+                                              10)))
     }
     set_layout()
 
@@ -300,12 +300,11 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     view
 }
 
-Dens.meta =
-  setRefClass("Dens_meta",
-    fields = properties(c(
-      Common.meta,
+Dens.meta = setRefClass("Dens_meta",
+                        fields = properties(c(
+                            Common.meta,
 
-      list(xvar = 'character', order = 'numeric',
-        x = 'numeric', y = 'numeric', binwidth = 'numeric',
-        dxy = 'list', asp = 'numeric', samesize = 'logical')
-)))
+                            list(xvar = 'character', order = 'numeric',
+                                 x = 'numeric', y = 'numeric', binwidth = 'numeric',
+                                 dxy = 'list', asp = 'numeric', samesize = 'logical')
+                            )))
