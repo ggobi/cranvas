@@ -216,7 +216,7 @@ qscatter =
         } else if (length(i <- which(match_key(c('Up', 'Down'))))) {
             ## change size
             data$.size = pmax(0.1, c(1.1, 0.9)[i] * data$.size)
-        }
+        } 
     }
     key_release = function(layer, event) {
         common_key_release(layer, event, data, meta)

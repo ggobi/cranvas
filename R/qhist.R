@@ -44,6 +44,7 @@ qhist =
     b = brush(data)
     b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
     cueOn = FALSE
+    pix1 = NULL
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
                       alpha = 1, horizontal = horizontal, main = main, active = TRUE,
@@ -182,10 +183,12 @@ qhist =
                 message('binwidth too small!')
             }
             initial_bins(default = FALSE)  # use new binwidth
+            layer.cues$invalidateIndex()
             return()
         } else if (length(i <- which(match_key(c('Left', 'Right'))))) {
             shift = c(-1, 1)[i] * meta$binwidth / 50  # shift by +/-(2% bin)
             meta$breaks = shift_anchor(shift)
+            layer.cues$invalidateIndex()
             return()
         }
     }
@@ -214,7 +217,7 @@ qhist =
     
     cue_mouse_move = function(layer, event) {
       pos = as.numeric(event$pos())
-      eps = pixelToXY(layer.main, meta$limits, 2, 2)
+      eps = 2*pix1
       rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
       if (length(hits)) {
@@ -260,7 +263,8 @@ qhist =
     }
     cue_draw = function(layer, painter) {
         ybottom = meta$limits[1,2]
-        eps = pixelToXY(layer.main, meta$limits, 1, 1)
+        pix1 <<- one_pixel(painter)
+        eps = pix1
 
         anchorCue <<- c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
         binwidthCue <<- c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
@@ -269,7 +273,7 @@ qhist =
     }
     cue_mouse_press = function(layer, event) {
       pos = as.numeric(event$pos())
-      eps = pixelToXY(layer.main, meta$limits, 2, 2)
+      eps = 2*pix1
       rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
       if (length(hits)) cueOn <<- TRUE        
@@ -302,6 +306,7 @@ qhist =
     layer.cues = 
         qlayer(paintFun = cue_draw, mouseMove = cue_mouse_move, hoverMoveFun = cue_hover, 
                mousePressFun = cue_mouse_press, mouseReleaseFun = cue_mouse_release,
+               keyPressFun = key_press, keyReleaseFun = key_release,
                focusInFun = function(layer, event) {
                    common_focus_in(layer, event, data, meta)
                }, focusOutFun = function(layer, event) {
