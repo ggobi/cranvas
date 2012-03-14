@@ -224,7 +224,7 @@ qhist =
         b$cursor = 18L # ClosedHandCursor
         if (hits[1]==0) {
           shift = pos[1] - meta$xleft[1]
-          message(sprintf('anchor: %f', pos[1]))
+#          message(sprintf('anchor: %f', pos[1]))
           meta$breaks = shift_anchor(shift)
           layer.cues$invalidateIndex()
           qupdate(layer.cues)
@@ -232,7 +232,7 @@ qhist =
         }
         if (hits[1]==1) {
           meta$binwidth = pos[1] - meta$xleft[1]  # larger/smaller bin width
-          message(sprintf('binwidth: %f', meta$binwidth))
+#          message(sprintf('binwidth: %f', meta$binwidth))
           if (meta$binwidth < ifelse(length(meta$binmin), meta$binmin, 1e-7)) {
               meta$binwidth = meta$binmin
               message('binwidth too small!')
