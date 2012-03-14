@@ -242,8 +242,8 @@ qhist =
           return()
         }
       } else {
-        # pass mouse move on
-        brush_mouse_move(layer.main, event)
+        # pass mouse move on, if cue is not being moved 
+        if (!cueOn) brush_mouse_move(layer.main, event)
       }
     }
     cue_hover = function(layer, event) {
@@ -257,6 +257,7 @@ qhist =
           # change cursor shape
           if (hits[1] == 0) b$cursor = 17L # OpenHandCursor # anchor
           if (hits[1] == 1) b$cursor = 17L # OpenHandCursor # binwidth
+          if (hits[1] == 2) b$cursor = 5L # ArrowVertCursor # binheight
           
         } else {
           # pass hover on and reverse any changes to the cursor
@@ -272,19 +273,34 @@ qhist =
 
     cue_draw = function(layer, painter) {
         ybottom = meta$limits[1,2]
+        ytop = meta$limits[2,2]
         eps = pixelToXY(layer, meta$limits, 1,1)
-
+#print(ytop)
         anchorCue <<- c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
         binwidthCue <<- c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
-        qdrawRect(painter, anchorCue[1], anchorCue[3], anchorCue[2], anchorCue[4], stroke="black", fill="black")
-        qdrawRect(painter, binwidthCue[1], binwidthCue[3], binwidthCue[2], binwidthCue[4], stroke="black", fill="black")
+        binheightCue <<- c(meta$limits[1,1], meta$limits[2,1], ytop-10*eps[2], ytop)
+        qdrawRect(painter, anchorCue[1], anchorCue[3], anchorCue[2], anchorCue[4], stroke="grey50", fill="grey50")
+        qdrawRect(painter, binwidthCue[1], binwidthCue[3], binwidthCue[2], binwidthCue[4], stroke="grey50", fill="grey50")
+        color = rgb(t(col2rgb("grey50"))/255, alpha=0.2)
+        qdrawRect(painter, binheightCue[1], binheightCue[3], binheightCue[2], binheightCue[4], stroke=color, fill=color)
     }
     cue_mouse_press = function(layer, event) {
       pos = as.numeric(event$pos())
       eps = 2*pixelToXY(layer, meta$limits, 1,1)
       rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
-      if (length(hits)) cueOn <<- TRUE        
+      if (length(hits)) {
+        cueOn <<- TRUE    
+        if (hits[1] == 2) {
+ #         print("reset")
+          meta$limits[,2] =
+            extend_ranges(c(meta$ybottom, meta$ytop))
+#          layer.main$invalidateIndex()
+                                
+#           layer.cues$invalidateIndex()
+#           qupdate(layer.cues)
+        }
+      }
       common_mouse_press(layer.main, event, data, meta)
     }
     cue_mouse_release = function(layer, event) {
@@ -379,7 +395,7 @@ qhist =
     b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
     })
-    sync_limits(meta, layer.main, layer.brush, layer.identify)  # sync limits
+    sync_limits(meta, layer.main, layer.brush, layer.identify, layer.cues)  # sync limits
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
