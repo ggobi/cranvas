@@ -522,7 +522,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       xrange <- diff(meta$limits[c(1, 2)])/10
       yrange <- diff(meta$limits[c(3, 4)])/10        
       rect <- matrix(c(xpos - xrange, ypos - yrange, xpos + xrange, ypos + yrange),
-                     2, byrow = TRUE))
+                     2, byrow = TRUE)
       hits <- rectLookup(tree, rect[1, ], rect[2, ])
       if (length(hits) < 1) return()
       if (length(hits) > 1) {
