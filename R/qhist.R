@@ -43,6 +43,8 @@ qhist =
     data = check_data(data)
     b = brush(data)
     b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
+    cueOn = FALSE
+    pix1 = NULL
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
                       alpha = 1, horizontal = horizontal, main = main, active = TRUE,
@@ -181,10 +183,12 @@ qhist =
                 message('binwidth too small!')
             }
             initial_bins(default = FALSE)  # use new binwidth
+            layer.cues$invalidateIndex()
             return()
         } else if (length(i <- which(match_key(c('Left', 'Right'))))) {
             shift = c(-1, 1)[i] * meta$binwidth / 50  # shift by +/-(2% bin)
             meta$breaks = shift_anchor(shift)
+            layer.cues$invalidateIndex()
             return()
         }
     }
@@ -213,7 +217,7 @@ qhist =
     
     cue_mouse_move = function(layer, event) {
       pos = as.numeric(event$pos())
-      eps = pixelToXY(layer.main, meta$limits, 2, 2)
+      eps = 2*pix1
       rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
       if (length(hits)) {
@@ -240,7 +244,7 @@ qhist =
         }
       } else {
         # pass mouse move on
-        brush_mouse_move(layer, event)
+        brush_mouse_move(layer.main, event)
       }
     }
     cue_hover = function(layer, event) {
@@ -254,19 +258,36 @@ qhist =
         } else {
           # pass hover on and reverse any changes to the cursor
           b$cursor = 2L # CrossCursor
-          identify_hover(layer, painter)
+          identify_hover(layer.main, painter)
         }
     }
     cue_draw = function(layer, painter) {
         ybottom = meta$limits[1,2]
- #       binwidth = meta$xright[1]-meta$xleft[1] 
-        eps = pixelToXY(layer.main, meta$limits, 1, 1)
+        pix1 <<- one_pixel(painter)
+        eps = pix1
 
         anchorCue <<- c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
         binwidthCue <<- c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
         qdrawRect(painter, anchorCue[1], anchorCue[3], anchorCue[2], anchorCue[4], stroke="black", fill="black")
         qdrawRect(painter, binwidthCue[1], binwidthCue[3], binwidthCue[2], binwidthCue[4], stroke="black", fill="black")
     }
+    cue_mouse_press = function(layer, event) {
+      pos = as.numeric(event$pos())
+      eps = 2*pix1
+      rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
+      hits = layer$locate(rect)
+      if (length(hits)) cueOn <<- TRUE        
+      common_mouse_press(layer.main, event, data, meta)
+    }
+    cue_mouse_release = function(layer, event) {
+      if (cueOn) cueOn <<- FALSE
+      else brush_mouse_release(layer.main, event)
+    }
+
+
+
+
+
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
@@ -282,7 +303,16 @@ qhist =
                limits = qrect(meta$limits), clip = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-    layer.cues = qlayer(paintFun = cue_draw, mouseMove = cue_mouse_move, hoverMoveFun = cue_hover, limits = qrect(meta$limits))
+    layer.cues = 
+        qlayer(paintFun = cue_draw, mouseMove = cue_mouse_move, hoverMoveFun = cue_hover, 
+               mousePressFun = cue_mouse_press, mouseReleaseFun = cue_mouse_release,
+               keyPressFun = key_press, keyReleaseFun = key_release,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
+               limits = qrect(meta$limits))
     layer.title = qmtext(meta = meta, side = 3)
     layer.xlab = qmtext(meta = meta, side = 1)
     layer.ylab = qmtext(meta = meta, side = 2)

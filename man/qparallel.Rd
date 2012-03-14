@@ -125,8 +125,6 @@ id <- link_cat(qflea, "species")
 ## stop categorical linking
 remove_link(qflea, id)
 
-
-
 ### (2) NRC rankings
 data(nrcstat)
 qnrc <- qdata(nrcstat, color = RegCode)
@@ -147,7 +145,6 @@ brush(qnrc, "color") <- "green"
 ## again, select other objects
 brush(qnrc, "color") <- "yellow"
 brush(qnrc, "persistent") <- FALSE  # transient brushing
-
 
 qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity", 
     center = median, horizontal = TRUE, glyph = "tick")

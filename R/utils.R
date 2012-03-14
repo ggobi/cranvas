@@ -680,20 +680,7 @@ qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
     qimg$save(filename)
 }
 
-##' Convert pixel to current coordinates
-##'
-##' This function provides a conversion from number of pixels to amounts in x and y of the 
-##' current coordinate system
-##' @param layer current layer
-##' @param limits two by two matrix of current coordinate limits
-##' @param px number of pixels in x direction
-##' @param py number of pixels in y direction
-##' @return Vector of x and y values 
-##' @author Heike Hofmann 
-##' @noRd
-##' @examples ## TODO
-pixelToXY = function(layer, limits, px, py) {
-  dx = px/layer$geometry$width()*diff(limits[,1])
-  dy = py/layer$geometry$height()*diff(limits[,2])
-  c(dx, dy)
-}
+near_zero = function(x) diff(range(x, na.rm = TRUE, finite = TRUE)) < 1e-7
+
+# Is shift pressed in an event?
+shift_on = function(event) event$modifiers() == Qt$Qt$ShiftModifier

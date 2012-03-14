@@ -1,22 +1,19 @@
 ##' Draw a univariate density plot
-##'
+##' 
 ##' Draw a univariate density plot, with a rug plot underneath.
-##'
-##' Common interactions are documented in
-##' \code{\link{common_key_press}}. Specific interactions include:
-##' Arrow \code{Up}/\code{Down} in-/de-creases size of points; Arrow
-##' \code{Left}/\code{Right} de-/in-creases binwidth for density; Key
-##' \code{Z} toggle zoom on/off (default is off); mouse click & drag
-##' will specify a zoom window, reset to default window by click/no
-##' drag; Key \code{X} toggles focal zoom on/off (default is off);
-##' mouse click & drag will specify a zoom window, zoom out by
-##' pressing \code{Shift} key; Key \code{R} resets data range to
-##' original scale.
-##'
-##' Note there are two short tickmarks in the plot denoting the
-##' binwidth.
-##' @param x variable name which designates variable displayed on the
-##' horizontal axis
+##' 
+##' Common interactions are documented in \code{\link{common_key_press}}. 
+##' Specific interactions include: Arrow \code{Up}/\code{Down} in-/de-creases 
+##' size of points; Arrow \code{Left}/\code{Right} de-/in-creases binwidth for 
+##' density; Key \code{Z} toggle zoom on/off (default is off); mouse click & 
+##' drag will specify a zoom window, reset to default window by click/no drag; 
+##' Key \code{X} toggles focal zoom on/off (default is off); mouse click & drag 
+##' will specify a zoom window, zoom out by pressing \code{Shift} key; Key 
+##' \code{R} resets data range to original scale.
+##' 
+##' Note there are two short tickmarks in the plot denoting the binwidth.
+##' @param x variable name which designates variable displayed on the horizontal
+##'   axis
 ##' @inheritParams qbar
 ##' @inheritParams qhist
 ##' @export
@@ -34,10 +31,8 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     s = attr(data, 'Scales')
     z = as.list(match.call()[-1])
     ## initialize meta
-    meta =
-        Dens.meta$new(xvar = as.character(z$x), active = TRUE,
-                      alpha = .5, main = main, minor = 'xy',
-                      samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
+    meta = Dens.meta$new(xvar = as.character(z$x), active = TRUE, alpha = .5, 
+                         main = main, minor = 'xy', samesize = near_zero(data$.size))
     ## set default xlab if not provided
     if (is.null(xlab)) meta$xlab = meta$xvar
 
@@ -67,10 +62,9 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
             } else rep('gray15', length(meta$x))
         }
         ## densities by color groups
-        meta$dxy =
-            sapply(split(meta$x[idx], grp[idx]), function(v) {
-                density(v, meta$binwidth)[c('x', 'y')]
-            }, simplify = FALSE)
+        meta$dxy = lapply(split(meta$x[idx], grp[idx]), function(v) {
+            density(v, meta$binwidth)[c('x', 'y')]
+        })
         y.all = as.vector(sapply(meta$dxy, `[[`, 'y')) # all density values
         meta$xat = axis_loc(meta$x[idx])
         meta$yat = axis_loc(y.all)
@@ -80,11 +74,8 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
         meta$ylab = if (is.null(ylab)) "Density" else ylab
         y.all = y.all * 100 + 0.00  # due to Qt imprecision bug
         meta$yat = meta$yat * 100 + 0.00
-        r =
-            cbind(if (is.null(xlim))
-                  range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
-                  if (is.null(ylim))
-                  c(0.00, max(y.all, na.rm = TRUE)) else ylim * 100 + 0.00)
+        r = cbind(if (is.null(xlim)) range(meta$x[idx], na.rm = TRUE, finite = TRUE) else xlim,
+                  if (is.null(ylim)) c(0.00, max(y.all, na.rm = TRUE)) else ylim * 100 + 0.00)
         meta$limits = extend_ranges(r)
         meta$x = meta$x[meta$order]
         meta$y = diff(meta$limits[, 2]) / 80  # ugly clipping bug
@@ -106,7 +97,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     ## draw points & density
     main_draw = function(layer, painter) {
         if (meta$samesize) {
-            qdrawGlyph(painter, qglyphCircle(r = data$.size[1]), meta$x, meta$y,
+            qdrawGlyph(painter, qglyphSegment(data$.size[1], pi/2), meta$x, meta$y,
                        stroke = alpha(meta$border, meta$alpha), fill = alpha(meta$color, meta$alpha))
         } else {
             qdrawCircle(painter, meta$x, meta$y, r = meta$size,
@@ -128,16 +119,16 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     brush_draw = function(layer, painter) {
         idx = visible(data) & selected(data)
         if (any(idx)) {
+            qlineWidth(painter) = 3
             if (meta$samesize) {
-                qdrawGlyph(painter, qglyphCircle(r = b$size * meta$size[1]),
+                qdrawGlyph(painter, qglyphSegment(meta$size[1], pi/2),
                            data[idx, meta$xvar], meta$y, stroke = b$color, fill = b$color)
             } else {
                 qdrawCircle(painter, data[idx, meta$xvar], meta$y,
                             r = b$size * data$.size[idx], stroke = b$color, fill = b$color)
             }
             dxy = density(data[idx, meta$xvar], meta$binwidth)
-            qlineWidth(painter) = 3
-            qdrawLine(painter, dxy$x, dxy$y * 100, stroke = b$color)
+            qdrawLine(painter, dxy$x, dxy$y / max(dxy$y) * max(meta$yat), stroke = b$color)
         }
         draw_brush(layer, painter, data, meta)
     }
@@ -161,7 +152,7 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
-        shift = event$modifiers() == Qt$Qt$ShiftModifier
+        shift = shift_on(event)
         if (shift && length(i <- which(match_key(c('Left', 'Right', 'Up', 'Down'))))) {
             j = c(1, 1, 2, 2)[i]; k = c(1, -1, -1, 1)[i]
             meta$limits[, j] = extend_ranges(meta$limits[, j], k * c(1, -1) * 0.02)
@@ -188,10 +179,9 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     }
     identify_draw = function(layer, painter) {
         if (!b$identify || !length(idx <- meta$identified)) return()
-        meta$identify.labels =
-            sprintf('row id: %s\n%s: %s',
-                    paste(rownames(data)[idx], collapse = ', '),
-                    meta$xvar, paste(meta$x[idx], collapse = ', '))
+        meta$identify.labels = sprintf('row id: %s\n%s: %s',
+                                       paste(rownames(data)[idx], collapse = ', '),
+                                       meta$xvar, paste(meta$x[idx], collapse = ', '))
         draw_identify(layer, painter, data, meta)
         if (meta$samesize) {
             qdrawGlyph(painter, qglyphCircle(r = 2 * b$size * data$.size[1]),
@@ -208,18 +198,17 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     scene <- qscene()
     layer.root <- qlayer(scene)
 
-    layer.main =
-        qlayer(paintFun = main_draw,
-               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-               mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
-               keyPressFun = key_press, keyReleaseFun = key_release,
-               wheelFun = mouse_wheel,
-               focusInFun = function(layer, event) {
-                   common_focus_in(layer, event, data, meta)
-               }, focusOutFun = function(layer, event) {
-                   common_focus_out(layer, event, data, meta)
-               },
-               limits = qrect(meta$limits), clip = TRUE)
+    layer.main = qlayer(paintFun = main_draw, mousePressFun = brush_mouse_press, 
+                        mouseReleaseFun = brush_mouse_release,
+                        mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
+                        keyPressFun = key_press, keyReleaseFun = key_release,
+                        wheelFun = mouse_wheel,
+                        focusInFun = function(layer, event) {
+                            common_focus_in(layer, event, data, meta)
+                        }, focusOutFun = function(layer, event) {
+                            common_focus_out(layer, event, data, meta)
+                        },
+                        limits = qrect(meta$limits), clip = TRUE)
     layer.lines = qlayer(paintFun = line_draw, limits = qrect(meta$limits), clip = TRUE)
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits), clip = TRUE)
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
@@ -244,12 +233,14 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     ## set sizes of layers (arrange the layout)
     set_layout = function() {
         fix_dimension(layer.root,
-                      row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
-                                                  prefer_height(meta$xlabels),
-                                                  prefer_height(meta$xlab))),
-                      column = list(id = c(1, 0, 3), value = c(prefer_width(meta$ylabels),
-                                                     prefer_width(meta$ylab, FALSE),
-                                                     10)))
+                      row = list(id = c(0, 2, 3), 
+                                 value = c(prefer_height(meta$main),
+                                           prefer_height(meta$xlabels),
+                                           prefer_height(meta$xlab))),
+                      column = list(id = c(1, 0, 3), 
+                                    value = c(prefer_width(meta$ylabels),
+                                              prefer_width(meta$ylab, FALSE),
+                                              10)))
     }
     set_layout()
 
@@ -309,12 +300,11 @@ qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
     view
 }
 
-Dens.meta =
-  setRefClass("Dens_meta",
-    fields = properties(c(
-      Common.meta,
+Dens.meta = setRefClass("Dens_meta",
+                        fields = properties(c(
+                            Common.meta,
 
-      list(xvar = 'character', order = 'numeric',
-        x = 'numeric', y = 'numeric', binwidth = 'numeric',
-        dxy = 'list', asp = 'numeric', samesize = 'logical')
-)))
+                            list(xvar = 'character', order = 'numeric',
+                                 x = 'numeric', y = 'numeric', binwidth = 'numeric',
+                                 dxy = 'list', asp = 'numeric', samesize = 'logical')
+                            )))

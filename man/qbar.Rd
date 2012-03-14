@@ -92,7 +92,6 @@ qparallel(vars = 13:10, main = "Overview of Rankings",
 qbar(RegCode, horizontal = TRUE)  # horizontal plot
 qbar(RegCode, standardize = TRUE)  # standardize to 1
 
-
 ## use border color to split the bars
 qnrc2 <- qdata(nrcstat, color = "white", border = Control)
 qbar(RegCode)

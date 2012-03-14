@@ -3,7 +3,7 @@
 \title{Draw a scatter plot}
 \usage{
 qscatter(x, y, data = last_data(), main = "", xlim = NULL, 
-    ylim = NULL, xlab = NULL, ylab = NULL, asp = 1)
+    ylim = NULL, xlab = NULL, ylab = NULL, asp = 1, alpha = 1)
 }
 \arguments{
   \item{x}{the name of the x variable}
