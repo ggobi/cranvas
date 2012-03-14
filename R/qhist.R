@@ -44,7 +44,6 @@ qhist =
     b = brush(data)
     b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
     cueOn = FALSE
-    pix1 = NULL
     meta =
         Hist.meta$new(var = as.character(as.list(match.call()[-1])$x), freq = freq,
                       alpha = 1, horizontal = horizontal, main = main, active = TRUE,
@@ -217,7 +216,7 @@ qhist =
     
     cue_mouse_move = function(layer, event) {
       pos = as.numeric(event$pos())
-      eps = 2*pix1
+      eps = 2*pixelToXY(layer.main, meta$limits, 1,1)
       rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
       if (length(hits)) {
@@ -248,8 +247,12 @@ qhist =
       }
     }
     cue_hover = function(layer, event) {
-        meta$pos = as.numeric(event$pos())
-        hits = layer.cues$locate(identify_rect(meta))
+      pos = as.numeric(event$pos())
+      eps = 2*pixelToXY(layer.main, meta$limits, 1,1)
+      rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
+      hits = layer.cues$locate(rect)
+#        meta$pos = as.numeric(event$pos())
+#        hits = layer.cues$locate(identify_rect(meta))
         if (length(hits > 0)) {
           # change cursor shape
           if (hits[1] == 0) b$cursor = 17L # OpenHandCursor # anchor
@@ -261,10 +264,15 @@ qhist =
           identify_hover(layer.main, painter)
         }
     }
+    pixelToXY = function(layer, limits, px, py) {
+       dx = px/layer.main$geometry$width()*diff(range(limits[,1]))
+       dy = py/layer.main$geometry$height()*diff(range(limits[,2]))
+       c(dx,dy)
+    }
+
     cue_draw = function(layer, painter) {
         ybottom = meta$limits[1,2]
-        pix1 <<- one_pixel(painter)
-        eps = pix1
+        eps = pixelToXY(layer, meta$limits, 1,1)
 
         anchorCue <<- c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
         binwidthCue <<- c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
@@ -273,7 +281,7 @@ qhist =
     }
     cue_mouse_press = function(layer, event) {
       pos = as.numeric(event$pos())
-      eps = 2*pix1
+      eps = 2*pixelToXY(layer, meta$limits, 1,1)
       rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
       if (length(hits)) cueOn <<- TRUE        
@@ -304,8 +312,9 @@ qhist =
     layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
     layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
     layer.cues = 
-        qlayer(paintFun = cue_draw, mouseMove = cue_mouse_move, hoverMoveFun = cue_hover, 
+        qlayer(paintFun = cue_draw,  
                mousePressFun = cue_mouse_press, mouseReleaseFun = cue_mouse_release,
+               mouseMove = cue_mouse_move, hoverMoveFun = cue_hover,
                keyPressFun = key_press, keyReleaseFun = key_release,
                focusInFun = function(layer, event) {
                    common_focus_in(layer, event, data, meta)
@@ -401,3 +410,4 @@ Hist.meta =
                                   binmin = 'numeric')
 
                              )))
+
