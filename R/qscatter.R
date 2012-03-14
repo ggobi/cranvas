@@ -43,7 +43,7 @@
 ##' @example inst/examples/qscatter-ex.R
 qscatter =
     function(x, y, data = last_data(), main = '', xlim = NULL, ylim = NULL,
-             xlab = NULL, ylab = NULL, asp = 1) {
+             xlab = NULL, ylab = NULL, asp = 1, alpha = 1) {
 
     data = check_data(data)
     b = brush(data)
@@ -53,7 +53,7 @@ qscatter =
     meta =
         Scat.meta$new(xvar = as.character(z$x), yvar = as.character(z$y),
                       xy = matrix(nrow = nrow(data), ncol = 2), active = TRUE,
-                      alpha = 1, main = main, asp = asp, minor = 'xy',
+                      alpha = alpha, main = main, asp = asp, minor = 'xy',
                       samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
 
     ## set default xlab/ylab if not provided
@@ -123,13 +123,22 @@ qscatter =
     ## draw points
     main_draw = function(layer, painter) {
         ord = meta$order; idx = visible(data)[ord]
+				stroke = meta$border
+				fill = meta$color
+				if (meta$alpha < 1) {
+					# adjust colors
+					stroke = rgb(t(col2rgb(stroke))/255, alpha=meta$alpha)
+					fill = rgb(t(col2rgb(fill))/255, alpha=meta$alpha)
+				}
         if (meta$samesize) {
+#browser()
             qdrawGlyph(painter, qglyphCircle(r = meta$size),
                        meta$xy[ord, 1][idx], meta$xy[ord, 2][idx],
-                       stroke = meta$border, fill = meta$color)
+                       stroke = stroke, fill = fill)
         } else {
+#browser()
             qdrawCircle(painter, meta$xy[ord, 1][idx], meta$xy[ord, 2][idx], r = meta$size,
-                        stroke = meta$border, fill = meta$color)
+                        stroke = stroke, fill = fill)
         }
         # draw warning lines, if points are outside the drawing area
                 if (sum(meta$outofbounds) > 0) {
