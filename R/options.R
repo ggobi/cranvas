@@ -38,3 +38,5 @@ qpar = function(...) {
         .opts
     }
 }
+
+qpar(mar = 0.05)
