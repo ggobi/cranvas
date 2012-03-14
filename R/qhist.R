@@ -210,16 +210,10 @@ qhist =
         qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
                   meta$ytop[idx], stroke = b$color, fill = NA)
     }
-
-    pixelToXY = function(layer, limits, px, py) {
-      dx = px/layer.main$geometry$width()*diff(limits[,1])
-      dy = py/layer.main$geometry$height()*diff(limits[,2])
-      c(dx, dy)
-    }
     
     cue_mouse_move = function(layer, event) {
       pos = as.numeric(event$pos())
-      eps = pixelToXY(layer, meta$limits, 2, 2)
+      eps = pixelToXY(layer.main, meta$limits, 2, 2)
       rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
       if (length(hits)) {
@@ -266,7 +260,7 @@ qhist =
     cue_draw = function(layer, painter) {
         ybottom = meta$limits[1,2]
  #       binwidth = meta$xright[1]-meta$xleft[1] 
-        eps = pixelToXY(layer, meta$limits, 1, 1)
+        eps = pixelToXY(layer.main, meta$limits, 1, 1)
 
         anchorCue <<- c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
         binwidthCue <<- c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
