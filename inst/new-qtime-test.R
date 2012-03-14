@@ -207,6 +207,26 @@ meta.yaxis <- function() {
   }
 }
 
+##'
+selected_draw <- function(meta,b,hits,painter){
+  qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[hits], 
+             meta$ytmp[hits], stroke = b$color, fill = b$color)     
+  for (i in 1:meta$nyvar){
+    for (k in unique(meta$vargroup)) {
+      for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
+        idxtmp <- (meta$wrap.group==j & meta$vargroup==k & meta$ylist[,i] & hits)
+        if (sum(idxtmp)){                 
+          xtmp <- meta$xtmp
+          ytmp <- meta$ytmp
+          xtmp[!idxtmp] <- NA
+          ytmp[!idxtmp] <- NA
+          qdrawLine(painter, xtmp, ytmp, stroke=b$color)
+        }
+      }
+    }
+  }
+}
+
 
 qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
                   shift=c(1,4,7,12,24), size=2, alpha=1, asp=NULL, 
@@ -342,76 +362,15 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   brush_draw <- function(layer, painter) {
     
     if (any(is.na(meta$pos))) return()
+    hits <- selected(data)[meta$orderEnter]
+    if (!any(hits)) return()
     
     if (meta$serie.mode) {
-      if (is.null(meta$serie.pos)) return()
       xpos <- meta$start[1]
-      ypos <- meta$start[2]
-      queryaround <- ifelse(meta$radius<=4,8/meta$radius,1)
-      xrange <- meta$radius/layer.root$size$width() *
-        diff(meta$limits[c(1, 2)]) * queryaround
-      yrange <- meta$radius/layer.root$size$height() *
-        diff(meta$limits[c(3, 4)]) * queryaround
-      rect <- matrix(c(xpos - xrange, ypos - yrange,
-                             xpos + xrange, ypos + yrange),
-                           2, byrow = TRUE)
-      hits <- main_circle_layer$locate(rect) + 1
-      if (length(hits) < 1) {
-        selected(data) <- FALSE
-        return()
-      }
-      hitsrow <- round(hits %% nrow(data))
-      hitsrow[hitsrow==0] <- nrow(data)
-      hitscol <- (hits-0.0000001)%/%nrow(data)+1
-      shadowmatrix <- matrix(FALSE,nrow=nrow(data),ncol=meta$nyvar)
-      if (length(meta$group)){
-        selected(data) <- meta$orderEnter[hitsrow]
-        #self_link(data)
-        if ("self" %in% link_type(data) & (!is.null(link_var(data)))) {
-        if (!is.null(meta$linkID)){
-          meta$hitsrow <- meta$orderBack[selected(data)]
-          meta$hitscol <- rep(as.integer(names(sort(table(meta$hitscol),decreasing=TRUE))[1]),length(meta$hitsrow))
-        }
-        for (i in 1:length(meta$hitsrow)) {
-          shadowmatrix[meta$hitsrow[i],meta$hitscol[i]] <- TRUE
-        }
-        } else if (meta$nyvar>1) {
-          for (i in 1:length(hitscol)) {
-            shadowmatrix[,hitscol[i]] <- TRUE
-          }
-        }
-      fill <- b$color
-      stroke <- b$color
-      radius <- meta$radius       
-      for (i in 1:meta$nyvar){
-        if (any(shadowmatrix[,i])) {
-          meta$mxtmp[shadowmatrix[,i],i] <- meta$mxtmp[shadowmatrix[,i],i] + meta$pos[1] - meta$start[1]
-          qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$mxtmp[shadowmatrix[,i],i], 
-                     meta$ytmp[shadowmatrix[,i],i], stroke = stroke, fill = fill)
-          #qdrawCircle(painter, x = meta$xtmp[shadowmatrix[,i]],
-          #            y = meta$ytmp[shadowmatrix[,i],i],
-          #            r = meta$radius*2, fill = fill,
-          #            stroke = stroke)
-          if (sum(shadowmatrix[,i])>1) {
-            for (k in unique(meta$vargroup)) {
-              for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
-                idxtmp <- (meta$wrap.group==j & meta$vargroup==k & shadowmatrix[,i])
-                if (sum(idxtmp)){                 
-                  xtmp <- meta$mxtmp[,i]
-                  ytmp <- meta$ytmp[,i]
-                  xtmp[!idxtmp] <- NA
-                  ytmp[!idxtmp] <- NA
-                  qdrawLine(painter, xtmp, ytmp, stroke=stroke)
-                }
-              }
-            }
-          }
-        }
-      }
-      #qupdate(main_circle_layer)
-      #qupdate(main_line_layer)
+      ypos <- meta$start[2]      
+      meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
+      selected_draw(meta,b,hits,painter)
       return()
-      }
     }
     
     if (meta$wrapF_dragT) {     
@@ -420,25 +379,8 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       return()
     }
     
+    selected_draw(meta,b,hits,painter)
     draw_brush(layer, painter, data, meta)
-    idx = selected(data)[meta$orderEnter]
-    if (!any(idx)) return()
-    qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[idx], 
-               meta$ytmp[idx], stroke = b$color, fill = b$color)
-    for (i in 1:meta$nyvar){
-      for (k in unique(meta$vargroup)) {
-        for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
-          idxtmp <- (meta$wrap.group==j & meta$vargroup==k & meta$ylist[,i] & idx)
-          if (sum(idxtmp)){                 
-            xtmp <- meta$xtmp
-            ytmp <- meta$ytmp
-            xtmp[!idxtmp] <- NA
-            ytmp[!idxtmp] <- NA
-            qdrawLine(painter, xtmp, ytmp, stroke=b$color)
-          }
-        }
-      }
-    }
   }
   
   query_draw <- function(item, painter, exposed, ...) {
@@ -466,7 +408,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
         distidx <- which(hitsdist==min(hitsdist,na.rm=TRUE))
         hits <- hits[distidx]
       }
-      if (is.null(meta$group)) {
+      if (length(meta$group)==0) {
         info <- data.frame(meta$varname$x,meta$xtmp[hits],
                            meta$yorig[hits,1],meta$ytmp[hits])
       } else {
@@ -540,22 +482,8 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       }
       hitsall <- which(meta$yorig[,1]==meta$yorig[hits,1] & checkhitgroup)
       selected(data) <- hitsall[meta$orderBack]
-      qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[hitsall], 
-                 meta$ytmp[hitsall], stroke = b$color, fill = b$color)
-      for (i in 1:meta$nyvar){
-        for (k in unique(meta$vargroup)) {
-          for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
-            idxtmp <- (meta$wrap.group==j & meta$vargroup==k & meta$ylist[,i] & selected(data)[meta$orderEnter])
-            if (sum(idxtmp)){                 
-              xtmp <- meta$xtmp
-              ytmp <- meta$ytmp
-              xtmp[!idxtmp] <- NA
-              ytmp[!idxtmp] <- NA
-              qdrawLine(painter, xtmp, ytmp, stroke=b$color)
-            }
-          }
-        }
-      }
+      hits <- selected(data)[meta$orderEnter]
+      selected_draw(meta,b,hits,painter)
     }
   }
 
@@ -621,12 +549,12 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   view <- qplotView(scene=scene)
   view$setWindowTitle(meta$main)
   view
-  # return(meta)
+  #return(meta)
 }
 
 data(nasa)
 nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
-qnasa <- time_qdata(nasa11,"ts")
+#qnasa <- time_qdata(nasa11,"ts")
 #qnasa <- time_qdata(nasa11,c("ts","ca_med"))
 qnasa <- time_qdata(nasa11,c("ts","ps_tovs","ca_med"))
 a=qtime2(TimeIndx,qnasa,shift=c(1,12))
