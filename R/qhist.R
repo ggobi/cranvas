@@ -291,14 +291,11 @@ qhist =
       hits = layer$locate(rect)
       if (length(hits)) {
         cueOn <<- TRUE    
-        if (hits[1] == 2) {
- #         print("reset")
+        if (hits[1] == 2) { #adjust vertical height to current maximum bin height
           meta$limits[,2] =
             extend_ranges(c(meta$ybottom, meta$ytop))
-#          layer.main$invalidateIndex()
-                                
-#           layer.cues$invalidateIndex()
-#           qupdate(layer.cues)
+          meta$yat = axis_loc(c(0, meta$limits[2,2]))
+          meta$ylabels = format(meta$yat)
         }
       }
       common_mouse_press(layer.main, event, data, meta)
