@@ -210,10 +210,17 @@ qhist =
         qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
                   meta$ytop[idx], stroke = b$color, fill = NA)
     }
+
+    pixelToXY = function(layer, limits, px, py) {
+      dx = px/layer.main$geometry$width()*diff(limits[,1])
+      dy = py/layer.main$geometry$height()*diff(limits[,2])
+      c(dx, dy)
+    }
+    
     cue_mouse_move = function(layer, event) {
       pos = as.numeric(event$pos())
-      eps = 1e-6
-      rect = qrect(pos[1]-eps, pos[2]-eps, pos[1]+eps, pos[2]+eps)
+      eps = pixelToXY(layer, meta$limits, 2, 2)
+      rect = qrect(pos[1]-eps[1], pos[2]-eps[2], pos[1]+eps[1], pos[2]+eps[2])
       hits = layer$locate(rect)
       if (length(hits)) {
         b$cursor = 18L # ClosedHandCursor
@@ -258,11 +265,13 @@ qhist =
     }
     cue_draw = function(layer, painter) {
         ybottom = meta$limits[1,2]
-        binwidth = meta$xright[1]-meta$xleft[1] 
-        anchor <<- c(meta$xleft[1]-binwidth/20, meta$xleft[1]+binwidth/20, 0.25*ybottom, 0.75*ybottom)
-        bin <<- c(meta$xleft[2]-binwidth/20, meta$xleft[2]+binwidth/20, 0.25*ybottom, 0.75*ybottom)
-        qdrawRect(painter, anchor[1], anchor[3], anchor[2], anchor[4], stroke="black", fill="black")
-        qdrawRect(painter, bin[1], bin[3], bin[2], bin[4], stroke="black", fill="black")
+ #       binwidth = meta$xright[1]-meta$xleft[1] 
+        eps = pixelToXY(layer, meta$limits, 1, 1)
+
+        anchorCue <<- c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
+        binwidthCue <<- c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
+        qdrawRect(painter, anchorCue[1], anchorCue[3], anchorCue[2], anchorCue[4], stroke="black", fill="black")
+        qdrawRect(painter, binwidthCue[1], binwidthCue[3], binwidthCue[2], binwidthCue[4], stroke="black", fill="black")
     }
     scene = qscene()
     layer.root = qlayer(scene)
