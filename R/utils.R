@@ -697,3 +697,6 @@ pixelToXY = function(layer, limits, px, py) {
   dy = py/layer$geometry$height()*diff(limits[,2])
   c(dx, dy)
 }
+
+near_zero = function(x) diff(range(x, na.rm = TRUE, finite = TRUE)) < 1e-7
+
