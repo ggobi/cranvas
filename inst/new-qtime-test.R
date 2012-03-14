@@ -707,6 +707,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
                               mouseReleaseFun = brush_mouse_move,
                               mouseMove = brush_mouse_move,
                               wheelFun = mouse_wheel,
+                              keyPressFun = key_press,
                               focusInFun = function(layer, event) {
                                 common_focus_in(layer, event, data, meta)
                               }, focusOutFun = function(layer, event) {
