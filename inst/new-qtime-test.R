@@ -210,7 +210,8 @@ meta.yaxis <- function() {
 ##' Draw the selected data in qtime
 selected_draw <- function(meta,b,hits,painter){
   qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[hits], 
-             meta$ytmp[hits], stroke = b$color, fill = b$color)     
+             meta$ytmp[hits], stroke = b$color, fill = b$color) 
+  qlineWidth(painter) <- max(meta$radius,1)
   for (i in 1:meta$nyvar){
     for (k in unique(meta$vargroup)) {
       for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
@@ -322,13 +323,18 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   
   key_press <- function(layer, event){
     crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
-    
-    if (event$key()==Qt$Qt$Key_W){
+    #keys = c('')
+    #meta$shift = shift_on(event)
+    #switch(key, 
+    #       W = toggle_wrap_mode(meta), 
+    #       M = switch_series_mode(meta, data)
+    #       )
+    if (match_key('W', event)) {
       ## key W for switching the wrapping mode
       
       meta$wrap.mode <- !meta$wrap.mode
       #qupdate(layer.WRAPtext)
-    } else if (event$key()==Qt$Qt$Key_M){
+    } else if (match_key('M', event)) {
       ## key M for switching the serie mode (for selecting and moving)
       
       if (length(meta$group)){
@@ -538,6 +544,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   }
   
   main_line_draw <- function(layer,painter){
+    qlineWidth(painter) <- meta$radius / 2
     for (j in 1:meta$nyvar) {
       color=gray(seq(0,0.6,length=max(meta$wrap.group,na.rm=TRUE)))
       for (k in unique(meta$vargroup)) {
@@ -558,9 +565,9 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
     
     if (any(is.na(meta$pos))) return()
     hits <- selected(data)[meta$orderEnter]
-    if (!any(hits)) return()
     
     if (meta$serie.mode) {
+      if (!any(hits)) return()
       xpos <- meta$start[1]
       ypos <- meta$start[2]      
       meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
@@ -574,7 +581,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       return()
     }
     
-    selected_draw(meta,b,hits,painter)
+    if (any(hits)) selected_draw(meta,b,hits,painter)
     draw_brush(layer, painter, data, meta)
   }
   
@@ -742,10 +749,33 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   layout$setColumnStretchFactor(0, 0)
   layout$setColumnStretchFactor(1, 0)
   
+
+    ## listeners on the data (which column updates which layer(s))
+      d.idx = add_listener(data, function(i, j) {
+        switch(j, .brushed = qupdate(brush_layer),
+               .color = {
+                   qupdate(main_circle_layer)
+                   qupdate(main_line_layer)
+               }, {
+                   qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+                   main_circle_layer$invalidateIndex()
+                   main_line_layer$invalidateIndex()
+                   qupdate(main_circle_layer)
+                   qupdate(main_line_layer)
+               })
+     })
+
   view <- qplotView(scene=scene)
   view$setWindowTitle(meta$main)
+  attr(view, 'meta') = meta
   view
-  #return(meta)
+}
+
+toggle_wrap_mode = function(meta) {
+      ## key W for switching the wrapping mode
+      
+      meta$wrap.mode <- !meta$wrap.mode
+      #qupdate(layer.WRAPtext)
 }
 
 data(nasa)
