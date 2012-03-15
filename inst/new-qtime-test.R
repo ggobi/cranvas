@@ -228,6 +228,47 @@ selected_draw <- function(meta,b,hits,painter){
   }
 }
 
+##' key W for switching the wrapping mode
+toggle_wrap_mode = function(meta) {    
+  meta$wrap.mode <- !meta$wrap.mode
+  #qupdate(layer.WRAPtext)
+}
+
+##' key M for switching the serie mode
+##' on the serie mode users can drag any serie horizontally
+switch_serie_mode = function(meta,data){  
+  if (length(meta$group)){
+    meta$serie.mode <- !meta$serie.mode
+    if (!meta$serie.mode) {
+      remove_listener(data,meta$linkID)
+      meta$linkID <- NULL
+    } else {
+      if (class(data[,meta$varname$g])=='factor'){
+        meta$linkID <- link_cat(data, meta$varname$g)
+      } else {
+        message("The group variable is not a factor. Please change to factor before pressing M.")
+        meta$serie.mode <- FALSE
+      }
+    }
+  } else if (meta$nyvar>1) {
+    meta$serie.mode <- !meta$serie.mode
+  }
+  if (!meta$wrap.mode) {
+    if (meta$limits[1,1]>extend_ranges(c(meta$time,meta$xtmp))[1] | 
+      meta$limits[2,1]<extend_ranges(c(meta$time,meta$xtmp))[2]) {
+      meta$wrapF_dragT <- !meta$wrapF_dragT
+    }
+  }
+}
+
+##' key G for shifting the wrapping gear
+##' i.e. changing the period/frequency
+shift_wrap_gear = function(meta){
+  meta$wrap.shift <- c(meta$wrap.shift[-1],meta$wrap.shift[1])
+  #qupdate(layer.WRAPtext)
+}
+
+
 
 qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
                   shift=c(1,4,7,12,24), size=2, alpha=1, asp=NULL, 
@@ -323,11 +364,18 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   
   key_press <- function(layer, event){
     crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
-    #keys = c('')
+    #keys = c('W','M','G','U','D','Left','Right','Up','Down','Plus','Minus')
     #meta$shift = shift_on(event)
     #switch(key, 
     #       W = toggle_wrap_mode(meta), 
-    #       M = switch_series_mode(meta, data)
+    #       M = switch_serie_mode(meta, data)
+    #       G = shift_wrap_gear(meta)
+    #       U = separate_group()
+    #       D = mix_group()
+    #       Left = wrap_backward()
+    #       Right = wrap_forward()
+    #       Up = size_up()
+    #       
     #       )
     if (match_key('W', event)) {
       ## key W for switching the wrapping mode
@@ -363,7 +411,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       ## key G for gear(shift the wrapping speed)
       
       meta$wrap.shift <- c(meta$wrap.shift[-1],meta$wrap.shift[1])
-      qupdate(layer.WRAPtext)
+      #qupdate(layer.WRAPtext)
     } else if (event$key()==Qt$Qt$Key_Right){
       ## arrow right
       
@@ -769,13 +817,6 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   view$setWindowTitle(meta$main)
   attr(view, 'meta') = meta
   view
-}
-
-toggle_wrap_mode = function(meta) {
-      ## key W for switching the wrapping mode
-      
-      meta$wrap.mode <- !meta$wrap.mode
-      #qupdate(layer.WRAPtext)
 }
 
 data(nasa)
