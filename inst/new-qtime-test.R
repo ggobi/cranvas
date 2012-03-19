@@ -11,19 +11,18 @@ Time.meta =
                     xtmp = 'numeric',
                     ytmp = 'numeric',
                     shadow.matrix = 'data.frame',
-                    wrap.mode = 'logical',  
+                    drag.mode = 'logical',
+                    serie.mode = 'logical',
+                    shift = 'logical',
+                    query.pos = 'numeric',  
                     wrap.group = 'numeric',
                     wrap.shift = 'numeric',
-                    wrapF_dragT = 'logical',
                     vargroup = 'factor',
                     zoomsize = 'numeric',
                     limits = 'matrix',
                     radius = 'numeric',
                     stroke = 'character',
-                    fill = 'character',
-                    query.pos = 'numeric',
-                    serie.mode = 'logical',
-                    serie.pos = 'numeric'))))
+                    fill = 'character'))))
 
 
 ##' Create data for drawing time plots
@@ -61,7 +60,7 @@ time_qdata <- function(data, y, color = "gray15", border = color, size = 4, brus
 
 ##' Initialize the Time.meta
 ##' 
-time_meta_initialize <- function(meta,call,data,period, group, wrap,
+time_meta_initialize <- function(meta,call,data,period, group,
                                  shift, size, alpha, asp,
                                  main, xlab, ylab,...){
   
@@ -77,10 +76,10 @@ time_meta_initialize <- function(meta,call,data,period, group, wrap,
     meta$vargroup <- factor(rep(1, nrow(data)))
     meta$orderEnter <- order(meta$time[1:meta$singleVarLen], decreasing=FALSE)
     meta$orderEnter <- rep(meta$orderEnter,meta$nyvar)+
-                       rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
+      rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
     meta$orderBack <- rank(meta$time[1:meta$singleVarLen],ties.method='first')
     meta$orderBack <- rep(meta$orderBack,meta$nyvar)+
-                      rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
+      rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
   } else {
     if (!is.null(call$period)) {
       meta$varname$g <- as.character(call$period)
@@ -90,13 +89,13 @@ time_meta_initialize <- function(meta,call,data,period, group, wrap,
     meta$orderEnter <- order(as.factor(data[1:meta$singleVarLen,meta$varname$g]), 
                              meta$time[1:meta$singleVarLen], decreasing=FALSE)
     meta$orderEnter <- rep(meta$orderEnter,meta$nyvar)+
-                       rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
+      rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
     meta$orderBack <- rank(meta$time[1:meta$singleVarLen] + 
-                           as.integer(as.factor(data[1:meta$singleVarLen,meta$varname$g])) * 
-                           (max(meta$time[1:meta$singleVarLen],na.rm=TRUE)+1),
+      as.integer(as.factor(data[1:meta$singleVarLen,meta$varname$g])) * 
+      (max(meta$time[1:meta$singleVarLen],na.rm=TRUE)+1),
                            ties.method='first')
     meta$orderBack <- rep(meta$orderBack,meta$nyvar)+
-                      rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
+      rep((0:(meta$nyvar-1))*meta$singleVarLen,each=meta$singleVarLen)
     meta$group <- factor(data[meta$orderEnter,meta$varname$g])
     meta$vargroup <- meta$group
   }
@@ -135,10 +134,10 @@ time_meta_initialize <- function(meta,call,data,period, group, wrap,
   meta$ylab <- ifelse(is.null(ylab), paste(meta$varname$y,collapse=', '), ylab)
   
   ## Other settings
-  meta$wrap.mode <- wrap
+  meta$drag.mode <- FALSE
+  meta$shift <- FALSE
   meta$wrap.group <- rep(1, nrow(data))
   meta$wrap.shift <- shift
-  meta$wrapF_dragT <- FALSE
   meta$hitscol <- 1
   meta$hitsrow <- NULL
   meta$vertconst <- 0
@@ -161,7 +160,6 @@ time_meta_initialize <- function(meta,call,data,period, group, wrap,
   meta$stroke <- data$.border[meta$orderEnter]
   meta$fill <- data$.color[meta$orderEnter]
   meta$serie.mode <- FALSE
-  meta$serie.pos <- NULL
   
   ## Brush etc.
   meta$pos <- c(NA, NA)
@@ -180,7 +178,7 @@ time_meta_initialize <- function(meta,call,data,period, group, wrap,
 
 
 ##' Set limits for yaxis in qtime
-meta.yaxis <- function() {
+meta.yaxis <- function(meta) {
   if (meta$shiftUP) {
     meta$yat <- 1:meta$nyvar+0.5
     meta$ylabels <- meta$varname$y
@@ -228,15 +226,14 @@ selected_draw <- function(meta,b,hits,painter){
   }
 }
 
-##' key W for switching the wrapping mode
-toggle_wrap_mode = function(meta) {    
-  meta$wrap.mode <- !meta$wrap.mode
-  #qupdate(layer.WRAPtext)
-}
-
 ##' key M for switching the serie mode
 ##' on the serie mode users can drag any serie horizontally
-switch_serie_mode = function(meta,data){  
+switch_serie_mode = function(meta,data){
+  if (meta$drag.mode) {
+    meta$drag.mode <- FALSE
+    meta$serie.mode <- FALSE
+    return()
+  }
   if (length(meta$group)){
     meta$serie.mode <- !meta$serie.mode
     if (!meta$serie.mode) {
@@ -253,12 +250,6 @@ switch_serie_mode = function(meta,data){
   } else if (meta$nyvar>1) {
     meta$serie.mode <- !meta$serie.mode
   }
-  if (!meta$wrap.mode) {
-    if (meta$limits[1,1]>extend_ranges(c(meta$time,meta$xtmp))[1] | 
-      meta$limits[2,1]<extend_ranges(c(meta$time,meta$xtmp))[2]) {
-      meta$wrapF_dragT <- !meta$wrapF_dragT
-    }
-  }
 }
 
 ##' key G for shifting the wrapping gear
@@ -268,11 +259,156 @@ shift_wrap_gear = function(meta){
   #qupdate(layer.WRAPtext)
 }
 
+##' key U for separating the groups by shifting up
+separate_group <- function(meta){
+  if (meta$nyvar>1 & meta$shift) {
+    for (i in 1:meta$nyvar){
+      meta$ytmp[meta$ylist[,i]] <- meta$y[meta$ylist[,i]]+i
+    }
+    meta$shiftUP <- TRUE
+  } else if (!is.null(meta$group) & length(meta$group)>0) {
+    meta$vertconst <- meta$vertconst + 0.05
+    if (meta$vertconst>1) meta$vertconst <- 1
+    for (j in 1:meta$nyvar) {
+      meta$ytmp[meta$ylist[,j]] <- (meta$y[meta$ylist[,j]]-min(meta$y,na.rm=TRUE))/
+        diff(range(meta$y,na.rm=TRUE))+(as.integer(meta$group)-1)*meta$vertconst
+    }
+  }
+  meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
+  meta.yaxis(meta)
+}
+
+##' key D for mixing the groups
+mix_group <- function(meta){
+  meta$shiftUP <- FALSE
+  if (meta$nyvar>1 & meta$shift) {
+    meta$ytmp <- meta$y
+    meta$shiftDOWN <- TRUE
+  } else {
+    if (!is.null(meta$group) & length(meta$group)>0) {
+      meta$vertconst <- meta$vertconst - 0.05
+      if (meta$vertconst<0) meta$vertconst <- 0
+      if (!meta$vertconst) {
+        meta$ytmp <- meta$y
+        meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))      
+      } else {
+        for (j in 1:meta$nyvar) {
+          meta$ytmp[meta$ylist[,j]] <- (meta$y[meta$ylist[,j]]-min(meta$y,na.rm=TRUE))/
+            diff(range(meta$y,na.rm=TRUE))+(as.integer(meta$group)-1)*meta$vertconst
+        }
+      }
+    }
+  } 
+  meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))  
+  meta.yaxis(meta)
+}
+
+##' key Right for wrapping
+wrap_forward <- function(meta,data,crt_range){
+  hits <- selected(data)[meta$orderEnter]
+  if (meta$serie.mode & sum(hits)) {
+    meta$xtmp[hits] <- meta$xtmp[hits] + diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
+    if (min(meta$xtmp[hits],na.rm=TRUE)>max(meta$time,na.rm=TRUE)) {
+      meta$xtmp[hits] <- meta$xtmp[hits] - min(meta$xtmp[hits],na.rm=TRUE) + 
+        max(meta$time,na.rm=TRUE)
+    }
+  } else if (!length(meta$group) & meta$shift) {
+    zoombound <- max(meta$wrap.shift)
+    if (zoombound<2) zoombound <- diff(range(meta$time,na.rm=TRUE))/4
+    meta$xtmp <- meta$time %% zoombound
+    meta$wrap.group <- ceiling(meta$time/zoombound)
+    if (sum(meta$xtmp==0)){
+      meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
+      meta$xtmp[meta$xtmp==0] <- zoombound
+    }
+    meta$limits[1:2] <- extend_ranges(meta$xtmp)
+  } else if (!meta$serie.mode) {
+    zoombound <- crt_range-meta$wrap.shift[1]
+    if (meta$wrap.shift[1]==1 & zoombound<3){
+      zoombound <- 3
+    } else if (meta$wrap.shift[1]!=1 & zoombound<meta$wrap.shift[1]){
+      zoombound <- crt_range %% meta$wrap.shift[1]
+      if (!zoombound) zoombound <- meta$wrap.shift[1]
+    }
+    meta$xtmp <- meta$time %% zoombound
+    meta$wrap.group <- ceiling(meta$time/zoombound)
+    if (sum(meta$xtmp==0)){
+      meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
+      meta$xtmp[meta$xtmp==0] <- zoombound
+    }
+    meta$limits[1:2] <- extend_ranges(meta$xtmp)
+  }
+  meta$xat <- axis_loc(meta$limits[1:2])
+  meta$xlabels <- format(meta$xat)
+}
+
+##' key Left for back wrapping
+wrap_backward <- function(meta,data,crt_range){    
+  if (meta$shift) {
+    meta$xtmp <- meta$time
+    meta$wrap.group <- 1
+    meta$zoomsize <- diff(range(meta$xtmp, na.rm = TRUE))
+    meta$limits[1:2] <- extend_ranges(meta$xtmp)
+    meta$drag.mode <- FALSE
+  } else {
+    hits <- selected(data)[meta$orderEnter]
+    if (meta$serie.mode & sum(hits)) {
+      meta$xtmp[hits] <- meta$xtmp[hits] - diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
+      if (max(meta$xtmp[hits],na.rm=TRUE)<min(meta$time,na.rm=TRUE)) {
+        meta$xtmp[hits] <- meta$xtmp[selected(data)] - max(meta$xtmp[hits],na.rm=TRUE) + 
+          min(meta$time,na.rm=TRUE)
+      }
+    } else if (!meta$serie.mode) {
+      zoombound <- crt_range+meta$wrap.shift[1]
+      if (zoombound>(meta$zoomsize+min(meta$time,na.rm=TRUE))) {
+        zoombound <- meta$zoomsize+min(meta$time,na.rm=TRUE)
+      }
+      meta$xtmp <- meta$time %% zoombound
+      meta$wrap.group <- ceiling(meta$time/zoombound)
+      if (sum(meta$xtmp==0)){
+        meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
+        meta$xtmp[meta$xtmp==0] <- zoombound
+      }
+      while (diff(range(meta$xtmp,na.rm=TRUE))+1 <= crt_range &
+        zoombound<meta$zoomsize+min(meta$time,na.rm=TRUE)) {
+        zoombound <- zoombound+max(meta$wrap.shift)
+        if (zoombound>(meta$zoomsize+min(meta$time,na.rm=TRUE))) {
+          zoombound <- meta$zoomsize+min(meta$time,na.rm=TRUE)
+        }
+        meta$xtmp <- meta$time %% zoombound
+        meta$wrap.group <- ceiling(meta$time/zoombound)
+        if (sum(meta$xtmp==0)){
+          meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
+          meta$xtmp[meta$xtmp==0] <- zoombound
+        }
+      }
+    }
+    meta$limits[1:2] <- extend_ranges(meta$xtmp)
+  }
+  meta$xat <- axis_loc(meta$limits[1:2])
+  meta$xlabels <- format(meta$xat)
+}
+
+##' key Up/Down for adjusting the point size / line width
+size_up <- function(meta){
+  meta$radius <- meta$radius + 1
+}
+size_down <- function(meta){
+  meta$radius <- max(0.1, meta$radius - 1)
+}
+
+##' key Plus/Minus for alpha blending
+alpha_plus <- function(meta){
+  meta$alpha <- max(0.01, 1/nrow(data), min(1, 1.1 * meta$alpha))
+}
+alpha_minus <- function(meta){
+  meta$alpha <- max(0.01, 1/nrow(data), min(1, 0.9 * meta$alpha))
+}
 
 
-qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
-                  shift=c(1,4,7,12,24), size=2, alpha=1, asp=NULL, 
-                  main=NULL, xlab=NULL, ylab=NULL,...){
+qtime2 <- function(time, data, period=NULL, group=NULL,
+                   shift=c(1,4,7,12,24), size=2, alpha=1, asp=NULL, 
+                   main=NULL, xlab=NULL, ylab=NULL,...){
   
   #####################
   ## data processing ##----------
@@ -299,7 +435,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
     }
     if (event$button() == Qt$Qt$LeftButton) {
       meta$brush.move <- TRUE
-      if (meta$serie.mode | meta$wrapF_dragT) {
+      if (meta$serie.mode | meta$drag.mode) {
         b$cursor <- 18L
       } else {
         b$cursor <- 0L
@@ -312,7 +448,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       b$cursor <- 0L
     }
     meta$pos <- as.numeric(event$pos())
-    if (meta$wrapF_dragT) {     
+    if (meta$drag.mode) {     
       meta$limits[1:2] <- meta$limits[1:2] - meta$pos[1] + meta$start[1]
       if (meta$limits[1,1]<extend_ranges(meta$time)[1]) {
         meta$limits[1:2] <- meta$limits[1:2] - meta$limits[1,1] + extend_ranges(meta$time)[1]
@@ -321,7 +457,6 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       }
       meta$xat <- axis_loc(meta$limits[1:2])
       meta$xlabels <- format(meta$xat)
-      
       qupdate(main_circle_layer)
       qupdate(main_line_layer)
     }
@@ -334,7 +469,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
     selected(data) <- meta$orderEnter[hits]
   }
   
-  mouse_wheel = function(layer, event) {
+  mouse_wheel <- function(layer, event) {
     pos <- as.numeric(event$pos())
     lim <- meta$limits
     p <- (pos - lim[1, ]) / (lim[2, ] - lim[1, ])
@@ -342,233 +477,45 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
     tmprange <- extend_ranges(unlist(meta$xtmp))
     meta$limits[1,1] <- max(meta$limits[1,1],min(tmprange))
     meta$limits[2,1] <- min(meta$limits[2,1],max(tmprange))
-    if (meta$limits[1,1]<=min(tmprange) & meta$limits[2,1]>=max(tmprange)){
-      meta$wrapF_dragT <- FALSE
-    } else {
-      meta$wrapF_dragT <- TRUE
-      meta$wrap.mode <- FALSE
-    }
+    meta$drag.mode <- ifelse(meta$limits[1,1]<=min(tmprange) & meta$limits[2,1]>=max(tmprange), FALSE, TRUE)
   }
   
   query_hover <- function(item, event, ...) {
     meta$query.pos <- as.numeric(event$pos())
-    if (meta$serie.mode) meta$serie.pos <- as.numeric(event$pos())
+    #  if (meta$serie.mode) meta$serie.pos <- as.numeric(event$pos())
     qupdate(query_layer)
   }
   
   query_hover_leave <- function(item, event, ...) {
     meta$query.pos <- NULL
-    if (meta$serie.mode) meta$serie.pos <- NULL
+    #  if (meta$serie.mode) meta$serie.pos <- NULL
     qupdate(query_layer)
   }
   
   key_press <- function(layer, event){
     crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
-    #keys = c('W','M','G','U','D','Left','Right','Up','Down','Plus','Minus')
-    #meta$shift = shift_on(event)
-    #switch(key, 
-    #       W = toggle_wrap_mode(meta), 
-    #       M = switch_serie_mode(meta, data)
-    #       G = shift_wrap_gear(meta)
-    #       U = separate_group()
-    #       D = mix_group()
-    #       Left = wrap_backward()
-    #       Right = wrap_forward()
-    #       Up = size_up()
-    #       
-    #       )
-    if (match_key('W', event)) {
-      ## key W for switching the wrapping mode
-      
-      meta$wrap.mode <- !meta$wrap.mode
-      #qupdate(layer.WRAPtext)
-    } else if (match_key('M', event)) {
-      ## key M for switching the serie mode (for selecting and moving)
-      
-      if (length(meta$group)){
-        meta$serie.mode <- !meta$serie.mode
-        if (!meta$serie.mode) {
-          remove_listener(data,meta$linkID)
-          meta$linkID <- NULL
-        } else {
-          if (class(data[,meta$varname$g])=='factor'){
-            meta$linkID <- link_cat(data, meta$varname$g)
-          } else {
-            message("The group variable is not a factor. Please change to factor before pressing M.")
-            meta$serie.mode <- FALSE
-          }
-        }
-      } else if (meta$nyvar>1) {
-        meta$serie.mode <- !meta$serie.mode
-      }
-      if (!meta$wrap.mode) {
-        if (meta$limits[1,1]>extend_ranges(c(meta$time,meta$xtmp))[1] | 
-          meta$limits[2,1]<extend_ranges(c(meta$time,meta$xtmp))[2]) {
-          meta$wrapF_dragT <- !meta$wrapF_dragT
-        }
-      }
-    } else if (event$key()==Qt$Qt$Key_G){
-      ## key G for gear(shift the wrapping speed)
-      
-      meta$wrap.shift <- c(meta$wrap.shift[-1],meta$wrap.shift[1])
-      #qupdate(layer.WRAPtext)
-    } else if (event$key()==Qt$Qt$Key_Right){
-      ## arrow right
-      
-      if (meta$wrap.mode) {
-        hits <- selected(data)[meta$orderEnter]
-        if (meta$serie.mode & sum(hits)) {
-          meta$xtmp[hits] <- meta$xtmp[hits] + diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
-          if (min(meta$xtmp[hits],na.rm=TRUE)>max(meta$time,na.rm=TRUE)) {
-            meta$xtmp[hits] <- meta$xtmp[hits] - min(meta$xtmp[hits],na.rm=TRUE) + 
-                               max(meta$time,na.rm=TRUE)
-          }
-        } else if (is.null(call$period) & is.null(call$group) & 
-                   event$modifiers() == Qt$Qt$ShiftModifier) {
-          zoombound <- max(meta$wrap.shift)
-          if (zoombound<2) zoombound <- diff(range(meta$time,na.rm=TRUE))/4
-          meta$xtmp <- meta$time %% zoombound
-          meta$wrap.group <- ceiling(meta$time/zoombound)
-          if (sum(meta$xtmp==0)){
-            meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
-            meta$xtmp[meta$xtmp==0] <- zoombound
-          }
-          meta$limits[1:2] <- extend_ranges(meta$xtmp)
-        } else {
-          zoombound <- crt_range-meta$wrap.shift[1]
-          if (meta$wrap.shift[1]==1 & zoombound<3){
-            zoombound <- 3
-          } else if (meta$wrap.shift[1]!=1 & zoombound<meta$wrap.shift[1]){
-            zoombound <- crt_range %% meta$wrap.shift[1]
-            if (!zoombound) zoombound <- meta$wrap.shift[1]
-          }
-          meta$xtmp <- meta$time %% zoombound
-          meta$wrap.group <- ceiling(meta$time/zoombound)
-          if (sum(meta$xtmp==0)){
-            meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
-            meta$xtmp[meta$xtmp==0] <- zoombound
-          }
-          meta$limits[1:2] <- extend_ranges(meta$xtmp)
-        }
-      } else {
-        if (meta$wrapF_dragT) {
-          meta$limits[1:2] <- meta$limits[1:2] + diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
-          if (max(meta$limits[1:2])>max(meta$time,na.rm=TRUE)) {
-            meta$limits[1:2] <- meta$limits[1:2] - max(meta$limits[1:2]) + max(meta$time,na.rm=TRUE)
-          }
-        } 
-      }
-      meta$xat <- axis_loc(meta$limits[1:2])
-      meta$xlabels <- format(meta$xat)
-    } else if (event$key()==Qt$Qt$Key_Left){
-      ## arrow left
-      
-      if (event$modifiers() == Qt$Qt$ShiftModifier) {
-        meta$xtmp <- meta$time
-        meta$wrap.group <- 1
-        meta$zoomsize <- diff(range(meta$xtmp, na.rm = TRUE))
-        meta$limits[1:2] <- extend_ranges(meta$xtmp)
-      } else {
-        if (meta$wrap.mode) {
-          hits <- selected(data)[meta$orderEnter]
-          if (meta$serie.mode & sum(hits)) {
-            meta$xtmp[hits] <- meta$xtmp[hits] - diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
-            if (max(meta$xtmp[hits],na.rm=TRUE)<min(meta$time,na.rm=TRUE)) {
-              meta$xtmp[hits] <- meta$xtmp[selected(data)] - max(meta$xtmp[hits],na.rm=TRUE) + 
-                                 min(meta$time,na.rm=TRUE)
-            }
-          } else {
-            zoombound <- crt_range+meta$wrap.shift[1]
-            if (zoombound>(meta$zoomsize+min(meta$time,na.rm=TRUE))) {
-              zoombound <- meta$zoomsize+min(meta$time,na.rm=TRUE)
-            }
-            meta$xtmp <- meta$time %% zoombound
-            meta$wrap.group <- ceiling(meta$time/zoombound)
-            if (sum(meta$xtmp==0)){
-              meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
-              meta$xtmp[meta$xtmp==0] <- zoombound
-            }
-            while (diff(range(meta$xtmp,na.rm=TRUE))+1 <= crt_range &
-              zoombound<meta$zoomsize+min(meta$time,na.rm=TRUE)) {
-              zoombound <- zoombound+max(meta$wrap.shift)
-              if (zoombound>(meta$zoomsize+min(meta$time,na.rm=TRUE))) {
-                zoombound <- meta$zoomsize+min(meta$time,na.rm=TRUE)
-              }
-              meta$xtmp <- meta$time %% zoombound
-              meta$wrap.group <- ceiling(meta$time/zoombound)
-              if (sum(meta$xtmp==0)){
-                meta$wrap.group[meta$xtmp==0] <- meta$wrap.group[which(meta$xtmp==0)-1]
-                meta$xtmp[meta$xtmp==0] <- zoombound
-              }
-            }
-          }
-          meta$limits[1:2] <- extend_ranges(meta$xtmp)       
-        } else {
-          if (meta$wrapF_dragT) {
-            meta$limits[1:2] <- meta$limits[1:2] - diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
-            if (min(meta$limits[1:2])<min(meta$time,na.rm=TRUE)) {
-              meta$limits[1:2] <- meta$limits[1:2] - min(meta$limits[1:2]) + min(meta$time,na.rm=TRUE)
-            }
-          }
-        }
-      }
-      meta$xat <- axis_loc(meta$limits[1:2])
-      meta$xlabels <- format(meta$xat)
-      
-    } else if (event$key() == Qt$Qt$Key_U) {
-      ## Key U (for Up)
-      
-      if (meta$nyvar>1 & event$modifiers() == Qt$Qt$ShiftModifier) {
-        for (i in 1:meta$nyvar){
-          meta$ytmp[meta$ylist[,i]] <- meta$y[meta$ylist[,i]]+i
-        }
-        meta$shiftUP <- TRUE
-      } else if (!is.null(meta$group) & length(meta$group)>0) {
-        meta$vertconst <- meta$vertconst + 0.05
-        if (meta$vertconst>1) meta$vertconst <- 1
-        for (j in 1:meta$nyvar) {
-          meta$ytmp[meta$ylist[,j]] <- (meta$y[meta$ylist[,j]]-min(meta$y,na.rm=TRUE))/
-            diff(range(meta$y,na.rm=TRUE))+(as.integer(meta$group)-1)*meta$vertconst
-        }
-      }
-      meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
-      meta.yaxis()
-    } else if (event$key() == Qt$Qt$Key_D) {
-      ## Key D (for Down)
-      meta$shiftUP <- FALSE
-      if (meta$nyvar>1 & event$modifiers() == Qt$Qt$ShiftModifier) {
-        meta$ytmp <- meta$y
-        meta$shiftDOWN <- TRUE
-      } else {
-        if (!is.null(meta$group) & length(meta$group)>0) {
-          meta$vertconst <- meta$vertconst - 0.05
-          if (meta$vertconst<0) meta$vertconst <- 0
-          if (!meta$vertconst) {
-            meta$ytmp <- meta$y
-            meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))      
-          } else {
-            for (j in 1:meta$nyvar) {
-              meta$ytmp[meta$ylist[,j]] <- (meta$y[meta$ylist[,j]]-min(meta$y,na.rm=TRUE))/
-                diff(range(meta$y,na.rm=TRUE))+(as.integer(meta$group)-1)*meta$vertconst
-            }
-          }
-        }
-      } 
-      meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))  
-      meta.yaxis()
-    }
-    if (length(i <- which(event$key() == c(Qt$Qt$Key_Up, Qt$Qt$Key_Down)))) {
-      ## arrow up/down
-      meta$radius <- max(0.1, meta$radius + c(1, -1)[i])
-    } else if (length(i <- which(event$key() == c(Qt$Qt$Key_Plus, Qt$Qt$Key_Minus)))) {
-      ## arrow plus/minus: alpha blending
-      meta$alpha <- max(0.01, 1/nrow(data), min(1, c(1.1, 0.9)[i] * meta$alpha))
-    }
+    keys <- c('M','G','U','D','Left','Right','Up','Down','Plus','Minus')
+    meta$shift <- shift_on(event)
+    key <- keys[match_key(keys,event)]
+    if (!length(key)) return()
+    switch(key, 
+           M = switch_serie_mode(meta, data),
+           G = shift_wrap_gear(meta),
+           U = separate_group(meta),
+           D = mix_group(meta),
+           Left = wrap_backward(meta,data,crt_range),
+           Right = wrap_forward(meta,data,crt_range),
+           Up = size_up(meta),
+           Down = size_down(meta),
+           Plus = alpha_plus(meta),
+           Minus = alpha_minus(meta)
+           )
+    tree <<- createTree(data.frame(x=meta$xtmp,y=meta$ytmp))
     qupdate(main_circle_layer)
     qupdate(main_line_layer)
   }
   
-
+  
   ############
   ## layers ##----------
   ############
@@ -612,20 +559,18 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   brush_draw <- function(layer, painter) {
     
     if (any(is.na(meta$pos))) return()
-    hits <- selected(data)[meta$orderEnter]
     
-    if (meta$serie.mode) {
-      if (!any(hits)) return()
-      xpos <- meta$start[1]
-      ypos <- meta$start[2]      
-      meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
-      selected_draw(meta,b,hits,painter)
+    if (meta$drag.mode) {     
+      qupdate(main_circle_layer)
+      qupdate(main_line_layer)
       return()
     }
     
-    if (meta$wrapF_dragT) {     
-      qupdate(main_circle_layer)
-      qupdate(main_line_layer)
+    hits <- selected(data)[meta$orderEnter]
+    if (meta$serie.mode) {
+      if (!any(hits)) return()   
+      meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
+      selected_draw(meta,b,hits,painter)
       return()
     }
     
@@ -642,14 +587,14 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       queryaround <- ifelse(meta$radius<=4,8/meta$radius,1)
       xrange <- meta$radius/layer.root$size$width() * diff(meta$limits[c(1, 2)]) * queryaround
       yrange <- meta$radius/layer.root$size$height() * diff(meta$limits[c(3, 4)]) * queryaround
-  
+      
       rect <- matrix(c(xpos - xrange, ypos - yrange, xpos + xrange, ypos + yrange),
                      2, byrow = TRUE)
       hits <- rectLookup(tree, rect[1, ], rect[2, ])
-  
+      
       ## Nothing under mouse?
       if (length(hits) < 1) return()
-  
+      
       if (length(hits) > 1) {
         hitsdist <- rep(0,length(hits))
         for (i in 1:length(hits)){
@@ -666,11 +611,11 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
                            meta$yorig[hits,1],meta$ytmp[hits],
                            meta$varname$g,meta$group[hits])
       }
-  
+      
       ## label position
       labelxpos <- mean(meta$xtmp[hits])
       labelypos <- mean(meta$ytmp[hits])
-  
+      
       ## label text 
       idx <- (1:(ncol(info)/2))*2
       if (length(hits) == 1) {
@@ -694,7 +639,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       }
       bgwidth <- qstrWidth(painter, infostring)
       bgheight <- qstrHeight(painter, infostring)
-  
+      
       ## adjust drawing directions when close to the boundary
       hflag <- meta$limits[2] - xpos > bgwidth
       vflag <- ypos - meta$limits[3] > bgheight
@@ -703,12 +648,12 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
                 labelypos + ifelse(vflag, -1, 1) * bgheight,
                 stroke = rgb(1, 1, 1),
                 fill = rgb(1, 1, 1, 0.9))
-  
+      
       qstrokeColor(painter) <- b$label.color
       qdrawText(painter, infostring, labelxpos, labelypos,
                 halign = ifelse(hflag, "left", "right"),
                 valign = ifelse(vflag, "top", "bottom"))
-  
+      
     } else {
       if (length(meta$group)==0 & meta$nyvar==1) return()
       xrange <- diff(meta$limits[c(1, 2)])/10
@@ -736,7 +681,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
       selected_draw(meta,b,hits,painter)
     }
   }
-
+  
   
   #####################
   ## draw the canvas ##----------
@@ -797,22 +742,35 @@ qtime2 <- function(time, data, period=NULL, group=NULL, wrap=TRUE,
   layout$setColumnStretchFactor(0, 0)
   layout$setColumnStretchFactor(1, 0)
   
-
-    ## listeners on the data (which column updates which layer(s))
-      d.idx = add_listener(data, function(i, j) {
-        switch(j, .brushed = qupdate(brush_layer),
-               .color = {
-                   qupdate(main_circle_layer)
-                   qupdate(main_line_layer)
-               }, {
-                   qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
-                   main_circle_layer$invalidateIndex()
-                   main_line_layer$invalidateIndex()
-                   qupdate(main_circle_layer)
-                   qupdate(main_line_layer)
-               })
-     })
-
+  
+  ## listeners on the data (which column updates which layer(s))
+  d.idx = add_listener(data, function(i, j) {
+    switch(j, .brushed = qupdate(brush_layer),
+           .color = {
+             qupdate(main_circle_layer)
+             qupdate(main_line_layer)
+           }, {
+             qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+             main_circle_layer$invalidateIndex()
+             main_line_layer$invalidateIndex()
+             qupdate(main_circle_layer)
+             qupdate(main_line_layer)
+           })
+  })
+  qconnect(main_circle_layer, 'destroyed', function(x) {
+    ## b$colorChanged$disconnect(b.idx)
+    remove_listener(data, d.idx)
+  })
+  b$cursorChanged$connect(function() {
+    set_cursor(view, b$cursor)
+  })
+  sync_limits(meta, main_circle_layer,main_line_layer,
+              query_layer, brush_layer)#,
+  #layer.WRAPtext,layer.ACFtext)
+  meta$manual.brush = function(pos) {
+    brush_mouse_move(layer = main_circle_layer, event = list(pos = function() pos))
+  }
+  
   view <- qplotView(scene=scene)
   view$setWindowTitle(meta$main)
   attr(view, 'meta') = meta
@@ -825,4 +783,4 @@ nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 #qnasa <- time_qdata(nasa11,c("ts","ca_med"))
 qnasa <- time_qdata(nasa11,c("ts","ps_tovs","ca_med"))
 a=qtime2(TimeIndx,qnasa,shift=c(1,12))
-a
+meta=attr(a,'meta')
