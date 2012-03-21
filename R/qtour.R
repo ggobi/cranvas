@@ -99,6 +99,7 @@ qtour =
         meta
     }
 
+setOldClass("tour_path")
 Tour.meta =
     setRefClass("Tourr_meta", fields =
                 properties(list(vars = 'character',
