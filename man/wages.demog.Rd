@@ -40,7 +40,7 @@ qbar(ged, data = qwg)
 qhist(hgc, data = qwg)
 
 qwages <- qdata(wages)
-qscatter(exper, lnw, data = qwages)
+qscatter(exper, lnw, data = qwages, alpha = 0.5)
 
 id <- link_cat(qwages, var1 = "id", qwg, var2 = "id")
 

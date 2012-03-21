@@ -17,10 +17,10 @@ last_data()
 \examples{
 library(cranvas)
 data(nrcstat)
-qnrc <- qdata(nrcstat, color = Regional.Code)
-qbar(Regional.Code, data = last_data())
+qnrc <- qdata(nrcstat, color = RegCode)
+qbar(RegCode, data = last_data())
 ## or simply ignore the data argument
-qbar(Regional.Code)
+qbar(RegCode)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

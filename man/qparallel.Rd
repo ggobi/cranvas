@@ -7,7 +7,7 @@ qparallel(vars = ~., data = last_data(), scale = "range",
     order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = FALSE, 
     glyph = c("auto", "line", "tick", "circle", "square", "triangle"), 
     boxplot = FALSE, width = NULL, jitter = NULL, amount = NULL, 
-    main = "")
+    main = "", alpha = 1)
 }
 \arguments{
   \item{scale}{data standardizing method; possible values
@@ -51,6 +51,10 @@ qparallel(vars = ~., data = last_data(), scale = "range",
 
   \item{amount}{jitter amount}
 
+  \item{main}{title of plot}
+
+  \item{alpha}{value for alpha-blending}
+
   \item{vars}{variables to show in the plot: a character
   vector of variable names, or a numeric vector of column
   indices, or a two-sided formula like \code{~ x1 + x2 +
@@ -60,8 +64,6 @@ qparallel(vars = ~., data = last_data(), scale = "range",
   \item{data}{a mutaframe created by \code{\link{qdata}}
   (default to be \code{\link{last_data}()}, i.e. the lastly
   used data)}
-
-  \item{main}{the main title}
 }
 \value{
   A par-coords plot
