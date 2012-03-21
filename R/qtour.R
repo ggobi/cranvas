@@ -42,7 +42,6 @@ qtour =
             Tour.meta$new(vars = var_names(vars, data), aps = aps, fps = fps,
                            rescale = rescale, sphere = sphere, tour_path = tour_path)
         src = last_time = tour = timer = NULL
-        aps.init <<- aps
 
         tour_init = function() {
             src <<- vapply(as.data.frame(data[, meta$vars]), as.numeric,
@@ -84,14 +83,8 @@ qtour =
         meta$start = function() {
             timer$start()
         }
-        meta$slower = function() {
-            meta$aps = meta$aps * 0.9
-        }
-        meta$faster = function() {
-            meta$aps = meta$aps * 1.1
-        }
-        meta$speed = function(ratio) {
-            meta$aps = aps.init * ratio
+        meta$speed = function(ratio = 1) {
+            meta$aps = meta$aps * ratio
         }
         meta$changed$connect(function(name) {
             if (name != 'apsChanged') tour_init()
