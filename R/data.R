@@ -195,10 +195,10 @@ Scales.meta =
 ##' @export
 ##' @examples library(cranvas)
 ##' data(nrcstat)
-##' qnrc = qdata(nrcstat, color = Regional.Code)
-##' qbar(Regional.Code, data = last_data())
+##' qnrc = qdata(nrcstat, color = RegCode)
+##' qbar(RegCode, data = last_data())
 ##' ## or simply ignore the data argument
-##' qbar(Regional.Code)
+##' qbar(RegCode)
 last_data = function() {
     if (is.null(.cranvasEnv$.last.data))
         stop('No data object was created by qdata() yet') else .cranvasEnv$.last.data
