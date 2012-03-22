@@ -3,6 +3,7 @@ library(cranvas)
 ## example 1: NASA temperature data
 data(nasa)
 nasa2221 <- subset(nasa, Gridx == 22 & Gridy == 21)
+nasa2221$Year <- factor(nasa2221$Year)
 qnasa1 <- time_qdata(nasa2221,"ts")
 qnasa2 <- time_qdata(nasa2221,c("ts","ps_tovs","ca_med"))
 
@@ -18,7 +19,7 @@ qtime2(TimeIndx,qnasa2,Year)
 
 
 ## example 2: Remifentanil in the nlme package
-require(nlme)
+library(nlme)
 qRem <- time_qdata(Remifentanil[complete.cases(Remifentanil) &
     Remifentanil$ID==1,],"conc")
 qtime2(Time,qRem)

@@ -519,7 +519,7 @@ time_meta_initialize <- function(meta,call,data,period, group,
         meta$xtmp <- meta$xtmp[meta$orderEnter]
     }
     if (!is.null(call$period)) {
-        pdLen <- tapply(meta$time,factor(paste(meta$.variable,meta$group)),length)
+        pdLen <- tapply(meta$time,factor(paste(as.character(data$.variable), as.character(meta$group),sep="")),length)
         if (!all(pdLen==pdLen[1])) {
             warning('Period lengths are not the same.')
             ## need to be modified here !!
@@ -535,7 +535,7 @@ time_meta_initialize <- function(meta,call,data,period, group,
     ## Y axis setting
     meta$varname$y <- as.character(unique(data$.variable)) 
     meta$yorig <- as.data.frame(data)[meta$orderEnter,c(".variable",".value")]
-    meta$ylist <- as.data.frame(data)[meta$orderEnter,meta$varname$y]
+    meta$ylist <- as.data.frame(as.data.frame(data)[meta$orderEnter,meta$varname$y])
     meta$y <- meta$yorig[,2]
     if (meta$nyvar>1) {
         for (i in 1:meta$nyvar) {
