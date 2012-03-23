@@ -673,6 +673,7 @@ qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
     filename = file.path(normalizePath(dirname(filename)), basename(filename))
     size = as.numeric(view$size)  # original size
     view$resize(width, height)
+    view$scene()$setBackgroundBrush(Qt$QBrush(Qt$QColor(255, 255, 255)))
     qimg = Qt$QImage(view$sceneRect$size()$toSize(), Qt$QImage$Format_ARGB32_Premultiplied)
     pt = Qt$QPainter(qimg)
     view$scene()$render(pt)
