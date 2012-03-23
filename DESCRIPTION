@@ -67,3 +67,4 @@ Collate:
     'qtime.R'
     'qspine.R'
     'qtour.R'
+    'knitr.R'
