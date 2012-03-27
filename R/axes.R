@@ -287,7 +287,7 @@ qmtext = function(parent = NULL, meta = NULL, side = 1, text = '', x = 0.5, y = 
             if (side == 2) text = meta$ylab
             if (side == 3) text = meta$main
         }
-        qfont(painter) = Qt$QFont('Palatino', pointSize = 11)
+        qfont(painter) = Qt$QFont('Palatino', pointSize = 14)
         qstrokeColor(painter) = "grey50"
         qdrawText(painter, text, x, y, rot = c(0, 90, 0, 90)[side], cex = cex)
     }
