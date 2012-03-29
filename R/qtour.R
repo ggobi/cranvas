@@ -72,13 +72,11 @@ qtour =
     timer$interval <- 1000 / fps
     meta = Tour.meta$new(timer = timer,vars = var_names(vars, data), data = data,
       src = src, tour = tour, 
-      aps = aps, aps.init = aps, fps = fps,
+      aps = new('NumericWithMin0Max3', aps),
+      aps.init = aps,
+      fps = new('NumericWithMin0Max60', fps),
       rescale = rescale, sphere = sphere, tour_path = tour_path)
-    ## register signal
-    ## meta$changed$connect(function(name) {
-    ##   if (name != 'apsChanged') tour_init()
-    ## })
-    meta$speedChanged$connect(function() flea_tour$setSpeed(meta$speed))
+    meta$regSignal()
     meta
   }
 
@@ -98,16 +96,17 @@ setRefClass("QTour", contains = "VIRTUAL",
               tour = "function"))
 
 speedcontrol <- setNumericWithRange("Numeric", min=0, max=3)
+fpscontrol <- setNumericWithRange("Numeric", min=0, max=60)
 
 Tour.meta = setRefClass("Tourr_meta", fields =
-  properties(list(aps = 'numeric',
+  properties(list(aps = 'NumericWithMin0Max3',
                   aps.init = 'numeric',
-                  fps = 'numeric',
+                  fps = 'NumericWithMin0Max60',
                   rescale = 'logical',
                   sphere = 'logical',
-                  speed = "NumericWithMin0Max3"),
+                  speed = 'NumericWithMin0Max3'),
              prototype = list(
-               speed = new("NumericWithMin0Max3", 1)
+               speed = new('NumericWithMin0Max3', 1)
                )),
   contains = c("PropertySet", "QTour"))
 
@@ -133,13 +132,19 @@ Tour.meta$methods(
                   tour_init = function(){
                     src <<- vapply(as.data.frame(data[, vars]), as.numeric,
                                    numeric(nrow(data)))
-                    if (meta$rescale)
+                    if (rescale)
                       src <<- tourr::rescale(src)
-                    if (meta$sphere)
+                    if (sphere)
                       src <<- tourr::sphere(src)
                     tour <<- new_tour(src, tour_path, NULL)
                     timer$interval <<- 1000 / fps
+                  },
+                  regSignal = function(){
+                    ## register singal here
+                    ## register signal
+                    ## meta$changed$connect(function(name) {
+                    ##   if (name != 'apsChanged') tour_init()
+                    ## })
+                    speedChanged$connect(function() setSpeed(speed))
                   })
-
-
 
