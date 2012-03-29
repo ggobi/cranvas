@@ -35,72 +35,111 @@
 ##' @export
 ##' @example inst/examples/qtour-ex.R
 qtour =
-    function(vars = ~., data = last_data(), tour_path = grand_tour(), aps = 1, fps = 30,
-             rescale = TRUE, sphere = FALSE, ...) {
-        data = check_data(data)
-        meta =
-            Tour.meta$new(vars = var_names(vars, data), aps = aps, fps = fps,
-                           rescale = rescale, sphere = sphere, tour_path = tour_path)
-        src = last_time = tour = timer = NULL
-
-        tour_init = function() {
-            src <<- vapply(as.data.frame(data[, meta$vars]), as.numeric,
-                           numeric(nrow(data)))
-            if (meta$rescale)
-                src <<- tourr::rescale(src)
-            if (meta$sphere)
-                src <<- tourr::sphere(src)
-            tour <<- new_tour(src, meta$tour_path, NULL)
-            timer$interval = 1000 / meta$fps
-        }
-        tour_step = function() {
-            if (is.null(last_time)) {
-                last_time <<- proc.time()[3]
-                delta = 0
-            } else {
-                cur_time = proc.time()[3]
-                delta = (cur_time - last_time)
-                last_time <<- cur_time
-            }
-            step = tour(meta$aps * delta)
-            if (is.null(step$proj)) {
-                meta$pause()
-                return()
-            }
-            data_proj = src %*% step$proj
-            data_proj = scale(data_proj, center = TRUE, scale = FALSE)
-            colnames(data_proj) = paste("proj", 1:ncol(data_proj), sep = "")
-            for(col in colnames(data_proj)) {
-                data[[col]] = data_proj[, col]
-            }
-            invisible(step)
-        }
-        timer = qtimer(1000, tour_step)
-        tour_init()
-        meta$pause = function() {
-            timer$stop()
-        }
-        meta$start = function() {
-            timer$start()
-        }
-        meta$speed = function(ratio = 1) {
-            meta$aps = meta$aps * ratio
-        }
-        meta$changed$connect(function(name) {
-            if (name != 'apsChanged') tour_init()
-        })
-        meta
+  function(vars = ~., data = last_data(), tour_path = grand_tour(), aps = 1, fps = 30,
+           rescale = TRUE, sphere = FALSE, ...) {
+    data = check_data(data)
+    src = last_time = tour = timer = NULL
+    tour_step = function(){
+      if (is.null(last_time)) {
+        last_time <<- proc.time()[3]
+        delta = 0
+      } else {
+        cur_time = proc.time()[3]
+        delta = (cur_time - last_time)
+        last_time <<- cur_time
+      }
+      step = tour(meta$aps * delta)
+      if (is.null(step$proj)) {
+        meta$pause()
+        return()
+      }
+      data_proj = src %*% step$proj
+      data_proj = scale(data_proj, center = TRUE, scale = FALSE)
+      colnames(data_proj) = paste("proj", 1:ncol(data_proj), sep = "")
+      for(col in colnames(data_proj)) {
+        data[[col]] = data_proj[, col]
+      }
+      invisible(step)
     }
+    timer <- qtimer(1000, tour_step)
+    src <- vapply(as.data.frame(data[, vars]), as.numeric,
+                  numeric(nrow(data)))
+    if (rescale)
+      src <- tourr::rescale(src)
+    if (sphere)
+      src <- tourr::sphere(src)
+    tour <- new_tour(src, tour_path, NULL)
+    timer$interval <- 1000 / fps
+    meta = Tour.meta$new(timer = timer,vars = var_names(vars, data), data = data,
+      src = src, tour = tour, 
+      aps = aps, aps.init = aps, fps = fps,
+      rescale = rescale, sphere = sphere, tour_path = tour_path)
+    ## register signal
+    ## meta$changed$connect(function(name) {
+    ##   if (name != 'apsChanged') tour_init()
+    ## })
+    meta$speedChanged$connect(function() flea_tour$setSpeed(meta$speed))
+    meta
+  }
+
 
 setOldClass("tour_path")
-Tour.meta =
-    setRefClass("Tourr_meta", fields =
-                properties(list(vars = 'character',
-                                tour_path = 'tour_path',
-                                aps = 'numeric', fps = 'numeric',
-                                rescale = 'logical', sphere = 'logical',
-                                start = 'function', stop = 'function',
-                                slower = 'function', faster = 'function',
-                                speed = 'function')),
-                contains = "PropertySet")
+setOldClass("QTimer")
+setOldClass("mutaframe")
+
+
+setRefClass("QTour", contains = "VIRTUAL",
+            fields = list(timer = "QTimer",
+              last_time = "numeric", 
+              vars = "character",
+              tour_path = "tour_path",
+              data = "mutaframe",
+              src = "matrix",
+              tour = "function"))
+
+speedcontrol <- setNumericWithRange("Numeric", min=0, max=3)
+
+Tour.meta = setRefClass("Tourr_meta", fields =
+  properties(list(aps = 'numeric',
+                  aps.init = 'numeric',
+                  fps = 'numeric',
+                  rescale = 'logical',
+                  sphere = 'logical',
+                  speed = "NumericWithMin0Max3"),
+             prototype = list(
+               speed = new("NumericWithMin0Max3", 1)
+               )),
+  contains = c("PropertySet", "QTour"))
+
+Tour.meta$methods(
+                  initialize = function(...){
+                    callSuper(...)
+                  },
+                  pause = function() {
+                    timer$stop()
+                  },
+                  start = function() {
+                    timer$start()
+                  },
+                  slower = function() {
+                    aps <<- meta$aps * 0.9
+                  },
+                  faster = function() {
+                    aps <<- meta$aps * 1.1
+                  },
+                  setSpeed = function(ratio) {
+                    aps <<- aps.init * ratio
+                  },
+                  tour_init = function(){
+                    src <<- vapply(as.data.frame(data[, vars]), as.numeric,
+                                   numeric(nrow(data)))
+                    if (meta$rescale)
+                      src <<- tourr::rescale(src)
+                    if (meta$sphere)
+                      src <<- tourr::sphere(src)
+                    tour <<- new_tour(src, tour_path, NULL)
+                    timer$interval <<- 1000 / fps
+                  })
+
+
 
