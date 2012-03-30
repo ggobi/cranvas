@@ -75,6 +75,9 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
             meta$brush.move <- TRUE
             if (meta$serie.mode | meta$drag.mode) {
                 b$cursor <- 18L
+                if (meta$serie.mode) {
+                    meta$serie.start <- TRUE
+                }
             } else {
                 b$cursor <- 0L
             }    
@@ -86,17 +89,23 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
             b$cursor <- 0L
         }
         meta$pos <- as.numeric(event$pos())
-        if (meta$drag.mode) {     
-            meta$limits[1:2] <- meta$limits[1:2] - meta$pos[1] + meta$start[1]
-            if (meta$limits[1,1]<extend_ranges(meta$time)[1]) {
-                meta$limits[1:2] <- meta$limits[1:2] - meta$limits[1,1] + extend_ranges(meta$time)[1]
-            } else if (meta$limits[2,1]>extend_ranges(meta$time)[2]) {
-                meta$limits[1:2] <- meta$limits[1:2] - meta$limits[2,1] + extend_ranges(meta$time)[2]
-            }
-            meta$xat <- axis_loc(meta$limits[1:2])
-            meta$xlabels <- format(meta$xat)
+        if (meta$serie.start | meta$drag.mode) {
+          if (meta$serie.start) {
+              hits <- selected(data)[meta$orderEnter]
+              meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
+          } else {
+              meta$limits[1:2] <- meta$limits[1:2] - meta$pos[1] + meta$start[1]
+              if (meta$limits[1,1]<extend_ranges(meta$time)[1]) {
+                  meta$limits[1:2] <- meta$limits[1:2] - meta$limits[1,1] + extend_ranges(meta$time)[1]
+              } else if (meta$limits[2,1]>extend_ranges(meta$time)[2]) {
+                  meta$limits[1:2] <- meta$limits[1:2] - meta$limits[2,1] + extend_ranges(meta$time)[2]
+              }
+              meta$xat <- axis_loc(meta$limits[1:2])
+              meta$xlabels <- format(meta$xat)
+          }
             qupdate(main_circle_layer)
             qupdate(main_line_layer)
+            return()
         }
         rect <- as.matrix(qrect(update_brush_size(meta)))
         hits <- rectLookup(tree, rect[1, ], rect[2, ])
@@ -105,6 +114,11 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
             return()
         }
         selected(data) <- meta$orderEnter[hits]
+    }
+    
+    brush_mouse_release <- function(layer, event){
+        brush_mouse_move(layer, event)
+        meta$serie.start <- FALSE
     }
     
     mouse_wheel <- function(layer, event) {
@@ -207,7 +221,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
         hits <- selected(data)[meta$orderEnter]
         if (meta$serie.mode) {
             if (!any(hits)) return()   
-            meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
+            #meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
             selected_draw(meta,b,hits,painter)
             return()
         }
@@ -342,7 +356,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
                                 hoverMoveFun = query_hover,
                                 hoverLeaveFun = query_hover_leave,
                                 mousePressFun = brush_mouse_press, 
-                                mouseReleaseFun = brush_mouse_move,
+                                mouseReleaseFun = brush_mouse_release,
                                 mouseMove = brush_mouse_move,
                                 wheelFun = mouse_wheel,
                                 keyPressFun = key_press,
@@ -581,6 +595,7 @@ time_meta_initialize <- function(meta,call,data,period, group,
     meta$pos <- c(NA, NA)
     meta$query.pos <- NULL
     meta$start <- c(NA, NA)
+    meta$serie.start <- FALSE
     meta$brush.move <- TRUE
     meta$brush.size <- c(diff(meta$limits[1:2]),
                          -diff(meta$limits[3:4]))/30
@@ -723,12 +738,10 @@ mix_group <- function(meta){
 wrap_forward <- function(meta,data,crt_range){
     hits <- selected(data)[meta$orderEnter]
     if (meta$serie.mode & sum(hits)) {
-        meta$xtmp[hits] <- meta$xtmp[hits] + diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
-        if (min(meta$xtmp[hits],na.rm=TRUE)>max(meta$time,na.rm=TRUE)) {
-            meta$xtmp[hits] <- meta$xtmp[hits] - min(meta$xtmp[hits],na.rm=TRUE) + 
-                max(meta$time,na.rm=TRUE)
+        if (min(meta$xtmp[hits],na.rm=TRUE)<=max(meta$time,na.rm=TRUE)){
+            meta$xtmp[hits] <- meta$xtmp[hits] + diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
         }
-    } else if (!length(meta$group) & meta$shift) {
+     } else if (!length(meta$group) & meta$shift) {
         zoombound <- max(meta$wrap.shift)
         if (zoombound<2) zoombound <- diff(range(meta$time,na.rm=TRUE))/4
         meta$xtmp <- meta$time %% zoombound
@@ -769,10 +782,8 @@ wrap_backward <- function(meta,data,crt_range){
     } else {
         hits <- selected(data)[meta$orderEnter]
         if (meta$serie.mode & sum(hits)) {
-            meta$xtmp[hits] <- meta$xtmp[hits] - diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
-            if (max(meta$xtmp[hits],na.rm=TRUE)<min(meta$time,na.rm=TRUE)) {
-                meta$xtmp[hits] <- meta$xtmp[selected(data)] - max(meta$xtmp[hits],na.rm=TRUE) + 
-                    min(meta$time,na.rm=TRUE)
+            if (max(meta$xtmp[hits],na.rm=TRUE) >= min(meta$time,na.rm=TRUE)) {
+              meta$xtmp[hits] <- meta$xtmp[hits] - diff(range(meta$time,na.rm=TRUE))/meta$singleVarLen
             }
         } else if (!meta$serie.mode) {
             zoombound <- crt_range+meta$wrap.shift[1]
@@ -798,8 +809,9 @@ wrap_backward <- function(meta,data,crt_range){
                     meta$xtmp[meta$xtmp==0] <- zoombound
                 }
             }
+            meta$limits[1:2] <- extend_ranges(meta$xtmp)
         }
-        meta$limits[1:2] <- extend_ranges(meta$xtmp)
+        
     }
     meta$xat <- axis_loc(meta$limits[1:2])
     meta$xlabels <- format(meta$xat)
