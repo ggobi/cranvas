@@ -58,6 +58,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
     time_meta_initialize(meta,call,data=data,period=period, group=group, wrap=wrap,
                          shift=shift, size=size, alpha=alpha, asp=asp, 
                          main=main, xlab=xlab, ylab=ylab)
+    meta$active <- TRUE
     tree <- createTree(data.frame(x=meta$xtmp,y=meta$ytmp))
     
     ####################
