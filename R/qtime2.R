@@ -468,9 +468,9 @@ Time.meta =
 ##' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 ##' qnasa <- time_qdata(nasa11,c("ts","ps_tovs","ca_med"))
 ##'
-time_qdata <- function(data, y, color = "gray15", border = color, size = 4, brushed = FALSE, 
-                       visible = TRUE, copy = TRUE) {
+time_qdata <- function(regular_qdata, y) {
     ycol <- length(y)
+    data <- as.data.frame(regular_qdata)
     data$.row <- 1:nrow(data)
     newdat <- data.frame(.variable=rep(y[1],nrow(data)),.value=data[,y[1]],data)
     newdat[,y[1]] <- TRUE
@@ -484,8 +484,28 @@ time_qdata <- function(data, y, color = "gray15", border = color, size = 4, brus
         }
     }
     newdat$.variable <- as.factor(newdat$.variable)
-    return(qdata(newdat, color = color, border = border, size = size, brushed = brushed, 
-                 visible = visible, copy = copy))
+    newdat <- as.mutaframe(newdat)
+    #add_listener(newdat,link_time_forward(ycol,regular_qdata,newdat))
+    #add_listener(regular_qdata,link_time_back(ycol,regular_qdata,newdat))
+    return(newdat)
+}
+
+link_time_forward <- function(ycol,regular_qdata,newdat){
+    if (selected(regular_qdata)) {
+        selected(newdat) <- selected(regular_qdata)+(0:(ycol-1))*nrow(regular_qdata)
+    } else {
+        selected(newdat) <- FALSE
+    }
+}
+    
+link_time_back <- function(ycol,regular_qdata,newdat){
+    if (selected(newdat)) {
+        tmp <- sort(unique(selected(newdat)%%nrow(regular_qdata)),decreasing=FALSE)
+        if (0 %in% tmp) {tmp=c(tmp[-1],nrow(regular_qdata))}
+        selected(regular_qdata) <- tmp
+    } else {
+        selected(regular_qdata) <- FALSE
+    }
 }
 
 
