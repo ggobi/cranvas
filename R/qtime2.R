@@ -471,6 +471,9 @@ Time.meta =
 time_qdata <- function(regular_qdata, y) {
     ycol <- length(y)
     data <- as.data.frame(regular_qdata)
+    usecol <- colnames(data) %in% c(".brushed",".visible",".color",".border",".size")
+    setting <- data[1,usecol]
+    data <- data[, !usecol]
     data$.row <- 1:nrow(data)
     newdat <- data.frame(.variable=rep(y[1],nrow(data)),.value=data[,y[1]],data)
     newdat[,y[1]] <- TRUE
@@ -484,7 +487,9 @@ time_qdata <- function(regular_qdata, y) {
         }
     }
     newdat$.variable <- as.factor(newdat$.variable)
-    newdat <- as.mutaframe(newdat)
+    newdat <- qdata(newdat,color = setting[1,3], border = setting[1,4], 
+                    size = setting[1,5], brushed = setting[1,1], 
+                    visible = setting[1,2])
     #add_listener(newdat,link_time_forward(ycol,regular_qdata,newdat))
     #add_listener(regular_qdata,link_time_back(ycol,regular_qdata,newdat))
     return(newdat)
