@@ -84,7 +84,7 @@ qdata =
     l = Scales.meta$new()  # record scales in an environment genreated by ref classes
     for (i in c('color', 'border', 'size')) {
         if (is.language(z[[i]])) {
-            v = eval(z[[i]], data)
+            v = eval(z[[i]], data, enclos=parent.frame())
             pal = NULL
             mf[[sprintf('.%s', i)]] = if (i != 'size') {
                 if (is.factor(v)) {
