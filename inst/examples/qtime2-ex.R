@@ -8,9 +8,8 @@ qnasa <- qdata(nasa2221)
 qnasa1 <- time_qdata(qnasa,"ts")
 qnasa2 <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"))
 
-a=qtime2(TimeIndx,qnasa1,shift=c(1,12))
-meta=attr(a,'meta')
-a
+qtime2(TimeIndx,qnasa1,shift=c(1,12))
+qscatter(data=qnasa,ts,ps_tovs)
 
 qtime2(TimeIndx,qnasa1,Year,shift=1)
 qtime2(TimeIndx,qnasa2,shift=c(1,12))

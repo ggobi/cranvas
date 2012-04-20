@@ -490,27 +490,33 @@ time_qdata <- function(regular_qdata, y) {
     newdat <- qdata(newdat,color = setting[1,3], border = setting[1,4], 
                     size = setting[1,5], brushed = setting[1,1], 
                     visible = setting[1,2])
-    #add_listener(newdat,link_time_forward(ycol,regular_qdata,newdat))
-    #add_listener(regular_qdata,link_time_back(ycol,regular_qdata,newdat))
-    return(newdat)
-}
-
-link_time_forward <- function(ycol,regular_qdata,newdat){
-    if (selected(regular_qdata)) {
-        selected(newdat) <- selected(regular_qdata)+(0:(ycol-1))*nrow(regular_qdata)
-    } else {
-        selected(newdat) <- FALSE
-    }
-}
-    
-link_time_back <- function(ycol,regular_qdata,newdat){
-    if (selected(newdat)) {
-        tmp <- sort(unique(selected(newdat)%%nrow(regular_qdata)),decreasing=FALSE)
+    change_back = change_forward = FALSE
+    add_listener(newdat,function(i,j){
+        if (j != ".brushed" || change_back) return()
+        change_back <<- TRUE
+        change_forward <<- TRUE
+        tmp <- sort(unique(which(newdat$.brushed) %% nrow(regular_qdata)),decreasing=FALSE)
         if (0 %in% tmp) {tmp=c(tmp[-1],nrow(regular_qdata))}
-        selected(regular_qdata) <- tmp
-    } else {
-        selected(regular_qdata) <- FALSE
-    }
+        if (!length(tmp)) tmp <- FALSE
+        tmpbrush <- rep(FALSE,nrow(regular_qdata))
+        tmpbrush[tmp] <- TRUE
+        regular_qdata$.brushed <- tmpbrush
+        change_back <<- FALSE
+        change_forward <<- FALSE
+    })
+    add_listener(regular_qdata,function(i,j){
+        if (j != ".brushed" || change_forward) return()
+        change_forward <<- TRUE
+        change_back <<- TRUE
+        tmp <- which(regular_qdata$.brushed)+(0:(ycol-1))*nrow(regular_qdata)
+        if (!length(tmp)) tmp <- FALSE
+        tmpbrush <- rep(FALSE,nrow(newdat))
+        tmpbrush[tmp] <- TRUE
+        newdat$.brushed <- tmpbrush
+        change_back <<- FALSE
+        change_forward <<- FALSE
+    })
+    return(newdat)
 }
 
 
