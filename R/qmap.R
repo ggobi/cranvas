@@ -38,7 +38,8 @@ qmap =
     ## initialize meta
     meta =
         Map.meta$new(alpha = 1, main = main, active = TRUE,
-                     group = cumsum(is.na(md$x) & is.na(md$y)) + 1)
+                     group = cumsum(is.na(md$x) & is.na(md$y)) + 1,
+                     drag.mode = FALSE)
 
     ## compute coordinates/axes-related stuff
     compute_coords = function() {
@@ -50,6 +51,7 @@ qmap =
         meta$limits = extend_ranges(r)
     }
     compute_coords()
+    meta$start.range = as.vector(meta$limits)
 
     compute_colors = function() {
         meta$border = data$.border
@@ -115,9 +117,22 @@ qmap =
 
     ## events
     brush_mouse_press = function(layer, event) {
-        common_mouse_press(layer, event, data, meta)
+        meta$drag.mode = ifelse((any(meta$limits[1,] > meta$start.range[c(1,3)]) | 
+            any(meta$limits[2,] < meta$start.range[c(2,4)])) & 
+            event$button() == Qt$Qt$LeftButton, TRUE, FALSE)
+        if (meta$drag.mode) {
+            meta$start = as.numeric(event$pos())
+        } else {
+            common_mouse_press(layer, event, data, meta)
+        }
     }
     brush_mouse_move = function(layer, event) {
+        if (meta$drag.mode) {
+            meta$pos = as.numeric(event$pos())
+            meta$limits = meta$limits + matrix(rep(-meta$pos+meta$start,each=2),nrow=2)
+            qupdate(layer.main)
+            return()
+        }
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
         if (length(hits)) {
@@ -125,10 +140,13 @@ qmap =
         }
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
+        
     }
     brush_mouse_release = function(layer, event) {
         brush_mouse_move(layer, event)
-        common_mouse_release(layer, event, data, meta)
+        if (!meta$drag.mode){
+            common_mouse_release(layer, event, data, meta)
+        }
     }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
@@ -253,7 +271,9 @@ Map.meta =
 
                 Common.meta,
 
-                list(group = 'numeric')
+                list(group = 'numeric',
+                     start.range = 'numeric',
+                     drag.mode = 'logical')
 
                 )))
 
