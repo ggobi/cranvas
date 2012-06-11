@@ -122,11 +122,15 @@ qmap =
             event$button() == Qt$Qt$LeftButton, TRUE, FALSE)
         if (meta$drag.mode) {
             meta$start = as.numeric(event$pos())
+            b$cursor <- 18L
         } else {
             common_mouse_press(layer, event, data, meta)
         }
     }
     brush_mouse_move = function(layer, event) {
+        if (event$button() != Qt$Qt$NoButton) {
+            b$cursor <- 0L
+        }
         if (meta$drag.mode) {
             meta$pos = as.numeric(event$pos())
             meta$limits = meta$limits + matrix(rep(-meta$pos+meta$start,each=2),nrow=2)
