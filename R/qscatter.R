@@ -120,9 +120,9 @@ qscatter =
     ## initialize brush size (1/15 of the layer size)
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
     
-    ## stupid brush setting
+    ## colorful brush setting
     if (!unibrushcolor) {
-        meta$current_color = data$.color  # stupid brush
+        meta$current_color = data$.color
         meta$current_border = data$.border
     }
 
@@ -174,7 +174,7 @@ qscatter =
         if (any(idx)) {            
             if (unibrushcolor) {
                 fill_color = b$color
-            } else {
+            } else { # colorful brush
                 idx = which(idx)[order(meta$current_color[idx])]
                 data$.color = alpha(data$.color, 0.1)
                 data$.border = alpha(data$.border, 0.1)
@@ -228,7 +228,7 @@ qscatter =
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
         if (!unibrushcolor) {
-            meta$current_color = data$.color  # stupid brush
+            meta$current_color = data$.color  # colorful brush
             meta$current_border = data$.border
         }
         shift = event$modifiers() == Qt$Qt$ShiftModifier
