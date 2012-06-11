@@ -64,7 +64,7 @@
 ##' @example inst/examples/qdata-ex.R
 qdata =
     function(data, color = "gray15", border = color, size = 4,
-             brushed = FALSE, visible = TRUE, copy = TRUE) {
+             brushed = FALSE, visible = TRUE, copy = TRUE, ...) {
     if (!is.data.frame(data))
         data = as.data.frame(data)
     ## check if the attribute exists
@@ -91,7 +91,7 @@ qdata =
                     pal = hue_pal()
                     dscale(v, pal)
                 } else if (is.numeric(v)) {
-                    pal = seq_gradient_pal()
+                    pal = seq_gradient_pal(...)
                     cscale(v, pal)
                 } else {
                     if (!inherits(try(col2rgb(v), silent = TRUE), 'try-error')) v else

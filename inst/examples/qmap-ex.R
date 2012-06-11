@@ -28,6 +28,7 @@ if (require('mapdata')) {
 data(crimes)
 head(crimes)
 qcrimes = qdata(crimes, color = population)  # population mapped to colors
+qcrimes = qdata(crimes, color = population, low = "#FCBBA1", high = "red")  # change the color scheme from http://colorbrewer2.org/
 
 qparallel(names(crimes)[-c(1, 2)], data = qcrimes)  # par-coords without first 2 columns
 qscatter(population, robbery, data = qcrimes)
