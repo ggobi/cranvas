@@ -16,6 +16,8 @@ qscatter(tars2, head)
 
 qscatter(tars1, tars2, asp = .7)  # aspect ratio
 
+qscatter(tars1, tars2, unibrushcolor=FALSE)  # brush color
+
 ## link qflea to itself using species
 id = link_cat(qflea, 'species')
 
@@ -34,6 +36,8 @@ qnrc = qdata(nrcstat, color = RegCode)
 qscatter(RRankings5th, RRankings95th)
 
 qscatter(SRankings5th, SRankings95th)
+
+qscatter(SRankings5th, SRankings95th, unibrushcolor=FALSE)
 
 ### (4) secrets in the pollen data
 library(animation)

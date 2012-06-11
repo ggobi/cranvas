@@ -43,7 +43,7 @@
 ##' @example inst/examples/qscatter-ex.R
 qscatter =
     function(x, y, data = last_data(), main = '', xlim = NULL, ylim = NULL,
-             xlab = NULL, ylab = NULL, asp = 1, alpha = 1) {
+             xlab = NULL, ylab = NULL, asp = 1, alpha = 1, unibrushcolor = TRUE) {
 
     data = check_data(data)
     b = brush(data)
@@ -119,6 +119,12 @@ qscatter =
 
     ## initialize brush size (1/15 of the layer size)
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+    
+    ## stupid brush setting
+    if (!unibrushcolor) {
+        meta$current_color = data$.color  # stupid brush
+        meta$current_border = data$.border
+    }
 
     ## draw points
     main_draw = function(layer, painter) {
@@ -165,15 +171,28 @@ qscatter =
     ## draw brushed points
     brush_draw = function(layer, painter) {
         idx = selected(data)
-        if (any(idx)) {
+        if (any(idx)) {            
+            if (unibrushcolor) {
+                fill_color = b$color
+            } else {
+                idx = which(idx)[order(meta$current_color[idx])]
+                data$.color = alpha(data$.color, 0.1)
+                data$.border = alpha(data$.border, 0.1)
+                fill_color = meta$current_color[idx]
+            }
             if (meta$samesize) {
                 qdrawGlyph(painter, qglyphCircle(r = sqrt(b$size) * meta$size),
-                           meta$xy[idx, 1], meta$xy[idx, 2],
-                           stroke = b$color, fill = b$color)
+                           meta$xy[idx, 1], meta$xy[idx, 2], 
+                           stroke = fill_color, fill = fill_color)
             } else {
                 qdrawCircle(painter, meta$xy[idx, 1], meta$xy[idx, 2],
                             r = sqrt(b$size) * data$.size[idx],
-                            stroke = b$color, fill = b$color)
+                            stroke = fill_color, fill = fill_color)
+            }
+        } else {
+            if (!unibrushcolor){
+                data$.color = meta$current_color
+                data$.border = meta$current_border
             }
         }
         draw_brush(layer, painter, data, meta)
@@ -208,6 +227,10 @@ qscatter =
     }
     key_press = function(layer, event) {
         common_key_press(layer, event, data, meta)
+        if (!unibrushcolor) {
+            meta$current_color = data$.color  # stupid brush
+            meta$current_border = data$.border
+        }
         shift = event$modifiers() == Qt$Qt$ShiftModifier
         if (shift && length(i <- which(match_key(c('Left', 'Right', 'Up', 'Down'))))) {
             j = c(1, 1, 2, 2)[i]; k = c(1, -1, -1, 1)[i]
