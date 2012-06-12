@@ -27,7 +27,7 @@
 ##' @example inst/examples/qmap-ex.R
 qmap =
     function(data = last_data(), linkto = NULL, linkby = NULL,
-             main = '', xlim = NULL, ylim = NULL) {
+             main = '', xlim = NULL, ylim = NULL, brush_alpha = 1) {
     data = check_data(data)
     if (is.null(md <- attr(data, 'MapData')))
         stop('data must be created from map_qdata()')
@@ -110,7 +110,8 @@ qmap =
         idx = selected(data)
         if (any(idx)) {
             i = meta$group %in% which(idx)
-            qdrawPolygon(painter, md$x[i], md$y[i], stroke = NA, fill = b$color)
+            brush_color = alpha(b$color, brush_alpha)  # transparent brush to see the original colors
+            qdrawPolygon(painter, md$x[i], md$y[i], stroke = NA, fill = brush_color)
         }
         draw_brush(layer, painter, data, meta)
     }

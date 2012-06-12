@@ -36,6 +36,8 @@ qscatter(population, robbery, data = qcrimes)
 ## categorical linking by states; now brush on any plot and see changes in other plots
 qmap(qstate, linkto = qcrimes, linkby = 'state')
 
+qmap(qstate, linkto = qcrimes, linkby = 'state', brush_alpha = 0.7) # transparent brush
+
 ## linking should be automatically removed when map is closed; if not, try remove_link(qcrimes); remove_link(qstate)
 
 
