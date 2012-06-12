@@ -338,7 +338,7 @@ map_qdata =
         } else df$names
     mf =
         qdata(data.frame(names = df$names, labels = labels, stringsAsFactors = FALSE),
-              color = color, border = border, size = size)
+              color = color, border = border, size = size, ...)
     xy = as.data.frame(df[1:2])
     if (cartogram && length(size) > 1 && !all(diff(size) < 1e-7)) {
         if (!require('Rcartogram'))
