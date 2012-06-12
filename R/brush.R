@@ -3,6 +3,7 @@ brushGen =
     setRefClass('BRUSH',
                 fields = properties(list(style = 'list',
                 color = 'character', size = 'numeric', mode = 'character',
+                alpha = 'numeric',
                 identify = 'logical', label.gen = 'function', label.color = 'character',
                 history.size = 'numeric', history.index = 'numeric', history.list = 'list',
                 persistent = 'logical', persistent.color = 'character',
