@@ -27,12 +27,13 @@
 ##' @example inst/examples/qmap-ex.R
 qmap =
     function(data = last_data(), linkto = NULL, linkby = NULL,
-             main = '', xlim = NULL, ylim = NULL, brush_alpha = 1) {
+             main = '', xlim = NULL, ylim = NULL, unibrushcolor = TRUE) {
     data = check_data(data)
     if (is.null(md <- attr(data, 'MapData')))
         stop('data must be created from map_qdata()')
     b = brush(data)
     b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
+    b$alpha = 1
     z = as.list(match.call()[-1])
 
     ## initialize meta
@@ -67,6 +68,9 @@ qmap =
 
     ## initialize brush size (1/15 of the layer size)
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+    
+    ## unibrushcolor
+    if (!unibrushcolor) meta$current_color=meta$color
 
     ## draw points
     main_draw = function(layer, painter) {
@@ -110,8 +114,19 @@ qmap =
         idx = selected(data)
         if (any(idx)) {
             i = meta$group %in% which(idx)
-            brush_color = alpha(b$color, brush_alpha)  # transparent brush to see the original colors
-            qdrawPolygon(painter, md$x[i], md$y[i], stroke = NA, fill = brush_color)
+            if (unibrushcolor) {
+                brush_color = alpha(b$color, b$alpha)  # transparent brush
+                qdrawPolygon(painter, md$x[i], md$y[i], stroke = NA, fill = brush_color)
+            } else {
+                meta$color = alpha(meta$current_color, 0.3)
+                meta$color[idx] = meta$current_color[idx]
+                qupdate(layer.main)
+            }
+        } else {
+            if (!unibrushcolor) {
+                meta$color = meta$current_color
+                qupdate(layer.main)
+            }
         }
         draw_brush(layer, painter, data, meta)
     }
