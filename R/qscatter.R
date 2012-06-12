@@ -176,8 +176,10 @@ qscatter =
                 fill_color = b$color
             } else { # colorful brush
                 idx = which(idx)[order(meta$current_color[idx])]
-                data$.color = alpha(data$.color, 0.1)
-                data$.border = alpha(data$.border, 0.1)
+                if (any(data$.color==meta$current_color)) {
+                    data$.color = alpha(meta$current_color, 0.1)
+                    data$.border = alpha(meta$current_border, 0.1)
+                }
                 fill_color = meta$current_color[idx]
             }
             if (meta$samesize) {
