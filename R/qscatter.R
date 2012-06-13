@@ -399,7 +399,8 @@ Scat.meta =
                 Common.meta,
 
                 list(xvar = 'character', yvar = 'character', order = 'numeric',
-                     xy = 'matrix', asp = 'numeric', samesize = 'logical')
+                     xy = 'matrix', asp = 'numeric', samesize = 'logical',
+                     outofbounds = 'matrix')
 
                 )))
 
