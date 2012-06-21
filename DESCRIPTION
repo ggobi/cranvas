@@ -39,6 +39,8 @@ Suggests:
     nlme,
     reshape,
     mapdata,
+    ggmap,
+    RgoogleMaps,
     productplots,
     animation,
     randomForest,

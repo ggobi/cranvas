@@ -27,263 +27,290 @@
 ##' @example inst/examples/qmap-ex.R
 qmap =
     function(data = last_data(), linkto = NULL, linkby = NULL,
-             main = '', xlim = NULL, ylim = NULL, unibrushcolor = TRUE) {
-    data = check_data(data)
-    if (is.null(md <- attr(data, 'MapData')))
-        stop('data must be created from map_qdata()')
-    b = brush(data)
-    b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
-    b$alpha = 1
-    z = as.list(match.call()[-1])
-
-    ## initialize meta
-    meta =
-        Map.meta$new(alpha = 1, main = main, active = TRUE,
-                     group = cumsum(is.na(md$x) & is.na(md$y)) + 1,
-                     drag.mode = FALSE)
-
-    ## compute coordinates/axes-related stuff
-    compute_coords = function() {
-        r =
-            cbind(if (is.null(xlim))
-                  range(md$x, na.rm = TRUE, finite = TRUE) else xlim,
-                  if (is.null(ylim))
-                  range(md$y, na.rm = TRUE, finite = TRUE) else ylim)
-        meta$limits = extend_ranges(r)
-    }
-    compute_coords()
-    meta$start.range = as.vector(meta$limits)
-
-    compute_colors = function() {
-        meta$border = data$.border
-        if (is.null(linkto)) {
-            meta$color = data$.color
-        } else {
-            if (is.null(linkby)) stop("must specify a linking variable in 'linkto'")
-            tmp = tapply(linkto$.color, linkto[, as.character(z$linkby)], `[`, 1)
-            meta$color = tmp[data$labels]  # use labels to find colors
-        }
-    }
-    compute_colors()
-
-    ## initialize brush size (1/15 of the layer size)
-    meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
-    
-    ## unibrushcolor
-    if (!unibrushcolor) meta$current_color=meta$color
-
-    ## draw points
-    main_draw = function(layer, painter) {
-        qdrawPolygon(painter, md$x, md$y, stroke = meta$border, fill = meta$color)
-
-        # draw warning lines, if points are outside the drawing area
-                # r is current range
-                # 
-                # binary array with one column for each variable
-                # shouldn't need to check for every single draw, but I'm not sure where the boundaries are changed - compute coord is not called for every zooms e.g.
-        meta$outofbounds <- meta$limits
-        meta$outofbounds[1,1] <- min(md$x, na.rm=T) < meta$limits[1,1]
-        meta$outofbounds[2,1] <- max(md$x, na.rm=T) > meta$limits[2,1]
-        meta$outofbounds[1,2] <- min(md$y, na.rm=T) < meta$limits[1,2]
-        meta$outofbounds[2,2] <- max(md$y, na.rm=T) > meta$limits[2,2]
-
-
-                if (sum(meta$outofbounds) > 0) {
-                    # at least one boundary is too tight                    
-                    if (meta$outofbounds[1,1])
-                        qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[1,1], meta$limits[2,2],
-                              stroke = "red")
-                    if (meta$outofbounds[1,2])
-                        qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
-                              stroke = "red")
-                    qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
-                    if (meta$outofbounds[2,2])
-                        qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
-                              stroke = "red")
-                    if (meta$outofbounds[2,1])
-                        qdrawSegment(painter, meta$limits[2,1], meta$limits[1,2], meta$limits[2,1], meta$limits[2,2],
-                              stroke = "red")
-                              
-                }
-
-
-    }
-
-    ## draw brushed points
-    brush_draw = function(layer, painter) {
-        idx = selected(data)
-        if (any(idx)) {
-            i = meta$group %in% which(idx)
-            if (unibrushcolor) {
-                brush_color = alpha(b$color, b$alpha)  # transparent brush
-                qdrawPolygon(painter, md$x[i], md$y[i], stroke = NA, fill = brush_color)
-            } else {
-                meta$color = alpha(meta$current_color, 0.3)
-                meta$color[idx] = meta$current_color[idx]
-                qupdate(layer.main)
-            }
-        } else {
-            if (!unibrushcolor) {
-                meta$color = meta$current_color
-                qupdate(layer.main)
-            }
-        }
-        draw_brush(layer, painter, data, meta)
-    }
-
-    ## events
-    brush_mouse_press = function(layer, event) {
-        meta$drag.mode = ifelse((any(meta$limits[1,] > meta$start.range[c(1,3)]) | 
-            any(meta$limits[2,] < meta$start.range[c(2,4)])) & 
-            event$button() == Qt$Qt$LeftButton, TRUE, FALSE)
-        if (meta$drag.mode) {
-            meta$start = as.numeric(event$pos())
-            b$cursor <- 18L
-        } else {
-            common_mouse_press(layer, event, data, meta)
-        }
-    }
-    brush_mouse_move = function(layer, event) {
-        if (event$button() != Qt$Qt$NoButton) {
-            b$cursor <- 0L
-        }
-        if (meta$drag.mode) {
-            meta$pos = as.numeric(event$pos())
-            meta$limits = meta$limits + matrix(rep(-meta$pos+meta$start,each=2),nrow=2)
-            qupdate(layer.main)
-            return()
-        }
-        rect = qrect(update_brush_size(meta, event))
-        hits = layer$locate(rect) + 1
-        if (length(hits)) {
-            hits = data$labels %in% unique(data$labels[hits])
-        }
-        selected(data) = mode_selection(selected(data), hits, mode = b$mode)
-        common_mouse_move(layer, event, data, meta)
+             main = '', xlim = NULL, ylim = NULL, unibrushcolor = TRUE,
+             googleMap = FALSE, ...) {
+        data = check_data(data)
+        if (is.null(md <- attr(data, 'MapData')))
+            stop('data must be created from map_qdata()')
+        b = brush(data)
+        b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
+        b$alpha = 1
+        z = as.list(match.call()[-1])
         
-    }
-    brush_mouse_release = function(layer, event) {
-        brush_mouse_move(layer, event)
-        if (!meta$drag.mode){
-            common_mouse_release(layer, event, data, meta)
+        ## initialize meta
+        meta =
+            Map.meta$new(alpha = 1, main = main, active = TRUE,
+                         group = cumsum(is.na(md$x) & is.na(md$y)) + 1,
+                         drag.mode = FALSE)
+        
+        ## compute coordinates/axes-related stuff
+        compute_coords = function() {
+            r =
+                cbind(if (is.null(xlim))
+                    range(md$x, na.rm = TRUE, finite = TRUE) else xlim,
+                      if (is.null(ylim))
+                          range(md$y, na.rm = TRUE, finite = TRUE) else ylim)
+            meta$limits = extend_ranges(r)
         }
-    }
-    key_press = function(layer, event) {
-        common_key_press(layer, event, data, meta)
-    }
-    key_release = function(layer, event) {
-        common_key_release(layer, event, data, meta)
-    }
-    mouse_wheel = function(layer, event) {
-        pos = as.numeric(event$pos())
-        lim = meta$limits
-        p = (pos - lim[1, ]) / (lim[2, ] - lim[1, ])  # proportions to left/bottom
-        meta$limits =
-            extend_ranges(meta$limits,
-                          -sign(event$delta()) * 0.1 * c(p[1], 1 - p[1], p[2], 1 - p[2]))
-    }
-    identify_hover = function(layer, event) {
-        if (!b$identify) return()
-        b$cursor = 2L
-        meta$pos = as.numeric(event$pos())
-        hits = layer$locate(identify_rect(meta)) + 1
-        if (length(hits)) {
-            hits = which(data$labels %in% unique(data$labels[hits]))
+        compute_coords()
+        meta$start.range = as.vector(meta$limits)
+        
+        compute_colors = function() {
+            meta$border = data$.border
+            if (is.null(linkto)) {
+                meta$color = if (googleMap) {alpha(data$.color, 0)} else {data$.color}
+            } else {
+                if (is.null(linkby)) stop("must specify a linking variable in 'linkto'")
+                tmp = tapply(linkto$.color, linkto[, as.character(z$linkby)], `[`, 1)
+                meta$color = if (googleMap) {alpha (tmp[data$labels], 0.5)} else {tmp[data$labels]}  # use labels to find colors
+            }
         }
-        meta$identified = hits
-        qupdate(layer.identify)
-    }
-    identify_draw = function(layer, painter) {
-        if (!b$identify || !length(idx <- meta$identified)) return()
-        if (any(idx)) {
-            meta$identify.labels = paste(unique(data$labels[idx]), collapse = '\n')
-            draw_identify(layer, painter, data, meta)
-            i = meta$group %in% idx
-            qdrawPolygon(painter, md$x[i], md$y[i], stroke = b$color, fill = NA)
+        compute_colors()
+        
+        ## initialize brush size (1/15 of the layer size)
+        meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+        
+        ## unibrushcolor
+        if (!unibrushcolor) meta$current_color=meta$color
+        
+        ## draw points
+        main_draw = function(layer, painter) {
+            qdrawPolygon(painter, md$x, md$y, stroke = meta$border, fill = meta$color)
+            
+            # draw warning lines, if points are outside the drawing area
+            # r is current range
+            # 
+            # binary array with one column for each variable
+            # shouldn't need to check for every single draw, but I'm not sure where the boundaries are changed - compute coord is not called for every zooms e.g.
+            meta$outofbounds <- meta$limits
+            meta$outofbounds[1,1] <- min(md$x, na.rm=T) < meta$limits[1,1]
+            meta$outofbounds[2,1] <- max(md$x, na.rm=T) > meta$limits[2,1]
+            meta$outofbounds[1,2] <- min(md$y, na.rm=T) < meta$limits[1,2]
+            meta$outofbounds[2,2] <- max(md$y, na.rm=T) > meta$limits[2,2]
+            
+            
+            if (sum(meta$outofbounds) > 0) {
+                # at least one boundary is too tight                    
+                if (meta$outofbounds[1,1])
+                    qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[1,1], meta$limits[2,2],
+                                 stroke = "red")
+                if (meta$outofbounds[1,2])
+                    qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
+                                 stroke = "red")
+                qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
+                if (meta$outofbounds[2,2])
+                    qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
+                                 stroke = "red")
+                if (meta$outofbounds[2,1])
+                    qdrawSegment(painter, meta$limits[2,1], meta$limits[1,2], meta$limits[2,1], meta$limits[2,2],
+                                 stroke = "red")
+                
+            }
+            
+            
         }
-    }
-
-    ## create layers
-    scene = qscene()
-    layer.root = qlayer(scene)
-    layer.main =
-        qlayer(paintFun = main_draw,
-               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-               mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
-               keyPressFun = key_press, keyReleaseFun = key_release,
-               wheelFun = mouse_wheel,
-               focusInFun = function(layer, event) {
-                   common_focus_in(layer, event, data, meta)
-               }, focusOutFun = function(layer, event) {
-                   common_focus_out(layer, event, data, meta)
-               },
-               limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
-    layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
-    layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-    layer.title = qmtext(meta = meta, side = 3)
-    layer.root[0, 0] = layer.title
-    layer.root[1, 0] = layer.main
-    layer.root[1, 0] = layer.brush
-    layer.root[1, 0] = layer.identify
-    layer.root[1, 1] = qlayer()
-
-    ## set sizes of layers (arrange the layout)
-    set_layout = function() {
-        fix_dimension(layer.root,
-                      row = list(id = 0, value = prefer_height(meta$main)),
-                      column = list(id = 1, value = 10))
-    }
-    set_layout()
-
-    ## layout is dynamic (listen to changes in xlab/ylab/xlabels/ylabels...)
-    meta$mainChanged$connect(set_layout)
-
-    ## finally create the view and set window title
-    view = qplotView(scene = scene)
-    view$setWindowTitle(paste("Map:", as.character(z$data)))
-
-    ## listeners on the data (which column updates which layer(s))
-    d.idx = add_listener(data, function(i, j) {
-        idx = which(j == c('.brushed', '.color', '.border'))
-        if (length(idx) < 1) {
-            compute_coords()
-            layer.main$invalidateIndex(); qupdate(layer.main)
-            return()
-        } else idx = c(1, 2, 2)[idx]
-        switch(idx, qupdate(layer.brush), {
-            compute_colors(); qupdate(layer.main)
+        
+        ## draw brushed points
+        brush_draw = function(layer, painter) {
+            idx = selected(data)
+            if (any(idx)) {
+                i = meta$group %in% which(idx)
+                if (unibrushcolor) {
+                    brush_color = alpha(b$color, b$alpha)  # transparent brush
+                    qdrawPolygon(painter, md$x[i], md$y[i], stroke = NA, fill = brush_color)
+                } else {
+                    meta$color = alpha(meta$current_color, 0.3)
+                    meta$color[idx] = meta$current_color[idx]
+                    qupdate(layer.main)
+                }
+            } else {
+                if (!unibrushcolor) {
+                    meta$color = meta$current_color
+                    qupdate(layer.main)
+                }
+            }
+            draw_brush(layer, painter, data, meta)
+        }
+        
+        ## draw Google maps
+        if (googleMap) {
+            google_draw = function(layer,painter) {
+                
+                bound=as.matrix(meta$limits)
+                googlezoom=min(MaxZoom(bound[,1], bound[,2], c(640, 640)))
+                map=get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),
+                                  zoom = googlezoom, scale = 2, ...)
+                rang=attr(map, "bb")
+                googlecolor=as.vector(map[1:1280, 1:1280])
+                googlex=rep(seq(rang$ll.lon,rang$ur.lon,length=1280),1280)
+                googley=rep(seq(rang$ur.lat,rang$ll.lat,length=1280),each=1280)                    
+                googleidx=( findInterval(googlex,bound[,1]) & findInterval(googley,bound[,2]) )
+                drawgooglecolor=googlecolor[googleidx]
+                qdrawGlyph(painter, qglyphSquare(x = min(diff(bound[,1]),diff(bound[,2]))/1280),
+                           googlex[googleidx], googley[googleidx],
+                           stroke = drawgooglecolor, fill = drawgooglecolor)
+            }
+        } 
+        
+        ## events
+        brush_mouse_press = function(layer, event) {
+            meta$drag.mode = ifelse((any(meta$limits[1,] > meta$start.range[c(1,3)]) | 
+                any(meta$limits[2,] < meta$start.range[c(2,4)])) & 
+                event$button() == Qt$Qt$LeftButton, TRUE, FALSE)
+            if (meta$drag.mode) {
+                meta$start = as.numeric(event$pos())
+                b$cursor <- 18L
+            } else {
+                common_mouse_press(layer, event, data, meta)
+            }
+        }
+        brush_mouse_move = function(layer, event) {
+            if (event$button() != Qt$Qt$NoButton) {
+                b$cursor <- 0L
+            }
+            if (meta$drag.mode) {
+                meta$pos = as.numeric(event$pos())
+                meta$limits = meta$limits + matrix(rep(-meta$pos+meta$start,each=2),nrow=2)
+                qupdate(layer.main)
+                return()
+            }
+            rect = qrect(update_brush_size(meta, event))
+            hits = layer$locate(rect) + 1
+            if (length(hits)) {
+                hits = data$labels %in% unique(data$labels[hits])
+            }
+            selected(data) = mode_selection(selected(data), hits, mode = b$mode)
+            common_mouse_move(layer, event, data, meta)
+            
+        }
+        brush_mouse_release = function(layer, event) {
+            brush_mouse_move(layer, event)
+            if (!meta$drag.mode){
+                common_mouse_release(layer, event, data, meta)
+            }
+        }
+        key_press = function(layer, event) {
+            common_key_press(layer, event, data, meta)
+        }
+        key_release = function(layer, event) {
+            common_key_release(layer, event, data, meta)
+        }
+        mouse_wheel = function(layer, event) {
+            pos = as.numeric(event$pos())
+            lim = meta$limits
+            p = (pos - lim[1, ]) / (lim[2, ] - lim[1, ])  # proportions to left/bottom
+            meta$limits =
+                extend_ranges(meta$limits,
+                              -sign(event$delta()) * 0.1 * c(p[1], 1 - p[1], p[2], 1 - p[2]))
+            if (googleMap) qupdate(layer.google)
+        }
+        identify_hover = function(layer, event) {
+            if (!b$identify) return()
+            b$cursor = 2L
+            meta$pos = as.numeric(event$pos())
+            hits = layer$locate(identify_rect(meta)) + 1
+            if (length(hits)) {
+                hits = which(data$labels %in% unique(data$labels[hits]))
+            }
+            meta$identified = hits
+            qupdate(layer.identify)
+        }
+        identify_draw = function(layer, painter) {
+            if (!b$identify || !length(idx <- meta$identified)) return()
+            if (any(idx)) {
+                meta$identify.labels = paste(unique(data$labels[idx]), collapse = '\n')
+                draw_identify(layer, painter, data, meta)
+                i = meta$group %in% idx
+                qdrawPolygon(painter, md$x[i], md$y[i], stroke = b$color, fill = NA)
+            }
+        }
+        
+        ## create layers
+        scene = qscene()
+        layer.root = qlayer(scene)
+        if (googleMap) layer.google = qlayer(paintFun = google_draw,
+                                             limits = qrect(meta$limits), 
+                                             clip = TRUE, cache = TRUE)
+        layer.main =
+            qlayer(paintFun = main_draw,
+                   mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
+                   mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
+                   keyPressFun = key_press, keyReleaseFun = key_release,
+                   wheelFun = mouse_wheel,
+                   focusInFun = function(layer, event) {
+                       common_focus_in(layer, event, data, meta)
+                   }, focusOutFun = function(layer, event) {
+                       common_focus_out(layer, event, data, meta)
+                   },
+                   limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
+        layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
+        layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
+        layer.title = qmtext(meta = meta, side = 3)
+        layer.root[0, 0] = layer.title
+        if (googleMap) layer.root[1, 0] = layer.google
+        layer.root[1, 0] = layer.main
+        layer.root[1, 0] = layer.brush
+        layer.root[1, 0] = layer.identify
+        layer.root[1, 1] = qlayer()
+        
+        ## set sizes of layers (arrange the layout)
+        set_layout = function() {
+            fix_dimension(layer.root,
+                          row = list(id = 0, value = prefer_height(meta$main)),
+                          column = list(id = 1, value = 10))
+        }
+        set_layout()
+        
+        ## layout is dynamic (listen to changes in xlab/ylab/xlabels/ylabels...)
+        meta$mainChanged$connect(set_layout)
+        
+        ## finally create the view and set window title
+        view = qplotView(scene = scene)
+        view$setWindowTitle(paste("Map:", as.character(z$data)))
+        
+        ## listeners on the data (which column updates which layer(s))
+        d.idx = add_listener(data, function(i, j) {
+            idx = which(j == c('.brushed', '.color', '.border'))
+            if (length(idx) < 1) {
+                compute_coords()
+                layer.main$invalidateIndex(); qupdate(layer.main)
+                return()
+            } else idx = c(1, 2, 2)[idx]
+            switch(idx, qupdate(layer.brush), {
+                compute_colors(); qupdate(layer.main)
+            })
         })
-    })
-
-    if (!is.null(linkto)) {
-        id = link_cat(linkto, as.character(z$linkby), data, 'labels')
-    }
-    ## when layer is destroyed, remove the listener from data
-    qconnect(layer.main, 'destroyed', function(x) {
-        ## b$colorChanged$disconnect(b.idx)
-        remove_listener(data, d.idx)
+        
         if (!is.null(linkto)) {
-            remove_link(linkto, id[1]); remove_link(data, id[2])
+            id = link_cat(linkto, as.character(z$linkby), data, 'labels')
         }
-    })
-
-    ## when b$cursor is changed, update cursor on screen
-    b$cursorChanged$connect(function() {
-        set_cursor(view, b$cursor)
-    })
-
-    ## these layers have the same limits from meta$limits
-    sync_limits(meta, layer.main, layer.brush, layer.identify)
-
-    ## simulate brushing
-    meta$manual.brush = function(pos) {
-        brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+        ## when layer is destroyed, remove the listener from data
+        qconnect(layer.main, 'destroyed', function(x) {
+            ## b$colorChanged$disconnect(b.idx)
+            remove_listener(data, d.idx)
+            if (!is.null(linkto)) {
+                remove_link(linkto, id[1]); remove_link(data, id[2])
+            }
+        })
+        
+        ## when b$cursor is changed, update cursor on screen
+        b$cursorChanged$connect(function() {
+            set_cursor(view, b$cursor)
+        })
+        
+        ## these layers have the same limits from meta$limits
+        sync_limits(meta, layer.main, layer.brush, layer.identify, if (googleMap) layer.google)
+        
+        ## simulate brushing
+        meta$manual.brush = function(pos) {
+            brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+        }
+        
+        ## attach meta to the returned value (for post-processing or debugging)
+        attr(view, 'meta') = meta
+        view
     }
 
-    ## attach meta to the returned value (for post-processing or debugging)
-    attr(view, 'meta') = meta
-    view
-}
 
 Map.meta =
     setRefClass("Map_meta",

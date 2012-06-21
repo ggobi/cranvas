@@ -7,7 +7,7 @@ qmap(qworld)
 
 ## US states
 qstate = map_qdata('state')
-qmap(qstate)
+qmap(qstate, googleMap=TRUE)
 
 ## a simple demonstration of colors
 qstate$.color = sample(c("red", "blue"), nrow(qstate), replace=TRUE)
