@@ -70,12 +70,10 @@ qmap =
         ## initialize brush size (1/15 of the layer size)
         meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
         
-        ## unibrushcolor
-        if (!unibrushcolor) meta$current_color=meta$color
-        
         ## draw points
         main_draw = function(layer, painter) {
-            qdrawPolygon(painter, md$x, md$y, stroke = meta$border, fill = meta$color)
+            qdrawPolygon(painter, md$x, md$y, stroke = meta$border, 
+                         fill = if (unibrushcolor) {meta$color} else {alpha(meta$color,0.3)})
             
             # draw warning lines, if points are outside the drawing area
             # r is current range
@@ -119,14 +117,12 @@ qmap =
                     brush_color = alpha(b$color, b$alpha)  # transparent brush
                     qdrawPolygon(painter, md$x[i], md$y[i], stroke = NA, fill = brush_color)
                 } else {
-                    meta$color = alpha(meta$current_color, 0.3)
-                    meta$color[idx] = meta$current_color[idx]
-                    qupdate(layer.main)
+                    ii = if (is.na(md$x[i][1])) {which(i)[-1]} else i
+                    qdrawPolygon(painter, md$x[ii], md$y[ii], stroke = NA, fill = meta$color[idx])
                 }
             } else {
                 if (!unibrushcolor) {
-                    meta$color = meta$current_color
-                    qupdate(layer.main)
+                    qdrawPolygon(painter, md$x, md$y, stroke = meta$border, fill = meta$color)
                 }
             }
             draw_brush(layer, painter, data, meta)
@@ -315,13 +311,14 @@ qmap =
 Map.meta =
     setRefClass("Map_meta",
                 fields = properties(c(
-
-                Common.meta,
-
-                list(group = 'numeric',
-                     start.range = 'numeric',
-                     drag.mode = 'logical')
-
+                    
+                    Common.meta,
+                    
+                    list(group = 'numeric',
+                         start.range = 'numeric',
+                         drag.mode = 'logical',
+                         outofbounds = 'matrix')
+                    
                 )))
 
 
