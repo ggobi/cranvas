@@ -134,6 +134,7 @@ qmap =
                 
                 bound=as.matrix(meta$limits)
                 googlezoom=min(MaxZoom(bound[,1], bound[,2], c(640, 640)))
+                message("Extracting the Google map...")
                 map=get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),
                                   zoom = googlezoom, scale = 2, ...)
                 rang=attr(map, "bb")
