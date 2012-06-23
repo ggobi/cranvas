@@ -352,7 +352,7 @@ Map.meta =
 ##' @examples library(cranvas); map_qdata('state'); map_qdata('county', 'iowa')
 map_qdata =
     function(database, regions = '.',  color = 'gray50', border = 'gray90', size = 4,
-             cartogram = FALSE, ...) {
+             cartogram = FALSE, diffuse = 5, ...) {
     df = map(database, regions, plot = FALSE, fill = TRUE)
     ## usually ':' is the separator but sometimes it is ','
     labels =
@@ -369,7 +369,7 @@ map_qdata =
         if (!require('Rcartogram'))
             message('Rcartogram package not available; map data not transformed')
         ## FIXME: cartogram() depends on the magnitude of size!!! so I did not use mf$.size
-        xy = cart_polygon(xy$x, xy$y, size, ...)
+        xy = cart_polygon(xy$x, xy$y, df$names, size, diffuse, ...)
     }
     attr(mf, 'MapData') = xy
     mf
@@ -394,19 +394,22 @@ map_qdata =
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/cart_polygon-ex.R
-cart_polygon = function(x, y, size, nrow = 100, ncol = 100, ...) {
+cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = 100 ...) {
     if (!require('Rcartogram')) {
         message("this function requires the Rcartogram package")
         return(data.frame(x, y))
     }
     if (length(size) != sum(is.na(x)) + 1)
         stop("the length of 'size' vector must be the same as the number of polygons")
-
+    if (diffuse <= 0) {
+        message("diffuse must be greater than 0. Set to be 1.")
+        diffuse = 1
+    }
     xlim = range(x, na.rm = TRUE); ylim = range(y, na.rm = TRUE)
     dx = c(0, diff(xlim)/1000); dy = c(0, diff(ylim)/1000)  # to construct query rectangle
-    grid = matrix(NA, nrow = nrow, ncol = ncol)
+    gridsize = gridcount = gridrecog = matrix(NA, nrow = nrow, ncol = ncol)
     gx = seq(xlim[1], xlim[2], length = ncol); gy = seq(ylim[1], ylim[2], length = nrow)
-
+    
     ## we use Qt to query the sizes for grid points
     h = qlayer(paintFun = function(layer, painter) {
         qdrawPolygon(painter, x, y)
@@ -417,14 +420,18 @@ cart_polygon = function(x, y, size, nrow = 100, ncol = 100, ...) {
     for (i in seq_len(nrow)) {
         for (j in seq_len(ncol)) {
             hit = h$locate(qrect(gx[j] + dx, gy[i] + dy))
-            if (length(hit)) grid[i, j] = size[hit[1] + 1]
+            if (length(hit)) gridsize[i, j] = size[hit[1] + 1]; gridrecog[i,j] = name[hit[1]+1]
         }
         setTxtProgressBar(pb, i)
     }
     close(pb)
-    f = min(grid, na.rm = TRUE)
-    grid[is.na(grid)] = f  # fill NA's with mean; add margin with mean too later
-    grid = addBoundary(grid, land.mean = f)
+    gridrecog[is.na(gridrecog)] = 0
+    gridcount = matrix(sapply(gridrecog, function(x){sum(gridrecog==x)}),nrow=nrow(gridrecog))
+    gridcount[is.na(gridsize)] = diffuse
+    gridsize[is.na(gridsize)] = min(gridsize, na.rm = TRUE)-diff(range(gridsize, na.rm = TRUE))/blank.init  # fill NA's with 1% less than min; add margin with min too later
+    tmp=as.vector(gridsize)/as.vector(gridcount)
+    grid = matrix(tmp,nrow=nrow,ncol = ncol)
+    grid = addBoundary(grid, sea=1, land.mean = min(grid))
     extra = attr(grid, 'extra')  # extra rows/cols added
     message('Calculating cartogram coordinates...')
     res = cartogram(grid, ...)

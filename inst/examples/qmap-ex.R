@@ -68,7 +68,8 @@ vote.pop = c(4708708, 6595778, 2889450, 36961664, 5024748, 3518288,
   6664195, 6664195, 6664195, 6664195, 6664195, 1819777, 5654774,
   544270)
 
-qstate2 = map_qdata('state', color = vote.res, size = vote.pop, cartogram = TRUE)
+qstate2 = map_qdata('state', color = vote.res, 
+                    size = vote.pop, cartogram = TRUE, diffuse = 2)
 qmap(qstate2)
 
 ## electoral votes for each state
