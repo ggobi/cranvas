@@ -394,7 +394,7 @@ map_qdata =
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/cart_polygon-ex.R
-cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = 100 ...) {
+cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = 100, ...) {
     if (!require('Rcartogram')) {
         message("this function requires the Rcartogram package")
         return(data.frame(x, y))
