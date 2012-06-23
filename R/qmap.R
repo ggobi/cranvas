@@ -394,7 +394,7 @@ map_qdata =
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @example inst/examples/cart_polygon-ex.R
-cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = 100, ...) {
+cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = .8, ...) {
     if (!require('Rcartogram')) {
         message("this function requires the Rcartogram package")
         return(data.frame(x, y))
@@ -404,6 +404,10 @@ cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank
     if (diffuse <= 0) {
         message("diffuse must be greater than 0. Set to be 1.")
         diffuse = 1
+    }
+    if (blank.init>1 | blank.init<=0) {
+        message("blank.init must be in (0,1]. Set to be 1.")
+        blank.init = 1
     }
     xlim = range(x, na.rm = TRUE); ylim = range(y, na.rm = TRUE)
     dx = c(0, diff(xlim)/1000); dy = c(0, diff(ylim)/1000)  # to construct query rectangle
@@ -428,12 +432,12 @@ cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank
     gridrecog[is.na(gridrecog)] = 0
     gridcount = matrix(sapply(gridrecog, function(x){sum(gridrecog==x)}),nrow=nrow(gridrecog))
     gridcount[is.na(gridsize)] = diffuse
-    gridsize[is.na(gridsize)] = min(gridsize, na.rm = TRUE)-diff(range(gridsize, na.rm = TRUE))/blank.init  # fill NA's with 1% less than min; add margin with min too later
+    gridsize[is.na(gridsize)] = min(gridsize, na.rm = TRUE) * blank.init  # fill NA's with 1% less than min; add margin with min too later
     tmp=as.vector(gridsize)/as.vector(gridcount)
     grid = matrix(tmp,nrow=nrow,ncol = ncol)
     grid = addBoundary(grid, sea=1, land.mean = min(grid))
     extra = attr(grid, 'extra')  # extra rows/cols added
-    message('Calculating cartogram coordinates...')
+    message(paste('Calculating cartogram coordinates for a',dim(grid)[1],'x',dim(grid)[2],'matrix...'))
     res = cartogram(grid, ...)
     pred =
         predict(res, (x - xlim[1]) / (diff(xlim)) * (ncol - 1) + 1 + extra[1],
