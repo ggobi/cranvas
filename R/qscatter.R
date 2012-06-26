@@ -182,6 +182,7 @@ qscatter =
                 }
                 fill_color = meta$current_color[idx]
             }
+            fill_color = alpha(fill_color, b$alpha)
             if (meta$samesize) {
                 qdrawGlyph(painter, qglyphCircle(r = sqrt(b$size) * meta$size),
                            meta$xy[idx, 1], meta$xy[idx, 2], 
