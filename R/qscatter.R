@@ -60,9 +60,21 @@ qscatter =
     if (is.null(xlab)) meta$xlab = meta$xvar
     if (is.null(ylab)) meta$ylab = meta$yvar
 
+    ## tour: color, size, transparency could be decided by proj3
+    if ('proj3' %in% colnames(data)) {
+        if (which(colnames(data) == 'proj3')[1] > which(colnames(data) == '.border')) {
+            dim3 = c('proj1','proj2','proj3')
+            meta$dim3 = dim3[! (dim3 %in% c(meta$xvar, meta$yvar))][1]
+        }
+    } else meta$dim3 = NULL
+    
     ## reorder the points according to color/border for drawing speed
     compute_order = function() {
-        meta$order = order(data$.color, data$.border)  # the ideal order to draw
+        meta$order = if (!is.null(meta$dim3)) {
+            order(data[,meta$dim3], decreasing=TRUE)
+        } else {
+            order(data$.color, data$.border)  # the ideal order to draw
+        }
     }
     compute_order()
 
@@ -111,6 +123,12 @@ qscatter =
         ord = meta$order; idx = visible(data)[ord]  # reorder aesthetics according to vis
         meta$color = data$.color[ord][idx]; meta$border = data$.border[ord][idx]
         meta$size = data$.size[ord][idx]
+        if (!is.null(meta$dim3)) {
+            dim3scale=(1-rescaler(data[ord,meta$dim3][idx],type='range'))*0.66+0.33
+            meta$color = alpha(meta$color, dim3scale)
+            meta$border = alpha(meta$border, dim3scale)
+            meta$size = meta$size * dim3scale
+        }
         if (length(unique(meta$color)) == 1) meta$color = meta$color[1]
         if (length(unique(meta$border)) == 1) meta$border = meta$border[1]
         if (meta$samesize) meta$size = meta$size[1]
@@ -119,6 +137,7 @@ qscatter =
 
     ## initialize brush size (1/15 of the layer size)
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+    b$alpha = alpha
     
     ## colorful brush setting
     if (!unibrushcolor) {
