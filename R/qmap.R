@@ -28,7 +28,7 @@
 qmap =
     function(data = last_data(), linkto = NULL, linkby = NULL,
              main = '', xlim = NULL, ylim = NULL, unibrushcolor = TRUE,
-             googleMap = FALSE, ...) {
+             googleMap = FALSE, place = NULL, text = NULL, ...) {
         data = check_data(data)
         if (is.null(md <- attr(data, 'MapData')))
             stop('data must be created from map_qdata()')
@@ -149,6 +149,32 @@ qmap =
             }
         } 
         
+        ## draw Google maps
+        if (!is.null(place)) {
+            place = check_data(place)
+            place_draw = function(layer,painter) {
+                idx = visible(place)
+                if (all(place$.size==place$.size[1])) {
+                    qdrawGlyph(painter, qglyphCircle(r = place$.size[1]),
+                               place[idx,1], place[idx,2],
+                               stroke = place$.border[idx], fill = place$.color[idx])
+                } else {
+                    qdrawCircle(painter, place[idx,1], place[idx,2], r = place$.size[idx],
+                                stroke = place$.border[idx], fill = place$.color[idx])
+                }
+            }
+        }
+        
+        ## draw Google maps
+        if (!is.null(text)) {
+            text = check_data(text)
+            text_draw = function(layer,painter) {
+                idx = visible(text)
+                qdrawText(painter, text[idx,3], text[idx,1], text[idx,2],
+                          color = text$.color[idx], ...)
+            }
+        }
+        
         ## events
         brush_mouse_press = function(layer, event) {
             meta$drag.mode = ifelse((any(meta$limits[1,] > meta$start.range[c(1,3)]) | 
@@ -225,9 +251,6 @@ qmap =
         ## create layers
         scene = qscene()
         layer.root = qlayer(scene)
-        if (googleMap) layer.google = qlayer(paintFun = google_draw,
-                                             limits = qrect(meta$limits), 
-                                             clip = TRUE, cache = TRUE)
         layer.main =
             qlayer(paintFun = main_draw,
                    mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
@@ -244,10 +267,27 @@ qmap =
         layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
         layer.title = qmtext(meta = meta, side = 3)
         layer.root[0, 0] = layer.title
-        if (googleMap) layer.root[1, 0] = layer.google
         layer.root[1, 0] = layer.main
         layer.root[1, 0] = layer.brush
         layer.root[1, 0] = layer.identify
+        if (googleMap) {
+            layer.google = qlayer(paintFun = google_draw,
+                                  limits = qrect(meta$limits), 
+                                  clip = TRUE, cache = TRUE)
+            layer.root[1, 0] = layer.google
+        }
+        if (!is.null(place)) {
+            layer.place = qlayer(paintFun = place_draw,
+                                 limits = qrect(meta$limits)
+            )
+            layer.root[1, 0] = layer.place
+        }
+        if (!is.null(text)) {
+            layer.text = qlayer(paintFun = text_draw,
+                                limits = qrect(meta$limits)
+            )
+            layer.root[1, 0] = layer.text
+        }
         layer.root[1, 1] = qlayer()
         
         ## set sizes of layers (arrange the layout)
@@ -296,7 +336,10 @@ qmap =
         })
         
         ## these layers have the same limits from meta$limits
-        sync_limits(meta, layer.main, layer.brush, layer.identify, if (googleMap){layer.google} else {NA})
+        sync_limits(meta, layer.main, layer.brush, layer.identify, 
+                    if (googleMap){layer.google} else {NA},
+                    if (!is.null(place)){layer.place} else {NA},
+                    if (!is.null(text)){layer.text} else {NA})
         
         ## simulate brushing
         meta$manual.brush = function(pos) {
