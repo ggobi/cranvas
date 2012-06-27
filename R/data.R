@@ -165,7 +165,7 @@ qdata = function(data, color = "gray15", border = color, size = 4,
   l$sizeChanged$connect(function() update_scales('size'))
 
   attr(mf, 'Scales') = l  # scales information to be used in legend
-  attr(mf, 'Generator') = 'd38bbe46dae5fa45758f3609f5dc1a0a'  # a token for internal use
+  attr(mf, 'Generator') = 'cranvas'  # to check if data was generated with qdata()
   if (copy) .cranvasEnv$.last.data = mf  # make a copy to .last.data
   mf
 }
@@ -354,7 +354,7 @@ link_type = function(data) {
 #' @examples check_data(cbind(x = 1:5, y = 6:10))
 #' check_data(1:8, convert = FALSE); check_data(qdata(mtcars), convert = FALSE)  # TRUE
 check_data = function(data, convert = TRUE) {
-  is_qdata = identical(attr(data, 'Generator'), 'd38bbe46dae5fa45758f3609f5dc1a0a')
+  is_qdata = identical(attr(data, 'Generator'), 'cranvas')
   if (!convert) return(is_qdata)
   if (is_qdata) data else {
     message(paste(strwrap('Automatically converting to a mutaframe... Interaction will work based on this data, but will not link to any other plots. For linking to work, use qdata() to create data objects.'), collapse = '\n'))
