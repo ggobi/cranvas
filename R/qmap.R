@@ -352,11 +352,14 @@ Map.meta =
 ##' @examples library(cranvas); map_qdata('state'); map_qdata('county', 'iowa')
 map_qdata =
     function(database, regions = '.',  color = 'gray50', border = 'gray90', size = 4,
-             cartogram = FALSE, diffuse = 5, ...) {
+             cartogram = FALSE, diffuse = 5, label = NULL, ...) {
     df = map(database, regions, plot = FALSE, fill = TRUE)
     ## usually ':' is the separator but sometimes it is ','
+    if (length(label) == length(df$names)) message('Self-defined labels will build a link between brushed and unbrushed areas which share the same label.')
     labels =
-        if (any(grepl(':', df$names, fixed = TRUE))) {
+        if (length(label) == length(df$names)) {
+            label
+        } else if (any(grepl(':', df$names, fixed = TRUE))) {
             sapply(strsplit(df$names, ':', fixed = TRUE), `[`, 1)
         } else if (any(grepl(',', df$names, fixed = TRUE))) {
             sapply(strsplit(df$names, ',', fixed = TRUE), `[`, 1)
