@@ -15,7 +15,7 @@
 ##' data will get brushed accordingly. On the other hand, when we
 ##' click on a plot, the corresponding items in the list will be
 ##' selected as well.
-##' @param data a mutaframe created by \code{\link{qdata}}
+##' @inheritParams qbar
 ##' @param vars a character string or an integer as a column index, or
 ##' a variable name (without quotes): the variable to be displayed in
 ##' the data selector (if not specified, the first non-numeric
