@@ -296,7 +296,7 @@ qmap =
         })
         
         ## these layers have the same limits from meta$limits
-        sync_limits(meta, layer.main, layer.brush, layer.identify, if (googleMap) layer.google)
+        sync_limits(meta, layer.main, layer.brush, layer.identify, if (googleMap){layer.google} else {NA})
         
         ## simulate brushing
         meta$manual.brush = function(pos) {
