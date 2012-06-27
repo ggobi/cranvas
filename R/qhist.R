@@ -37,7 +37,7 @@
 ##' @family plots
 ##' @example inst/examples/qhist-ex.R
 qhist =
-    function(x, data = last_data(), bins = 30, binwidth = NULL, freq = TRUE,
+    function(x, data, bins = 30, binwidth = NULL, freq = TRUE,
              main = '', horizontal = FALSE, spine = FALSE, xlim = NULL, ylim = NULL,
              xlab = NULL, ylab = NULL) {
     data = check_data(data)

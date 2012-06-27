@@ -27,7 +27,7 @@
 ##' @family plots
 ##' @example inst/examples/qmval-ex.R
 qmval =
-    function(vars, data = last_data(), horizontal = TRUE, standardize = TRUE, ...) {
+    function(vars, data, horizontal = TRUE, standardize = TRUE, ...) {
         shadow = attr(data, 'Shadow')
         vars = var_names(vars, data)
         if (is.null(shadow)) stop('there are no missing values in the data!')

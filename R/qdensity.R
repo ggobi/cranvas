@@ -19,7 +19,7 @@
 ##' @export
 ##' @family plots
 ##' @example inst/examples/qdensity-ex.R
-qdensity <- function(x, data = last_data(), binwidth = NULL, main = '',
+qdensity <- function(x, data, binwidth = NULL, main = '',
                      xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL) {
 
     ################################

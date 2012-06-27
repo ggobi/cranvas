@@ -46,7 +46,7 @@
 ##' @family plots
 ##' @example inst/examples/qparallel-ex.R
 qparallel =
-    function(vars = ~., data = last_data(), scale = "range", names = break_str(vars),
+    function(vars = ~., data, scale = "range", names = break_str(vars),
              na.action = na_impute, center = NULL,
              order = c('none', 'MDS', 'ANOVA', 'randomForest'), horizontal = FALSE,
              glyph = c('auto', 'line', 'tick', 'circle', 'square', 'triangle'),

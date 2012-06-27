@@ -40,23 +40,13 @@
 #'   all \code{FALSE})
 #' @param visible a logical vector indicating which rows are visible (default
 #'   all \code{TRUE})
-#' @param copy logical: if \code{TRUE}, a copy of the generated data object is
-#'   stored and can be accessed later by \code{\link{last_data}()}, which
-#'   enables us to ignore the \code{data} argument in many plotting functions
-#'   since they default to \code{\link{last_data}()}
 #' @return a mutaframe with attributes for interaction
 #' @author Yihui Xie <\url{http://yihui.name}>
 #' @seealso \code{\link[plumbr]{mutaframe}}, \code{\link{brush}}
-#' @note The argument \code{copy} should be used with care. If we only focus on
-#'   one dataset and all plots are created from this dataset, \code{copy = TRUE}
-#'   can save some typing efforts. However, if we need to switch between
-#'   different datasets frequently, it is recommended to write the \code{data}
-#'   argument in a plotting function explicitly, e.g. \code{qbar(x, data =
-#'   a_specific_data_object)}.
 #' @export
 #' @example inst/examples/qdata-ex.R
 qdata = function(data, color = "gray15", border = color, size = 4,
-                 brushed = FALSE, visible = TRUE, copy = TRUE, ...) {
+                 brushed = FALSE, visible = TRUE, ...) {
   if (!is.data.frame(data)) data = as.data.frame(data)
   ## check if the attribute exists
   ## row attributes needed by all plotting functions
@@ -166,36 +156,12 @@ qdata = function(data, color = "gray15", border = color, size = 4,
 
   attr(mf, 'Scales') = l  # scales information to be used in legend
   attr(mf, 'Generator') = 'cranvas'  # to check if data was generated with qdata()
-  if (copy) .cranvasEnv$.last.data = mf  # make a copy to .last.data
   mf
 }
 Scales.meta = setRefClass(
   "Scales_meta",
   fields = properties(list(color = 'list', border = 'list', size = 'list'))
 )
-
-
-.cranvasEnv$.last.data = NULL
-
-#' Get the last used data object
-#'
-#' Since interactive graphics often involves with linking based on the same data
-#' object, this function provides an access to the last used data object, which
-#' is often the default value for the argument \code{data} in many plotting
-#' functions in this package.
-#' @return The last data object created by \code{\link{qdata}}.
-#' @author Yihui Xie <\url{http://yihui.name}>
-#' @export
-#' @examples library(cranvas)
-#' data(nrcstat)
-#' qnrc = qdata(nrcstat, color = RegCode)
-#' qbar(RegCode, data = last_data())
-#' ## or simply ignore the data argument
-#' qbar(RegCode)
-last_data = function() {
-  if (is.null(.cranvasEnv$.last.data))
-    stop('No data object was created by qdata() yet') else .cranvasEnv$.last.data
-}
 
 
 #' Set or query the visibility of observations

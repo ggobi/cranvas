@@ -29,8 +29,7 @@
 ##' @param x a variable name (will be coerced to a factor if it is
 ##' not; \code{NA} will also be a level of the factor if the variable
 ##' has any \code{NA}'s)
-##' @param data a mutaframe created by \code{\link{qdata}} (default to
-##' be \code{\link{last_data}()}, i.e. the lastly used data)
+##' @param data a mutaframe created by \code{\link{qdata}}
 ##' @param space the space between bars proportional to the width of
 ##' bars
 ##' @param main the main title
@@ -52,7 +51,7 @@
 ##' @family plots
 ##' @example inst/examples/qbar-ex.R
 qbar =
-    function(x, data = last_data(), space = 0.1, main = '', horizontal = FALSE,
+    function(x, data, space = 0.1, main = '', horizontal = FALSE,
              standardize = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL) {
     data = check_data(data)
     b = brush(data)

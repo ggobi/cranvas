@@ -31,7 +31,7 @@
 ##' @export
 ##' @family plots
 qboxplot =
-    function(vars, data = last_data(), at = NULL, width = NULL, horizontal = FALSE,
+    function(vars, data, at = NULL, width = NULL, horizontal = FALSE,
              main = '', xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL,
              points = FALSE) {
     data = check_data(data)

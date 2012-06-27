@@ -37,7 +37,7 @@
 #'   former, and \code{\link[qtpaint]{qdrawGlyph}} for the latter).
 #' @export
 #' @example inst/examples/qscatter-ex.R
-qscatter = function(x, y, data = last_data(), main = '', xlim = NULL, ylim = NULL,
+qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
                     xlab = NULL, ylab = NULL, asp = 1, alpha = 1, unibrushcolor = TRUE) {
 
   data = check_data(data)

@@ -26,7 +26,7 @@
 ##' @seealso \code{\link{qdata}}
 ##' @export
 ##' @example inst/examples/record_selector-ex.R
-record_selector = function(vars, data = last_data()) {
+record_selector = function(vars, data) {
     l = as.list(match.call()[-1])
     if (is.null(l$vars)) {
         vars = names(data)[!(sapply(as.data.frame(data), is.numeric))][1]

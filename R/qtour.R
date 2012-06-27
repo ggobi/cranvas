@@ -35,7 +35,7 @@
 ##' @export
 ##' @example inst/examples/qtour-ex.R
 qtour =
-  function(vars = ~., data = last_data(), tour_path = grand_tour(), aps = 1, fps = 30,
+  function(vars = ~., data, tour_path = grand_tour(), aps = 1, fps = 30,
            rescale = TRUE, sphere = FALSE, ...) {
     data = check_data(data)
     src = last_time = tour = timer = NULL

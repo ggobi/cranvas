@@ -26,7 +26,7 @@
 ##' @author Heike Hofmann and Yihui Xie
 ##' @example inst/examples/qmap-ex.R
 qmap =
-    function(data = last_data(), linkto = NULL, linkby = NULL,
+    function(data, linkto = NULL, linkby = NULL,
              main = '', xlim = NULL, ylim = NULL, unibrushcolor = TRUE,
              googleMap = FALSE, place = NULL, path = NULL, text = NULL, ...) {
         data = check_data(data)

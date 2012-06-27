@@ -142,7 +142,7 @@ link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10) {
 ##' @seealso \code{\link{link_knn}}, \code{\link{link_cat}}
 ##' @export
 ##' @examples ## see ?link_cat
-remove_link = function(data = last_data(), id = link_id(data)) {
+remove_link = function(data, id = link_id(data)) {
     l = attr(data, 'Link')
     for (j in id) {
         remove_listener(data, j)
@@ -159,6 +159,6 @@ remove_link = function(data = last_data(), id = link_id(data)) {
 ##' @author Yihui Xie <\url{http://yihui.name}>
 ##' @export
 ##' @examples ## see ?link_cat
-link_id = function(data = last_data()) {
+link_id = function(data) {
     attr(data, 'Link')$linkid
 }
