@@ -28,7 +28,7 @@
 qmap =
     function(data = last_data(), linkto = NULL, linkby = NULL,
              main = '', xlim = NULL, ylim = NULL, unibrushcolor = TRUE,
-             googleMap = FALSE, place = NULL, text = NULL, ...) {
+             googleMap = FALSE, place = NULL, path = NULL, text = NULL, ...) {
         data = check_data(data)
         if (is.null(md <- attr(data, 'MapData')))
             stop('data must be created from map_qdata()')
@@ -149,7 +149,18 @@ qmap =
             }
         } 
         
-        ## draw Google maps
+        ## draw path
+        if (!is.null(path)) {
+            path = check_data(path)
+            path_draw = function(layer,painter) {
+                idx = visible(path)
+                qlineWidth(painter) <- median(path$.size[idx])
+                qdrawLine(painter, path[idx,1], path[idx,2],
+                          stroke = path$.color[idx][1])
+            }
+        }
+        
+        ## draw points
         if (!is.null(place)) {
             place = check_data(place)
             place_draw = function(layer,painter) {
@@ -165,7 +176,7 @@ qmap =
             }
         }
         
-        ## draw Google maps
+        ## draw text
         if (!is.null(text)) {
             text = check_data(text)
             text_draw = function(layer,painter) {
@@ -267,25 +278,31 @@ qmap =
         layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
         layer.title = qmtext(meta = meta, side = 3)
         layer.root[0, 0] = layer.title
-        layer.root[1, 0] = layer.main
-        layer.root[1, 0] = layer.brush
-        layer.root[1, 0] = layer.identify
         if (googleMap) {
             layer.google = qlayer(paintFun = google_draw,
                                   limits = qrect(meta$limits), 
                                   clip = TRUE, cache = TRUE)
             layer.root[1, 0] = layer.google
         }
+        layer.root[1, 0] = layer.main
+        layer.root[1, 0] = layer.brush
+        layer.root[1, 0] = layer.identify
+        if (!is.null(path)) {
+            layer.path = qlayer(paintFun = path_draw,
+                                 limits = qrect(meta$limits), 
+                                 clip = TRUE, cache = TRUE)
+            layer.root[1, 0] = layer.path
+        }
         if (!is.null(place)) {
             layer.place = qlayer(paintFun = place_draw,
-                                 limits = qrect(meta$limits)
-            )
+                                 limits = qrect(meta$limits), 
+                                 clip = TRUE, cache = TRUE)
             layer.root[1, 0] = layer.place
         }
         if (!is.null(text)) {
             layer.text = qlayer(paintFun = text_draw,
-                                limits = qrect(meta$limits)
-            )
+                                limits = qrect(meta$limits), 
+                                clip = TRUE, cache = TRUE)
             layer.root[1, 0] = layer.text
         }
         layer.root[1, 1] = qlayer()
