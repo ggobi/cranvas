@@ -145,6 +145,8 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
       qdrawCircle(painter, meta$xy[ord, 1][idx], meta$xy[ord, 2][idx], r = meta$size,
                   stroke = stroke, fill = fill)
     }
+    if (!is.null(bd <- bound_seg(meta)))
+      qdrawSegment(painter, bd[, 1], bd[, 2], bd[, 3], bd[, 4], stroke = "red")
   }
 
   ## draw brushed points
