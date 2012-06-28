@@ -58,8 +58,7 @@ qdata = function(data, color = "gray15", border = color, size = 4,
                  paste(row_attrs[conflict_attrs], collapse = ", ")))
   }
   mf = data
-  mf$.brushed = brushed
-  mf$.visible = visible
+  mf$.brushed = brushed; mf$.visible = visible
 
   z = as.list(match.call()[-1])
   l = Scales.meta$new()  # record scales in an environment genreated by ref classes
@@ -69,11 +68,9 @@ qdata = function(data, color = "gray15", border = color, size = 4,
       pal = NULL
       mf[[sprintf('.%s', i)]] = if (i != 'size') {
         if (is.factor(v)) {
-          pal = hue_pal()
-          dscale(v, pal)
+          pal = hue_pal(); dscale(v, pal)
         } else if (is.numeric(v)) {
-          pal = seq_gradient_pal(...)
-          cscale(v, pal)
+          pal = seq_gradient_pal(); cscale(v, pal)
         } else {
           if (!inherits(try(col2rgb(v), silent = TRUE), 'try-error')) v else
             stop(sQuote(i),
