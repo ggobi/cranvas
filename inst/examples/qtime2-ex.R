@@ -6,7 +6,7 @@ nasa2221 <- subset(nasa, Gridx == 22 & Gridy == 21)
 nasa2221$Year <- factor(nasa2221$Year)
 qnasa <- qdata(nasa2221)
 qnasa1 <- time_qdata(qnasa,"ts")
-qnasa2 <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"))
+qnasa2 <- time_qdata(qnasa,c("ps_tovs","ts","ca_med"))
 
 qtime2(TimeIndx,qnasa1,shift=c(1,12))
 qscatter(data=qnasa,ts,ps_tovs)
