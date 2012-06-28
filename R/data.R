@@ -1,3 +1,5 @@
+AES_VARS = c(".color", ".border", ".size", ".brushed", ".visible")
+
 #' Create a mutaframe from data with attributes for interaction
 #'
 #' This function will first check if the names of some pre-defined row
@@ -47,16 +49,14 @@
 #' @example inst/examples/qdata-ex.R
 qdata = function(data, color = "gray15", border = color, size = 4,
                  brushed = FALSE, visible = TRUE, ...) {
+
   if (!is.data.frame(data)) data = as.data.frame(data)
-  ## check if the attribute exists
-  ## row attributes needed by all plotting functions
-  row_attrs = c(".color", ".border", ".size", ".brushed", ".visible")
-  ## once in a blue moon...
-  conflict_attrs = row_attrs %in% colnames(data)
-  if (any(conflict_attrs)) {
+
+  # check if aes attributes exist
+  if (any(idx <- AES_VARS %in% colnames(data)))
     stop(sprintf("variable names conflicts: %s already exist(s) in data",
-                 paste(row_attrs[conflict_attrs], collapse = ", ")))
-  }
+                 paste(AES_VARS[idx], collapse = ", ")))
+
   mf = data
   mf$.brushed = brushed; mf$.visible = visible
 
