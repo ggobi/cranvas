@@ -28,9 +28,9 @@
 ##' @example inst/examples/qmval-ex.R
 qmval =
     function(vars, data, horizontal = TRUE, standardize = TRUE, ...) {
-        shadow = attr(data, 'Shadow')
+        shadow = is.na(as.data.frame(data[, setdiff(names(data), AES_VARS)]))
         vars = var_names(vars, data)
-        if (is.null(shadow)) stop('there are no missing values in the data!')
+        if (sum(shadow) == 0L) stop('there are no missing values in the data!')
         ## reshape the shadow matrix to a new qdata()
         d =
             data.frame(variable = rep(vars, each = nrow(data)),
