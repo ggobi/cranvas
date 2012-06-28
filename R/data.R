@@ -85,12 +85,7 @@ qdata = function(data, color = "gray15", border = color, size = 4,
     }
   }
 
-  ## prevent converting from characters to factors
-  if (!is.mutaframe(mf)) {
-    old_opts = options(stringsAsFactors = FALSE)
-    mf = as.mutaframe(mf)
-    on.exit(options(old_opts))
-  }
+  if (!is.mutaframe(mf)) mf = as.mutaframe(mf)
 
   ## attach a brush to data; we need to create the xxxChanged event in specific plots
   ## use brush(data) to access this brush
