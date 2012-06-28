@@ -34,9 +34,8 @@ AES_VARS = c(".color", ".border", ".size", ".brushed", ".visible")
 #'   interior of graphical elements
 #' @param border colors for the border of graphical elements (e.g. rectangles);
 #'   \code{NA} means to suppress the border
-#' @param size sizes of rows (default 1); possible values are similar to
-#'   \code{color}, but when using a variable to generate sizes, it must be a
-#'   numeric variable
+#' @param size sizes of rows; possible values are similar to \code{color}, but
+#'   when using a variable to generate sizes, it must be a numeric variable
 #' @param brushed a logical vector indicating which rows are brushed (default
 #'   all \code{FALSE})
 #' @param visible a logical vector indicating which rows are visible (default
