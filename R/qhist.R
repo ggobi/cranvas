@@ -276,9 +276,9 @@ qhist =
         ytop = meta$limits[2,2]
         eps = pixelToXY(layer, meta$limits, 1,1)
 #print(ytop)
-        anchorCue <<- c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
-        binwidthCue <<- c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
-        binheightCue <<- c(meta$limits[1,1], meta$limits[2,1], ytop-10*eps[2], ytop)
+        anchorCue = c(meta$xleft[1]-eps[1], meta$xleft[1]+eps[1], 0.25*ybottom, 0.75*ybottom)
+        binwidthCue = c(meta$xleft[2]-eps[1], meta$xleft[2]+eps[1], 0.25*ybottom, 0.75*ybottom)
+        binheightCue = c(meta$limits[1,1], meta$limits[2,1], ytop-10*eps[2], ytop)
         qdrawRect(painter, anchorCue[1], anchorCue[3], anchorCue[2], anchorCue[4], stroke="grey50", fill="grey50")
         qdrawRect(painter, binwidthCue[1], binwidthCue[3], binwidthCue[2], binwidthCue[4], stroke="grey50", fill="grey50")
         color = rgb(t(col2rgb("grey50"))/255, alpha=0.2)
