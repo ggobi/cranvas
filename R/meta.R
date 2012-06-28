@@ -63,7 +63,7 @@
 ##' @export
 ##' @keywords internal
 Common.meta =
-    list(alpha = 'numeric', main = 'character',
+    list(alpha = 'numeric', main = 'character', xlim = 'numeric', ylim = 'numeric',
          xat = 'numeric', yat = 'numeric', xlab = 'character', ylab = 'character',
          xlabels = 'character', ylabels = 'character', limits = 'matrix',
          color = 'character', border = 'character', size = 'numeric',
