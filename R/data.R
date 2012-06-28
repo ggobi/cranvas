@@ -78,9 +78,7 @@ qdata = function(data, color = "gray15", border = color, size = 4,
         })()
         pal(v)
       } else stop(sQuote('size'), ' must be numeric!')
-      l[[i]] =
-        list(title = deparse(z[[i]]), variable = deparse(z[[i]]),
-             palette = pal)
+      l[[i]] = list(title = deparse(z[[i]]), variable = z[[i]], palette = pal)
     } else {
       if ((i == 'border') && is.null(z[[i]])) mf$.border = mf$.color else
         mf[[sprintf('.%s', i)]] = switch(i, color = color, border = border, size = size)
