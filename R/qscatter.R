@@ -146,6 +146,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     }
     if (!is.null(bd <- bound_seg(meta)))
       qdrawSegment(painter, bd[, 1], bd[, 2], bd[, 3], bd[, 4], stroke = "red")
+    meta$brush.adj = one_pixel(painter) * min(meta$size)
   }
 
   ## draw brushed points
@@ -189,13 +190,8 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   tree = createTree(meta$xy)  # build a search tree
   brush_mouse_move = function(layer, event) {
     rect = update_brush_size(meta, event)
-    # increase rectangle by size of glyphs (only works, if glyphs have the same size)
-    xincrease = mean(meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1])))
-    yincrease = mean(meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2])))
-    #browser()
-    rect[1,] <- rect[1,] - c(xincrease, yincrease)
-    rect[2,] <- rect[2,] + c(xincrease, yincrease)
-
+    rect[1, ] = rect[1, ] - meta$brush.adj
+    rect[2, ] = rect[2, ] + meta$brush.adj
     if (!(b$select.only && b$draw.brush)) {
       hits = rectLookup(tree, rect[1, ], rect[2, ])
       selected(data) = mode_selection(selected(data), hits, mode = b$mode)
