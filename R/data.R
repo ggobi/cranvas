@@ -87,22 +87,9 @@ qdata = function(data, color = "gray15", border = color, size = 4,
 
   if (!is.mutaframe(mf)) mf = as.mutaframe(mf)
 
-  ## attach a brush to data; we need to create the xxxChanged event in specific plots
-  ## use brush(data) to access this brush
-  attr(mf, "Brush") = brushGen$new(
-    style = list(color = "yellow", linewidth = 2, linetype = NULL),
-    color = "yellow", size = 4,
-    mode = "none", identify = FALSE, label.gen = function(x) {
-      x = t(as.data.frame(x))
-      paste(capture.output(print(x, quote = FALSE)), collapse = '\n')
-    }, label.color = "darkgray",
-    history.size = 30, history.index = 0, history.list = list(),
-    persistent = FALSE, persistent.color = character(0),
-    persistent.list = list(), select.only = FALSE, draw.brush = TRUE,
-    cursor = 0L
-  )
-
-  ## here 'mode' is explained in the documentation of mode_selection()
+  # attach a brush to data; we need to create the xxxChanged event in specific
+  # plots; use brush(data) to access this brush
+  attr(mf, "Brush") = new_brush()
 
   attr(mf, "Link") = mutalist(linkid = NULL, linkvar = NULL, type = NULL)
 

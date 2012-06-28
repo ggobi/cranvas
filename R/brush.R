@@ -11,6 +11,22 @@ brushGen =
                 select.only = 'logical', draw.brush = 'logical',
                 cursor = 'numeric')))
 
+# create a new brush object
+new_brush = function() {
+  # here 'mode' is explained in the documentation of mode_selection()
+  brushGen$new(
+    style = list(color = "yellow", linewidth = 2, linetype = NULL),
+    color = "yellow", size = 4,
+    mode = "none", identify = FALSE, label.gen = function(x) {
+      x = t(as.data.frame(x))
+      paste(capture.output(print(x, quote = FALSE)), collapse = '\n')
+    }, label.color = "darkgray",
+    history.size = 30, history.index = 0, history.list = list(),
+    persistent = FALSE, persistent.color = character(0),
+    persistent.list = list(), select.only = FALSE, draw.brush = TRUE,
+    cursor = 0L
+  )
+}
 
 ##' Set or query the brush attributes
 ##'
