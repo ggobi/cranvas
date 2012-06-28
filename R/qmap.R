@@ -130,20 +130,31 @@ qmap =
         
         ## draw Google maps
         if (googleMap) {
-            google_draw = function(layer,painter) {
-                
+            meta$googlemaprange = data.frame(ll.lon=0,ur.lon=0,ll.lat=0,ur.lat=0)
+            meta$googlecolor = rep('white',1280*1280)
+            meta$googlezoom = -1
+            google_draw = function(layer,painter) {                
                 bound=as.matrix(meta$limits)
-                googlezoom=min(MaxZoom(bound[,1], bound[,2], c(640, 640)))
-                message("Extracting the Google map...")
-                map=get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),
-                                  zoom = googlezoom, scale = 2, ...)
-                rang=attr(map, "bb")
-                googlecolor=as.vector(map[1:1280, 1:1280])
-                googlex=rep(seq(rang$ll.lon,rang$ur.lon,length=1280),1280)
-                googley=rep(seq(rang$ur.lat,rang$ll.lat,length=1280),each=1280)                    
-                googleidx=( findInterval(googlex,bound[,1]) & findInterval(googley,bound[,2]) )
-                drawgooglecolor=googlecolor[googleidx]
-                qdrawGlyph(painter, qglyphSquare(x = min(diff(bound[,1]),diff(bound[,2]))/1280),
+                googlezoom1=min(MaxZoom(bound[,1], bound[,2], c(640, 640)))                
+                googlezoom2=round(log(360/max(diff(bound[,1]),diff(bound[,2])),1.8))
+                googlezoom=min(googlezoom1,googlezoom2)
+                rangecond=any(meta$googlemaprange$ll.lon>c(0.9,0.1)%*%bound[,1],
+                              meta$googlemaprange$ur.lon<c(0.1,0.9)%*%bound[,1],
+                              meta$googlemaprange$ll.lat>c(0.9,0.1)%*%bound[,2],
+                              meta$googlemaprange$ur.lat<c(0.1,0.9)%*%bound[,2])
+                if (meta$googlezoom!=googlezoom | rangecond) {
+                    meta$googlezoom=googlezoom
+                    message("Extracting the Google map...")
+                    map=get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),
+                                      zoom = meta$googlezoom, scale = 2, ...)
+                    meta$googlemaprange=attr(map, "bb")
+                    meta$googlecolor=as.vector(map[1:1280, 1:1280])
+                }
+                googlex=rep(seq(meta$googlemaprange$ll.lon,meta$googlemaprange$ur.lon,length=1280),1280)
+                googley=rep(seq(meta$googlemaprange$ur.lat,meta$googlemaprange$ll.lat,length=1280),each=1280)
+                googleidx=( findInterval(googlex,bound[,1],rightmost.closed=TRUE)==1 & findInterval(googley,bound[,2],rightmost.closed=TRUE)==1 )
+                drawgooglecolor=meta$googlecolor[googleidx]
+                qdrawGlyph(painter, qglyphSquare(x = min(diff(bound[,1]),diff(bound[,2]))/sqrt(sum(googleidx))),
                            googlex[googleidx], googley[googleidx],
                            stroke = drawgooglecolor, fill = drawgooglecolor)
             }
@@ -289,8 +300,8 @@ qmap =
         layer.root[1, 0] = layer.identify
         if (!is.null(path)) {
             layer.path = qlayer(paintFun = path_draw,
-                                 limits = qrect(meta$limits), 
-                                 clip = TRUE, cache = TRUE)
+                                limits = qrect(meta$limits), 
+                                clip = TRUE, cache = TRUE)
             layer.root[1, 0] = layer.path
         }
         if (!is.null(place)) {
@@ -378,7 +389,9 @@ Map.meta =
                     list(group = 'numeric',
                          start.range = 'numeric',
                          drag.mode = 'logical',
-                         outofbounds = 'matrix')
+                         outofbounds = 'matrix',
+                         googlezoom = 'integer',
+                         googlemaprange = 'data.frame')
                     
                 )))
 
