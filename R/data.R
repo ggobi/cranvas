@@ -8,8 +8,7 @@ AES_VARS = c(".color", ".border", ".size", ".brushed", ".visible")
 #' original data to create an augmented data as a
 #' \code{\link[plumbr]{mutaframe}}; in the end add some attributes to the
 #' mutaframe for the purpose of interaction (mainly the \code{\link{brush}}
-#' object and the linking specification). A shadow matrix will be attached if
-#' any missing values are present in the original data.
+#' object and the linking specification).
 #'
 #' When the three arguments \code{color}, \code{border} and \code{size} take
 #' values as variable names in \code{data}, default palettes will be used to
@@ -92,20 +91,6 @@ qdata = function(data, color = "gray15", border = color, size = 4,
   attr(mf, "Brush") = new_brush()
 
   attr(mf, "Link") = mutalist(linkid = NULL, linkvar = NULL, type = NULL)
-
-  shadow = is.na(data)  # shadow matrix for missing values
-  ## add shadow matrix to 'shadow' attribute
-  if (sum(shadow)) {
-    idx = (colSums(shadow) > 0)
-    message('There are ', sum(shadow),' missing values in ', sum(idx), ' columns.',
-            ' A shadow matrix is attached to attr(data, "Shadow")')
-    attr(mf, 'Shadow') = shadow
-    add_listener(mf, function(i, j) {
-      if (is.null(j)) return()
-      if (!(j %in% row_attrs))
-        attr(mf, 'Shadow') = is.na(as.data.frame(mf[, !(names(mf) %in% row_attrs)]))
-    })  # shadow matrix will change when data is changed
-  }
 
   ## whenever the scales information is changed, update data columns
   update_scales = function(comp) {
