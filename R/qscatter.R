@@ -134,8 +134,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     fill = meta$color
     if (meta$alpha < 1) {
       # adjust colors
-      stroke = rgb(t(col2rgb(stroke))/255, alpha=meta$alpha)
-      fill = rgb(t(col2rgb(fill))/255, alpha=meta$alpha)
+      stroke = alpha(stroke, meta$alpha); fill = alpha(fill, meta$alpha)
     }
     if (meta$samesize) {
       qdrawGlyph(painter, qglyphCircle(r = meta$size),
