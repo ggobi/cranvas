@@ -686,3 +686,14 @@ near_zero = function(x) diff(range(x, na.rm = TRUE, finite = TRUE)) < 1e-7
 
 # Is shift pressed in an event?
 shift_on = function(event) event$modifiers() == Qt$Qt$ShiftModifier
+
+# data limits x and y; plot limits X and Y; return a matrix to draw segments to
+# denote boundaries
+bound_seg = function(meta = list()) {
+  x = meta$xlim; y = meta$ylim; X = meta$limits[, 1]; Y = meta$limits[, 2]
+  if (length(x) * length(y) * length(X) * length(Y) == 0L) return()
+  rbind(if (x[1] < X[1]) c(X[1], Y[1], X[1], Y[2]),
+        if (x[2] > X[2]) c(X[2], Y[1], X[2], Y[2]),
+        if (y[1] < Y[1]) c(X[1], Y[1], X[2], Y[1]),
+        if (y[2] > Y[2]) c(X[1], Y[2], X[2], Y[2]))
+}
