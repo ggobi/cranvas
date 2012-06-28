@@ -3,20 +3,20 @@ library(cranvas)
 data(tennis)
 
 qtennis = qdata(tennis)
-qbar(matches)
+qbar(matches, data = qtennis)
 
 ## NRC rankings
 data(nrcstat)
 
 qnrc = qdata(nrcstat, color = Control)  # Control: public or private univ
-qbar(RegCode, main = 'Number of public and private colleges in each region')
+qbar(RegCode, data = qnrc, main = 'Number of public and private colleges in each region')
 
-qparallel(vars = 13:10, main = "Overview of Rankings", glyph = "tick",
+qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
     horizontal = TRUE, boxplot = TRUE)
 
-qbar(RegCode, horizontal = TRUE)  # horizontal plot
-qbar(RegCode, standardize = TRUE)  # standardize to 1
+qbar(RegCode, data = qnrc, horizontal = TRUE)  # horizontal plot
+qbar(RegCode, data = qnrc, standardize = TRUE)  # standardize to 1
 
 ## use border color to split the bars
-qnrc2 = qdata(nrcstat, color = 'white', border = Control)
-qbar(RegCode)
+qnrc2 = qdata(nrcstat, data = qnrc, color = 'white', border = Control)
+qbar(RegCode, data = qnrc)
