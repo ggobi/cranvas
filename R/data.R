@@ -71,11 +71,7 @@ qdata = function(data, color = "gray15", border = color, size = 4,
           pal = hue_pal(); dscale(v, pal)
         } else if (is.numeric(v)) {
           pal = seq_gradient_pal(); cscale(v, pal)
-        } else {
-          if (!inherits(try(col2rgb(v), silent = TRUE), 'try-error')) v else
-            stop(sQuote(i),
-                 ' must be either a factor or a numeric variable or valid colors!')
-        }
+        } else col2rgb(v)
       } else if (is.numeric(v)) {
         pal = (function(range = c(1, 6)) {
           function(x) scales::rescale(x, range, range(x, na.rm = TRUE))
