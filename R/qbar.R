@@ -248,7 +248,7 @@ Bar.meta =
 .find_split_var = function(data, meta) {
     s = attr(data, 'Scales')
     for (i in c('color', 'border')) {
-        if (length(nm <- s[[i]]$variable) && (nm %in% names(data)) &&
+        if (length(nm <- deparse(s[[i]]$variable)) && (nm %in% names(data)) &&
             is.factor(v <- data[, nm])) {
             meta$var2 = nm
             meta$value2 = factor(v, exclude = NULL)
