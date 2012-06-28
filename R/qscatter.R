@@ -281,17 +281,15 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     }, focusOutFun = function(layer, event) {
       common_focus_out(layer, event, data, meta)
     },
-    limits = qrect(meta$limits), clip = TRUE
-  ) #, cache = TRUE)
-  # cache=T commented out because it creates garbage drawing on Mac
+    limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
   layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
   layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-  layer.title = qmtext(meta = meta, side = 3)#, cache = TRUE)
-  layer.xlab = qmtext(meta = meta, side = 1)#, cache = TRUE)
-  layer.ylab = qmtext(meta = meta, side = 2)#, cache = TRUE)
-  layer.xaxis = qaxis(meta = meta, side = 1)#, cache = TRUE)
-  layer.yaxis = qaxis(meta = meta, side = 2)#, cache = TRUE)
-  layer.grid = qgrid(meta = meta)#, cache = TRUE)
+  layer.title = qmtext(meta = meta, side = 3, cache = TRUE)
+  layer.xlab = qmtext(meta = meta, side = 1, cache = TRUE)
+  layer.ylab = qmtext(meta = meta, side = 2, cache = TRUE)
+  layer.xaxis = qaxis(meta = meta, side = 1, cache = TRUE)
+  layer.yaxis = qaxis(meta = meta, side = 2, cache = TRUE)
+  layer.grid = qgrid(meta = meta, cache = TRUE)
   layer.root[0, 2] = layer.title
   layer.root[2, 2] = layer.xaxis
   layer.root[3, 2] = layer.xlab
