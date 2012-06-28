@@ -79,12 +79,6 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     meta$ylabels = format(meta$yat <- axis_loc(r[, 2]))
     meta$xlab = if (is.null(xlab)) meta$xvar else xlab
     meta$ylab = if (is.null(ylab)) meta$yvar else ylab
-
-    meta$outofbounds <- meta$limits
-    meta$outofbounds[1,1] <- min(meta$xy[,1], na.rm=T) < meta$limits[1,1]
-    meta$outofbounds[2,1] <- max(meta$xy[,1], na.rm=T) > meta$limits[2,1]
-    meta$outofbounds[1,2] <- min(meta$xy[,2], na.rm=T) < meta$limits[1,2]
-    meta$outofbounds[2,2] <- max(meta$xy[,2], na.rm=T) > meta$limits[2,2]
   }
 
   ## compute coordinates/axes-related stuff
@@ -150,24 +144,6 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     } else {
       qdrawCircle(painter, meta$xy[ord, 1][idx], meta$xy[ord, 2][idx], r = meta$size,
                   stroke = stroke, fill = fill)
-    }
-    # draw warning lines, if points are outside the drawing area
-    if (sum(meta$outofbounds) > 0) {
-      # at least one boundary is too tight
-      if (meta$outofbounds[1,1])
-        qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[1,1], meta$limits[2,2],
-                     stroke = "red")
-      if (meta$outofbounds[1,2])
-        qdrawSegment(painter, meta$limits[1,1], meta$limits[1,2], meta$limits[2,1], meta$limits[1,2],
-                     stroke = "red")
-      #                    qlineWidth(painter) = 4 # just to make sure that the right hand side and top line show up - they get clipped at the limits, so only half of it shows.
-      # as soon as we get caching/clipping back, this has to be uncommented again, I believe. HH
-      if (meta$outofbounds[2,2])
-        qdrawSegment(painter, meta$limits[1,1], meta$limits[2,2], meta$limits[2,1], meta$limits[2,2],
-                     stroke = "red")
-      if (meta$outofbounds[2,1])
-        qdrawSegment(painter, meta$limits[2,1], meta$limits[1,2], meta$limits[2,1], meta$limits[2,2],
-                     stroke = "red")
     }
   }
 
@@ -402,8 +378,7 @@ Scat.meta = setRefClass("Scat_meta",
                           Common.meta,
 
                           list(xvar = 'character', yvar = 'character', order = 'numeric',
-                               xy = 'matrix', asp = 'numeric', samesize = 'logical',
-                               outofbounds = 'matrix')
+                               xy = 'matrix', asp = 'numeric', samesize = 'logical')
 
                         )))
 
