@@ -35,7 +35,7 @@ qmval =
         d =
             data.frame(variable = rep(vars, each = nrow(data)),
                        missing = factor(as.vector(shadow[, vars]), c(TRUE, FALSE)))
-        nd = qdata(d, color = missing, copy = FALSE)
+        nd = qdata(d, color = missing)
         ## link nd to data (code borrowed from link.R)
         change1 = change2 = FALSE
         add_listener(nd, function(i, j) {
