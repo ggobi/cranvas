@@ -27,6 +27,13 @@ try(update.packages(.libPaths()[1], ask = FALSE, repos = 'http://cran.r-project.
 owd = setwd("..")
 
 library(Rd2roxygen)
+if (grepl('yihui', Sys.getenv('USER'))) {
+  pth = .libPaths()[1]
+  psr = file.path(pth, 'parser')
+  psr2 = file.path(pth, 'parser2')
+  file.rename(psr2, psr)
+  .Last = function() file.rename(psr, psr2)
+}
 options(width = 80, replace.assign = TRUE)
 
 ## run roxygen and several cleaning up steps
