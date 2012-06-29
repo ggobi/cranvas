@@ -18,9 +18,6 @@ hispanic} \item{\code{hgc}}{highest grade completed}
   National Longitudinal Survey of Youth (NLSY) described at
   \url{http://www.bls.gov/nls/nlsdata.htm}.
 }
-\usage{
-data(wages.demog)
-}
 \description{
   This is just the demographic data for each person
   recorded in the wages data.
@@ -28,13 +25,12 @@ data(wages.demog)
 \examples{
 library(cranvas)
 
-### (1) linking to between two tables, using common id
-#   variable
+### (1) linking to between two tables, using common id variable
 data(wages.demog)
 data(wages)
 
 qwg <- qdata(wages.demog)
-#qscatter(ged, race, data=qwg)
+# qscatter(ged, race, data=qwg)
 qbar(race, data = qwg)
 qbar(ged, data = qwg)
 qhist(hgc, data = qwg)
@@ -65,8 +61,8 @@ colnames(tab2) <- c("type", "freq")
 (qflea2 <- qdata(tab2))
 head(qflea)  # what the two datasets look like
 
-## see how two different datasets can be linked through a
-#   common categorical variable
+## see how two different datasets can be linked through a common categorical
+## variable
 id <- link_cat(qflea, var1 = "species", qflea2, var2 = "type")
 qhist(tars1, data = qflea)
 qbar(type, data = qflea2, standardize = TRUE)

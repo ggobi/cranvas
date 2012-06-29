@@ -12,7 +12,7 @@ brush(data, attr) <- value
   with an attribute \code{Brush}}
 
   \item{attr}{the name of the brush attribute (a character
-  scalar), e.g. \code{style} (the color, linewidth and
+  scalar), e.g.  \code{style} (the color, linewidth and
   linetype of the brush), \code{color} (the color of the
   objects selected by the brush), \code{size} (the size of
   the selected objects, e.g. line width or size of points);
@@ -37,43 +37,65 @@ brush(data, attr) <- value
   The list of attributes in the brush (they can be accessed
   by the \code{$} method):
 
-  \describe{\item{style}{a list containing \code{color},
+  \describe{
+
+  \item{style}{a list containing \code{color},
   \code{linewidth} and \code{linetype} defining the style
   of the brush (rectangle) -- not to be confused with the
-  color of the brushed elements} \item{color, size}{the
-  color and size of the brushed elements} \item{mode}{the
-  brush mode: can be \code{'none'} (default), \code{'and'},
-  \code{'or'}, \code{'xor'}, \code{'not'} or
-  \code{'complement'}; see \code{\link{mode_selection}} for
-  details} \item{identify}{logical: \code{TRUE} (turn on
-  the identify mode) or \code{FALSE} (the brush mode)}
+  color of the brushed elements}
+
+  \item{color, size}{the color and size of the brushed
+  elements}
+
+  \item{mode}{the brush mode: can be \code{'none'}
+  (default), \code{'and'}, \code{'or'}, \code{'xor'},
+  \code{'not'} or \code{'complement'}; see
+  \code{\link{mode_selection}} for details}
+
+  \item{identify}{logical: \code{TRUE} (turn on the
+  identify mode) or \code{FALSE} (the brush mode)}
+
   \item{label.gen}{a function to be used to generate the
   labels (based on the identified data) to show in the
   identify mode; the default function just prints the
   identified data as a character string}
+
   \item{label.color}{the color for the label in the
-  identify mode} \item{history.size}{the size of brush
-  history, i.e. how many brushing operations to be
-  recorded; default to be 30} \item{history.list}{the list
-  of indices of the brushed elements; we can go back and
-  forth in the brush history according to this list}
+  identify mode}
+
+  \item{history.size}{the size of brush history, i.e. how
+  many brushing operations to be recorded; default to be
+  30}
+
+  \item{history.list}{the list of indices of the brushed
+  elements; we can go back and forth in the brush history
+  according to this list}
+
   \item{history.index}{the current index of the brush
-  history} \item{persistent}{persistent (\code{TRUE}) or
-  transient (\code{FALSE}) brushing; in the persistent
-  brushing mode, the attributes of the brushed elements
-  will be changed permanently} \item{persistent.color}{a
-  color vector to store the colors of persistently brushed
-  elements} \item{persistent.list}{the persistent brushing
-  history (a list of indices of the brushed elements)}
+  history}
+
+  \item{persistent}{persistent (\code{TRUE}) or transient
+  (\code{FALSE}) brushing; in the persistent brushing mode,
+  the attributes of the brushed elements will be changed
+  permanently}
+
+  \item{persistent.color}{a color vector to store the
+  colors of persistently brushed elements}
+
+  \item{persistent.list}{the persistent brushing history (a
+  list of indices of the brushed elements)}
+
   \item{select.only}{is the mouse used to brush graphical
   elements ((\code{FALSE})) or select elements only
   (\code{TRUE}); the subtle difference here is whether the
   brush should stay on the plot or not when the mouse is
-  released} \item{draw.brush}{whether to draw the brush
-  (when the mouse is released and \code{select.only} is
-  \code{TRUE}, then \code{draw.brush} will be \code{FALSE}
-  so the brush will go away)} \item{cursor}{the cursor type
-  (an integer; see \code{\link{set_cursor}})}}
+  released}
+
+  \item{draw.brush}{whether to draw the brush (when the
+  mouse is released and \code{select.only} is \code{TRUE},
+  then \code{draw.brush} will be \code{FALSE} so the brush
+  will go away)} \item{cursor}{the cursor type (an integer;
+  see \code{\link{set_cursor}})}}
 }
 \examples{
 library(cranvas)
@@ -85,11 +107,9 @@ brush(qiris, "color") <- "green"  # set brush color to green
 ## attach events on the brush
 b <- brush(qiris)
 
-# idx is the index of the event; it can be used to stop the
-#   listening
+# idx is the index of the event; it can be used to stop the listening
 idx <- b$colorChanged$connect(function() {
-    message("the color of brushed elements was changed to ", 
-        b$color)
+    message("the color of brushed elements was changed to ", b$color)
 })
 b$color <- "brown"
 b$color <- "gold"
@@ -110,8 +130,7 @@ b$identify <- FALSE  # turn off; i.e. in brushing mode now
 
 b$persistent <- TRUE  # turn on persistent brushing
 
-## redefine label generating function: show row names in
-#   the identify mode
+## redefine label generating function: show row names in the identify mode
 b$label.gen <- function(x) {
     paste(rownames(x), collapse = ", ")
 }

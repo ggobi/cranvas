@@ -6,9 +6,6 @@
 \source{
   \url{http://sites.nationalacademies.org/pga/resdoc/index.htm}
 }
-\usage{
-data(nrcstat)
-}
 \description{
   This data contains the NRC rankings for all the
   statistics departments in US.

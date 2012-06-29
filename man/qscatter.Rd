@@ -2,8 +2,8 @@
 \alias{qscatter}
 \title{Draw a scatter plot}
 \usage{
-qscatter(x, y, data = last_data(), main = "", xlim = NULL, 
-    ylim = NULL, xlab = NULL, ylab = NULL, asp = 1, alpha = 1)
+qscatter(x, y, data, main = "", xlim = NULL, ylim = NULL, xlab = NULL, 
+    ylab = NULL, asp = 1, alpha = 1, unibrushcolor = TRUE)
 }
 \arguments{
   \item{x}{the name of the x variable}
@@ -16,9 +16,7 @@ qscatter(x, y, data = last_data(), main = "", xlim = NULL,
   a plot to its width; unlike other R graphics systems,
   this will \emph{not} affect the ranges of axes)}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
   \item{main}{the main title}
 
@@ -81,8 +79,8 @@ library(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 
-qscatter(first.serve.pct, second.serve.pts, data = qtennis, 
-    xlab = "First Serve \%", ylab = "Second Serve Points")
+qscatter(first.serve.pct, second.serve.pts, data = qtennis, xlab = "First Serve \%", 
+    ylab = "Second Serve Points")
 qscatter(return.games, first.serves, data = qtennis)
 
 ### (2) flea: color by categorical variable, and linking
@@ -94,6 +92,8 @@ qscatter(tars2, head)
 
 qscatter(tars1, tars2, asp = 0.7)  # aspect ratio
 
+qscatter(tars1, tars2, unibrushcolor = FALSE)  # brush color
+
 ## link qflea to itself using species
 id <- link_cat(qflea, "species")
 
@@ -101,8 +101,7 @@ id <- link_cat(qflea, "species")
 remove_link(qflea, id)
 
 ## a bubble chart
-qflea2 <- qdata(flea, color = NA, border = species, 
-    size = tars1)
+qflea2 <- qdata(flea, color = NA, border = species, size = tars1)
 qscatter(tars1, tars2)
 
 ### (3) NRC rankings
@@ -114,6 +113,8 @@ qscatter(RRankings5th, RRankings95th)
 
 qscatter(SRankings5th, SRankings95th)
 
+qscatter(SRankings5th, SRankings95th, unibrushcolor = FALSE)
+
 ### (4) secrets in the pollen data
 library(animation)
 data(pollen, package = "animation")
@@ -124,8 +125,7 @@ qscatter(RIDGE, CRACK, data = qpollen)
 
 ### (5) pressure test; run with care!
 n <- 1e+06  # a million still works (at least for me)
-df <- qdata(data.frame(x = rnorm(n), y = rnorm(n), 
-    z = gl(4, n/4)), color = z)
+df <- qdata(data.frame(x = rnorm(n), y = rnorm(n), z = gl(4, n/4)), color = z)
 qscatter(x, y)
 
 }

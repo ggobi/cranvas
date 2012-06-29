@@ -2,8 +2,7 @@
 \alias{link_knn}
 \title{k-Nearest neighbor linking}
 \usage{
-link_knn(mf1, var1 = NULL, mf2 = NULL, var2 = var1, 
-    k = 10)
+link_knn(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10)
 }
 \arguments{
   \item{var1}{the variable names or column indices of the
@@ -54,8 +53,7 @@ remove_link(qflea, id)
 
 
 ### (2) variables on the same scale
-mf <- qdata(data.frame(x = rnorm(300), y = rnorm(300)), 
-    size = 3)
+mf <- qdata(data.frame(x = rnorm(300), y = rnorm(300)), size = 3)
 qscatter(x, y, data = mf)
 
 id <- link_knn(mf, c("x", "y"), k = 20)
@@ -71,8 +69,7 @@ mf2 <- qdata(subset(flea, species == "Concinna "))
 qscatter(tars1, tars2, data = mf1)
 qscatter(tars1, tars2, data = mf2)
 
-id <- link_knn(mf1, c("tars1", "tars2"), mf2, c("tars1", 
-    "tars2"))
+id <- link_knn(mf1, c("tars1", "tars2"), mf2, c("tars1", "tars2"))
 
 remove_link(mf1, id[1])
 remove_link(mf2, id[2])

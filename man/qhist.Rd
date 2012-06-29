@@ -3,11 +3,10 @@
 \alias{qspine}
 \title{Draw a histogram or a spine plot}
 \usage{
-qhist(x, data = last_data(), bins = 30, binwidth = NULL, 
-    freq = TRUE, main = "", horizontal = FALSE, spine = FALSE, 
-    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
+qhist(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = "", horizontal = FALSE, 
+    spine = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
 
-qspine(x, data = last_data(), ...)
+qspine(x, data, ...)
 }
 \arguments{
   \item{x}{the name of the numeric variable to be used to
@@ -26,9 +25,7 @@ qspine(x, data = last_data(), ...)
 
   \item{...}{arguments passed to \code{\link{qhist}}}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
   \item{main}{the main title}
 
@@ -80,21 +77,19 @@ qspine(x, data = last_data(), ...)
 \examples{
 library(cranvas)
 
-#### (1) split histogram by species, and categorical
-#   linking
+#### (1) split histogram by species, and categorical linking
 data(flea, package = "tourr")
 qflea <- qdata(flea, color = species)
 
-qhist(tars1)
-qhist(tars2, freq = FALSE, main = "density of tars2")
-qhist(aede1, ylim = c(0, 10), main = "fix y-axis limits")
-qhist(head, horizontal = TRUE)
-qspine(aede2)
-qparallel(~.)  # all variables
+qhist(tars1, data = qflea)
+qhist(tars2, data = qflea, freq = FALSE, main = "density of tars2")
+qhist(aede1, data = qflea, ylim = c(0, 10), main = "fix y-axis limits")
+qhist(head, data = qflea, horizontal = TRUE)
+qspine(aede2, data = qflea)
+qparallel(~., data = qflea)  # all variables
 
 id <- link_cat(qflea, "species")  # linking by categorical variable
-## now brush one bar, all fleas of the same species will be
-#   brushed
+## now brush one bar, all fleas of the same species will be brushed
 
 
 ## remove linking
@@ -106,14 +101,14 @@ data(tennis)
 
 qtennis <- qdata(tennis, color = "white", border = "black")
 
-qhist(first.serve.pct)
-qbar(matches)
-qspine(matches)
+qhist(first.serve.pct, data = qtennis)
+qbar(matches, data = qtennis)
+qspine(matches, data = qtennis)
 
-qhist(first.serve.pct, horizontal = TRUE)
+qhist(first.serve.pct, data = qtennis, horizontal = TRUE)
 
-qhist(serve.speed)
-qhist(serve.speed, freq = FALSE)  # density
+qhist(serve.speed, data = qtennis)
+qhist(serve.speed, data = qtennis, freq = FALSE)  # density
 
 
 #### see help(wages) for yet another example
@@ -124,5 +119,6 @@ qhist(serve.speed, freq = FALSE)  # density
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qtime}}
+  \code{\link{qparallel}}, \code{\link{qtime}},
+  \code{\link{qtime2}}
 }

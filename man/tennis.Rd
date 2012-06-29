@@ -6,9 +6,6 @@
 \source{
   2006 Australian Open mens tennis matches.
 }
-\usage{
-data(tennis)
-}
 \description{
   The data contains statistics from the 2006 Australian
   Open mens tennis matches.
