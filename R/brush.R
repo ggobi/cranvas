@@ -318,6 +318,6 @@ draw_brush = function(layer, painter, data, meta) {
             stroke = b$style$color,
             fill = ifelse(b$select.only, alpha(b$style$color, .3), NA))
 
-  qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 0.9 * b$style$linewidth,
+  qdrawCircle(painter, meta$pos[1], meta$pos[2], r = 1.8 * b$style$linewidth,
               stroke = b$style$color, fill = b$style$color)
 }
