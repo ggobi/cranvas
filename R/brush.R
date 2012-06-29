@@ -312,16 +312,7 @@ draw_brush = function(layer, painter, data, meta) {
   if (!meta$active || length(meta$pos) == 0) return()
   b = brush(data)
   if (!b$draw.brush || b$identify) return()
-  qlineWidth(painter) = 1
-  if (!b$select.only) {
-    ## shift the brush shadow by 1 pixel
-    d = (1 + b$style$linewidth / 2) * one_pixel(painter)
-    qdrawRect(painter, meta$pos[1] - meta$brush.size[1] + d[1],
-              meta$pos[2] - meta$brush.size[2] - d[2],
-              meta$pos[1] + d[1], meta$pos[2] - d[2],
-              stroke = 'gray90', fill = NA)
-    qlineWidth(painter) = b$style$linewidth
-  }
+  qlineWidth(painter) = b$style$linewidth
   qdrawRect(painter, meta$pos[1] - meta$brush.size[1],
             meta$pos[2] - meta$brush.size[2], meta$pos[1], meta$pos[2],
             stroke = b$style$color,
