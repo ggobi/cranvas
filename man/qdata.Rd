@@ -2,8 +2,8 @@
 \alias{qdata}
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
-qdata(data, color = "gray15", border = color, size = 4, 
-    brushed = FALSE, visible = TRUE, copy = TRUE)
+qdata(data, color = "gray15", border = color, size = 4, brushed = FALSE, 
+    visible = TRUE, ...)
 }
 \arguments{
   \item{data}{a data frame (it will be coerced to a data
@@ -20,21 +20,15 @@ qdata(data, color = "gray15", border = color, size = 4,
   (e.g. rectangles); \code{NA} means to suppress the
   border}
 
-  \item{size}{sizes of rows (default 1); possible values
-  are similar to \code{color}, but when using a variable to
-  generate sizes, it must be a numeric variable}
+  \item{size}{sizes of rows; possible values are similar to
+  \code{color}, but when using a variable to generate
+  sizes, it must be a numeric variable}
 
   \item{brushed}{a logical vector indicating which rows are
   brushed (default all \code{FALSE})}
 
   \item{visible}{a logical vector indicating which rows are
   visible (default all \code{TRUE})}
-
-  \item{copy}{logical: if \code{TRUE}, a copy of the
-  generated data object is stored and can be accessed later
-  by \code{\link{last_data}()}, which enables us to ignore
-  the \code{data} argument in many plotting functions since
-  they default to \code{\link{last_data}()}}
 }
 \value{
   a mutaframe with attributes for interaction
@@ -48,9 +42,7 @@ qdata(data, color = "gray15", border = color, size = 4,
   as a \code{\link[plumbr]{mutaframe}}; in the end add some
   attributes to the mutaframe for the purpose of
   interaction (mainly the \code{\link{brush}} object and
-  the linking specification). A shadow matrix will be
-  attached if any missing values are present in the
-  original data.
+  the linking specification).
 }
 \details{
   When the three arguments \code{color}, \code{border} and
@@ -74,21 +66,11 @@ qdata(data, color = "gray15", border = color, size = 4,
   \code{\link{color_pal<-}} for a list of functions on how
   to modify scales information.
 }
-\note{
-  The argument \code{copy} should be used with care. If we
-  only focus on one dataset and all plots are created from
-  this dataset, \code{copy = TRUE} can save some typing
-  efforts. However, if we need to switch between different
-  datasets frequently, it is recommended to write the
-  \code{data} argument in a plotting function explicitly,
-  e.g. \code{qbar(x, data = a_specific_data_object)}.
-}
 \examples{
 library(cranvas)
 data(tennis)
 str(tennis)
-## more Aces, closer to red; less, blue; higher speed,
-#   larger points
+## more Aces, closer to red; less, blue; higher speed, larger points
 qtennis <- qdata(tennis, color = aces, size = serve.speed)
 
 qhist(aces, data = qtennis, main = "Number of Aces")

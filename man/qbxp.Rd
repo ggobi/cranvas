@@ -13,9 +13,7 @@ qbxp(data, meta, subset = FALSE, ...)
   \item{...}{other arguments passed to
   \code{\link[qtpaint]{qlayer}}}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   a layer object

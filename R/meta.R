@@ -57,6 +57,9 @@
 #' \item{brush.size}{the size of the brush rectangle (a numeric vector of length
 #' 2)}
 #'
+#' \item{brush.adj}{the amount of x and y adjustment for the brush rectangle to
+#' capture a graphical element without having to cover its center}
+#'
 #' \item{manual.brush}{a function to manually brush the plot given the mouse
 #' position}
 #'
@@ -87,7 +90,7 @@ Common.meta = list(
   xlabels = 'character', ylabels = 'character', limits = 'matrix',
   color = 'character', border = 'character', size = 'numeric',
   start = 'numeric', pos = 'numeric', active = 'logical',
-  brush.move = 'logical', brush.size = 'numeric',
+  brush.move = 'logical', brush.size = 'numeric', brush.adj = 'numeric',
   manual.brush = 'function', minor = 'character',
   identified = 'integer', identify.labels = 'character'
 )

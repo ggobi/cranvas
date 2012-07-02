@@ -6,9 +6,6 @@
 \source{
   \url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
 }
-\usage{
-data(crimes)
-}
 \description{
   Counts of different crimes by state across the USA
 }

@@ -6,9 +6,6 @@
 \source{
   \url{http://www.cityofames.org/Assessor/index.htm}
 }
-\usage{
-data(ameshousing)
-}
 \description{
   This data contains statistics for the housing market in
   Ames, Iowa from January 2008 to September 2012

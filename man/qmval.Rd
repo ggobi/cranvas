@@ -2,8 +2,7 @@
 \alias{qmval}
 \title{Draw a missing value plot}
 \usage{
-qmval(vars, data = last_data(), horizontal = TRUE, 
-    standardize = TRUE, ...)
+qmval(vars, data, horizontal = TRUE, standardize = TRUE, ...)
 }
 \arguments{
   \item{vars}{variables to show in the plot: a character
@@ -14,9 +13,7 @@ qmval(vars, data = last_data(), horizontal = TRUE,
 
   \item{...}{arguments passed to \code{\link{qbar}}}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
   \item{horizontal}{\code{TRUE} to draw a horizontal plot
   or \code{FALSE} (vertical)}
@@ -53,20 +50,19 @@ library(cranvas)
 data(brfss)
 
 qbrfss <- qdata(brfss)
-qmval(names(brfss)[40:50])
-qmval(51:68)
-qmval(~poorhlth + fruit + greensal)
+qmval(names(brfss)[40:50], data = qbrfss)
+qmval(51:68, data = qbrfss)
+qmval(~poorhlth + fruit + greensal, data = qbrfss)
 
-qparallel(100:110)
+qparallel(100:110, data = qbrfss)
 
 ## TAO data
 data(tao, package = "tourr")
 
-qtao <- qdata(tao)
-qmval(~.)
-qmval(~., horizontal = FALSE, standardize = FALSE, 
-    main = "horizontal plot with counts")
-qscatter(longitude, latitude)
+qtao <- qdata(tao, data = qtao)
+qmval(~., data = qtao)
+qmval(~., data = qtao, horizontal = FALSE, standardize = FALSE, main = "horizontal plot with counts")
+qscatter(longitude, latitude, data = qtao)
 }
 \author{
   Heike Hofmann and Yihui Xie
@@ -75,5 +71,5 @@ qscatter(longitude, latitude)
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
   \code{\link{qparallel}}, \code{\link{qspine}},
-  \code{\link{qtime}}
+  \code{\link{qtime}}, \code{\link{qtime2}}
 }

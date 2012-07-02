@@ -6,9 +6,6 @@
 \source{
   \url{http://stat-computing.org/dataexpo/2006/}
 }
-\usage{
-data(nasa)
-}
 \description{
   Monthly measurements from 1995-2000 of temperature,
   pressure ozone and clouds over central America. The data

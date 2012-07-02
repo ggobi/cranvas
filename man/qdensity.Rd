@@ -2,16 +2,14 @@
 \alias{qdensity}
 \title{Draw a univariate density plot}
 \usage{
-qdensity(x, data = last_data(), binwidth = NULL, main = "", 
-    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
+qdensity(x, data, binwidth = NULL, main = "", xlim = NULL, ylim = NULL, 
+    xlab = NULL, ylab = NULL)
 }
 \arguments{
   \item{x}{variable name which designates variable
   displayed on the horizontal axis}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
   \item{main}{the main title}
 
@@ -96,5 +94,5 @@ qdensity(tars1, data = qflea)
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qhist}}, \code{\link{qmval}},
   \code{\link{qparallel}}, \code{\link{qspine}},
-  \code{\link{qtime}}
+  \code{\link{qtime}}, \code{\link{qtime2}}
 }

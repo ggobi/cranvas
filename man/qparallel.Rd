@@ -2,12 +2,10 @@
 \alias{qparallel}
 \title{Draw a parallel coordinates plot}
 \usage{
-qparallel(vars = ~., data = last_data(), scale = "range", 
-    names = break_str(vars), na.action = na_impute, center = NULL, 
-    order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = FALSE, 
-    glyph = c("auto", "line", "tick", "circle", "square", "triangle"), 
-    boxplot = FALSE, width = NULL, jitter = NULL, amount = NULL, 
-    main = "", alpha = 1)
+qparallel(vars = ~., data, scale = "range", names = break_str(vars), na.action = na_impute, 
+    center = NULL, order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = FALSE, 
+    glyph = c("auto", "line", "tick", "circle", "square", "triangle"), boxplot = FALSE, 
+    width = NULL, jitter = NULL, amount = NULL, main = "", alpha = 1)
 }
 \arguments{
   \item{scale}{data standardizing method; possible values
@@ -61,9 +59,7 @@ qparallel(vars = ~., data = last_data(), scale = "range",
   x3} (without the left-hand side); see
   \code{\link{var_names}}}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   A par-coords plot
@@ -100,8 +96,7 @@ qparallel(~., data = qflea, scale = "I", main = "unscaled data")
 qparallel(~., data = qflea, scale = "var", main = "mean 0 variance 1")
 qparallel(~., data = qflea, scale = "global", main = "scale globally to [0, 1]")
 
-## centering by median; add boxplots to assist
-#   understanding
+## centering by median; add boxplots to assist understanding
 qparallel(~., data = qflea, center = median, boxplot = TRUE)
 
 ## ordering
@@ -121,8 +116,7 @@ qparallel(~., data = qflea, jitter = "species")
 
 ## categorical linking
 id <- link_cat(qflea, "species")
-## now brush on plots; will see all rows in the same
-#   category brushed
+## now brush on plots; will see all rows in the same category brushed
 
 ## stop categorical linking
 remove_link(qflea, id)
@@ -132,14 +126,13 @@ data(nrcstat)
 qnrc <- qdata(nrcstat, color = RegCode)
 
 ## Overview: type, rankings
-qparallel(13:10, main = "Overview of Rankings", glyph = "tick", 
-    horizontal = TRUE, boxplot = TRUE)
+qparallel(13:10, main = "Overview of Rankings", glyph = "tick", horizontal = TRUE, 
+    boxplot = TRUE)
 
 ## link to a droplist (institution names)
 record_selector(Institution, qnrc)
 
-## TODO: we need keyboard interactions here instead of
-#   command line
+## TODO: we need keyboard interactions here instead of command line
 brush(qnrc, "persistent") <- TRUE  # begin persistent brushing
 brush(qnrc, "color") <- "brown"
 ## select other objects now
@@ -153,8 +146,7 @@ qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversit
 
 
 ### (3) Missing values are imputed by 20\% below the mean
-df <- as.data.frame(replicate(5, sample(c(rep(NA, 
-    10), rnorm(100)))))
+df <- as.data.frame(replicate(5, sample(c(rep(NA, 10), rnorm(100)))))
 mf <- qdata(df)
 qparallel(~., data = mf)
 
@@ -175,8 +167,7 @@ if (require("animation")) {
 ### (5) pressure test
 test.mat <- qdata(matrix(rnorm(3e+05 * 10), ncol = 10))
 qparallel(~., data = test.mat)
-## for large data, short ticks are automatically used
-#   instead of segments
+## for large data, short ticks are automatically used instead of segments
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -185,5 +176,5 @@ qparallel(~., data = test.mat)
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
   \code{\link{qmval}}, \code{\link{qspine}},
-  \code{\link{qtime}}
+  \code{\link{qtime}}, \code{\link{qtime2}}
 }

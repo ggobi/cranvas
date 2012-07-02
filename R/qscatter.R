@@ -134,8 +134,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     fill = meta$color
     if (meta$alpha < 1) {
       # adjust colors
-      stroke = rgb(t(col2rgb(stroke))/255, alpha=meta$alpha)
-      fill = rgb(t(col2rgb(fill))/255, alpha=meta$alpha)
+      stroke = alpha(stroke, meta$alpha); fill = alpha(fill, meta$alpha)
     }
     if (meta$samesize) {
       qdrawGlyph(painter, qglyphCircle(r = meta$size),
@@ -147,6 +146,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     }
     if (!is.null(bd <- bound_seg(meta)))
       qdrawSegment(painter, bd[, 1], bd[, 2], bd[, 3], bd[, 4], stroke = "red")
+    meta$brush.adj = one_pixel(painter) * min(meta$size)
   }
 
   ## draw brushed points
@@ -190,13 +190,8 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   tree = createTree(meta$xy)  # build a search tree
   brush_mouse_move = function(layer, event) {
     rect = update_brush_size(meta, event)
-    # increase rectangle by size of glyphs (only works, if glyphs have the same size)
-    xincrease = mean(meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1])))
-    yincrease = mean(meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2])))
-    #browser()
-    rect[1,] <- rect[1,] - c(xincrease, yincrease)
-    rect[2,] <- rect[2,] + c(xincrease, yincrease)
-
+    rect[1, ] = rect[1, ] - meta$brush.adj
+    rect[2, ] = rect[2, ] + meta$brush.adj
     if (!(b$select.only && b$draw.brush)) {
       hits = rectLookup(tree, rect[1, ], rect[2, ])
       selected(data) = mode_selection(selected(data), hits, mode = b$mode)
@@ -238,13 +233,6 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     b$cursor = 2L
     meta$pos = as.numeric(event$pos())
     rect = as.matrix(identify_rect(meta))
-
-    # increase rectangle by size of glyphs (only works, if glyphs have the same size)
-    xincrease = meta$size/layer.main$geometry$width()*diff(range(meta$xy[,1]))
-    yincrease = meta$size/layer.main$geometry$height()*diff(range(meta$xy[,2]))
-    rect[1,] <- rect[1,] - c(xincrease, yincrease)
-    rect[2,] <- rect[2,] + c(xincrease, yincrease)
-
     meta$identified = rectLookup(tree, rect[1, ], rect[2, ])
     qupdate(layer.identify)
   }
@@ -281,17 +269,15 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     }, focusOutFun = function(layer, event) {
       common_focus_out(layer, event, data, meta)
     },
-    limits = qrect(meta$limits), clip = TRUE
-  ) #, cache = TRUE)
-  # cache=T commented out because it creates garbage drawing on Mac
+    limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
   layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
   layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-  layer.title = qmtext(meta = meta, side = 3)#, cache = TRUE)
-  layer.xlab = qmtext(meta = meta, side = 1)#, cache = TRUE)
-  layer.ylab = qmtext(meta = meta, side = 2)#, cache = TRUE)
-  layer.xaxis = qaxis(meta = meta, side = 1)#, cache = TRUE)
-  layer.yaxis = qaxis(meta = meta, side = 2)#, cache = TRUE)
-  layer.grid = qgrid(meta = meta)#, cache = TRUE)
+  layer.title = qmtext(meta = meta, side = 3, cache = TRUE)
+  layer.xlab = qmtext(meta = meta, side = 1, cache = TRUE)
+  layer.ylab = qmtext(meta = meta, side = 2, cache = TRUE)
+  layer.xaxis = qaxis(meta = meta, side = 1, cache = TRUE)
+  layer.yaxis = qaxis(meta = meta, side = 2, cache = TRUE)
+  layer.grid = qgrid(meta = meta, cache = TRUE)
   layer.root[0, 2] = layer.title
   layer.root[2, 2] = layer.xaxis
   layer.root[3, 2] = layer.xlab

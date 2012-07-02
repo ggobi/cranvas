@@ -2,18 +2,15 @@
 \alias{qbar}
 \title{Draw a bar plot}
 \usage{
-qbar(x, data = last_data(), space = 0.1, main = "", 
-    horizontal = FALSE, standardize = FALSE, xlim = NULL, ylim = NULL, 
-    xlab = NULL, ylab = NULL)
+qbar(x, data, space = 0.1, main = "", horizontal = FALSE, standardize = FALSE, 
+    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
 }
 \arguments{
   \item{x}{a variable name (will be coerced to a factor if
   it is not; \code{NA} will also be a level of the factor
   if the variable has any \code{NA}'s)}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
   \item{space}{the space between bars proportional to the
   width of bars}
@@ -78,23 +75,23 @@ library(cranvas)
 data(tennis)
 
 qtennis <- qdata(tennis)
-qbar(matches)
+qbar(matches, data = qtennis)
 
 ## NRC rankings
 data(nrcstat)
 
 qnrc <- qdata(nrcstat, color = Control)  # Control: public or private univ
-qbar(RegCode, main = "Number of public and private colleges in each region")
+qbar(RegCode, data = qnrc, main = "Number of public and private colleges in each region")
 
-qparallel(vars = 13:10, main = "Overview of Rankings", 
-    glyph = "tick", horizontal = TRUE, boxplot = TRUE)
+qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick", 
+    horizontal = TRUE, boxplot = TRUE)
 
-qbar(RegCode, horizontal = TRUE)  # horizontal plot
-qbar(RegCode, standardize = TRUE)  # standardize to 1
+qbar(RegCode, data = qnrc, horizontal = TRUE)  # horizontal plot
+qbar(RegCode, data = qnrc, standardize = TRUE)  # standardize to 1
 
 ## use border color to split the bars
-qnrc2 <- qdata(nrcstat, color = "white", border = Control)
-qbar(RegCode)
+qnrc2 <- qdata(nrcstat, data = qnrc, color = "white", border = Control)
+qbar(RegCode, data = qnrc)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -103,5 +100,6 @@ qbar(RegCode)
   Other plots: \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
   \code{\link{qmval}}, \code{\link{qparallel}},
-  \code{\link{qspine}}, \code{\link{qtime}}
+  \code{\link{qspine}}, \code{\link{qtime}},
+  \code{\link{qtime2}}
 }

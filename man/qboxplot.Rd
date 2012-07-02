@@ -3,9 +3,8 @@
 \title{Draw boxplots for several variables in the data or a continuous
 variable vs a categorical variable}
 \usage{
-qboxplot(vars, data = last_data(), at = NULL, width = NULL, 
-    horizontal = FALSE, main = "", xlim = NULL, ylim = NULL, 
-    xlab = NULL, ylab = NULL, points = FALSE)
+qboxplot(vars, data, at = NULL, width = NULL, horizontal = FALSE, main = "", 
+    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, points = FALSE)
 }
 \arguments{
   \item{vars}{a list of variables (a character vector), or
@@ -28,9 +27,7 @@ qboxplot(vars, data = last_data(), at = NULL, width = NULL,
 
   \item{points}{whether to add data points to the boxplot}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
   \item{main}{the main title}
 
@@ -104,5 +101,5 @@ qboxplot(~aede1 + aede2 + aede3, data = qflea2, points = TRUE)
   Other plots: \code{\link{qbar}}, \code{\link{qdensity}},
   \code{\link{qhist}}, \code{\link{qmval}},
   \code{\link{qparallel}}, \code{\link{qspine}},
-  \code{\link{qtime}}
+  \code{\link{qtime}}, \code{\link{qtime2}}
 }

@@ -132,6 +132,7 @@ qmap =
         if (googleMap) {
             meta$googlemaprange = data.frame(ll.lon=0,ur.lon=0,ll.lat=0,ur.lat=0)
             meta$googlecolor = rep('white',1280*1280)
+            meta$googlex = meta$googley = rep(0, 1280*1280)
             meta$googlezoom = -1
             google_draw = function(layer,painter) {                
                 bound=as.matrix(meta$limits)
@@ -145,17 +146,19 @@ qmap =
                 if (meta$googlezoom!=googlezoom | rangecond) {
                     meta$googlezoom=googlezoom
                     message("Extracting the Google map...")
-                    map=get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),
-                                      zoom = meta$googlezoom, scale = 2, ...)
+                    map=get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),zoom = meta$googlezoom, scale = 2, ...)
                     meta$googlemaprange=attr(map, "bb")
                     meta$googlecolor=as.vector(map[1:1280, 1:1280])
-                }
-                googlex=rep(seq(meta$googlemaprange$ll.lon,meta$googlemaprange$ur.lon,length=1280),1280)
-                googley=rep(seq(meta$googlemaprange$ur.lat,meta$googlemaprange$ll.lat,length=1280),each=1280)
-                googleidx=( findInterval(googlex,bound[,1],rightmost.closed=TRUE)==1 & findInterval(googley,bound[,2],rightmost.closed=TRUE)==1 )
+                    realxy=XY2LatLon(list(lat=mean(bound[,2]),lon=mean(bound[,1]),zoom=meta$googlezoom),seq(-320,319.5,0.5),seq(-320,319.5,0.5))
+                    reallocat=expand.grid(realxy[,2],rev(realxy[,1]))
+                    meta$googlex=reallocat$Var1
+                    meta$googley=reallocat$Var2
+                }                
+                googleidx=(findInterval(meta$googlex,bound[,1],rightmost.closed=TRUE)==1 &
+                    findInterval(meta$googley,bound[,2],rightmost.closed=TRUE)==1)
                 drawgooglecolor=meta$googlecolor[googleidx]
                 qdrawGlyph(painter, qglyphSquare(x = min(diff(bound[,1]),diff(bound[,2]))/sqrt(sum(googleidx))),
-                           googlex[googleidx], googley[googleidx],
+                           meta$googlex[googleidx], meta$googley[googleidx],
                            stroke = drawgooglecolor, fill = drawgooglecolor)
             }
         } 

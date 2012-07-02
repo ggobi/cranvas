@@ -2,7 +2,7 @@
 \alias{remove_link}
 \title{Remove the linking in mutaframes}
 \usage{
-remove_link(data = last_data(), id = link_id(data))
+remove_link(data, id = link_id(data))
 }
 \arguments{
   \item{id}{a character vector of id's of linking listeners
@@ -10,9 +10,7 @@ remove_link(data = last_data(), id = link_id(data))
   \code{\link{link_cat}} and \code{\link{link_knn}}); by
   default it is a vector of all id's for linking}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   the listeners are removed

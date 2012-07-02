@@ -2,16 +2,16 @@
 \alias{record_selector}
 \title{Select a subset of data through a GUI to be brushed}
 \usage{
-record_selector(vars, data = last_data())
+record_selector(vars, data)
 }
 \arguments{
-  \item{data}{a mutaframe created by \code{\link{qdata}}}
-
   \item{vars}{a character string or an integer as a column
   index, or a variable name (without quotes): the variable
   to be displayed in the data selector (if not specified,
   the first non-numeric variable will be used; if all
   columns are numeric, the first column will be used)}
+
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   \code{NULL} (a GUI will pop up)
@@ -47,8 +47,7 @@ record_selector(Species, data = qiris)
 ## NRC rankings
 data(nrcstat)
 qnrc <- qdata(nrcstat)
-qparallel(10:13, data = qnrc, main = "Overview of Rankings", 
-    horizontal = FALSE)
+qparallel(10:13, data = qnrc, main = "Overview of Rankings", horizontal = FALSE)
 record_selector(Institution, data = qnrc)
 qparallel(14:19, data = qnrc, main = "Research, Student Support, Diversity")
 qparallel(20:26, data = qnrc, main = "Publication, Award, Time to Degree")

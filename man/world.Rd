@@ -6,9 +6,6 @@
 \source{
   maps package
 }
-\usage{
-data(world)
-}
 \description{
   An shortened version of the map coordinates for all the
   countries on the globe. Polygon edges will be a bit

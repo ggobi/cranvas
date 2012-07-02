@@ -2,8 +2,8 @@
 \alias{map_qdata}
 \title{Create data for drawing maps}
 \usage{
-map_qdata(database, regions = ".", color = "gray50", 
-    border = "gray90", size = 4, cartogram = FALSE, ...)
+map_qdata(database, regions = ".", color = "gray50", border = "gray90", 
+    size = 4, cartogram = FALSE, diffuse = 5, label = NULL, ...)
 }
 \arguments{
   \item{database}{see \code{\link[maps]{map}}}
@@ -29,9 +29,9 @@ map_qdata(database, regions = ".", color = "gray50",
   (e.g. rectangles); \code{NA} means to suppress the
   border}
 
-  \item{size}{sizes of rows (default 1); possible values
-  are similar to \code{color}, but when using a variable to
-  generate sizes, it must be a numeric variable}
+  \item{size}{sizes of rows; possible values are similar to
+  \code{color}, but when using a variable to generate
+  sizes, it must be a numeric variable}
 }
 \value{
   A mutaframe of region names and labels, with an attribute

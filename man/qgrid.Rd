@@ -2,8 +2,8 @@
 \alias{qgrid}
 \title{Create a background grid layer}
 \usage{
-qgrid(parent = NULL, meta = NULL, xat, yat, xlim, 
-    ylim, minor = "xy", ...)
+qgrid(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = "xy", 
+    ...)
 }
 \arguments{
   \item{parent}{the parent layer (default to be
@@ -60,8 +60,8 @@ m <- qlayer(paintFun = function(layer, painter) {
     qdrawCircle(painter, runif(1000), runif(1000), r = 2)
     qdrawRect(painter, 0, 0, 1, 1)
 }, limits = l)  # main layer
-g <- qgrid(xat = seq(0, 1, 0.2), yat = seq(0, 1, 0.5), 
-    xlim = c(0, 1), ylim = c(0, 1), limits = l)
+g <- qgrid(xat = seq(0, 1, 0.2), yat = seq(0, 1, 0.5), xlim = c(0, 1), 
+    ylim = c(0, 1), limits = l)
 r[1, 1] <- g  # must add the grid layer FIRST, then the plot layer
 r[1, 1] <- m
 print(qplotView(scene = s))

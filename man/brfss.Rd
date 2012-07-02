@@ -6,9 +6,6 @@
 \source{
   \url{http://www.cdc.gov/BRFSS/}
 }
-\usage{
-data(brfss)
-}
 \description{
   Part of the largest, on-going telephone health survey
   system, tracking health conditions and risk behaviors in

@@ -2,16 +2,14 @@
 \alias{qtour}
 \title{Create a tour associated with a mutaframe}
 \usage{
-qtour(vars = ~., data = last_data(), tour_path = grand_tour(), 
-    aps = 1, fps = 30, rescale = TRUE, sphere = FALSE, ...)
+qtour(vars = ~., data, tour_path = grand_tour(), aps = 1, fps = 30, rescale = TRUE, 
+    sphere = FALSE, ...)
 }
 \arguments{
   \item{vars}{variable names to be used in the tour (parsed
   by \code{\link{var_names}})}
 
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 
   \item{tour_path}{tour path generator, defaults to 2d
   grand tour}
@@ -73,11 +71,11 @@ flea_tour <- qtour(1:6, data = qflea, tour_path = grand_tour(3))
 flea_tour$start()
 
 Sys.sleep(0.5)  # need a pause to generate projections
-qscatter(proj1, proj2, data = qflea, xlim = c(-0.8, 
-    0.8), ylim = c(-0.8, 0.8), xlab = "Projection 1", ylab = "Projection 2")
+qscatter(proj1, proj2, data = qflea, xlim = c(-0.8, 0.8), ylim = c(-0.8, 
+    0.8), xlab = "Projection 1", ylab = "Projection 2")
 qparallel(~proj1 + proj2 + proj3, data = qflea)
-qhist(proj1, data = qflea, binwidth = 0.05, xlim = c(-1, 
-    1), ylim = c(0, 10))
+qhist(proj1, data = qflea, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0, 
+    10))
 
 flea_tour$pause()
 
@@ -89,8 +87,7 @@ flea_tour$speed(0.5)  # slow down
 ## change the type of tour
 flea_tour$tour_path <- guided_tour(holes, d = 3)
 flea_tour$tour_path <- grand_tour(d = 3)
-flea_tour$tour_path <- guided_tour(lda_pp(flea$species), 
-    d = 3)
+flea_tour$tour_path <- guided_tour(lda_pp(flea$species), d = 3)
 flea_tour$tour_path <- grand_tour(d = 3)
 
 ## do sphering

@@ -20,8 +20,7 @@ library(qtpaint)
 s <- qscene()
 qlayer(s, paintFun = function(layer, painter) {
     d <- one_pixel(painter)
-    qdrawSegment(painter, 0.1, seq(0, 1, 0.1), 0.1 + d[1], seq(0, 
-        1, 0.1))  # one pixel segments
+    qdrawSegment(painter, 0.1, seq(0, 1, 0.1), 0.1 + d[1], seq(0, 1, 0.1))  # one pixel segments
     qdrawRect(painter, 0.3, 0.4, 0.3 + d[1], 0.4 + d[2])  # one pixel rectangle
 }, limits = qrect(c(0, 1), c(0, 1)))
 qplotView(scene = s)

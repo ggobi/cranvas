@@ -2,12 +2,10 @@
 \alias{link_id}
 \title{Get the id's of listeners on linking}
 \usage{
-link_id(data = last_data())
+link_id(data)
 }
 \arguments{
-  \item{data}{a mutaframe created by \code{\link{qdata}}
-  (default to be \code{\link{last_data}()}, i.e. the lastly
-  used data)}
+  \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
   A character vector of id's.
