@@ -220,6 +220,10 @@ qmap =
                 meta$pos = as.numeric(event$pos())
                 meta$limits = meta$limits + matrix(rep(-meta$pos+meta$start,each=2),nrow=2)
                 qupdate(layer.main)
+                if (googleMap) qupdate(layer.google)
+                if (!is.null(path)) qupdate(layer.path)
+                if (!is.null(place)) qupdate(layer.place)
+                if (!is.null(text)) qupdate(layer.text)
                 return()
             }
             rect = qrect(update_brush_size(meta, event))
