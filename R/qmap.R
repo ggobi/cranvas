@@ -251,6 +251,9 @@ qmap =
                 extend_ranges(meta$limits,
                               -sign(event$delta()) * 0.1 * c(p[1], 1 - p[1], p[2], 1 - p[2]))
             if (googleMap) qupdate(layer.google)
+            if (!is.null(path)) qupdate(layer.path)
+            if (!is.null(place)) qupdate(layer.place)
+            if (!is.null(text)) qupdate(layer.text)
         }
         identify_hover = function(layer, event) {
             if (!b$identify) return()
@@ -369,6 +372,7 @@ qmap =
         ## these layers have the same limits from meta$limits
         sync_limits(meta, layer.main, layer.brush, layer.identify, 
                     if (googleMap){layer.google} else {NA},
+                    if (!is.null(path)){layer.path} else {NA},
                     if (!is.null(place)){layer.place} else {NA},
                     if (!is.null(text)){layer.text} else {NA})
         
