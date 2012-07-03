@@ -8,10 +8,19 @@ qmap(qworld)
 ## US states
 qstate = map_qdata('state')
 qmap(qstate)
-qmap(qstate, googleMap=TRUE)  # get a google map background
 
-## a simple demonstration of colors
+# get a google map background
+qmap(qstate, googleMap=TRUE)
+
+# a simple demonstration of colors
 qstate$.color = sample(c("red", "blue"), nrow(qstate), replace=TRUE)
+
+# Draw a path on the map
+MyTrip=data.frame(x=c(-80.134,-84.39,-93.62,-95.383,-122.333,-117.1625),
+                  y=c(25.81,33.755,42.0347,29.763,47.6097,32.715),
+                  place=c('Miami','Atlanta','Ames','Houston','Seattle','San Diego'))
+qMyTrip=qdata(MyTrip,color='black',size=c(1,0.5,3,1,2,1))
+qmap(qstate, place = qMyTrip, path = qMyTrip, text = qMyTrip, halign='center', valign='bottom', cex=1.25)
 
 ## US counties
 qcounty = map_qdata('county')
