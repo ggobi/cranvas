@@ -253,6 +253,7 @@ qmap =
                     md$y = md$finaly * meta$cartopar + md$origy * (1 - meta$cartopar)
                     compute_coords()
                     meta$start.range = as.vector(meta$limits)
+                    layer.main$invalidateIndex()
                 }
             }
         }
