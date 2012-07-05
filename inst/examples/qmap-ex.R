@@ -80,7 +80,7 @@ vote.pop = c(4708708, 6595778, 2889450, 36961664, 5024748, 3518288,
 
 qstate2 = map_qdata('state', color = vote.res, 
                     size = vote.pop, cartogram = TRUE, diffuse = 2)
-qmap(qstate2)
+qmap(qstate2)  # try to press left arrow and right arrow
 
 ## electoral votes for each state
 vote.num = c(9, 10, 6, 55, 9, 7, 3, 3, 27, 15, 4, 21, 11, 7, 6, 8, 9,
