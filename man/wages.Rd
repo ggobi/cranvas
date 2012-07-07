@@ -24,6 +24,9 @@ region at each measurement time} }}
   National Longitudinal Survey of Youth (NLSY) described at
   \url{http://www.bls.gov/nls/nlsdata.htm}.
 }
+\usage{
+data(wages)
+}
 \description{
   The data was collected to track the labor experiences of
   male high-school dropouts. The men were between 14 and 17

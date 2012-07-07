@@ -3,7 +3,8 @@
 \title{Draw a map}
 \usage{
 qmap(data, linkto = NULL, linkby = NULL, main = "", xlim = NULL, ylim = NULL, unibrushcolor = TRUE, 
-    googleMap = FALSE, place = NULL, path = NULL, text = NULL, ...)
+    googleMap = FALSE, place = NULL, path = NULL, text = NULL, cartostep = 0.05, 
+    ...)
 }
 \arguments{
   \item{data}{the map data created by
@@ -61,10 +62,20 @@ qmap(qworld)
 ## US states
 qstate <- map_qdata("state")
 qmap(qstate)
-qmap(qstate, googleMap = TRUE)  # get a google map background
 
-## a simple demonstration of colors
+# get a google map background
+qmap(qstate, googleMap = TRUE)
+
+# a simple demonstration of colors
 qstate$.color <- sample(c("red", "blue"), nrow(qstate), replace = TRUE)
+
+# Draw a path on the map
+MyTrip <- data.frame(x = c(-80.134, -84.39, -93.62, -95.383, -122.333, -117.1625), 
+    y = c(25.81, 33.755, 42.0347, 29.763, 47.6097, 32.715), place = c("Miami", "Atlanta", 
+        "Ames", "Houston", "Seattle", "San Diego"))
+qMyTrip <- qdata(MyTrip, color = "black", size = c(1, 0.5, 3, 1, 2, 1))
+qmap(qstate, place = qMyTrip, path = qMyTrip, text = qMyTrip, halign = "center", 
+    valign = "bottom", cex = 1.25)
 
 ## US counties
 qcounty <- map_qdata("county")
@@ -123,7 +134,7 @@ vote.pop <- c(4708708, 6595778, 2889450, 36961664, 5024748, 3518288, 885122, 601
 
 qstate2 <- map_qdata("state", color = vote.res, size = vote.pop, cartogram = TRUE, 
     diffuse = 2)
-qmap(qstate2)
+qmap(qstate2)  # try to press left arrow and right arrow
 
 ## electoral votes for each state
 vote.num <- c(9, 10, 6, 55, 9, 7, 3, 3, 27, 15, 4, 21, 11, 7, 6, 8, 9, 2, 10, 12, 
