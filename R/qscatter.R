@@ -53,6 +53,8 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   ## set default xlab/ylab if not provided
   if (is.null(xlab)) meta$xlab = meta$xvar
   if (is.null(ylab)) meta$ylab = meta$yvar
+  if (!(meta$xvar %in% names(data))) meta$xvar = x
+  if (!(meta$yvar %in% names(data))) meta$yvar = y
 
   ## tour: color, size, transparency could be decided by proj3
   if ('proj3' %in% colnames(data)) {
