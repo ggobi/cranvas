@@ -25,7 +25,7 @@ qpar = function(...) {
   }
 }
 
-qpar(mar = 0.05, cache = TRUE)
+qpar(mar = 0.05, cache = FALSE)
 
 # a convenience function
 .cache = function() qpar('cache')
