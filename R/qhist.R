@@ -262,7 +262,7 @@ qhist =
         } else {
           # pass hover on and reverse any changes to the cursor
           b$cursor = 2L # CrossCursor
-          identify_hover(layer.main, painter)
+          identify_hover(layer.main, event)
         }
     }
     pixelToXY = function(layer, limits, px, py) {
