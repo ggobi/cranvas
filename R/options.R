@@ -26,3 +26,6 @@ qpar = function(...) {
 }
 
 qpar(mar = 0.05, cache = TRUE)
+
+# a convenience function
+.cache = function() qpar('cache')
