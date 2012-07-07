@@ -25,4 +25,4 @@ qpar = function(...) {
   }
 }
 
-qpar(mar = 0.05)
+qpar(mar = 0.05, cache = TRUE)
