@@ -47,7 +47,6 @@ Suggests:
     Rcartogram
 Collate:
     'cranvas-package.R'
-    'zzz.R'
     'utils.R'
     'data.R'
     'axes.R'
