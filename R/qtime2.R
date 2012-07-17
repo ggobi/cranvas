@@ -45,6 +45,7 @@
 
 qtime2 <- function(time, data, period=NULL, group=NULL,
                    shift=c(1,4,7,12,24), size=3, alpha=1, asp=NULL, 
+                   similarity.index=ifelse(is.null(period) & is.null(group),TRUE,FALSE),
                    main=NULL, xlab=NULL, ylab=NULL,...){
     
     #####################
@@ -324,6 +325,32 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
         }
     }
     
+    similarity_draw <- function(layer, painter){
+        j <- is.null(call$period) & is.null(call$group)
+        if (!j) return()
+        tmp <- unique(meta$wrap.group)
+        if (length(tmp)==1){
+            ytmpacf <- unname(tapply(meta$ytmp,meta$yorig[,1],function(z) acf(z,lag.max=max(30,max(meta$wrap.shift)),plot=F)$acf[meta$wrap.shift[1]+1]))
+            tmpprint <- paste(meta$varname$y,": ACF(lag=",meta$wrap.shift[1],"):",round(ytmpacf,2),sep="")
+        } else if (length(tmp)==2) {
+            tmpdat=data.frame(ytmp=meta$ytmp,series=meta$wrap.group,label=meta$yorig[,1])
+            ytmpcor <- ddply(tmpdat,'label',summarise,res=cor(ytmp[series==1][1:sum(series==2)],ytmp[series==2]))[,2]
+            tmpprint <- paste(meta$varname$y,"Corr. of two series = ",round(ytmpcor,2),sep="")
+        } else {
+            tmpdat=data.frame(ytmp=meta$ytmp,xtmp=factor(meta$xtmp),label=meta$yorig[,1])
+            ytmpR2 <- ddply(tmpdat,'label',summarise,res=summary(lm(ytmp~xtmp))$r.squared)[,2]
+            tmpprint <- paste("R square = ",round(ytmpR2,2),sep="")
+        }
+        if (meta$shiftUP) {
+            qdrawText(painter,tmpprint,
+                      rep(meta$limits[1,1],meta$nyvar),meta$yat-0.5,
+                      halign='left',valign='bottom')
+        } else {
+            qdrawText(painter,paste(tmpprint,collapse="\n"),
+                      meta$limits[1,1],meta$limits[1,2],
+                      halign='left',valign='bottom')
+        }
+    }
     
     #####################
     ## draw the canvas ##----------
@@ -358,6 +385,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
     main_line_layer <- qlayer(paintFun=main_line_draw,limits=qrect(meta$limits),clip=TRUE)
     brush_layer <- qlayer(paintFun=brush_draw, limits=qrect(meta$limits))
     query_layer <- qlayer(paintFun=query_draw, limits=qrect(meta$limits))
+    if (similarity.index) similarity_layer <- qlayer(paintFun=similarity_draw, limits=qrect(meta$limits))
     
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
@@ -369,6 +397,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
     layer.root[1, 2] = main_line_layer
     layer.root[1, 2] = brush_layer
     layer.root[1, 2] = query_layer
+    if (similarity.index) layer.root[1, 2] = similarity_layer
     layer.root[1, 3] = qlayer() 
     layout = layer.root$gridLayout()
     layout$setRowPreferredHeight(0, 30)
@@ -407,8 +436,8 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
         set_cursor(view, b$cursor)
     })
     sync_limits(meta, main_circle_layer,main_line_layer,
-                query_layer, brush_layer)#,
-    #layer.WRAPtext,layer.ACFtext)
+                query_layer, brush_layer,
+                if (similarity.index){similarity_layer} else {NA})
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = main_circle_layer, event = list(pos = function() pos))
     }
