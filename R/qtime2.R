@@ -46,7 +46,7 @@
 qtime2 <- function(time, data, period=NULL, group=NULL,
                    shift=c(1,4,7,12,24), size=3, alpha=1, asp=NULL, 
                    similarity.index=ifelse(is.null(period) & is.null(group),TRUE,FALSE),
-                   main=NULL, xlab=NULL, ylab=NULL,...){
+                   help.text=TRUE, main=NULL, xlab=NULL, ylab=NULL,...){
     
     #####################
     ## data processing ##----------
@@ -127,10 +127,12 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
         lim <- meta$limits
         p <- (pos - lim[1, ]) / (lim[2, ] - lim[1, ])
         meta$limits[1:2] <- extend_ranges(meta$limits[1:2], -sign(event$delta()) * 0.05 * c(p[1], 1 - p[1]))
+        meta$helptext <- paste("Wheel: Zoom",ifelse(sign(event$delta())>0,"in","out"))
         tmprange <- extend_ranges(unlist(meta$xtmp))
         meta$limits[1,1] <- max(meta$limits[1,1],min(tmprange))
         meta$limits[2,1] <- min(meta$limits[2,1],max(tmprange))
         meta$drag.mode <- ifelse(meta$limits[1,1]<=min(tmprange) & meta$limits[2,1]>=max(tmprange), FALSE, TRUE)
+        timer$start()
     }
     
     query_hover <- function(item, event, ...) {
@@ -151,6 +153,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
         meta$shift <- shift_on(event)
         key <- keys[match_key(keys,event)]
         if (!length(key)) return()
+        meta$helptext <- paste("Key:",ifelse(meta$shift,"Shift +",""),key)
         switch(key, 
                M = switch_serie_mode(meta, data),
                G = shift_wrap_gear(meta),
@@ -166,6 +169,7 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
         tree <<- createTree(data.frame(x=meta$xtmp,y=meta$ytmp))
         qupdate(main_circle_layer)
         qupdate(main_line_layer)
+        timer$start()      
     }
     
     
@@ -344,21 +348,58 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
         if (meta$shiftUP) {
             qdrawText(painter,tmpprint,
                       rep(meta$limits[1,1],meta$nyvar),meta$yat-0.5,
-                      halign='left',valign='bottom')
+                      halign='left',valign='bottom',color='gray50')
         } else {
             qdrawText(painter,paste(tmpprint,collapse="\n"),
                       meta$limits[1,1],meta$limits[1,2],
-                      halign='left',valign='bottom')
+                      halign='left',valign='bottom',color='gray50')
         }
     }
+    
+    helptext_draw <- function(layer,painter){
+        if (meta$helptext == "") return()
+        qdrawText(painter,meta$helptext,
+                  meta$limits[2,1],meta$limits[1,2],
+                  halign='right',valign='bottom',color='gray70', cex=2)
+    }
+    
+    timer <- qtimer(2000, function() {
+        meta$helptext <- ""
+        qupdate(helptext_layer)
+    })
     
     #####################
     ## draw the canvas ##----------
     #####################
     
-    xWidth <- 800
-    yWidth <- 500
-    if (!is.null(asp)) xWidth <- round(yWidth*asp)
+    asp_ratio <- function(x,y){
+        if (length(x)!=length(y)) return(0.5)
+        
+        x <- (x-min(x,na.rm=TRUE))/(max(x,na.rm=TRUE)-min(x,na.rm=TRUE))
+        y <- (y-min(y,na.rm=TRUE))/(max(y,na.rm=TRUE)-min(y,na.rm=TRUE))
+        r <- diff(y)/diff(x)
+        f <- function(a,r){
+            mean(abs(atan(a*r)))-pi/3
+        }
+        a=try(uniroot(f,c(0.1,1),r)$root, silent = TRUE)
+        if (class(a) == 'try-error') a <- 0.5
+        return(a)
+    }
+    
+    if (is.null(asp)) {
+        a <- asp_ratio(meta$time,meta$y)
+        if (a<0.35) {
+            xWidth <- 1280
+            yWidth <- max(round(xWidth*a),320)
+        } else {
+            yWidth <- 750
+            xWidth <- round(yWidth/a)
+        }
+    } else {
+        yWidth <- 600
+        xWidth <- round(yWidth*asp)
+    }
+
     
     scene <- qscene()
     layer.root <- qlayer(scene)
@@ -386,33 +427,38 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
     brush_layer <- qlayer(paintFun=brush_draw, limits=qrect(meta$limits))
     query_layer <- qlayer(paintFun=query_draw, limits=qrect(meta$limits))
     if (similarity.index) similarity_layer <- qlayer(paintFun=similarity_draw, limits=qrect(meta$limits))
+    if (help.text) helptext_layer <- qlayer(paintFun=helptext_draw, limits=qrect(meta$limits))
     
     layer.root[0, 2] = layer.title
+    if (help.text) layer.root[0, 2] = helptext_layer
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab
     layer.root[1, 1] = layer.yaxis
     layer.root[1, 0] = layer.ylab
     layer.root[1, 2] = layer.grid
+    if (similarity.index) layer.root[1, 2] = similarity_layer
     layer.root[1, 2] = main_circle_layer
     layer.root[1, 2] = main_line_layer
     layer.root[1, 2] = brush_layer
     layer.root[1, 2] = query_layer
-    if (similarity.index) layer.root[1, 2] = similarity_layer
     layer.root[1, 3] = qlayer() 
-    layout = layer.root$gridLayout()
-    layout$setRowPreferredHeight(0, 30)
-    layout$setRowPreferredHeight(2, 15 * max(sapply(gregexpr('\\n', meta$xlabels),
-                                                    function(xx) ifelse(any(xx <0), 0, length(xx)) + 2)))
-    layout$setRowPreferredHeight(3, 20)
-    layout$setColumnPreferredWidth(0, 10)
-    layout$setColumnPreferredWidth(1, 9 * max(nchar(unlist(strsplit(meta$ylabels, '\n')))) + 5)
-    layout$setColumnMaximumWidth(3, 10)
-    layout$setRowStretchFactor(0, 0)
-    layout$setRowStretchFactor(2, 0)
-    layout$setRowStretchFactor(3, 0)
-    layout$setColumnStretchFactor(0, 0)
-    layout$setColumnStretchFactor(1, 0)
     
+    ## set sizes of layers (arrange the layout)
+    set_layout = function() {
+        fix_dimension(layer.root,
+                      row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
+                                                            prefer_height(meta$xlabels),
+                                                            prefer_height(meta$xlab))),
+                      column = list(id = c(1, 0, 3), value = c(prefer_width(meta$ylabels),
+                                                               prefer_width(meta$ylab, FALSE),
+                                                               10)))
+    }
+    set_layout()
+    
+    ## layout is dynamic (listen to changes in xlab/ylab/xlabels/ylabels...)
+    meta$mainChanged$connect(set_layout)
+    meta$xlabChanged$connect(set_layout); meta$ylabChanged$connect(set_layout)
+    meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout)
     
     ## listeners on the data (which column updates which layer(s))
     d.idx = add_listener(data, function(i, j) {
@@ -437,13 +483,15 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
     })
     sync_limits(meta, main_circle_layer,main_line_layer,
                 query_layer, brush_layer,
-                if (similarity.index){similarity_layer} else {NA})
+                if (similarity.index){similarity_layer} else {NA},
+                if (help.text) {helptext_layer} else {NA})
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = main_circle_layer, event = list(pos = function() pos))
     }
     
     view <- qplotView(scene=scene)
     view$setWindowTitle(meta$main)
+    view$resize(xWidth,yWidth)
     attr(view, 'meta') = meta
     view
 }
@@ -472,7 +520,8 @@ Time.meta =
                       limits = 'matrix',
                       radius = 'numeric',
                       stroke = 'character',
-                      fill = 'character'))))
+                      fill = 'character',
+                      helptext = 'character'))))
 
 
 ##' Create data for drawing time plots
@@ -624,6 +673,7 @@ time_meta_initialize <- function(meta,call,data,period, group,
     meta$hitsrow <- NULL
     meta$vertconst <- 0
     meta$linkID <- NULL
+    meta$helptext <- ""
     
     ## Range, axes, etc.
     meta$zoomsize <- diff(range(meta$xtmp, na.rm = TRUE))
