@@ -36,6 +36,8 @@
 ##' @param size Point size, default to be 2.
 ##' @param alpha Transparency level, 1=completely opaque, default to be 1.
 ##' @param asp Ratio between width and height of the plot.
+##' @param similarity.index Whether to show the statistics which measure the similarity between series when wrapping. It gives the ACF, corr, and R square for one, two, and more series respectively.
+##' @param help.text Whether to show the instruction. All the text will disappear in 2 seconds after the interaction.
 ##' @param main main title for the plot.
 ##' @param xlab label on horizontal axis, default is name of x variable
 ##' @param ylab label on vertical axis, default is name of y variable
