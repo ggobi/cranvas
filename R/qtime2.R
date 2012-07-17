@@ -39,11 +39,11 @@
 ##' @param main main title for the plot.
 ##' @param xlab label on horizontal axis, default is name of x variable
 ##' @param ylab label on vertical axis, default is name of y variable
-##' @example inst/examples/qtime2-ex.R
+##' @example inst/examples/qtime-ex.R
 ##' @export
 ##' @family plots
 
-qtime2 <- function(time, data, period=NULL, group=NULL,
+qtime <- function(time, data, period=NULL, group=NULL,
                    shift=c(1,4,7,12,24), size=3, alpha=1, asp=NULL, 
                    similarity.index=ifelse(is.null(period) & is.null(group),TRUE,FALSE),
                    help.text=TRUE, main=NULL, xlab=NULL, ylab=NULL,...){
