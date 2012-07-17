@@ -247,10 +247,10 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
             }
             if (length(meta$group)==0) {
                 info <- data.frame(meta$varname$x,meta$time[hits],
-                                   meta$yorig[hits,1],meta$ytmp[hits])
+                                   meta$yorig[hits,1],meta$yorig[hits,2])
             } else {
                 info <- data.frame(meta$varname$x, meta$time[hits],
-                                   meta$yorig[hits,1],meta$ytmp[hits],
+                                   meta$yorig[hits,1],meta$yorig[hits,2],
                                    meta$varname$g,meta$group[hits])
             }
             
