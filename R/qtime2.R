@@ -472,7 +472,7 @@ time_qdata <- function(regular_qdata, y) {
     ycol <- length(y)
     data <- as.data.frame(regular_qdata)
     usecol <- colnames(data) %in% c(".brushed",".visible",".color",".border",".size")
-    setting <- data[1,usecol]
+    setting <- settingh <- data[, usecol]
     data <- data[, !usecol]
     data$.row <- 1:nrow(data)
     newdat <- data.frame(.variable=rep(y[1],nrow(data)),.value=data[,y[1]],data)
@@ -484,12 +484,13 @@ time_qdata <- function(regular_qdata, y) {
             tmpnewdat[,y[i]] <- TRUE
             tmpnewdat[,y[-i]] <- FALSE
             newdat <- rbind(newdat, tmpnewdat)
+            settingh <- rbind(settingh, setting)
         }
     }
     newdat$.variable <- as.factor(newdat$.variable)
-    newdat <- qdata(newdat,color = setting[1,3], border = setting[1,4], 
-                    size = setting[1,5], brushed = setting[1,1], 
-                    visible = setting[1,2])
+    newdat <- qdata(newdat,color = settingh[,3], border = settingh[,4], 
+                    size = settingh[,5], brushed = settingh[,1], 
+                    visible = settingh[,2])
     change_back = change_forward = FALSE
     add_listener(newdat,function(i,j){
         if (j != ".brushed" || change_back) return()
