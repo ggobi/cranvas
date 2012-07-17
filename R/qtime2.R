@@ -44,7 +44,7 @@
 ##' @family plots
 
 qtime2 <- function(time, data, period=NULL, group=NULL,
-                   shift=c(1,4,7,12,24), size=2, alpha=1, asp=NULL, 
+                   shift=c(1,4,7,12,24), size=3, alpha=1, asp=NULL, 
                    main=NULL, xlab=NULL, ylab=NULL,...){
     
     #####################
@@ -173,35 +173,25 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
     ############
     
     main_circle_draw <- function(layer,painter){
-        for (j in 1:meta$nyvar) {
-            color=gray(seq(0,0.6,length=max(meta$wrap.group,na.rm=TRUE)))
-            for (k in unique(meta$vargroup)) {
-                for (i in 1:max(meta$wrap.group,na.rm=TRUE)) {
-                    if (sum(meta$wrap.group==i & meta$vargroup==k)){
-                        tmprow <- 1:meta$singleVarLen + meta$singleVarLen * (j-1)
-                        qdrawGlyph(painter, qglyphCircle(r = meta$radius), 
-                                   meta$xtmp[meta$wrap.group==i & meta$vargroup==k & 1:length(meta$xtmp) %in% tmprow],
-                                   meta$ytmp[meta$wrap.group==i & meta$vargroup==k & 1:length(meta$ytmp) %in% tmprow],
-                                   fill=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha),
-                                   stroke=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha))
-                    }
-                }
-            }
-        }
+        maxgroup = max(meta$wrap.group)
+        color = alpha(data$.color, seq(0,1,length=maxgroup+1)[meta$wrap.group+1])
+        qdrawGlyph(painter, qglyphCircle(r = meta$radius), meta$xtmp, meta$ytmp,
+                   fill=alpha(color,meta$alpha), stroke=alpha(color,meta$alpha))
     }
     
     main_line_draw <- function(layer,painter){
         qlineWidth(painter) <- meta$radius / 2
+        maxgroup = max(meta$wrap.group)
+        color=gray(seq(0,0.6,length=max(meta$wrap.group,na.rm=TRUE)))
         for (j in 1:meta$nyvar) {
-            color=gray(seq(0,0.6,length=max(meta$wrap.group,na.rm=TRUE)))
             for (k in unique(meta$vargroup)) {
-                for (i in 1:max(meta$wrap.group,na.rm=TRUE)) {
+                for (i in 1:maxgroup) {
                     if (sum(meta$wrap.group==i & meta$vargroup==k)){
                         tmprow <- 1:meta$singleVarLen + meta$singleVarLen * (j-1)
                         qdrawLine(painter,
                                   meta$xtmp[meta$wrap.group==i & meta$vargroup==k & 1:length(meta$xtmp) %in% tmprow],
                                   meta$ytmp[meta$wrap.group==i & meta$vargroup==k & 1:length(meta$ytmp) %in% tmprow],
-                                  stroke=alpha(color[max(meta$wrap.group,na.rm=TRUE)+1-i],meta$alpha))
+                                  stroke=alpha(color[maxgroup+1-i],meta$alpha))
                     }
                 }
             }
@@ -256,10 +246,10 @@ qtime2 <- function(time, data, period=NULL, group=NULL,
                 hits <- hits[distidx]
             }
             if (length(meta$group)==0) {
-                info <- data.frame(meta$varname$x,meta$xtmp[hits],
+                info <- data.frame(meta$varname$x,meta$time[hits],
                                    meta$yorig[hits,1],meta$ytmp[hits])
             } else {
-                info <- data.frame(meta$varname$x, meta$xtmp[hits],
+                info <- data.frame(meta$varname$x, meta$time[hits],
                                    meta$yorig[hits,1],meta$ytmp[hits],
                                    meta$varname$g,meta$group[hits])
             }
@@ -488,7 +478,8 @@ time_qdata <- function(regular_qdata, y) {
         }
     }
     newdat$.variable <- as.factor(newdat$.variable)
-    newdat <- qdata(newdat,color = settingh[,3], border = settingh[,4], 
+    newdat <- qdata(newdat,color = as.character(settingh[,3]), 
+                    border = as.character(settingh[,4]), 
                     size = settingh[,5], brushed = settingh[,1], 
                     visible = settingh[,2])
     change_back = change_forward = FALSE
@@ -863,4 +854,9 @@ alpha_plus <- function(meta){
 }
 alpha_minus <- function(meta){
     meta$alpha <- max(0.01, 1/nrow(data), min(1, 0.9 * meta$alpha))
+}
+
+`%md%` = function(x, y) {
+    z = (col2rgb(x, TRUE) + col2rgb(y, TRUE))/255/2
+    rgb(z[1, ], z[2, ], z[3, ], z[4, ])
 }
