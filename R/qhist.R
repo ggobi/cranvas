@@ -151,6 +151,13 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
     brush_mouse_move(layer, event)
     common_mouse_release(layer, event, data, meta)
   }
+  mouse_wheel = function(layer, event) {
+    pos = as.numeric(event$pos())
+    lim = meta$limits
+    p = (pos - lim[1, ]) / (lim[2, ] - lim[1, ])  # proportions to left/bottom
+    s = if (horizontal) c(0, 0, p[2], 1 - p[2]) else c(p[1], 1 - p[1], 0, 0)
+    meta$limits = extend_ranges(meta$limits, -sign(event$delta()) * 0.1 * s)
+  }
 
   shift_anchor = function(shift) {
     brk = meta$breaks
@@ -309,7 +316,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
     paintFun = main_draw,
     mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
     mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
-    keyPressFun = key_press, keyReleaseFun = key_release,
+    keyPressFun = key_press, keyReleaseFun = key_release, wheelFun = mouse_wheel,
     focusInFun = function(layer, event) {
       common_focus_in(layer, event, data, meta)
     }, focusOutFun = function(layer, event) {
