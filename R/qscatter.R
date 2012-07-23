@@ -153,7 +153,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
 
   ## draw brushed points
   brush_draw = function(layer, painter) {
-    idx = selected(data)
+    idx = selected(data) & visible(data)
     if (any(idx)) {
       if (unibrushcolor) {
         fill_color = b$color
