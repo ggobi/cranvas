@@ -12,7 +12,7 @@
 #' Arrow keys can be used to change the binwidth as well as the breakpoints in
 #' the plot. Up and Down can increase and decrease the binwidth respectively;
 #' Left and Right can move the breakpoints of the bins to the left (smaller) or
-#' right (larger).
+#' right (larger). Mouse wheel helps zoom in/out of the plot.
 #'
 #' In the identify mode, the breakpoints of the bin(s) as well as counts and
 #' proportion of cases in the bin(s) are shown as text labels in the plot.
