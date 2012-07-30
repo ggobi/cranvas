@@ -2,8 +2,8 @@
 \alias{qtime}
 \title{Draw a time plot}
 \usage{
-qtime(time, y, data, period = NULL, group = NULL, wrap = TRUE, shift = c(1, 
-    7, 12, 24), size = 2, alpha = 1, asp = NULL, main = NULL, xlab = NULL, ylab = NULL)
+qtime(time, y, data, period = NULL, group = NULL, wrap = TRUE, shift = c(1, 7, 12, 
+    24), size = 2, alpha = 1, asp = NULL, main = NULL, xlab = NULL, ylab = NULL)
 }
 \arguments{
   \item{time}{The variable indicating time, which is
@@ -102,8 +102,7 @@ qtime(TimeIndx, ~value, qnasaTsCa, group = variable, shift = c(1, 12))
 
 ## example 2: Remifentanil in the nlme package
 require(nlme)
-Rem <- qdata(Remifentanil[complete.cases(Remifentanil) & Remifentanil$ID == 
-    1, ])
+Rem <- qdata(Remifentanil[complete.cases(Remifentanil) & Remifentanil$ID == 1, ])
 Remi <- Remifentanil[complete.cases(Remifentanil), ]
 Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
@@ -141,8 +140,7 @@ qtime(Time, ~sunspots, qsun, shift = c(1, (1:10) * 10))
 ## example 6: Pigs
 data(pigs)
 qpig <- qdata(pigs)
-qtime(TIME, ~GILTS + PROFIT + PRODUCTION + HERDSZ, qpig, shift = c(1, 
-    4))
+qtime(TIME, ~GILTS + PROFIT + PRODUCTION + HERDSZ, qpig, shift = c(1, 4))
 
 library(reshape)
 pigGP <- pigs[, c(1, 7, 8)]

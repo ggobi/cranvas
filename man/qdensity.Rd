@@ -2,8 +2,8 @@
 \alias{qdensity}
 \title{Draw a univariate density plot}
 \usage{
-qdensity(x, data, binwidth = NULL, main = "", xlim = NULL, ylim = NULL, 
-    xlab = NULL, ylab = NULL)
+qdensity(x, data, binwidth = NULL, main = "", xlim = NULL, ylim = NULL, xlab = NULL, 
+    ylab = NULL)
 }
 \arguments{
   \item{x}{variable name which designates variable

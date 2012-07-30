@@ -53,6 +53,8 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   ## set default xlab/ylab if not provided
   if (is.null(xlab)) meta$xlab = meta$xvar
   if (is.null(ylab)) meta$ylab = meta$yvar
+  if (!(meta$xvar %in% names(data))) meta$xvar = x
+  if (!(meta$yvar %in% names(data))) meta$yvar = y
 
   ## tour: color, size, transparency could be decided by proj3
   if ('proj3' %in% colnames(data)) {
@@ -151,7 +153,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
 
   ## draw brushed points
   brush_draw = function(layer, painter) {
-    idx = selected(data)
+    idx = selected(data) & visible(data)
     if (any(idx)) {
       if (unibrushcolor) {
         fill_color = b$color
@@ -269,14 +271,14 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     }, focusOutFun = function(layer, event) {
       common_focus_out(layer, event, data, meta)
     },
-    limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
+    limits = qrect(meta$limits), clip = TRUE, cache = .cache())
   layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
   layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
-  layer.title = qmtext(meta = meta, side = 3, cache = TRUE)
-  layer.xlab = qmtext(meta = meta, side = 1, cache = TRUE)
-  layer.ylab = qmtext(meta = meta, side = 2, cache = TRUE)
-  layer.xaxis = qaxis(meta = meta, side = 1, cache = TRUE)
-  layer.yaxis = qaxis(meta = meta, side = 2, cache = TRUE)
+  layer.title = qmtext(meta = meta, side = 3, cache = .cache())
+  layer.xlab = qmtext(meta = meta, side = 1, cache = .cache())
+  layer.ylab = qmtext(meta = meta, side = 2, cache = .cache())
+  layer.xaxis = qaxis(meta = meta, side = 1, cache = .cache())
+  layer.yaxis = qaxis(meta = meta, side = 2, cache = .cache())
   layer.grid = qgrid(meta = meta, cache = TRUE)
   layer.root[0, 2] = layer.title
   layer.root[2, 2] = layer.xaxis

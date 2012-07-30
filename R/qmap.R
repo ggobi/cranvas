@@ -28,7 +28,8 @@
 qmap =
     function(data, linkto = NULL, linkby = NULL,
              main = '', xlim = NULL, ylim = NULL, unibrushcolor = TRUE,
-             googleMap = FALSE, place = NULL, path = NULL, text = NULL, ...) {
+             googleMap = FALSE, place = NULL, path = NULL, text = NULL, 
+             cartostep = 0.05, ...) {
         data = check_data(data)
         if (is.null(md <- attr(data, 'MapData')))
             stop('data must be created from map_qdata()')
@@ -41,7 +42,7 @@ qmap =
         meta =
             Map.meta$new(alpha = 1, main = main, active = TRUE,
                          group = cumsum(is.na(md$x) & is.na(md$y)) + 1,
-                         drag.mode = FALSE)
+                         drag.mode = FALSE, cartopar = 1)
         
         ## compute coordinates/axes-related stuff
         compute_coords = function() {
@@ -220,6 +221,10 @@ qmap =
                 meta$pos = as.numeric(event$pos())
                 meta$limits = meta$limits + matrix(rep(-meta$pos+meta$start,each=2),nrow=2)
                 qupdate(layer.main)
+                if (googleMap) qupdate(layer.google)
+                if (!is.null(path)) qupdate(layer.path)
+                if (!is.null(place)) qupdate(layer.place)
+                if (!is.null(text)) qupdate(layer.text)
                 return()
             }
             rect = qrect(update_brush_size(meta, event))
@@ -239,6 +244,18 @@ qmap =
         }
         key_press = function(layer, event) {
             common_key_press(layer, event, data, meta)
+            if (ncol(md)==6 & !googleMap & is.null(path) & is.null(place) & is.null(text)
+                & length(i <- which(match_key(c('Left', 'Right'))))) {
+                cartopar = max(0, min(1, c(-1, 1)[i] * cartostep + meta$cartopar))
+                if (cartopar != meta$cartopar) {
+                    meta$cartopar = cartopar
+                    md$x = md$finalx * meta$cartopar + md$origx * (1 - meta$cartopar)
+                    md$y = md$finaly * meta$cartopar + md$origy * (1 - meta$cartopar)
+                    compute_coords()
+                    meta$start.range = as.vector(meta$limits)
+                    layer.main$invalidateIndex()
+                }
+            }
         }
         key_release = function(layer, event) {
             common_key_release(layer, event, data, meta)
@@ -251,6 +268,9 @@ qmap =
                 extend_ranges(meta$limits,
                               -sign(event$delta()) * 0.1 * c(p[1], 1 - p[1], p[2], 1 - p[2]))
             if (googleMap) qupdate(layer.google)
+            if (!is.null(path)) qupdate(layer.path)
+            if (!is.null(place)) qupdate(layer.place)
+            if (!is.null(text)) qupdate(layer.text)
         }
         identify_hover = function(layer, event) {
             if (!b$identify) return()
@@ -369,6 +389,7 @@ qmap =
         ## these layers have the same limits from meta$limits
         sync_limits(meta, layer.main, layer.brush, layer.identify, 
                     if (googleMap){layer.google} else {NA},
+                    if (!is.null(path)){layer.path} else {NA},
                     if (!is.null(place)){layer.place} else {NA},
                     if (!is.null(text)){layer.text} else {NA})
         
@@ -394,7 +415,8 @@ Map.meta =
                          drag.mode = 'logical',
                          outofbounds = 'matrix',
                          googlezoom = 'integer',
-                         googlemaprange = 'data.frame')
+                         googlemaprange = 'data.frame',
+                         cartopar = 'numeric')
                     
                 )))
 
@@ -449,6 +471,11 @@ map_qdata =
             message('Rcartogram package not available; map data not transformed')
         ## FIXME: cartogram() depends on the magnitude of size!!! so I did not use mf$.size
         xy = cart_polygon(xy$x, xy$y, df$names, size, diffuse, ...)
+        xy$origx = df$x
+        xy$origy = df$y
+        xy$finalx = xy$x
+        xy$finaly = xy$y
+        xy = as.mutaframe(xy)
     }
     attr(mf, 'MapData') = xy
     mf

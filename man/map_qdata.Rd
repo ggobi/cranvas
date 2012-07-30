@@ -2,8 +2,8 @@
 \alias{map_qdata}
 \title{Create data for drawing maps}
 \usage{
-map_qdata(database, regions = ".", color = "gray50", border = "gray90", 
-    size = 4, cartogram = FALSE, diffuse = 5, label = NULL, ...)
+map_qdata(database, regions = ".", color = "gray50", border = "gray90", size = 4, 
+    cartogram = FALSE, diffuse = 5, label = NULL, ...)
 }
 \arguments{
   \item{database}{see \code{\link[maps]{map}}}

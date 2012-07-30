@@ -2,8 +2,8 @@
 \alias{qdata}
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
-qdata(data, color = "gray15", border = color, size = 4, brushed = FALSE, 
-    visible = TRUE, ...)
+qdata(data, color = "gray15", border = color, size = 4, brushed = FALSE, visible = TRUE, 
+    ...)
 }
 \arguments{
   \item{data}{a data frame (it will be coerced to a data

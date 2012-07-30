@@ -2,74 +2,63 @@ library(cranvas)
 
 ## example 1: NASA temperature data
 data(nasa)
-nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
-qnasa <- qdata(nasa11)
-qtime(TimeIndx,~ts,qnasa,shift=c(1,12))
-qtime(TimeIndx,~ts,qnasa,wrap=FALSE)
-qtime(TimeIndx,~ts,qnasa,Year,shift=1)
-qtime(TimeIndx,~ts,qnasa,Year,wrap=FALSE)
-qtime(TimeIndx,~ts+ps_tovs+ca_med,qnasa,shift=c(1,12))
-qtime(TimeIndx,~ts+ps_tovs+ca_med,qnasa,wrap=FALSE)
-qtime(TimeIndx,~ts+ps_tovs+ca_med,qnasa,Year)
-qtime(TimeIndx,~ts+ps_tovs+ca_med,qnasa,Year,wrap=FALSE)
+nasa2221 <- subset(nasa, Gridx == 22 & Gridy == 21)
+nasa2221$Year <- factor(nasa2221$Year)
+qnasa <- qdata(nasa2221)
+qnasa1 <- time_qdata(qnasa,"ts")
+qnasa2 <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"))
 
-library(reshape)
-nasaTsCa <- nasa11[,c(6,9,14)]
-nasaTsCa[,2:3] <- rescaler(nasaTsCa[,2:3])
-nasaTsCa <- melt(nasaTsCa,1)
-qnasaTsCa <- qdata(nasaTsCa)
-qtime(TimeIndx,~value,qnasaTsCa,group=variable,shift=c(1,12))
+qtime(TimeIndx,qnasa1,shift=c(1,12))
+qscatter(data=qnasa,ts,ps_tovs)
+
+qtime(TimeIndx,qnasa1,Year,shift=1)
+qtime(TimeIndx,qnasa2,shift=c(1,12))
+qtime(TimeIndx,qnasa2,Year)
 
 
 ## example 2: Remifentanil in the nlme package
-require(nlme)
-Rem <- qdata(Remifentanil[complete.cases(Remifentanil) &
-                          Remifentanil$ID==1,])
+library(nlme)
+qRem <- qdata(Remifentanil[complete.cases(Remifentanil) & Remifentanil$ID==1,])
+qRem_time <- time_qdata(qRem,"conc")
+qtime(Time,qRem_time)
+
 Remi <- Remifentanil[complete.cases(Remifentanil),]
 Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
-qtime(Time,~conc,Rem)
-qtime(Time,~conc,qRemi,group=ID)
-qtime(Time,~conc,qRemi,group=ID,wrap=FALSE)
-
+qRemi_time <- time_qdata(qRemi,"conc")
+qtime(Time,qRemi_time,group=ID)
 # for categorical brushing self-link dataset by ID:
-id <- link_cat(qRemi, "ID")
+# id <- link_cat(qRemi, "ID")
 # remove_link(qRemi, id)
 
 
 ## example 3: Wages
 data(wages)
-wage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
-qtime(exper,~lnw,wage,group=id)
-id <- link_cat(wage, "id")
-remove_link(wage, id)
+qwage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
+qwage_time <- time_qdata(qwage, "lnw")
+qtime(exper,qwage_time,group=id)
+# id <- link_cat(wage, "id")
+# remove_link(wage, id)
 
 
 ## example 4: Lynx - for posterity
 # Good to show off wrapping to investigate irregular series
 data(lynx)
-qlynx<-qdata(data.frame(Time=1:114, lynx))
-qtime(Time, ~lynx, qlynx, shift=1:12)
+qlynx <- qdata(data.frame(Time=1:114, lynx))
+qlynx_time <- time_qdata(qlynx,"lynx")
+qtime(Time, qlynx_time, shift=1:12)
 
 
 ## example 5: Sunspots - for posterity
 # Good to show off wrapping to investigate irregular series
 data(sunspots)
-qsun<-qdata(data.frame(Time=1:2820, sunspots))
-qtime(Time, ~sunspots, qsun, shift=c(1,(1:10)*10))
+qsun <- qdata(data.frame(Time=1:2820, sunspots))
+qsun_time <- time_qdata(qsun,"sunspots")
+qtime(Time, qsun_time, shift=c(1,(1:10)*10))
 
 
 ## example 6: Pigs
 data(pigs)
-qpig<-qdata(pigs)
-qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
-
-library(reshape)
-pigGP <- pigs[,c(1,7,8)]
-pigGP[,2:3] <- rescaler(pigGP[,2:3])
-pigGP <- melt(pigGP,1)
-qpigGP <- qdata(pigGP)
-qtime(TIME,~value,qpigGP,group=variable,shift=c(1,4))
-id <- link_cat(qpigGP, "variable")
-# remove_link(qpigGP, id)
-
+qpig <- qdata(pigs)
+qpig_time <- time_qdata(qpig,c("GILTS","PROFIT","PRODUCTION","HERDSZ"))
+qtime(TIME, qpig_time, shift=c(1,4))

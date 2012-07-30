@@ -2,8 +2,8 @@
 \alias{qscatter}
 \title{Draw a scatter plot}
 \usage{
-qscatter(x, y, data, main = "", xlim = NULL, ylim = NULL, xlab = NULL, 
-    ylab = NULL, asp = 1, alpha = 1, unibrushcolor = TRUE)
+qscatter(x, y, data, main = "", xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, 
+    asp = 1, alpha = 1, unibrushcolor = TRUE)
 }
 \arguments{
   \item{x}{the name of the x variable}
