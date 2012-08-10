@@ -56,7 +56,7 @@ qdensity <- function(x, data, binwidth = NULL, main = '',
         }
         idx = visible(data)
         grp = data$.color
-        if (length(nm <- s$color$variable) && (nm %in% names(data))) {
+        if (length(nm <- as.character(s$color$variable)) && (nm %in% names(data))) {
             grp = if (is.factor(data[, nm])) {
                 data$.color
             } else rep('gray15', length(meta$x))
