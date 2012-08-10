@@ -297,7 +297,7 @@ qdensity <- function(x, data, binwidth = NULL, main = '',
 
     ## attach meta to the returned value (for post-processing or debugging)
     attr(view, 'meta') = meta
-    view
+    view$show()
 }
 
 Dens.meta = setRefClass("Dens_meta",

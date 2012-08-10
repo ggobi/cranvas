@@ -359,7 +359,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
 
   ## attach meta to the returned value (for post-processing or debugging)
   attr(view, 'meta') = meta
-  view
+  view$show()
 }
 
 Scat.meta = setRefClass("Scat_meta",

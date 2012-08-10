@@ -225,7 +225,7 @@ qbar =
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     attr(view, 'meta') = meta
-    view
+    view$show()
 }
 
 Bar.meta =

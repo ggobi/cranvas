@@ -400,7 +400,7 @@ qmap =
         
         ## attach meta to the returned value (for post-processing or debugging)
         attr(view, 'meta') = meta
-        view
+        view$show()
     }
 
 
