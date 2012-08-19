@@ -33,7 +33,7 @@
 #'
 #' \item{xat, yat}{the tickmarks locations on the x and y axis}
 #'
-#' \item{xlat, ylab}{x and y axis titles}
+#' \item{xlab, ylab}{x and y axis titles}
 #'
 #' \item{xlabels, ylabels}{the tickmarks labels}
 #'

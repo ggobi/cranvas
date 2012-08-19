@@ -1,0 +1,395 @@
+paste_formula <- function(form) {
+# form has pieces wt, marg and cond
+# output is character - needs to be converted to formula afterwards
+	wtStr <- ""
+	if (length(form$wt) > 0)
+		wtStr <- form$wt[1]
+	margStr <- "1"
+	if (length(form$marg) > 0)
+		margStr <- paste(form$marg,collapse="+")
+	condStr <- ""
+	if (length(form$cond) > 0)
+		condStr <- paste("|", paste(form$cond, collapse="+"))
+
+	formstring <- paste(wtStr,"~", margStr, condStr)
+	return(formstring)
+}
+
+find_x_label <- function(df) {
+  vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
+  
+  axis.set <- subset(df, (b==min(b)) &  (level==max(level)))
+  
+  paste(vars[sapply(vars, function(x) return(length(unique(axis.set[,x]))>1))],"")
+}
+
+find_y_label <- function(df) {
+  vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
+  
+  axis.set <- subset(df, (l==min(l)) & (level==max(level)))
+  
+  paste(vars[sapply(vars, function(x) return(length(unique(axis.set[,x]))>1))],"")
+}
+
+settitle <- function(form) {
+  paste(as.character(form)[c(2,1,3)], collapse=" ")
+}
+
+extractVars <- function(form) {
+  setdiff(unlist(parse_product_formula(form)), "1")
+}
+##' Mosaic plot.
+##' Create a mosaicplot using a formula (as described in prodplot)
+##'
+##' @param data a mutaframe which is typically built upon a data frame
+##' along with several row attributes
+##' @param formula a formula to describe order in which variables go into the mosaicplot. The first variables are the ones visually most important, i.e. Y ~ X1 + X2 + X3 first splits according to X3, then according to X2, then according to X1
+##' @param divider structure of the split in each direction. Choices are "hbar", "vbar" for horizontal/vertical barcharts, "hspine", "vspine" for horizontal/vertical spineplots.
+##' @param cascade parameter for prodplot in package productplots
+##' @param scale_max parameter for prodplot in package productplots
+##' @param na.rm handling of missing values, defaults to FALSE
+##' @param subset parameter for prodplot - 
+##' @param colour fill colour of rectangles - only used if colour is not used in the data
+##' @param main parameter for prodplot
+##' @param ...
+##' @return NULL
+##' @author Heike Hofmann
+##' @export
+##' @example cranvas/inst/examples/mosaic-ex.R
+qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE, subset=NULL, colour="grey30", main=NULL, ...) {
+    data = check_data(data)
+    b = brush(data)
+    b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
+		z = as.list(match.call()[-1])
+    s = attr(data, 'Scales')
+    var = extractVars(z$formula)
+
+    
+    meta =
+        Mosaic.meta$new(var=var, form = as.formula(z$formula), origForm=as.formula(z$formula),
+                     xlim=c(0,1), ylim=c(0,1), alpha = 1, 
+                     inactiveVar=NULL, inactiveDivider=NULL,
+                     active = TRUE, main=settitle(z$formula), ylab="", xlab="", main=main)
+    if(is.null(divider)) divider = mosaic()
+    meta$divider = divider
+    if (!is.character(divider)) {
+    	form = parse_product_formula(z$formula)
+    	splits = c(form$marg, form$cond)
+      meta$divider = divider(length(splits))
+    }
+    meta$origDivider = meta$divider
+
+browser()    
+    recalc = function() {
+      df <- data.frame(data)
+      mdata <- prodcalc(df, meta$form, meta$divider, cascade, scale_max, na.rm = na.rm)
+      meta$mdata <- subset(mdata, level==max(mdata$level))
+      meta$xlab <- find_x_label(meta$mdata)
+      meta$ylab <- find_y_label(meta$mdata)
+    }
+    compute_coords = function() {
+			meta$limits = extend_ranges(cbind(meta$xlim, meta$ylim))
+      meta$minor = "xy"
+			meta$xat = meta$yat = seq(0,1, by=0.25)
+			meta$xlabels = meta$ylabels = seq(0,1, by=0.25)
+
+      recalc()			
+    }
+    compute_coords()
+
+
+    compute_colors = function() {
+    }
+    compute_colors()
+
+		removeSplit = function() {
+			form = parse_product_formula(meta$form)
+
+      if (length(form$marg) > 1) {
+      	meta$inactiveVar <- c(form$marg[1], meta$inactiveVar)
+      	meta$inactiveDivider <- c(meta$divider[1], meta$inactiveDivider)
+        form$marg <- form$marg[-1]
+        meta$divider <- meta$divider[-1]        
+      } else if (length(form$marg) == 1) {
+        if (form$marg[1] == "1") return()
+        else {
+      	  meta$inactiveVar <- c(form$marg[1], meta$inactiveVar)
+          form$marg[1] = "1"
+        }
+      }
+
+			meta$form <- as.formula(paste_formula(form))
+			meta$main <- settitle(meta$form)
+			recalc()
+			qupdate(layer.main)
+		}
+
+		addSplit = function() {
+			form = parse_product_formula(meta$form)
+			if(length(meta$inactiveVar) < 1) return()
+      
+      if ((length(form$marg) == 0) | (form$marg[1] == "1")) {
+				form$marg[1] <- meta$inactiveVar[1]
+				meta$inactiveVar <- meta$inactiveVar[-1]
+			} else {
+				form$marg <- c( meta$inactiveVar[1], form$marg)
+				meta$inactiveVar <- meta$inactiveVar[-1]
+				lastSplit <- length(form$marg)
+				meta$divider <- c(meta$inactiveDivider[1], meta$divider)
+				meta$inactiveDivider = meta$inactiveDivider[-1]
+			}
+
+			meta$form <- as.formula(paste_formula(form))
+			meta$main <- settitle(meta$form)
+			recalc()
+			qupdate(layer.main)	
+		}
+
+		rotateLeft = function() {
+			form = parse_product_formula(meta$form)
+			if(length(meta$inactiveVar) < 1) return()
+      
+      if ((length(form$marg) == 0) | (form$marg[1] == "1")) {
+				form$marg[1] <- meta$inactiveVar[1]
+				meta$inactiveVar <- meta$inactiveVar[-1]
+			} else {
+				save <- form$marg[1]
+				form$marg[1] <- meta$inactiveVar[1]
+				meta$inactiveVar <- c(meta$inactiveVar[-1], save)
+			}
+			meta$form <- as.formula(paste_formula(form))
+			meta$main <- settitle(meta$form)
+			recalc()
+			qupdate(layer.main)	
+		}
+
+		rotateRight = function() {
+			form = parse_product_formula(meta$form)
+			if(length(meta$inactiveVar) < 1) return()
+      
+      if ((length(form$marg) == 0) | (form$marg[1] == "1")) {
+				form$marg[1] <- meta$inactiveVar[1]
+				meta$inactiveVar <- meta$inactiveVar[-1]
+			} else {
+				save <- form$marg[1]
+				lastInactive <- length(meta$inactiveVar)
+				form$marg[1] <- meta$inactiveVar[lastInactive]
+				meta$inactiveVar <- c(save, meta$inactiveVar[-lastInactive])
+			}
+			meta$form <- as.formula(paste_formula(form))
+			meta$main <- settitle(meta$form)
+			recalc()
+			qupdate(layer.main)	
+		}
+		
+		rotateSplit = function() {
+		  if (length(grep("v", meta$divider[1])) > 0) 
+         meta$divider[1] <- gsub("v", "h", meta$divider[1])
+      else
+         meta$divider[1] <- gsub("h", "v", meta$divider[1])
+			
+			recalc()
+			qupdate(layer.main)
+		}
+
+		unconditionVar = function() {
+			form = parse_product_formula(meta$form)
+
+			if (length(form$cond) < 1) return()
+			
+			# take last conditioning variable and move in as first split
+			form$marg <- c(form$marg, form$cond[1])
+			form$cond <- form$cond[-1]
+			
+			meta$form <- as.formula(paste_formula(form))
+			meta$main <- settitle(meta$form)
+			recalc()
+			qupdate(layer.main)
+		}
+
+		conditionVar = function() {
+			form = parse_product_formula(meta$form)
+
+			if (length(form$marg) < 1) return()
+			
+			# take fist split and condition on it
+			firstSplit <- length(form$marg)
+			form$cond <- c(form$marg[firstSplit], form$cond)
+			form$marg <- form$marg[-firstSplit]
+			
+			meta$form <- as.formula(paste_formula(form))
+			meta$main <- settitle(meta$form)
+			recalc()
+			qupdate(layer.main)
+		}
+
+    meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
+
+    main_draw = function(layer, painter) {
+			colour="grey50"
+			color = colour
+#			if (.colored)
+#				color <- as.character(meta$mdata$.color)
+#			else color <- colour
+	
+			with(meta$mdata, qdrawRect(painter,l,b,r,t, fill=color))
+			
+      zeroes <- subset(meta$mdata, .wt==0)
+      if (nrow(zeroes) > 0) {
+        qdrawCircle(painter, zeroes$l, zeroes$b, r = 3,
+          stroke = color, fill = NULL)
+      }
+    }
+    brush_draw = function(layer, painter) {
+    }
+    brush_mouse_press = function(layer, event) {
+        common_mouse_press(layer, event, data, meta)
+    }
+    brush_mouse_move = function(layer, event) {
+        rect = qrect(update_brush_size(meta, event))
+        hits = layer$locate(rect)
+#        if (length(hits)) {
+#            hits = .find_intersect(meta$value, hits, meta$nlevel)
+#        }
+        selected(data) = mode_selection(selected(data), hits, mode = b$mode)
+        common_mouse_move(layer, event, data, meta)
+    }
+    brush_mouse_release = function(layer, event) {
+        brush_mouse_move(layer, event)
+        common_mouse_release(layer, event, data, meta)
+    }
+    key_press = function(layer, event) {
+        common_key_press(layer, event, data, meta)
+
+				key <- event$key()
+				
+				if (key == Qt$Qt$Key_Up) {        # arrow up
+					removeSplit()
+				} 
+				if (key == Qt$Qt$Key_Down) {        # arrow down
+					addSplit()
+				}       
+				if (key == Qt$Qt$Key_Right) {        # arrow right
+					rotateRight()
+				}       
+				if (key == Qt$Qt$Key_Left) {        # arrow right
+					rotateLeft()
+				}       
+				if (key == Qt$Qt$Key_R) {     # 'r' or 'R' for 'rotate'
+					rotateSplit()
+        }
+				if (key == Qt$Qt$Key_U) {     # 'u' or 'U' for 'uncondition'
+					unconditionVar()
+        }
+				if (key == Qt$Qt$Key_C) {     # 'c' or 'C' for 'condition'
+					conditionVar()
+        }
+    }
+    key_release = function(layer, event) {
+        common_key_release(layer, event, data, meta)
+    }
+    identify_hover = function(layer, event) {
+        if (!b$identify) return()
+        b$cursor = 2L
+        meta$pos = as.numeric(event$pos())
+        meta$identified = layer$locate(identify_rect(meta))
+        qupdate(layer.identify)
+    }
+    identify_draw = function(layer, painter) {
+    }
+    scene = qscene()
+    layer.root = qlayer(scene)
+    layer.main =
+        qlayer(paintFun = main_draw,
+               mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
+               mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
+               keyPressFun = key_press, keyReleaseFun = key_release,
+               focusInFun = function(layer, event) {
+                   common_focus_in(layer, event, data, meta)
+               }, focusOutFun = function(layer, event) {
+                   common_focus_out(layer, event, data, meta)
+               },
+               limits = qrect(meta$limits))
+    layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
+    layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
+    layer.title = qmtext(meta = meta, side = 3)
+    layer.xlab = qmtext(meta = meta, side = 1)
+    layer.ylab = qmtext(meta = meta, side = 2)
+    layer.xaxis = qaxis(meta = meta, side = 1)
+    layer.yaxis = qaxis(meta = meta, side = 2)
+    layer.grid = qgrid(meta = meta)
+    layer.root[0, 2] = layer.title
+    layer.root[2, 2] = layer.xaxis
+    layer.root[3, 2] = layer.xlab
+    layer.root[1, 1] = layer.yaxis
+    layer.root[1, 0] = layer.ylab
+    layer.root[1, 2] = layer.grid
+    layer.root[1, 2] = layer.main
+    layer.root[1, 2] = layer.brush
+    layer.root[1, 2] = layer.identify
+    layer.root[1, 3] = qlayer()
+
+    set_layout = function() {
+        fix_dimension(layer.root,
+                      row = list(id = c(0, 2, 3), value = c(prefer_height(meta$main),
+                                                  prefer_height(meta$xlabels),
+                                                  prefer_height(meta$xlab))),
+                      column = list(id = c(1, 0, 3), value = c(prefer_width(meta$ylabels),
+                                                     prefer_width(meta$ylab, FALSE),
+                                                     10)))
+    }
+    set_layout()
+    meta$mainChanged$connect(set_layout)
+    meta$xlabChanged$connect(set_layout); meta$ylabChanged$connect(set_layout)
+    meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout)
+
+    view = qplotView(scene = scene)
+    view$setWindowTitle(sprintf('Mosaic plot: %s', meta$main))
+    meta$varChanged$connect(function() {
+        meta$main = setTitle(main$form)
+        view$setWindowTitle(sprintf('Mosaic plot: %s', meta$main))
+    })
+    d.idx = add_listener(data, function(i, j) {
+        switch(j, .brushed = qupdate(layer.brush),
+               .color = {
+                   compute_colors()
+                   qupdate(layer.main)
+               }, {
+                   compute_coords(); compute_colors(); flip_coords()
+                   layer.main$invalidateIndex()
+                   qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+                   qupdate(layer.main)
+               })
+    })
+    qconnect(layer.main, 'destroyed', function(x) {
+        ## b$colorChanged$disconnect(b.idx)
+        remove_listener(data, d.idx)
+    })
+
+    b$cursorChanged$connect(function() {
+        set_cursor(view, b$cursor)
+    })
+    sync_limits(meta, layer.main, layer.brush, layer.identify)
+    meta$manual.brush = function(pos) {
+        brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
+    }
+    attr(view, 'meta') = meta
+    view$show()
+
+
+}
+
+
+Mosaic.meta =
+    setRefClass("Mosaic_meta",
+                fields = properties(c(
+                  var = 'character',
+                  form='formula',
+                  divider='character',
+                  origForm='formula',
+                  origDivider='character',
+                  inactiveVar='character',
+                  inactiveDivider='character',
+                  mdata='data.frame',
+                  Common.meta
+                )))

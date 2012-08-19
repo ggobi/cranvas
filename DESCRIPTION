@@ -59,6 +59,7 @@ Collate:
     'qbar.R'
     'qboxplot.R'
     'qdensity.R'
+    'qmosaic.R'
     'qhist.R'
     'qlegend.R'
     'qmap.R'

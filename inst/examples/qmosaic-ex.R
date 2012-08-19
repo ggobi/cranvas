@@ -5,10 +5,11 @@ data(Titanic)
 titanic <- as.data.frame(Titanic)
 qtitanic <- qdata(titanic)
 
+print(qmosaic(qtitanic, Freq ~ Sex + Age | Class))
+
 print(qmosaic(qtitanic, Freq ~ Survived, "hbar")) 
 print(qmosaic(qtitanic, Freq ~ Age, "hbar")) 
 print(qmosaic(qtitanic, Freq ~ Sex, "hbar")) 
 print(qmosaic(qtitanic, Freq ~ Class, "hbar")) 
 
-
-print(qmosaic(qtitanic, Freq ~ Sex + Age | Class, mosaic()))
+print(qmosaic(qtitanic, Freq ~ Sex + Survived | Class, divider=c("vspine", "hspine", "hspine")))
