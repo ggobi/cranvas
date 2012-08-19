@@ -1,3 +1,16 @@
+constructCondition <- function (hdata) {
+  require(reshape2)
+  require(plyr)
+  
+  hdata$ID <- 1:nrow(hdata)
+  res.melt <- melt(hdata,id.var="ID")
+  res.melt$cond <- with(res.melt, sprintf("(%s == '%s')", variable, value))
+  NAs <- which(is.na(res.melt$value))
+  res.melt$cond[NAs] <- sprintf("is.na(%s)", res.melt$variable[NAs])
+  condis <- ddply(res.melt, .(ID), summarize, condi = paste("(", paste(cond, collapse=" & "), ")"))
+  paste(condis$condi, collapse="|")  
+}
+
 paste_formula <- function(form) {
 # form has pieces wt, marg and cond
 # output is character - needs to be converted to formula afterwards
@@ -71,12 +84,12 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
                      inactiveVar=NULL, inactiveDivider=NULL,
                      active = TRUE, main=settitle(z$formula), ylab="", xlab="", main=main)
     if(is.null(divider)) divider = mosaic()
-    meta$divider = divider
     if (!is.character(divider)) {
     	form = parse_product_formula(z$formula)
     	splits = c(form$marg, form$cond)
-      meta$divider = divider(length(splits))
+      divider = divider(length(splits))
     }
+    meta$divider = divider
     meta$origDivider = meta$divider
 
     recalc = function() {
@@ -247,9 +260,15 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect)
-#        if (length(hits)) {
-#            hits = .find_intersect(meta$value, hits, meta$nlevel)
-#        }
+        if (length(hits)) {
+          ## rectangles are drawn in the same order as in mdata
+          print(hits)
+          form <- parse_product_formula(meta$form)
+          var <- unlist(c(form$marg, form$cond))
+          selected <- meta$mdata[hits+1, var]
+          condstr = constructCondition(selected)
+          hits = with(data.frame(data), which(eval(parse(text=condstr))))
+        }
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
     }
