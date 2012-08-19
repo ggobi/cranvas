@@ -79,7 +79,6 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     }
     meta$origDivider = meta$divider
 
-browser()    
     recalc = function() {
       df <- data.frame(data)
       mdata <- prodcalc(df, meta$form, meta$divider, cascade, scale_max, na.rm = na.rm)
