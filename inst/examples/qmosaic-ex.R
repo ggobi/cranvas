@@ -13,3 +13,7 @@ print(qmosaic(qtitanic, Freq ~ Sex, "hbar"))
 print(qmosaic(qtitanic, Freq ~ Class, "hbar")) 
 
 print(qmosaic(qtitanic, Freq ~ Sex + Survived | Class, divider=c("vspine", "hspine", "hspine")))
+data(happy)
+qhappy <- qdata(happy)
+qmosaic(qhappy, ~ happy, "hbar")
+qmosaic(qhappy, ~ happy + age, c("hspine", "vspine"))

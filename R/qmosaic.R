@@ -1,7 +1,7 @@
 constructCondition <- function (hdata) {
   require(reshape2)
   require(plyr)
-  
+
   hdata$ID <- 1:nrow(hdata)
   res.melt <- melt(hdata,id.var="ID")
   res.melt$cond <- with(res.melt, sprintf("(%s == '%s')", variable, value))
@@ -31,7 +31,7 @@ paste_formula <- function(form) {
 find_x_label <- function(df) {
   vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
   
-  axis.set <- subset(df, (b==min(b)) &  (level==max(level)))
+  axis.set <- subset(df, (b==min(b)) &  (level==max(level)), drop=FALSE)
   
   paste(vars[sapply(vars, function(x) return(length(unique(axis.set[,x]))>1))],"")
 }
@@ -39,13 +39,13 @@ find_x_label <- function(df) {
 find_y_label <- function(df) {
   vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
   
-  axis.set <- subset(df, (l==min(l)) & (level==max(level)))
+  axis.set <- subset(df, (l==min(l)) & (level==max(level)), drop=FALSE)
   
   paste(vars[sapply(vars, function(x) return(length(unique(axis.set[,x]))>1))],"")
 }
 
 settitle <- function(form) {
-  paste(as.character(form)[c(2,1,3)], collapse=" ")
+  paste_formula(parse_product_formula(~ happy))
 }
 
 extractVars <- function(form) {
@@ -77,7 +77,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     s = attr(data, 'Scales')
     var = extractVars(z$formula)
 
-    
+    redoHiliting <- FALSE
     meta =
         Mosaic.meta$new(var=var, form = as.formula(z$formula), origForm=as.formula(z$formula),
                      xlim=c(0,1), ylim=c(0,1), alpha = 1, 
@@ -92,13 +92,47 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     meta$divider = divider
     meta$origDivider = meta$divider
 
+    recalcHiliting = function() {
+      redoHiliting <<-FALSE
+      idx = visible(data) & selected(data)
+      if (sum(idx) > 0) {
+      
+        df <- data.frame(data[idx,])
+        form <- parse_product_formula(meta$form)
+        df$wt <- 1
+        if (length(form$wt) == 1) df$wt <- df[,form$wt]
+      
+        var <- unlist(form$marg, form$cond)
+        hils <- ddply(df, var, summarize, hilited = sum(wt))
+        hilID <- grep("hilited", names(meta$mdata))
+        meta$hdata <- merge(meta$mdata, hils, by=var)
+      
+      #     browser()
+      } else {
+        meta$hdata <- meta$mdata  
+        meta$hdata$hilited <- 0
+      }
+      
+      split <- meta$divider[meta$hdata$level[1]]
+      if (length(grep("v", split))>0) split <- "hspine"
+      else split <- "vspine"
+      
+      if (split =="vspine") {
+        meta$hdata$t =  with(meta$hdata, b + (t-b)*hilited/.wt)
+      } else
+        meta$hdata$r =  with(meta$hdata, l + (r-l)*hilited/.wt)
+    }
+
     recalc = function() {
-      df <- data.frame(data)
+      idx = visible(data)
+      df <- data.frame(data[idx,])
       mdata <- prodcalc(df, meta$form, meta$divider, cascade, scale_max, na.rm = na.rm)
-      meta$mdata <- subset(mdata, level==max(mdata$level))
+      meta$mdata <- subset(mdata, level==max(mdata$level), drop=FALSE)
       meta$xlab <- find_x_label(meta$mdata)
       meta$ylab <- find_y_label(meta$mdata)
+      recalcHiliting()
     }
+    
     compute_coords = function() {
 			meta$limits = extend_ranges(cbind(meta$xlim, meta$ylim))
       meta$minor = "xy"
@@ -111,6 +145,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 
 
     compute_colors = function() {
+      recalcHiliting()
     }
     compute_colors()
 
@@ -133,6 +168,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			meta$form <- as.formula(paste_formula(form))
 			meta$main <- settitle(meta$form)
 			recalc()
+			layer.main$invalidateIndex()
 			qupdate(layer.main)
 		}
 
@@ -154,6 +190,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			meta$form <- as.formula(paste_formula(form))
 			meta$main <- settitle(meta$form)
 			recalc()
+			layer.main$invalidateIndex()
 			qupdate(layer.main)	
 		}
 
@@ -172,6 +209,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			meta$form <- as.formula(paste_formula(form))
 			meta$main <- settitle(meta$form)
 			recalc()
+			layer.main$invalidateIndex()
 			qupdate(layer.main)	
 		}
 
@@ -191,6 +229,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			meta$form <- as.formula(paste_formula(form))
 			meta$main <- settitle(meta$form)
 			recalc()
+			layer.main$invalidateIndex()
 			qupdate(layer.main)	
 		}
 		
@@ -201,6 +240,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
          meta$divider[1] <- gsub("h", "v", meta$divider[1])
 			
 			recalc()
+		  layer.main$invalidateIndex()
 			qupdate(layer.main)
 		}
 
@@ -216,6 +256,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			meta$form <- as.formula(paste_formula(form))
 			meta$main <- settitle(meta$form)
 			recalc()
+			layer.main$invalidateIndex()
 			qupdate(layer.main)
 		}
 
@@ -232,6 +273,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			meta$form <- as.formula(paste_formula(form))
 			meta$main <- settitle(meta$form)
 			recalc()
+			layer.main$invalidateIndex()
 			qupdate(layer.main)
 		}
 
@@ -246,13 +288,21 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 	
 			with(meta$mdata, qdrawRect(painter,l,b,r,t, fill=color))
 			
-      zeroes <- subset(meta$mdata, .wt==0)
+      zeroes <- subset(meta$mdata, .wt==0, drop=FALSE)
       if (nrow(zeroes) > 0) {
         qdrawCircle(painter, zeroes$l, zeroes$b, r = 3,
           stroke = color, fill = NULL)
       }
     }
     brush_draw = function(layer, painter) {
+      if (redoHiliting) recalcHiliting()
+      colour="yellow"
+      color = colour
+      #			if (.colored)
+      #				color <- as.character(meta$mdata$.color)
+      #			else color <- colour
+      
+      with(meta$hdata, qdrawRect(painter,l,b,r,t, fill=color))
     }
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
@@ -262,10 +312,10 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         hits = layer$locate(rect)
         if (length(hits)) {
           ## rectangles are drawn in the same order as in mdata
-          print(hits)
+ #         print(hits)
           form <- parse_product_formula(meta$form)
           var <- unlist(c(form$marg, form$cond))
-          selected <- meta$mdata[hits+1, var]
+          selected <- meta$mdata[hits+1, var, drop=FALSE]
           condstr = constructCondition(selected)
           hits = with(data.frame(data), which(eval(parse(text=condstr))))
         }
@@ -302,6 +352,20 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 				if (key == Qt$Qt$Key_C) {     # 'c' or 'C' for 'condition'
 					conditionVar()
         }
+        if (key == Qt$Qt$Key_B) {     # 'b' or 'B' for 'spine to Bar'
+          firstletter <- substr(meta$divider[1],1,1)
+          meta$divider[1] <- sprintf("%sbar", firstletter)
+          recalc()
+          layer.main$invalidateIndex()
+          qupdate(layer.main)
+        }
+        if (key == Qt$Qt$Key_S) {     # 's' or 'S' for 'bar to Spine'
+          firstletter <- substr(meta$divider[1],1,1)
+          meta$divider[1] <- sprintf("%sspine", firstletter)
+          recalc()
+          layer.main$invalidateIndex(); qupdate(layer.main)
+        }
+        
     }
     key_release = function(layer, event) {
         common_key_release(layer, event, data, meta)
@@ -368,7 +432,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         view$setWindowTitle(sprintf('Mosaic plot: %s', meta$main))
     })
     d.idx = add_listener(data, function(i, j) {
-        switch(j, .brushed = qupdate(layer.brush),
+        switch(j, .brushed = { redoHiliting <<-TRUE; qupdate(layer.main)},
                .color = {
                    compute_colors()
                    qupdate(layer.main)
