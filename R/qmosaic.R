@@ -54,6 +54,13 @@ extractVars <- function(form) {
 ##' Mosaic plot.
 ##' Create a mosaicplot using a formula (as described in prodplot)
 ##'
+##' Interactive elements for mosaic plots are arrow keys for navigating through the mosaic hierarchy:
+##' arrow up reduces complexity of the mosaic by one variable, arrow down increases the complexity by one, if possible.
+##' Arrow left and right rotate a previously included variable into the last split position.
+##' Conditioning/Unconditioning is done with keys 'C' and 'U'
+##' Keys 'B' and 'S" switch to bar and spine representation, respectively
+##' Key 'R' rotates the last split variable between horizontal and vertical display.
+##' 
 ##' @param data a mutaframe which is typically built upon a data frame
 ##' along with several row attributes
 ##' @param formula a formula to describe order in which variables go into the mosaicplot. The first variables are the ones visually most important, i.e. Y ~ X1 + X2 + X3 first splits according to X3, then according to X2, then according to X1
