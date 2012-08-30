@@ -362,14 +362,16 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   view$show()
 }
 
-Scat.meta = setRefClass("Scat_meta",
-                        fields = properties(c(
+Scat.meta = setRefClass(
+  "Scat_meta",
+  fields = properties(c(
 
-                          Common.meta,
+    Common.meta,
 
-                          list(xvar = 'character', yvar = 'character', order = 'numeric',
-                               xy = 'matrix', asp = 'numeric', samesize = 'logical')
+    list(xvar = 'character', yvar = 'character', order = 'numeric',
+         xy = 'matrix', asp = 'numeric', samesize = 'logical')
 
-                        )))
+  ))
+)
 
 ## order is for keeping track of the original order of data
