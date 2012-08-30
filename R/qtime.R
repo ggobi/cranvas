@@ -47,7 +47,7 @@
 
 qtime <- function(time, data, period=NULL, group=NULL,
                    shift=c(1,4,7,12,24), size=3, alpha=1, asp=NULL, 
-                   similarity.index=ifelse(is.null(period) & is.null(group),TRUE,FALSE),
+                   similarity.index=is.null(period) & is.null(group),
                    help.text=TRUE, main=NULL, xlab=NULL, ylab=NULL,...){
     
     #####################
