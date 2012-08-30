@@ -62,11 +62,11 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
       dim3 = c('proj1','proj2','proj3')
       meta$dim3 = dim3[! (dim3 %in% c(meta$xvar, meta$yvar))][1]
     }
-  } else meta$dim3 = NULL
+  }
 
   ## reorder the points according to color/border for drawing speed
   compute_order = function() {
-    meta$order = if (!is.null(meta$dim3)) {
+    meta$order = if (length(meta$dim3)) {
       order(data[,meta$dim3], decreasing=TRUE)
     } else {
       order(data$.color, data$.border)  # the ideal order to draw
@@ -107,7 +107,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     ord = meta$order; idx = visible(data)[ord]  # reorder aesthetics according to vis
     meta$color = data$.color[ord][idx]; meta$border = data$.border[ord][idx]
     meta$size = data$.size[ord][idx]
-    if (!is.null(meta$dim3)) {
+    if (length(meta$dim3)) {
       dim3scale=(1-rescaler(data[ord,meta$dim3][idx],type='range'))*0.66+0.33
       meta$color = alpha(meta$color, dim3scale)
       meta$border = alpha(meta$border, dim3scale)
