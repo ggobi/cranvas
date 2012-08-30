@@ -369,7 +369,7 @@ Scat.meta = setRefClass(
     Common.meta,
 
     list(xvar = 'character', yvar = 'character', order = 'numeric',
-         xy = 'matrix', asp = 'numeric', samesize = 'logical')
+         xy = 'matrix', asp = 'numeric', samesize = 'logical', dim3 = 'character')
 
   ))
 )
