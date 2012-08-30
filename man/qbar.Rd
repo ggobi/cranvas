@@ -100,6 +100,5 @@ qbar(RegCode, data = qnrc)
   Other plots: \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
   \code{\link{qmval}}, \code{\link{qparallel}},
-  \code{\link{qspine}}, \code{\link{qtime}},
-  \code{\link{qtime2}}
+  \code{\link{qspine}}, \code{\link{qtime}}
 }

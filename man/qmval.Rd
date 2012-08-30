@@ -71,5 +71,5 @@ qscatter(longitude, latitude, data = qtao)
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qhist}},
   \code{\link{qparallel}}, \code{\link{qspine}},
-  \code{\link{qtime}}, \code{\link{qtime2}}
+  \code{\link{qtime}}
 }

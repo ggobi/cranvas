@@ -65,7 +65,8 @@ qspine(x, data, ...)
   the breakpoints in the plot. Up and Down can increase and
   decrease the binwidth respectively; Left and Right can
   move the breakpoints of the bins to the left (smaller) or
-  right (larger).
+  right (larger). Mouse wheel helps zoom in/out of the
+  plot.
 
   In the identify mode, the breakpoints of the bin(s) as
   well as counts and proportion of cases in the bin(s) are
@@ -119,6 +120,5 @@ qhist(serve.speed, data = qtennis, freq = FALSE)  # density
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
   \code{\link{qdensity}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qtime}},
-  \code{\link{qtime2}}
+  \code{\link{qparallel}}, \code{\link{qtime}}
 }
