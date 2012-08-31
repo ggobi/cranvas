@@ -45,7 +45,9 @@ find_y_label <- function(df) {
 }
 
 settitle <- function(form) {
-  paste_formula(parse_product_formula(~ happy))
+#  browser()
+  if (!is.null(form))
+    paste_formula(parse_product_formula(form))
 }
 
 extractVars <- function(form) {
@@ -173,7 +175,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       }
 
 			meta$form <- as.formula(paste_formula(form))
-			meta$main <- settitle(meta$form)
+#			meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)
@@ -195,7 +197,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			}
 
 			meta$form <- as.formula(paste_formula(form))
-			meta$main <- settitle(meta$form)
+#			meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)	
@@ -214,7 +216,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 				meta$inactiveVar <- c(meta$inactiveVar[-1], save)
 			}
 			meta$form <- as.formula(paste_formula(form))
-			meta$main <- settitle(meta$form)
+#			meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)	
@@ -234,7 +236,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 				meta$inactiveVar <- c(save, meta$inactiveVar[-lastInactive])
 			}
 			meta$form <- as.formula(paste_formula(form))
-			meta$main <- settitle(meta$form)
+#     meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)	
@@ -261,7 +263,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			form$cond <- form$cond[-1]
 			
 			meta$form <- as.formula(paste_formula(form))
-			meta$main <- settitle(meta$form)
+#			meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)
@@ -278,7 +280,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			form$marg <- form$marg[-firstSplit]
 			
 			meta$form <- as.formula(paste_formula(form))
-			meta$main <- settitle(meta$form)
+#			meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)
@@ -434,8 +436,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 
     view = qplotView(scene = scene)
     view$setWindowTitle(sprintf('Mosaic plot: %s', meta$main))
-    meta$varChanged$connect(function() {
-        meta$main = setTitle(main$form)
+    meta$formChanged$connect(function() {
+        meta$main = settitle(meta$form)
         view$setWindowTitle(sprintf('Mosaic plot: %s', meta$main))
     })
     d.idx = add_listener(data, function(i, j) {
