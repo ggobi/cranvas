@@ -2,8 +2,9 @@
 \alias{qscatter}
 \title{Draw a scatter plot}
 \usage{
-qscatter(x, y, data, main = "", xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, 
-    asp = 1, alpha = 1, unibrushcolor = TRUE)
+  qscatter(x, y, data, main = "", xlim = NULL, ylim = NULL,
+    xlab = NULL, ylab = NULL, asp = 1, alpha = 1,
+    unibrushcolor = TRUE)
 }
 \arguments{
   \item{x}{the name of the x variable}
@@ -79,56 +80,57 @@ library(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 
-qscatter(first.serve.pct, second.serve.pts, data = qtennis, xlab = "First Serve \%", 
-    ylab = "Second Serve Points")
-qscatter(return.games, first.serves, data = qtennis)
+qscatter(first.serve.pct, second.serve.pts, data=qtennis, xlab="First Serve \%", ylab="Second Serve Points")
+qscatter(return.games, first.serves, data=qtennis)
 
 ### (2) flea: color by categorical variable, and linking
-data(flea, package = "tourr")
+data(flea, package = 'tourr')
 qflea <- qdata(flea, color = species)  # use species to create colors
 
 qscatter(tars1, aede1)
 qscatter(tars2, head)
 
-qscatter(tars1, tars2, asp = 0.7)  # aspect ratio
+qscatter(tars1, tars2, asp = .7)  # aspect ratio
 
-qscatter(tars1, tars2, unibrushcolor = FALSE)  # brush color
+qscatter(tars1, tars2, unibrushcolor=FALSE)  # brush color
 
 ## link qflea to itself using species
-id <- link_cat(qflea, "species")
+id = link_cat(qflea, 'species')
 
 ## remove linking
 remove_link(qflea, id)
 
 ## a bubble chart
-qflea2 <- qdata(flea, color = NA, border = species, size = tars1)
+qflea2 = qdata(flea, color = NA, border = species, size = tars1)
 qscatter(tars1, tars2)
 
 ### (3) NRC rankings
 data(nrcstat)
 
-qnrc <- qdata(nrcstat, color = RegCode)
+qnrc = qdata(nrcstat, color = RegCode)
 
 qscatter(RRankings5th, RRankings95th)
 
 qscatter(SRankings5th, SRankings95th)
 
-qscatter(SRankings5th, SRankings95th, unibrushcolor = FALSE)
+qscatter(SRankings5th, SRankings95th, unibrushcolor=FALSE)
 
 ### (4) secrets in the pollen data
 library(animation)
-data(pollen, package = "animation")
+data(pollen, package = 'animation')
 head(pollen)
-qpollen <- qdata(pollen, size = 2)
+qpollen = qdata(pollen, size = 2)
 qscatter(RIDGE, CRACK, data = qpollen)
 ## try zooming into the center or press +/-
 
 ### (5) pressure test; run with care!
-n <- 1e+06  # a million still works (at least for me)
-df <- qdata(data.frame(x = rnorm(n), y = rnorm(n), z = gl(4, n/4)), color = z)
+n = 1e+06  # a million still works (at least for me)
+df = qdata(data.frame(x = rnorm(n), y = rnorm(n),
+    z = gl(4, n/4)), color = z)
 qscatter(x, y)
 
 }
 \author{
   Heike Hofmann, Di Cook, Yihui Xie
 }
+

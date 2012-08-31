@@ -3,7 +3,8 @@
 \title{Draw boxplots for several variables in the data or a continuous
 variable vs a categorical variable}
 \usage{
-qboxplot(vars, data, at = NULL, width = NULL, horizontal = FALSE, main = "", xlim = NULL, 
+  qboxplot(vars, data, at = NULL, width = NULL,
+    horizontal = FALSE, main = "", xlim = NULL,
     ylim = NULL, xlab = NULL, ylab = NULL, points = FALSE)
 }
 \arguments{
@@ -64,25 +65,25 @@ qboxplot(vars, data, at = NULL, width = NULL, horizontal = FALSE, main = "", xli
 library(cranvas)
 
 ### (1) some test cases
-df <- qdata(as.data.frame(matrix(rnorm(1000), 200)))
+df = qdata(as.data.frame(matrix(rnorm(1000), 200)))
 qboxplot(~., df)
 qboxplot(~., df, horizontal = TRUE)
 qboxplot(~., df, at = (1:5)^2)  # at different locations
-qboxplot(~., df, width = 0.1 * sample(5))  # different widths
+qboxplot(~., df, width = .1*sample(5))  # different widths
 
 
 ### (2) flea data
-data(flea, package = "tourr")
+data(flea, package = 'tourr')
 qflea <- qdata(flea)
 
 ## continuous vs categorical variable
 qboxplot(tars1 ~ species, data = qflea)
 
 ## side-by-side boxplots for several continuous variables
-qboxplot(~aede1 + aede2 + aede3, data = qflea)
+qboxplot(~aede1+aede2+aede3, data = qflea)
 
 ## brush on other plots and we see little boxplots
-qparallel(~., data = qflea)
+qparallel(~ ., data = qflea)
 
 qscatter(tars1, tars2, data = qflea)
 
@@ -91,8 +92,8 @@ qscatter(tars1, tars2, data = qflea)
 qboxplot(tars1 ~ species, data = qflea, points = TRUE)
 
 ## show points with colors
-qflea2 <- qdata(flea, color = species)
-qboxplot(~aede1 + aede2 + aede3, data = qflea2, points = TRUE)
+qflea2 = qdata(flea, color = species)
+qboxplot(~aede1+aede2+aede3, data = qflea2, points = TRUE)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -103,3 +104,4 @@ qboxplot(~aede1 + aede2 + aede3, data = qflea2, points = TRUE)
   \code{\link{qparallel}}, \code{\link{qspine}},
   \code{\link{qtime}}
 }
+

@@ -34,14 +34,14 @@ BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
     R (>= 2.10),
     scales,
-    maps
+    maps,
+    productplots
 Suggests:
     nlme,
     reshape,
     mapdata,
     ggmap,
     RgoogleMaps,
-    productplots,
     animation,
     randomForest,
     Rcartogram

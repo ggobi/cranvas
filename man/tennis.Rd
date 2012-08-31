@@ -6,19 +6,16 @@
 \source{
   2006 Australian Open mens tennis matches.
 }
-\usage{
-data(tennis)
-}
 \description{
   The data contains statistics from the 2006 Australian
   Open mens tennis matches.
 }
 \examples{
 library(cranvas)
-data(tennis)
-qtennis <- qdata(tennis)
+data(tennis); qtennis = qdata(tennis)
 
 qscatter(first.serve.pts, second.serve.pts, data = qtennis)
 qscatter(matches, sets, data = qtennis)
 }
 \keyword{datasets}
+

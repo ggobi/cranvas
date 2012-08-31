@@ -2,7 +2,7 @@
 \alias{draw_identify}
 \title{Draw the identify labels under the mouse}
 \usage{
-draw_identify(layer, painter, data, meta)
+  draw_identify(layer, painter, data, meta)
 }
 \arguments{
   \item{layer}{the layer argument of the painting function}
@@ -41,3 +41,4 @@ draw_identify(layer, painter, data, meta)
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

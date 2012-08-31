@@ -2,7 +2,7 @@
 \alias{lighter}
 \title{Generate lighter colors}
 \usage{
-lighter(color, factor = 0.2)
+  lighter(color, factor = 0.2)
 }
 \arguments{
   \item{color}{the color vector}
@@ -23,15 +23,14 @@ lighter(color, factor = 0.2)
 lighter(palette())
 
 par(mfrow = c(2, 1), mar = rep(0, 4))
-d <- c("black", grep("dark", colors(), value = TRUE))  # dark colors
-x <- rep(1, length(d))
+d = c('black', grep('dark', colors(), value = TRUE))  # dark colors
+x = rep(1, length(d))
 for (f in seq(0, 1, length = 20)) {
-    barplot(x, col = d)
-    barplot(x, col = lighter(d, f))
-    if (interactive()) 
-        Sys.sleep(0.2)
+    barplot(x, col = d); barplot(x, col = lighter(d, f))
+    if(interactive()) Sys.sleep(.2)
 }
 }
 \author{
   Heike Hofmann and Yihui Xie
 }
+

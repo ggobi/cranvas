@@ -2,7 +2,7 @@
 \alias{break_str}
 \title{Insert line breaks into character strings}
 \usage{
-break_str(x, split = "[^[:alnum:]]", ...)
+  break_str(x, split = "[^[:alnum:]]", ...)
 }
 \arguments{
   \item{x}{a character vector}
@@ -24,9 +24,10 @@ break_str(x, split = "[^[:alnum:]]", ...)
   plots.
 }
 \examples{
-break_str(c("long label1.1", "long label1.2", "long label1.3"), split = " ")
+break_str(c('long label1.1', 'long label1.2', 'long label1.3'), split = ' ')
 break_str(names(iris))
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

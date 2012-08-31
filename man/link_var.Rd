@@ -3,9 +3,9 @@
 \alias{link_var<-}
 \title{Set or query the linking variable in a mutaframe}
 \usage{
-link_var(data)
+  link_var(data)
 
-link_var(data) <- value
+  link_var(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe (typically created by
@@ -23,11 +23,11 @@ link_var(data) <- value
   Set or query the linking variable in a mutaframe
 }
 \examples{
-mf <- qdata(head(iris))
+mf = qdata(head(iris))
 link_var(mf)  # NULL
-link_var(mf) <- "Species"  # linking by 'Species'
+link_var(mf) = 'Species'  # linking by 'Species'
 link_var(mf)
-link_var(mf) <- NULL  # disable linking
+link_var(mf) = NULL  # disable linking
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -35,3 +35,4 @@ link_var(mf) <- NULL  # disable linking
 \seealso{
   \code{\link{qdata}}
 }
+

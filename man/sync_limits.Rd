@@ -2,7 +2,7 @@
 \alias{sync_limits}
 \title{Sync layer limits}
 \usage{
-sync_limits(meta, ...)
+  sync_limits(meta, ...)
 }
 \arguments{
   \item{meta}{the meta data contains a matrix of limits in
@@ -42,3 +42,4 @@ sync_limits(meta, ...)
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

@@ -28,7 +28,7 @@
  $ identified     : chr "integer"
  $ identify.labels: chr "character"}
 \usage{
-Common.meta
+  Common.meta
 }
 \description{
   A meta data is created with reference classes
@@ -115,22 +115,17 @@ Common.meta
 }
 \examples{
 library(objectSignals)
-My.meta <- setRefClass("My_meta", fields = objectProperties::properties(c(Common.meta, 
-    list(horizontal = "logical", xleft = "numeric"))))
-meta <- My.meta$new(alpha = 1)
-meta$alpha
-meta$xat <- 1:5
-meta$pos <- c(1, 4)
-meta$horizontal <- FALSE
+My.meta = setRefClass("My_meta", fields = objectProperties::properties(c(Common.meta,
+list(horizontal = 'logical', xleft = 'numeric'))))
+meta = My.meta$new(alpha = 1); meta$alpha; meta$xat = 1:5
+meta$pos = c(1, 4); meta$horizontal = FALSE
 
-meta2 <- meta
-meta2$xat <- 2:6
-meta$xat  # meta is changed too
+meta2 = meta; meta2$xat = 2:6; meta$xat  # meta is changed too
 
 meta$posChanged$connect(function() {
-    message("the mouse position is (", paste(meta$pos, collapse = ","), ") now")
+message('the mouse position is (', paste(meta$pos, collapse = ','), ') now')
 })
-meta$pos <- c(2, 0)
+meta$pos = c(2, 0)
 
 ls(meta)  # list all the objects in it
 }
@@ -139,3 +134,4 @@ ls(meta)  # list all the objects in it
 }
 \keyword{datasets}
 \keyword{internal}
+

@@ -3,9 +3,9 @@
 \alias{brush<-}
 \title{Set or query the brush attributes}
 \usage{
-brush(data, attr)
+  brush(data, attr)
 
-brush(data, attr) <- value
+  brush(data, attr) <- value
 }
 \arguments{
   \item{data}{the mutaframe created by \code{\link{qdata}},
@@ -99,41 +99,38 @@ brush(data, attr) <- value
 }
 \examples{
 library(cranvas)
-qiris <- qdata(head(iris))  # create a mutaframe
+qiris = qdata(head(iris))  # create a mutaframe
 brush(qiris)  # the brush object (a reference object)
-brush(qiris, "color")
-brush(qiris, "color") <- "green"  # set brush color to green
+brush(qiris, 'color')
+brush(qiris, 'color') = 'green'  # set brush color to green
 
 ## attach events on the brush
-b <- brush(qiris)
+b = brush(qiris)
 
-# idx is the index of the event; it can be used to stop the listening
-idx <- b$colorChanged$connect(function() {
-    message("the color of brushed elements was changed to ", b$color)
-})
-b$color <- "brown"
-b$color <- "gold"
+#  idx is the index of the event; it can be used to stop the listening
+idx = b$colorChanged$connect(function() {
+message('the color of brushed elements was changed to ', b$color)})
+b$color = 'brown'
+b$color = 'gold'
 
 b$colorChanged$disconnect(idx)  # disconnect the event
 
-b$style$color <- "red"  # change the color of the brush itself to red
-b$style$linewidth <- 3  # the border width to 3
+b$style$color = 'red'  # change the color of the brush itself to red
+b$style$linewidth = 3  # the border width to 3
 
-b$mode <- "or"  # brush mode to OR
+b$mode = 'or'  # brush mode to OR
 
-b$history.size <- 50  # increase history size to 50
+b$history.size = 50  # increase history size to 50
 
-b$cursor <- 3L  # cursor type to WaitCursor
+b$cursor = 3L  # cursor type to WaitCursor
 
-b$identify <- TRUE  # turn on identify mode
-b$identify <- FALSE  # turn off; i.e. in brushing mode now
+b$identify = TRUE  # turn on identify mode
+b$identify = FALSE  # turn off; i.e. in brushing mode now
 
-b$persistent <- TRUE  # turn on persistent brushing
+b$persistent = TRUE  # turn on persistent brushing
 
 ## redefine label generating function: show row names in the identify mode
-b$label.gen <- function(x) {
-    paste(rownames(x), collapse = ", ")
-}
+b$label.gen = function(x) {paste(rownames(x), collapse = ', ')}
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -141,3 +138,4 @@ b$label.gen <- function(x) {
 \seealso{
   \code{\link{qdata}}
 }
+

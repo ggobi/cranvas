@@ -17,3 +17,4 @@ data(pollen)
 plot(pollen[, 1:2], pch = 20, col = rgb(0, 0, 0, 0.1))
 }
 \keyword{datasets}
+

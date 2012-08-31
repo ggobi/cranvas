@@ -6,9 +6,6 @@
 \source{
   \url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
 }
-\usage{
-data(crimes)
-}
 \description{
   Counts of different crimes by state across the USA
 }
@@ -16,6 +13,7 @@ data(crimes)
 library(cranvas)
 data(crimes)
 qcrimes <- qdata(crimes)
-qparallel(names(crimes)[-c(1, 2)], data = qcrimes)
+qparallel(names(crimes)[-c(1,2)], data=qcrimes)
 }
 \keyword{datasets}
+

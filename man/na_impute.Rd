@@ -2,7 +2,7 @@
 \alias{na_impute}
 \title{Simple data imputation}
 \usage{
-na_impute(x, method = "below.min")
+  na_impute(x, method = "below.min")
 }
 \arguments{
   \item{x}{the numeric data matrix}
@@ -20,3 +20,4 @@ na_impute(x, method = "below.min")
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

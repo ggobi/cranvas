@@ -2,7 +2,7 @@
 \alias{qlegend}
 \title{Create a legend layer}
 \usage{
-qlegend(parent = NULL, data = NULL, vertical = TRUE, ...)
+  qlegend(parent = NULL, data = NULL, vertical = TRUE, ...)
 }
 \arguments{
   \item{parent}{the parent layer (default to be
@@ -26,3 +26,4 @@ qlegend(parent = NULL, data = NULL, vertical = TRUE, ...)
 \author{
   Heike Hofmann
 }
+

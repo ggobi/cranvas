@@ -2,8 +2,8 @@
 \alias{cart_polygon}
 \title{Calculate coordinates of transformed polygons to make cartograms}
 \usage{
-cart_polygon(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = 0.8, 
-    ...)
+  cart_polygon(x, y, name, size, diffuse, nrow = 100,
+    ncol = 100, blank.init = 0.8, ...)
 }
 \arguments{
   \item{x,y}{the x and y coordinates of original polygons
@@ -34,15 +34,13 @@ cart_polygon(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = 0.8
 library(cranvas)
 
 ## a simple example: two polygons of size 1 and 5 respectively
-theta <- seq(0, 2 * pi, length = 100)
-x <- c(cos(theta), NA, cos(theta) + 2)
-y <- c(sin(theta), NA, sin(theta) + 1)
-plot(x, y, type = "n", xlim = c(-2, 5), ylim = c(-2, 3))
-polygon(x, y)
-text(c(0, 2), c(0, 1), c(1, 5))  # original polygons
+theta=seq(0,2*pi,length=100)
+x=c(cos(theta),NA,cos(theta)+2);y=c(sin(theta),NA,sin(theta)+1)
+plot(x,y,type='n',xlim=c(-2,5),ylim=c(-2,3)); polygon(x,y)
+text(c(0,2),c(0,1),c(1,5))  # original polygons
 
-res <- cart_polygon(x, y, c(1, 5), nrow = 100, ncol = 100)
-polygon(res$x, res$y, border = "red", lty = 2, lwd = 2)  # transformed polygons
+res=cart_polygon(x, y, c(1,5), nrow=100,ncol=100)
+polygon(res$x,res$y,border='red',lty=2,lwd=2)  # transformed polygons
 
 
 ## see map_qdata() for examples of real maps
@@ -50,3 +48,4 @@ polygon(res$x, res$y, border = "red", lty = 2, lwd = 2)  # transformed polygons
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

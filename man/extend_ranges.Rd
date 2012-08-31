@@ -2,7 +2,7 @@
 \alias{extend_ranges}
 \title{Extend the range of data by an amount}
 \usage{
-extend_ranges(x, f = qpar("mar"))
+  extend_ranges(x, f = qpar("mar"))
 }
 \arguments{
   \item{x}{the data vector (either the orginal vector or
@@ -25,11 +25,12 @@ extend_ranges(x, f = qpar("mar"))
 extend_ranges(c(0, 1))
 extend_ranges(1:10)
 
-m <- matrix(c(c(1, 5, 10), c(5, 7, 8)), ncol = 2)
+m = matrix(c(c(1,5,10), c(5,7,8)), ncol = 2)
 extend_ranges(m)
-extend_ranges(m, f = c(0.1, 0.2))  # larger top and right margins
-extend_ranges(m, f = c(0.2, 0.2, 0.1, 0.1))  # larger horiz margins, small vertical margins
+extend_ranges(m, f = c(.1, .2))  # larger top and right margins
+extend_ranges(m, f = c(.2, .2, .1, .1))  # larger horiz margins, small vertical margins
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

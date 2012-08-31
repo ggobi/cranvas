@@ -10,23 +10,23 @@
 \alias{size_var<-}
 \title{Set palettes and variables to map data to aesthetics}
 \usage{
-color_pal(data) <- value
+  color_pal(data) <- value
 
-color_var(data) <- value
+  color_var(data) <- value
 
-color_title(data) <- value
+  color_title(data) <- value
 
-border_pal(data) <- value
+  border_pal(data) <- value
 
-border_var(data) <- value
+  border_var(data) <- value
 
-border_title(data) <- value
+  border_title(data) <- value
 
-size_pal(data) <- value
+  size_pal(data) <- value
 
-size_var(data) <- value
+  size_var(data) <- value
 
-size_title(data) <- value
+  size_title(data) <- value
 }
 \arguments{
   \item{data}{the data object}
@@ -56,7 +56,7 @@ size_title(data) <- value
 \examples{
 library(cranvas)
 data(tennis)
-qtennis <- qdata(tennis, color = aces)
+qtennis = qdata(tennis, color = aces)
 
 qscatter(server.pts, first.serves)
 qparallel(10:14)  # variables including Aces
@@ -64,12 +64,13 @@ qscatter(server.pts, aces)
 
 
 ## now notice the color changes in the plot
-color_pal(qtennis) <- div_gradient_pal()  # change to diverging gradient palette
+color_pal(qtennis) = div_gradient_pal()  # change to diverging gradient palette
 
-color_var(qtennis) <- "first.serves"  # change color variable from Aces to First.Serves
+color_var(qtennis) = 'first.serves'  # change color variable from Aces to First.Serves
 
-color_title(qtennis) <- "First Serves"  # change title; to be used in legend
+color_title(qtennis) = 'First Serves'  # change title; to be used in legend
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

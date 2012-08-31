@@ -2,7 +2,7 @@
 \alias{qbxp}
 \title{Create a boxplot layer}
 \usage{
-qbxp(data, meta, subset = FALSE, ...)
+  qbxp(data, meta, subset = FALSE, ...)
 }
 \arguments{
   \item{meta}{the meta data}
@@ -28,3 +28,4 @@ qbxp(data, meta, subset = FALSE, ...)
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

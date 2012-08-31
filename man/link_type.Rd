@@ -3,9 +3,9 @@
 \alias{link_type<-}
 \title{Set or query the type of linking}
 \usage{
-link_type(data)
+  link_type(data)
 
-link_type(data) <- value
+  link_type(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe (typically created by
@@ -26,11 +26,12 @@ link_type(data) <- value
   brushed element(s) will be brushed as well.
 }
 \examples{
-mf <- qdata(iris)
+mf = qdata(iris)
 link_type(mf)
-link_type(mf) <- "self"
-link_type(mf) <- "cold"
+link_type(mf) = 'self'
+link_type(mf) = 'cold'
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

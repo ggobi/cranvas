@@ -3,9 +3,9 @@
 \alias{visible<-}
 \title{Set or query the visibility of observations}
 \usage{
-visible(data)
+  visible(data)
 
-visible(data) <- value
+  visible(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe}
@@ -24,11 +24,11 @@ visible(data) <- value
   their visibility to \code{FALSE}).
 }
 \examples{
-df <- qdata(iris)
+df = qdata(iris)
 
 visible(df)
 
-visible(df) <- rep(c(TRUE, FALSE), c(100, 50))  # hide the last 50 obs
+visible(df) = rep(c(TRUE, FALSE), c(100, 50))  # hide the last 50 obs
 
 visible(df)
 }
@@ -38,3 +38,4 @@ visible(df)
 \seealso{
   \code{\link{qdata}}
 }
+

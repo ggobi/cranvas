@@ -20,9 +20,6 @@
   and Research Worker}, Springer-Verlag, New York, NY. URL:
   \url{http://lib.stat.cmu.edu/datasets/Andrews/}
 }
-\usage{
-data(pigs)
-}
 \description{
   Multivariate time series data originally from Andrews and
   Herzberg (1985).
@@ -31,6 +28,7 @@ data(pigs)
 library(cranvas)
 data(pigs)
 qpig <- qdata(pigs)
-qtime(TIME, ~GILTS + PROFIT + PRODUCTION + HERDSZ, qpig, shift = c(1, 4))
+qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
 }
 \keyword{datasets}
+

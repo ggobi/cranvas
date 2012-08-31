@@ -3,9 +3,9 @@
 \alias{selected<-}
 \title{Set or query the selected (brushed) observations}
 \usage{
-selected(data)
+  selected(data)
 
-selected(data) <- value
+  selected(data) <- value
 }
 \arguments{
   \item{data}{the mutaframe}
@@ -27,17 +27,17 @@ selected(data) <- value
   selected).
 }
 \examples{
-df <- qdata(mtcars)
+df = qdata(mtcars)
 
 selected(df)
 
-selected(df) <- rep(c(TRUE, FALSE), c(10, 22))  # brush the first 10 obs
+selected(df) = rep(c(TRUE, FALSE), c(10, 22))  # brush the first 10 obs
 selected(df)
 
-selected(df) <- 15L  # brush the 15th row
+selected(df) = 15L  # brush the 15th row
 selected(df)
 
-selected(df) <- "Honda Civic"  # brush by row names
+selected(df) = 'Honda Civic'  # brush by row names
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -45,3 +45,4 @@ selected(df) <- "Honda Civic"  # brush by row names
 \seealso{
   \code{\link{qdata}}
 }
+

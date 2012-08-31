@@ -2,7 +2,7 @@
 \alias{record_selector}
 \title{Select a subset of data through a GUI to be brushed}
 \usage{
-record_selector(vars, data)
+  record_selector(vars, data)
 }
 \arguments{
   \item{vars}{a character string or an integer as a column
@@ -40,17 +40,17 @@ record_selector(vars, data)
 library(cranvas)
 
 ## old iris as the toy example
-qiris <- qdata(iris)
+qiris = qdata(iris)
 qparallel(~., data = qiris)
 record_selector(Species, data = qiris)
 
 ## NRC rankings
 data(nrcstat)
-qnrc <- qdata(nrcstat)
-qparallel(10:13, data = qnrc, main = "Overview of Rankings", horizontal = FALSE)
+qnrc = qdata(nrcstat)
+qparallel(10:13, data = qnrc, main = 'Overview of Rankings', horizontal=FALSE)
 record_selector(Institution, data = qnrc)
-qparallel(14:19, data = qnrc, main = "Research, Student Support, Diversity")
-qparallel(20:26, data = qnrc, main = "Publication, Award, Time to Degree")
+qparallel(14:19, data = qnrc, main = 'Research, Student Support, Diversity')
+qparallel(20:26, data = qnrc, main = 'Publication, Award, Time to Degree')
 }
 \author{
   Yihui Xie and Jason Crowley
@@ -58,3 +58,4 @@ qparallel(20:26, data = qnrc, main = "Publication, Award, Time to Degree")
 \seealso{
   \code{\link{qdata}}
 }
+

@@ -2,7 +2,7 @@
 \alias{match_key}
 \title{Match keys from a keyboard event}
 \usage{
-match_key(key, event)
+  match_key(key, event)
 }
 \arguments{
   \item{key}{a character vector of key names (see the
@@ -26,11 +26,10 @@ match_key(key, event)
 library(qtbase)
 library(qtpaint)
 library(cranvas)
-key_press <- function(layer, event) {
-    print(match_key(c("A", "F", "PageUp", "1"), event))
+key_press = function(layer, event) {
+print(match_key(c('A', 'F', 'PageUp', '1'), event))
 }
-s <- qscene()
-r <- qlayer(s, keyPressFun = key_press)
+s = qscene(); r = qlayer(s, keyPressFun = key_press)
 qplotView(scene = s)
 }
 \author{
@@ -39,3 +38,4 @@ qplotView(scene = s)
 \references{
   \url{http://doc.qt.nokia.com/latest/qt.html#Key-enum}
 }
+

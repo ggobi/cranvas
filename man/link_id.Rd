@@ -2,7 +2,7 @@
 \alias{link_id}
 \title{Get the id's of listeners on linking}
 \usage{
-link_id(data)
+  link_id(data)
 }
 \arguments{
   \item{data}{a mutaframe created by \code{\link{qdata}}}
@@ -21,3 +21,4 @@ link_id(data)
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+

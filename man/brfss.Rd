@@ -6,9 +6,6 @@
 \source{
   \url{http://www.cdc.gov/BRFSS/}
 }
-\usage{
-data(brfss)
-}
 \description{
   Part of the largest, on-going telephone health survey
   system, tracking health conditions and risk behaviors in
@@ -18,11 +15,11 @@ data(brfss)
 }
 \examples{
 library(cranvas)
-data(brfss)
-qbrfss <- qdata(brfss)
+data(brfss); qbrfss = qdata(brfss)
 
 qmval(names(brfss)[40:50])
 qmval(51:68)
-qmval(~poorhlth + fruit + greensal)
+qmval(~poorhlth+fruit+greensal)
 }
 \keyword{datasets}
+

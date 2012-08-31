@@ -2,7 +2,7 @@
 \alias{qpar}
 \title{Graphical parameters in cranvas}
 \usage{
-qpar(...)
+  qpar(...)
 }
 \arguments{
   \item{...}{options of the form \code{tag = value}}
@@ -27,7 +27,7 @@ qpar(...)
 }
 \examples{
 str(qpar())  # all default parameters
-op <- qpar()
+op = qpar()
 qpar(mar = 0.05)  # the degree to extend the plot margin (inner margin)
 qpar(op)  # restore
 }
@@ -37,3 +37,4 @@ qpar(op)  # restore
 \seealso{
   \code{\link[graphics]{par}}
 }
+

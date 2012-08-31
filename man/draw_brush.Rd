@@ -2,7 +2,7 @@
 \alias{draw_brush}
 \title{Draw the brush rectangle}
 \usage{
-draw_brush(layer, painter, data, meta)
+  draw_brush(layer, painter, data, meta)
 }
 \arguments{
   \item{layer,painter}{the painter of the layer on which to
@@ -28,3 +28,4 @@ draw_brush(layer, painter, data, meta)
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
+
