@@ -32,14 +32,14 @@ paste_formula <- function(form) {
 find_x_label <- function(form, divider) {
   parsed <- parse_product_formula(form)
   vars <- c(parsed$marg, parsed$cond)
-  xlabs <- rev(vars[divider=="hspine"])
+  xlabs <- rev(vars[grep("h",divider)])
   paste(xlabs,"", collapse="+ ")
 }
 
 find_y_label <- function(form, divider) {
   parsed <- parse_product_formula(form)
   vars <- c(parsed$marg, parsed$cond)
-  ylabs <- rev(vars[divider=="vspine"])
+  ylabs <- rev(vars[grep("v",divider)])
   paste(ylabs,"", collapse="+ ")  
 }
 
@@ -102,20 +102,22 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     
     recalcHiliting = function() {
       redoHiliting <<-FALSE
-      idx = visible(data) & selected(data)
+      idx = visible(data) 
       if (sum(idx) > 0) {
       
         df <- data.frame(data[idx,])
+        
         form <- parse_product_formula(meta$form)
         df$wt <- 1
         if (length(form$wt) == 1) df$wt <- df[,form$wt]
       
-        var <- unlist(form$marg, form$cond)
-        hils <- ddply(df, var, summarize, hilited = sum(wt))
+        var <- unlist(c(form$marg, form$cond))
+        hils <- ddply(df, var, summarize, hilited = sum(wt[.brushed])/sum(wt))
+        hils$hilited[is.nan(hils$hilited)] <- 0
+
         hilID <- grep("hilited", names(meta$mdata))
+        if (length(hilID) >0) meta$mdata <- meta$mdata[-hilID]
         meta$hdata <- merge(meta$mdata, hils, by=var)
-      
-      #     browser()
       } else {
         meta$hdata <- meta$mdata  
         meta$hdata$hilited <- 0
@@ -126,9 +128,9 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       else split <- "vspine"
       
       if (split =="vspine") {
-        meta$hdata$t =  with(meta$hdata, b + (t-b)*hilited/.wt)
+        meta$hdata$t =  with(meta$hdata, b + (t-b)*hilited)
       } else
-        meta$hdata$r =  with(meta$hdata, l + (r-l)*hilited/.wt)
+        meta$hdata$r =  with(meta$hdata, l + (r-l)*hilited)
     }
 
     recalc = function() {
@@ -279,7 +281,6 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			form$marg <- form$marg[-firstSplit]
 			
 			meta$form <- as.formula(paste_formula(form))
-#			meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)
@@ -290,9 +291,6 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     main_draw = function(layer, painter) {
 			colour="grey50"
 			color = colour
-#			if (.colored)
-#				color <- as.character(meta$mdata$.color)
-#			else color <- colour
 	
 			with(meta$mdata, qdrawRect(painter,l,b,r,t, fill=color))
 			
