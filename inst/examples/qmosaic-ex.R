@@ -7,6 +7,7 @@ qtitanic <- qdata(titanic)
 
 qtitanic$.brushed <- qtitanic$Survived=="Yes"
 print(qmosaic(qtitanic, Freq ~ Sex + Age + Class))
+print(qbar(Survived, data=qtitanic))
 
 print(qmosaic(qtitanic, Freq ~ Survived, "hbar")) 
 print(qmosaic(qtitanic, Freq ~ Age, "hbar")) 

@@ -286,7 +286,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 		}
 
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
-
+    
     main_draw = function(layer, painter) {
 			colour="grey50"
 			color = colour
@@ -311,6 +311,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       #			else color <- colour
       
       with(meta$hdata, qdrawRect(painter,l,b,r,t, fill=color))
+      draw_brush(layer, painter, data, meta)
     }
     brush_mouse_press = function(layer, event) {
         common_mouse_press(layer, event, data, meta)
