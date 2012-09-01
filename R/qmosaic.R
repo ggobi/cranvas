@@ -28,20 +28,19 @@ paste_formula <- function(form) {
 	return(formstring)
 }
 
-find_x_label <- function(df) {
-  vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
-  
-  axis.set <- subset(df, (b==min(b)) &  (level==max(level)), drop=FALSE)
-browser()  
-  paste(vars[sapply(vars, function(x) return(length(unique(axis.set[,x]))>1))],"")
+
+find_x_label <- function(form, divider) {
+  parsed <- parse_product_formula(form)
+  vars <- c(parsed$marg, parsed$cond)
+  xlabs <- rev(vars[divider=="hspine"])
+  paste(xlabs,"", collapse="+ ")
 }
 
-find_y_label <- function(df) {
-  vars <- setdiff(names(df), c(".wt", "l", "r", "t", "b", "level"))
-  
-  axis.set <- subset(df, (l==min(l)) & (level==max(level)), drop=FALSE)
-browser()  
-  paste(vars[sapply(vars, function(x) return(length(unique(axis.set[,x]))>1))],"")
+find_y_label <- function(form, divider) {
+  parsed <- parse_product_formula(form)
+  vars <- c(parsed$marg, parsed$cond)
+  ylabs <- rev(vars[divider=="vspine"])
+  paste(ylabs,"", collapse="+ ")  
 }
 
 settitle <- function(form) {
@@ -94,13 +93,13 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
                      active = TRUE, main=settitle(z$formula), ylab="", xlab="", main=main)
     if(is.null(divider)) divider = mosaic()
     if (!is.character(divider)) {
-    	form = parse_product_formula(z$formula)
-    	splits = c(form$marg, form$cond)
+      form = parse_product_formula(z$formula)
+      splits = c(form$marg, form$cond)
       divider = divider(length(splits))
     }
     meta$divider = divider
     meta$origDivider = meta$divider
-
+    
     recalcHiliting = function() {
       redoHiliting <<-FALSE
       idx = visible(data) & selected(data)
@@ -137,8 +136,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       df <- data.frame(data[idx,])
       mdata <- prodcalc(df, meta$form, meta$divider, cascade, scale_max, na.rm = na.rm)
       meta$mdata <- subset(mdata, level==max(mdata$level), drop=FALSE)
-      meta$xlab <- find_x_label(meta$mdata)
-      meta$ylab <- find_y_label(meta$mdata)
+      meta$xlab <- find_x_label(meta$form, meta$divider)
+      meta$ylab <- find_y_label(meta$form, meta$divider)
       recalcHiliting()
     }
     
