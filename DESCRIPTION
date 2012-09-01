@@ -8,7 +8,8 @@ Imports:
     plumbr (>= 0.6.3),
     objectSignals (>= 0.9.5),
     objectProperties,
-    SearchTrees (>= 0.5.1)
+    SearchTrees (>= 0.5.1),
+    productplots
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
 Title: Interactive statistical graphics based on Qt
@@ -34,8 +35,7 @@ BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
     R (>= 2.10),
     scales,
-    maps,
-    productplots
+    maps
 Suggests:
     nlme,
     reshape,
