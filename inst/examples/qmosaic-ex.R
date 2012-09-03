@@ -3,12 +3,11 @@ library(productplots)
 
 data(happy)
 qhappy <- qdata(happy, color=happy)
-qhappy <- qdata(happy, color=sex)
-qhappy <- qdata(happy)
+qbar(happy, qhappy)
 
-qmosaic(qhappy, ~marital+happy, divider=c("vspine", "hspine"))
+qmosaic(qhappy, ~sex+marital, divider=c("vspine", "hspine"))
 qmosaic(qhappy, ~marital+happy+year, divider=c("vspine", "hspine", "hspine"))
-qmosaic(qhappy, ~marital+degree+year, divider=c("vspine", "hspine", "hspine"))
+qmosaic(qhappy, ~marital+degree, divider=c("vspine", "hspine"))
 
 qbar(sex, qhappy)
 

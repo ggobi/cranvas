@@ -139,10 +139,10 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         meta$cdata$cval <- 0
       }
 
-      split <- meta$divider[meta$cdata$level[1]]
-      if (length(grep("v", split))>0) split <- "vspine"
-      else split <- "hspine"
-#browser()      
+      split <- meta$divider[1]
+      if (length(grep("v", split))>0) split <- "hspine"
+      else split <- "vspine"
+
       if (split =="vspine") {
         meta$cdata$t =  with(meta$cdata, b + (t-b)*cval)
         meta$cdata <- ddply(meta$cdata, var, transform, 
@@ -177,7 +177,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         meta$hdata$hilited <- 0
       }
       
-      split <- meta$divider[meta$hdata$level[1]]
+      split <- meta$divider[1]
       if (length(grep("v", split))>0) split <- "hspine"
       else split <- "vspine"
       
