@@ -1,3 +1,4 @@
+
 constructCondition <- function (hdata) {
   require(reshape2)
   require(plyr)
@@ -133,6 +134,39 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         meta$hdata$r =  with(meta$hdata, l + (r-l)*hilited)
     }
 
+    setylab <- function() {
+      parsed <- parse_product_formula(meta$form)
+      vars <- c(parsed$marg, parsed$cond)
+      
+      yvars <- rev(vars[grep("v",meta$divider)])
+      meta$yat = seq(0,1, length=5)
+      meta$ylabels = round(seq(0,1, length=5),2)
+      if (length(yvars)>=1) {
+        yvar <- yvars[1]
+        df <- subset(meta$mdata, l==0)
+        at <- ddply(df, yvar, summarize, yat=(min(b)+max(t))/2)
+        meta$yat = at$yat
+        meta$ylabels = at[,1]
+      }           
+    }
+    
+    setxlab <- function() {
+      parsed <- parse_product_formula(meta$form)
+      vars <- c(parsed$marg, parsed$cond)
+      
+      xvars <- rev(vars[grep("h",meta$divider)])
+      meta$xat = seq(0,1, length=5)
+      meta$xlabels = round(seq(0,1, length=5), 2)
+      if (length(xvars)>=1) {
+        xvar <- xvars[1]
+        #      browser()
+        df <- subset(meta$mdata, b==0)
+        at <- ddply(df, xvar, summarize, xat=(min(l)+max(r))/2)
+        meta$xat = at$xat
+        meta$xlabels = at[,1]
+      }      
+    }
+    
     recalc = function() {
       idx = visible(data)
       df <- data.frame(data[idx,])
@@ -140,16 +174,18 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       meta$mdata <- subset(mdata, level==max(mdata$level), drop=FALSE)
       meta$xlab <- find_x_label(meta$form, meta$divider)
       meta$ylab <- find_y_label(meta$form, meta$divider)
+      setxlab()
+      setylab()
       recalcHiliting()
     }
+ 
     
     compute_coords = function() {
 			meta$limits = extend_ranges(cbind(meta$xlim, meta$ylim))
       meta$minor = "xy"
-			meta$xat = meta$yat = seq(0,1, by=0.25)
-			meta$xlabels = meta$ylabels = seq(0,1, by=0.25)
-
-      recalc()			
+#			meta$xat = meta$yat = seq(0,1, by=0.25)
+#			meta$xlabels = meta$ylabels = seq(0,1, by=0.25)
+      recalc()
     }
     compute_coords()
 
@@ -434,6 +470,11 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 
     view = qplotView(scene = scene)
     view$setWindowTitle(sprintf('Mosaic plot: %s', meta$main))
+
+    
+    meta$xlabChanged$connect(setxlab)    
+    meta$ylabChanged$connect(setylab)    
+    
     meta$formChanged$connect(function() {
         meta$main = settitle(meta$form)
         view$setWindowTitle(sprintf('Mosaic plot: %s', meta$main))

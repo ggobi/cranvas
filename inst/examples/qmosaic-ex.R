@@ -1,6 +1,10 @@
 library(cranvas)
 library(productplots)
 
+data(happy)
+qhappy <- qdata(happy)
+qmosaic(qhappy, ~happy+marital+sex, divider=c("vspine", "hspine", "hspine"))
+
 data(Titanic)
 titanic <- as.data.frame(Titanic)
 qtitanic <- qdata(titanic)
