@@ -236,8 +236,6 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     compute_coords = function() {
 			meta$limits = extend_ranges(cbind(meta$xlim, meta$ylim))
       meta$minor = "xy"
-#			meta$xat = meta$yat = seq(0,1, by=0.25)
-#			meta$xlabels = meta$ylabels = seq(0,1, by=0.25)
       recalc()
     }
     compute_coords()
@@ -345,7 +343,6 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
 			form$cond <- form$cond[-1]
 			
 			meta$form <- as.formula(paste_formula(form))
-#			meta$main <- settitle(meta$form)
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)
@@ -385,9 +382,6 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     brush_draw = function(layer, painter) {
       if (redoHiliting) recalcHiliting()
 
-      #			if (.colored)
-      #				color <- as.character(meta$mdata$.color)
-      #			else color <- colour
       color <- b$color
       
       with(meta$hdata, qdrawRect(painter,l,b,r,t, fill=color, stroke=color))
@@ -467,7 +461,32 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         qupdate(layer.identify)
     }
     identify_draw = function(layer, painter) {
+      if (!b$identify || !length(idx <- meta$identified)) return()
+
+      idx <- idx[idx <= nrow(meta$mdata)]
+      if (length(idx) == 0) return()
+
+      idx = idx + 1
+      form <- parse_product_formula(meta$form)
+      var <- rev(unlist(c(form$marg, form$cond)))
+      for(i in var)
+        meta$mdata[,i] <- as.character(meta$mdata[,i])
+      id <- paste(var, meta$mdata[idx, var], sep=": ", collapse="\n")
+
+      sumwt <- sum(meta$mdata[, ".wt"])  
+      ivals <- paste(sprintf("\ncount: %s\nproportion: %.2f%%", 
+                             meta$mdata[idx, ".wt"], 
+                             meta$mdata[idx, ".wt"]/sumwt*100), collapse="\n")
+            
+      meta$identify.labels = paste(id, ivals, collapse="")
+        
+      draw_identify(layer, painter, data, meta)
+      qdrawRect(painter, meta$mdata$l[idx], meta$mdata$b[idx], meta$mdata$r[idx],
+                meta$mdata$t[idx], stroke = b$color, fill = NA)
     }
+    
+    
+    
     scene = qscene()
     layer.root = qlayer(scene)
     layer.main =
