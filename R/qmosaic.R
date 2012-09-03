@@ -379,7 +379,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
       zeroes <- subset(meta$mdata, .wt==0, drop=FALSE)
       if (nrow(zeroes) > 0) {
         qdrawCircle(painter, zeroes$l, zeroes$b, r = 3,
-          stroke = color, fill = NULL)
+          stroke = color, fill = "white")
       }
     }
     brush_draw = function(layer, painter) {

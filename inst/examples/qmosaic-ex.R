@@ -8,6 +8,7 @@ qhappy <- qdata(happy)
 
 qmosaic(qhappy, ~marital+happy, divider=c("vspine", "hspine"))
 qmosaic(qhappy, ~marital+happy+year, divider=c("vspine", "hspine", "hspine"))
+qmosaic(qhappy, ~marital+degree+year, divider=c("vspine", "hspine", "hspine"))
 
 qbar(sex, qhappy)
 
