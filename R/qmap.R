@@ -467,8 +467,6 @@ map_qdata =
               color = color, border = border, size = size, ...)
     xy = as.data.frame(df[1:2])
     if (cartogram && length(size) > 1 && !all(diff(size) < 1e-7)) {
-        if (!require('Rcartogram'))
-            message('Rcartogram package not available; map data not transformed')
         ## FIXME: cartogram() depends on the magnitude of size!!! so I did not use mf$.size
         xy = cart_polygon(xy$x, xy$y, df$names, size, diffuse, ...)
         xy$origx = df$x
@@ -501,10 +499,7 @@ map_qdata =
 ##' @export
 ##' @example inst/examples/cart_polygon-ex.R
 cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = .8, ...) {
-    if (!require('Rcartogram')) {
-        message("this function requires the Rcartogram package")
-        return(data.frame(x, y))
-    }
+    library(Rcartogram)
     if (length(size) != sum(is.na(x)) + 1)
         stop("the length of 'size' vector must be the same as the number of polygons")
     if (diffuse <= 0) {
