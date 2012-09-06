@@ -243,22 +243,24 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     recalcColor()
 
 		removeSplit = function() {
-			form = parse_product_formula(meta$form)
-
+			form = parse_product_formula(meta$form)			
       if (length(form$marg) > 1) {
       	meta$inactiveVar <- c(form$marg[1], meta$inactiveVar)
       	meta$inactiveDivider <- c(meta$divider[1], meta$inactiveDivider)
         form$marg <- form$marg[-1]
         meta$divider <- meta$divider[-1]        
-      } else if (length(form$marg) == 1) {
-        if (form$marg[1] == "1") return()
-        else {
-      	  meta$inactiveVar <- c(form$marg[1], meta$inactiveVar)
-          form$marg[1] = "1"
-        }
-      }
+      } 
+      else return()
+#         if (length(form$marg) == 1) {
+#         if (form$marg[1] == "1") return()
+#         else {
+#       	  meta$inactiveVar <- c(form$marg[1], meta$inactiveVar)
+#           form$marg[1] = "1"
+#         }
+#       
+#         }
 
-			meta$form <- as.formula(paste_formula(form))
+      meta$form <- as.formula(paste_formula(form))
 			recalc()
 			layer.main$invalidateIndex()
 			qupdate(layer.main)

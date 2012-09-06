@@ -6,10 +6,10 @@ library(productplots)
 data(Titanic)
 titanic <- as.data.frame(Titanic)
 titanic$Passenger <- titanic$Class != "Crew"
-qtitanic <- qdata(titanic)
+qtitanic <- qdata(titanic, color=Survived)
 
 qtitanic$.brushed <- qtitanic$Survived=="Yes"
-## passengers have a higher probabiloty of survival than crew members ...
+## passengers have a higher probability of survival than crew members ...
 print(qmosaic(qtitanic, Freq ~ Passenger, divider=c("hspine")))
 ## unless sex is taken into account: the conditional association between Passenger 
 ## and Survival changes to the opposite: both male and female crew members had better 
