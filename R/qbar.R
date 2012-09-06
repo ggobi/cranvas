@@ -72,7 +72,9 @@ qbar = function(x, data, weight = NULL, space = 0.1, main = '', horizontal = FAL
     meta$xlabels = rownames(tmp)
     meta$ylabels = format(meta$yat)
     meta$xlab = if (is.null(xlab)) meta$var else xlab
-    meta$ylab = if (is.null(ylab)) '' else ylab
+    meta$ylab = if (is.null(ylab)) {
+      if (length(meta$weight) == 1) meta$weight else 'counts'
+    } else ylab
     w = diff(meta$xat[1:2]) / (1 + meta$space) / 2  # half width of a bar
     meta$xleft = meta$x - w; meta$xright = meta$x + w
     meta$ybottom = c(cbind(0, tmp[, -meta$nlevel2])); meta$ytop = meta$y
