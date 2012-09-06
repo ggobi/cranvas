@@ -29,12 +29,14 @@ draw_identify = function(layer, painter, data, meta) {
   # adjust drawing directions when close to the boundary
   hflag = meta$limits[2] - meta$pos[1] > bgwidth  # draw to the right
   vflag = meta$pos[2] - meta$limits[3] > bgheight # draw to the bottom
-  qdrawRect(painter, meta$pos[1], meta$pos[2],
-            meta$pos[1] + ifelse(hflag, 1, -1) * bgwidth,
-            meta$pos[2] + ifelse(vflag, -1, 1) * bgheight,
+  # add an offset to move text labels a little bit away from the cursor
+  pos = meta$pos + 10 * one_pixel(painter) * c(ifelse(hflag, 1, -1), ifelse(vflag, -1, 1))
+  qdrawRect(painter, pos[1], pos[2],
+            pos[1] + ifelse(hflag, 1, -1) * bgwidth,
+            pos[2] + ifelse(vflag, -1, 1) * bgheight,
             stroke = rgb(1, 1, 1, 0.8), fill = rgb(1, 1, 1, 0.8))
   qstrokeColor(painter) = b$label.color
-  qdrawText(painter, meta$identify.labels, meta$pos[1], meta$pos[2],
+  qdrawText(painter, meta$identify.labels, pos[1], pos[2],
             halign = ifelse(hflag, "left", "right"),
             valign = ifelse(vflag, "top", "bottom"))
 }
