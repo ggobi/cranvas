@@ -28,8 +28,8 @@ draw_identify = function(layer, painter, data, meta) {
     bgwidth = qstrWidth(painter, meta$identify.labels)
     bgheight = qstrHeight(painter, meta$identify.labels)
     ## adjust drawing directions when close to the boundary
-    hflag = meta$limits[2] - meta$pos[1] > bgwidth
-    vflag = meta$pos[2] - meta$limits[3] > bgheight
+    hflag = meta$limits[2] - meta$pos[1] > bgwidth  # draw to the right
+    vflag = meta$pos[2] - meta$limits[3] > bgheight # draw to the bottom
     qdrawRect(painter, meta$pos[1], meta$pos[2],
               meta$pos[1] + ifelse(hflag, 1, -1) * bgwidth,
               meta$pos[2] + ifelse(vflag, -1, 1) * bgheight,
