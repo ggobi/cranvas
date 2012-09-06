@@ -19,7 +19,7 @@ new_brush = function() {
     mode = "none", identify = FALSE, label.gen = function(x) {
       x = t(as.data.frame(x))
       paste(capture.output(print(x, quote = FALSE)), collapse = '\n')
-    }, label.color = "darkgray",
+    }, label.color = "black",
     history.size = 30, history.index = 0, history.list = list(),
     persistent = FALSE, persistent.color = character(0),
     persistent.list = list(), select.only = FALSE, draw.brush = TRUE,
