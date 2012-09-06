@@ -34,10 +34,10 @@ URL: http://github.com/ggobi/cranvas
 BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
     R (>= 2.10),
-    scales,
-    maps
+    scales
 Suggests:
     nlme,
+    maps,
     reshape,
     mapdata,
     ggmap,

@@ -451,6 +451,7 @@ Map.meta =
 map_qdata =
     function(database, regions = '.',  color = 'gray50', border = 'gray90', size = 4,
              cartogram = FALSE, diffuse = 5, label = NULL, ...) {
+    library(maps)
     df = map(database, regions, plot = FALSE, fill = TRUE)
     ## usually ':' is the separator but sometimes it is ','
     if (length(label) == length(df$names)) message('Self-defined labels will build a link between brushed and unbrushed areas which share the same label.')
