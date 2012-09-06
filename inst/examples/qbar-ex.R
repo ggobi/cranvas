@@ -4,6 +4,7 @@ data(tennis)
 
 qtennis = qdata(tennis)
 qbar(matches, data = qtennis)
+qbar(matches, data = qtennis, weight = serve.speed)
 
 ## NRC rankings
 data(nrcstat)

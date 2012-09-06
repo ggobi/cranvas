@@ -25,6 +25,8 @@
 #' @param x a variable name (will be coerced to a factor if it is not; \code{NA}
 #'   will also be a level of the factor if the variable has any \code{NA}'s)
 #' @param data a mutaframe created by \code{\link{qdata}}
+#' @param weight weight the bars by the sums of another variable instead of the
+#'   counts of \code{x}
 #' @param space the space between bars proportional to the width of bars
 #' @param main the main title
 #' @param horizontal \code{TRUE} to draw a horizontal plot or \code{FALSE}
@@ -43,14 +45,15 @@
 #' @export
 #' @family plots
 #' @example inst/examples/qbar-ex.R
-qbar = function(x, data, space = 0.1, main = '', horizontal = FALSE,
+qbar = function(x, data, weight = NULL, space = 0.1, main = '', horizontal = FALSE,
                 standardize = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL) {
   data = check_data(data)
   b = brush(data)
   b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
   s = attr(data, 'Scales')
+  mc = as.list(match.call()[-1])
   meta = Bar.meta$new(
-    var = as.character(as.list(match.call()[-1])$x), space = space, alpha = 1,
+    var = as.character(mc$x), weight = as.character(mc$weight), space = space, alpha = 1,
     horizontal = horizontal, main = main, standardize = standardize, active = TRUE
   )
   compute_coords = function() {
@@ -58,7 +61,8 @@ qbar = function(x, data, space = 0.1, main = '', horizontal = FALSE,
     meta$nlevel = length(levels(meta$value))
     .find_split_var(data, meta)
     idx = visible(data)
-    tmp = table(meta$value[idx], meta$value2[idx])
+    tmp = tapply(if (length(meta$weight) == 1) data[idx, meta$weight] else rep(1, sum(idx)),
+                 list(meta$value[idx], meta$value2[idx]), sum, na.rm = TRUE)
     if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
     if (meta$standardize) tmp = tmp / tmp[, meta$nlevel2, drop = ncol(tmp) > 1]
     tmp[!is.finite(tmp)] = 0  # consider division by 0
@@ -227,7 +231,7 @@ Bar.meta = setRefClass(
          space = 'numeric', xleft = 'numeric', xright = 'numeric',
          ybottom = 'numeric', ytop = 'numeric', binmin = 'numeric',
          horizontal = 'logical', freq = 'logical', standardize = 'logical',
-         split.type = 'character')
+         split.type = 'character', weight = 'character')
 
   ))
 )
@@ -294,7 +298,8 @@ Bar.meta = setRefClass(
 .bar_draw_brush = function(layer, painter, data, meta) {
   b = brush(data)
   if (any(idx <- selected(data) & (vis <- visible(data)))) {
-    d = c(table(meta$value[idx], meta$value2[idx])) # brushed counts
+    d = c(tapply(if (length(meta$weight) == 1) data[idx, meta$weight] else rep(1, sum(idx)),
+                 list(meta$value[idx], meta$value2[idx]), sum, na.rm = TRUE)) # brushed counts
     if (length(meta$freq) && !meta$freq)
       d = d / (sum(vis) * diff(meta$breaks[1:2])) * meta$multiplier
     if (isTRUE(meta$standardize)) {
