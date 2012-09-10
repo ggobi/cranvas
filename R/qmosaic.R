@@ -395,6 +395,8 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     brush_mouse_move = function(layer, event) {
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect)
+        hits <- hits[hits < nrow(meta$mdata)]
+        
         if (length(hits)) {
           ## rectangles are drawn in the same order as in mdata
  #         print(hits)

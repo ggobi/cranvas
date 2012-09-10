@@ -2,9 +2,9 @@
 \alias{qbar}
 \title{Draw a bar plot}
 \usage{
-  qbar(x, data, space = 0.1, main = "", horizontal = FALSE,
-    standardize = FALSE, xlim = NULL, ylim = NULL,
-    xlab = NULL, ylab = NULL)
+  qbar(x, data, weight = NULL, space = 0.1, main = "",
+    horizontal = FALSE, standardize = FALSE, xlim = NULL,
+    ylim = NULL, xlab = NULL, ylab = NULL)
 }
 \arguments{
   \item{x}{a variable name (will be coerced to a factor if
@@ -12,6 +12,9 @@
   if the variable has any \code{NA}'s)}
 
   \item{data}{a mutaframe created by \code{\link{qdata}}}
+
+  \item{weight}{weight the bars by the sums of another
+  variable instead of the counts of \code{x}}
 
   \item{space}{the space between bars proportional to the
   width of bars}
@@ -77,6 +80,7 @@ data(tennis)
 
 qtennis = qdata(tennis)
 qbar(matches, data = qtennis)
+qbar(matches, data = qtennis, weight = serve.speed)
 
 ## NRC rankings
 data(nrcstat)

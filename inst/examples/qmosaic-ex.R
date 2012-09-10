@@ -23,11 +23,11 @@ print(qmosaic(qtitanic, Freq ~ Sex+Passenger, divider=c("vspine", "hspine")))
 #######################
 data(happy)
 qhappy <- qdata(happy, color=happy)
-qbar(happy, qhappy)
 
 qmosaic(qhappy, ~sex+marital, divider=c("vspine", "hspine"))
 qmosaic(qhappy, ~marital+happy+year, divider=c("vspine", "hspine", "hspine"))
 qmosaic(qhappy, ~marital+degree, divider=c("vspine", "hspine"))
+qmosaic(qhappy, ~happy, divider=c("hbar"))
 
 qbar(sex, qhappy)
 
