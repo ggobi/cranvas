@@ -21,3 +21,8 @@ qbar(RegCode, data = qnrc, standardize = TRUE)  # standardize to 1
 ## use border color to split the bars
 qnrc2 = qdata(nrcstat, data = qnrc, color = 'white', border = Control)
 qbar(RegCode, data = qnrc)
+
+## happy data
+library(productplots)
+qhappy = qdata(happy, color = happy)
+qbar(happy, data = qhappy)
