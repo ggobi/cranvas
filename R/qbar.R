@@ -61,8 +61,9 @@ qbar = function(x, data, weight = NULL, space = 0.1, main = '', horizontal = FAL
     meta$nlevel = length(levels(meta$value))
     .find_split_var(data, meta)
     idx = visible(data)
-    tmp = tapply(if (length(meta$weight) == 1) data[idx, meta$weight] else rep(1, sum(idx)),
-                 list(meta$value[idx], meta$value2[idx]), sum, na.rm = TRUE)
+    tmp = if (length(meta$weight) == 1) {
+      tapply(data[idx, meta$weight], list(meta$value[idx], meta$value2[idx]), sum, na.rm = TRUE)
+    } else table(meta$value[idx], meta$value2[idx])
     if (ncol(tmp) > 1) tmp = t(apply(tmp, 1, cumsum))
     if (meta$standardize) tmp = tmp / tmp[, meta$nlevel2, drop = ncol(tmp) > 1]
     tmp[!is.finite(tmp)] = 0  # consider division by 0
