@@ -2,8 +2,8 @@
 \alias{qmtext}
 \title{Create a margin text layer}
 \usage{
-  qmtext(parent = NULL, meta = NULL, side = 1, text = "",
-    x = 0.5, y = 0.5, cex = 1, ...)
+qmtext(parent = NULL, meta = NULL, side = 1, text = "", x = 0.5, y = 0.5, cex = 1, 
+    ...)
 }
 \arguments{
   \item{parent}{the parent layer (default to be
@@ -59,22 +59,22 @@ library(cranvas)
 library(qtbase)
 library(qtpaint)
 
-s = qscene()
-r = qlayer(s)  # root layer
-m = qlayer(paintFun = function(layer, painter) {
+s <- qscene()
+r <- qlayer(s)  # root layer
+m <- qlayer(paintFun = function(layer, painter) {
     qdrawCircle(painter, runif(1000), runif(1000), r = 2)
     qdrawRect(painter, 0, 0, 1, 1)
-}, limits = qrect(matrix(c(0, 1, 0, 1), 2))) # main layer
-m1 = qmtext(text = 'x axis title!', side = 1)
-m2 = qmtext(text = 'y axis title!', side = 2)
-m3 = qmtext(text = 'THE MAIN TITLE', side = 3)
-m4 = qmtext(text = 'text on the right margin', side = 4)
+}, limits = qrect(matrix(c(0, 1, 0, 1), 2)))  # main layer
+m1 <- qmtext(text = "x axis title!", side = 1)
+m2 <- qmtext(text = "y axis title!", side = 2)
+m3 <- qmtext(text = "THE MAIN TITLE", side = 3)
+m4 <- qmtext(text = "text on the right margin", side = 4)
 ## note how to arrange these layers appropriately in the margin
-r[1, 1] = m
-r[2, 1] = m1
-r[1, 0] = m2
-r[0, 1] = m3
-r[1, 2] = m4
+r[1, 1] <- m
+r[2, 1] <- m1
+r[1, 0] <- m2
+r[0, 1] <- m3
+r[1, 2] <- m4
 print(qplotView(scene = s))
 }
 \author{
@@ -84,4 +84,3 @@ print(qplotView(scene = s))
   \code{\link[graphics]{mtext}},
   \code{\link[qtpaint]{qlayer}}
 }
-

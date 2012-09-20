@@ -2,9 +2,8 @@
 \alias{qbar}
 \title{Draw a bar plot}
 \usage{
-  qbar(x, data, weight = NULL, space = 0.1, main = "",
-    horizontal = FALSE, standardize = FALSE, xlim = NULL,
-    ylim = NULL, xlab = NULL, ylab = NULL)
+qbar(x, data, weight = NULL, space = 0.1, main = "", horizontal = FALSE, standardize = FALSE, 
+    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
 }
 \arguments{
   \item{x}{a variable name (will be coerced to a factor if
@@ -78,25 +77,30 @@ library(cranvas)
 ## tennis data
 data(tennis)
 
-qtennis = qdata(tennis)
+qtennis <- qdata(tennis)
 qbar(matches, data = qtennis)
 qbar(matches, data = qtennis, weight = serve.speed)
 
 ## NRC rankings
 data(nrcstat)
 
-qnrc = qdata(nrcstat, color = Control)  # Control: public or private univ
-qbar(RegCode, data = qnrc, main = 'Number of public and private colleges in each region')
+qnrc <- qdata(nrcstat, color = Control)  # Control: public or private univ
+qbar(RegCode, data = qnrc, main = "Number of public and private colleges in each region")
 
-qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick",
+qparallel(vars = 13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick", 
     horizontal = TRUE, boxplot = TRUE)
 
 qbar(RegCode, data = qnrc, horizontal = TRUE)  # horizontal plot
 qbar(RegCode, data = qnrc, standardize = TRUE)  # standardize to 1
 
 ## use border color to split the bars
-qnrc2 = qdata(nrcstat, data = qnrc, color = 'white', border = Control)
+qnrc2 <- qdata(nrcstat, data = qnrc, color = "white", border = Control)
 qbar(RegCode, data = qnrc)
+
+## happy data
+library(productplots)
+qhappy <- qdata(happy, color = happy)
+qbar(happy, data = qhappy)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -107,4 +111,3 @@ qbar(RegCode, data = qnrc)
   \code{\link{qmval}}, \code{\link{qparallel}},
   \code{\link{qspine}}, \code{\link{qtime}}
 }
-

@@ -2,8 +2,7 @@
 \alias{qsave}
 \title{Save the plot to a file}
 \usage{
-  qsave(filename = "Rplot.png", view, width = 480,
-    height = 480)
+qsave(filename = "Rplot.png", view, width = 480, height = 480)
 }
 \arguments{
   \item{filename}{the file name (must have an explicit
@@ -26,8 +25,11 @@
   or JPEG, etc.
 }
 \examples{
-library(cranvas); data(tennis); qtennis = qdata(tennis)
-v = qbar(matches, data = qtennis); qsave('tennis_bar.png', v, 480, 320)
+library(cranvas)
+data(tennis)
+qtennis <- qdata(tennis)
+v <- qbar(matches, data = qtennis)
+qsave("tennis_bar.png", v, 480, 320)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -36,4 +38,3 @@ v = qbar(matches, data = qtennis); qsave('tennis_bar.png', v, 480, 320)
   Supported image formats:
   \url{http://doc.qt.nokia.com/latest/qimagewriter.html#supportedImageFormats}
 }
-

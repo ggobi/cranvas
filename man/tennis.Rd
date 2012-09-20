@@ -12,10 +12,10 @@
 }
 \examples{
 library(cranvas)
-data(tennis); qtennis = qdata(tennis)
+data(tennis)
+qtennis <- qdata(tennis)
 
 qscatter(first.serve.pts, second.serve.pts, data = qtennis)
 qscatter(matches, sets, data = qtennis)
 }
 \keyword{datasets}
-

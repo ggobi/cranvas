@@ -15,4 +15,3 @@ data(ameshousing)
 summary(ameshousing)
 }
 \keyword{datasets}
-

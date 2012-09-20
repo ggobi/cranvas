@@ -2,7 +2,7 @@
 \alias{switch_value}
 \title{Switch the values of two variables}
 \usage{
-  switch_value(a, b, envir = .GlobalEnv)
+switch_value(a, b, envir = .GlobalEnv)
 }
 \arguments{
   \item{a}{the name of the first variable (character)}
@@ -27,9 +27,11 @@
   The bar plot is such an example.
 }
 \examples{
-x1 = 4:9; x2 = letters
-switch_value('x1', 'x2')
-x1; x2
+x1 <- 4:9
+x2 <- letters
+switch_value("x1", "x2")
+x1
+x2
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
@@ -37,4 +39,3 @@ x1; x2
 \seealso{
   \code{\link[base]{get}}, \code{\link[base]{assign}}
 }
-

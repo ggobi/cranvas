@@ -2,7 +2,7 @@
 \alias{update_brush_size}
 \title{Update the brush size in the mouse move event}
 \usage{
-  update_brush_size(meta, event)
+update_brush_size(meta, event)
 }
 \arguments{
   \item{meta}{the meta data containing the brush
@@ -39,4 +39,3 @@
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
-

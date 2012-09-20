@@ -2,8 +2,8 @@
 \alias{qdata}
 \title{Create a mutaframe from data with attributes for interaction}
 \usage{
-  qdata(data, color = "gray15", border = color, size = 4,
-    brushed = FALSE, visible = TRUE, ...)
+qdata(data, color = "gray15", border = color, size = 4, brushed = FALSE, visible = TRUE, 
+    ...)
 }
 \arguments{
   \item{data}{a data frame (it will be coerced to a data
@@ -71,27 +71,27 @@ library(cranvas)
 data(tennis)
 str(tennis)
 ## more Aces, closer to red; less, blue; higher speed, larger points
-qtennis = qdata(tennis, color = aces, size = serve.speed)
+qtennis <- qdata(tennis, color = aces, size = serve.speed)
 
-qhist(aces, data = qtennis, main = 'Number of Aces')
-ls.str(attr(qtennis, 'Scales'))  # the scales information
+qhist(aces, data = qtennis, main = "Number of Aces")
+ls.str(attr(qtennis, "Scales"))  # the scales information
 
-selected(qtennis)[1:10] = TRUE  # brush the first 10 cases
+selected(qtennis)[1:10] <- TRUE  # brush the first 10 cases
 
-b = brush(qtennis)  # the brush object
+b <- brush(qtennis)  # the brush object
 b$style  # style the brush rectangle
-b$style$color = 'brown'  # a brown brush
+b$style$color <- "brown"  # a brown brush
 
 b$color  # color of brushed elements
 
-b$color = 'cyan'  # brushed elements become cyan
+b$color <- "cyan"  # brushed elements become cyan
 
 
-attr(qtennis, 'Shadow')  # should be NULL, since no misssing values here
+attr(qtennis, "Shadow")  # should be NULL, since no misssing values here
 
 
 ## we can also use the default dark gray
-qtennis = qdata(tennis)
+qtennis <- qdata(tennis)
 qhist(double.faults, data = qtennis)
 }
 \author{
@@ -100,4 +100,3 @@ qhist(double.faults, data = qtennis)
 \seealso{
   \code{\link[plumbr]{mutaframe}}, \code{\link{brush}}
 }
-

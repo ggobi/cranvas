@@ -2,7 +2,7 @@
 \alias{set_cursor}
 \title{Set the cursor of a view}
 \usage{
-  set_cursor(view, cursor = "ArrowCursor")
+set_cursor(view, cursor = "ArrowCursor")
 }
 \arguments{
   \item{view}{the view for which to change the cursor
@@ -38,12 +38,12 @@
 \examples{
 library(cranvas)
 library(qtpaint)
-scene = qscene()
+scene <- qscene()
 qlayer(scene)
-v = qplotView(scene = scene)
+v <- qplotView(scene = scene)
 print(v)
 
-set_cursor(v, 'WaitCursor')
+set_cursor(v, "WaitCursor")
 
 set_cursor(v, 2L)  # CrossCursor
 }
@@ -53,4 +53,3 @@ set_cursor(v, 2L)  # CrossCursor
 \references{
   \url{http://doc.qt.nokia.com/latest/qt.html#CursorShape-enum}
 }
-

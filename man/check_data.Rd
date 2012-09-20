@@ -2,7 +2,7 @@
 \alias{check_data}
 \title{Check if a data object was created by qdata()}
 \usage{
-  check_data(data, convert = TRUE)
+check_data(data, convert = TRUE)
 }
 \arguments{
   \item{data}{a data object}
@@ -27,9 +27,9 @@
 }
 \examples{
 check_data(cbind(x = 1:5, y = 6:10))
-check_data(1:8, convert = FALSE); check_data(qdata(mtcars), convert = FALSE)  # TRUE
+check_data(1:8, convert = FALSE)
+check_data(qdata(mtcars), convert = FALSE)  # TRUE
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
-

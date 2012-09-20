@@ -14,8 +14,7 @@
 \examples{
 library(cranvas)
 data(world)
-qworld = map_qdata('world')
+qworld <- map_qdata("world")
 qmap(qworld)
 }
 \keyword{datasets}
-

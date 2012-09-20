@@ -6,15 +6,15 @@
 \alias{common_mouse_release}
 \title{Some common processings in the keyboard and mouse events}
 \usage{
-  common_key_press(layer, event, data, meta)
+common_key_press(layer, event, data, meta)
 
-  common_key_release(layer, event, data, meta)
+common_key_release(layer, event, data, meta)
 
-  common_mouse_press(layer, event, data, meta)
+common_mouse_press(layer, event, data, meta)
 
-  common_mouse_move(layer, event, data, meta)
+common_mouse_move(layer, event, data, meta)
 
-  common_mouse_release(layer, event, data, meta)
+common_mouse_release(layer, event, data, meta)
 }
 \arguments{
   \item{layer}{the layer argument in the event callback}
@@ -39,7 +39,7 @@
 \section{Mouse Events}{
   Left click to brush the plot with a rectangle brush, and
   right click to resize the brush (the cursor shape will
-  become a cross). The middle button is used to toggle
+  become a cross).  The middle button is used to toggle
   between two types of brushes: one type is to keep the
   brush on the plot when the mouse is released, and the
   other type is to hide it on mouse release. When the mouse
@@ -79,4 +79,3 @@
 \seealso{
   \code{\link{brush}}
 }
-

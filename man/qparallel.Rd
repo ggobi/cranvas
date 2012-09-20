@@ -2,14 +2,10 @@
 \alias{qparallel}
 \title{Draw a parallel coordinates plot}
 \usage{
-  qparallel(vars = ~., data, scale = "range",
-    names = break_str(vars), na.action = na_impute,
-    center = NULL,
-    order = c("none", "MDS", "ANOVA", "randomForest"),
-    horizontal = FALSE,
-    glyph = c("auto", "line", "tick", "circle", "square", "triangle"),
-    boxplot = FALSE, width = NULL, jitter = NULL,
-    amount = NULL, main = "", alpha = 1)
+qparallel(vars = ~., data, scale = "range", names = break_str(vars), na.action = na_impute, 
+    center = NULL, order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = FALSE, 
+    glyph = c("auto", "line", "tick", "circle", "square", "triangle"), boxplot = FALSE, 
+    width = NULL, jitter = NULL, amount = NULL, main = "", alpha = 1)
 }
 \arguments{
   \item{scale}{data standardizing method; possible values
@@ -85,41 +81,41 @@
 library(cranvas)
 
 ### (1) flea data
-data(flea, package = 'tourr')
-qflea = qdata(flea, color = species)
+data(flea, package = "tourr")
+qflea <- qdata(flea, color = species)
 
 ## input variables
 qparallel(~., data = qflea)  # all variables
-qparallel(~aede1+aede2+aede3, data = qflea)  # 3 variables
+qparallel(~aede1 + aede2 + aede3, data = qflea)  # 3 variables
 qparallel(1:4, data = qflea)  # first 4 variables
-qparallel(c('head','aede1','tars2','aede3'), data = qflea)  # input variables by names
+qparallel(c("head", "aede1", "tars2", "aede3"), data = qflea)  # input variables by names
 
 ## scaling
-qparallel(~., data = qflea, main = 'scale columns individually to [0, 1]')
-qparallel(~., data = qflea, scale = "I", main = 'unscaled data')
-qparallel(~., data = qflea, scale = "var", main = 'mean 0 variance 1')
-qparallel(~., data = qflea, scale = "global", main = 'scale globally to [0, 1]')
+qparallel(~., data = qflea, main = "scale columns individually to [0, 1]")
+qparallel(~., data = qflea, scale = "I", main = "unscaled data")
+qparallel(~., data = qflea, scale = "var", main = "mean 0 variance 1")
+qparallel(~., data = qflea, scale = "global", main = "scale globally to [0, 1]")
 
 ## centering by median; add boxplots to assist understanding
 qparallel(~., data = qflea, center = median, boxplot = TRUE)
 
 ## ordering
-qparallel(~., data = qflea, order = 'MDS')  # similar variables together
-qparallel(~., data = qflea, order = 'ANOVA')  # color is covariate, order by ANOVA p-value
+qparallel(~., data = qflea, order = "MDS")  # similar variables together
+qparallel(~., data = qflea, order = "ANOVA")  # color is covariate, order by ANOVA p-value
 ## we can use arrow keys to manually order the variables
 
 ## horizontal direction
 qparallel(~., data = qflea, horizontal = TRUE)
 
 ## use glyphs instead of segments
-qparallel(~., data = qflea, glyph = 'tick')
-qparallel(~., data = qflea, glyph = 'circle')
+qparallel(~., data = qflea, glyph = "tick")
+qparallel(~., data = qflea, glyph = "circle")
 
 ## jittering
-qparallel(~., data = qflea, jitter = 'species')
+qparallel(~., data = qflea, jitter = "species")
 
 ## categorical linking
-id = link_cat(qflea, 'species')
+id <- link_cat(qflea, "species")
 ## now brush on plots; will see all rows in the same category brushed
 
 ## stop categorical linking
@@ -127,32 +123,31 @@ remove_link(qflea, id)
 
 ### (2) NRC rankings
 data(nrcstat)
-qnrc = qdata(nrcstat, color = RegCode)
+qnrc <- qdata(nrcstat, color = RegCode)
 
 ## Overview: type, rankings
-qparallel(13:10, main = "Overview of Rankings", glyph = "tick",
-    horizontal = TRUE, boxplot = TRUE)
+qparallel(13:10, main = "Overview of Rankings", glyph = "tick", horizontal = TRUE, 
+    boxplot = TRUE)
 
 ## link to a droplist (institution names)
 record_selector(Institution, qnrc)
 
 ## TODO: we need keyboard interactions here instead of command line
-brush(qnrc, 'persistent') = TRUE  # begin persistent brushing
-brush(qnrc, 'color') = 'brown'
+brush(qnrc, "persistent") <- TRUE  # begin persistent brushing
+brush(qnrc, "color") <- "brown"
 ## select other objects now
-brush(qnrc, 'color') = 'green'
+brush(qnrc, "color") <- "green"
 ## again, select other objects
-brush(qnrc, 'color') = 'yellow'
-brush(qnrc, 'persistent') = FALSE  # transient brushing
+brush(qnrc, "color") <- "yellow"
+brush(qnrc, "persistent") <- FALSE  # transient brushing
 
-qparallel(vars = 14:19, data = qnrc,
-    main = "Research, Student Support, Diversity",
+qparallel(vars = 14:19, data = qnrc, main = "Research, Student Support, Diversity", 
     center = median, horizontal = TRUE, glyph = "tick")
 
 
 ### (3) Missing values are imputed by 20\% below the mean
-df = as.data.frame(replicate(5, sample(c(rep(NA, 10), rnorm(100)))))
-mf = qdata(df)
+df <- as.data.frame(replicate(5, sample(c(rep(NA, 10), rnorm(100)))))
+mf <- qdata(df)
 qparallel(~., data = mf)
 
 ## see this by missing value plot
@@ -161,17 +156,17 @@ qmval(~., data = mf)
 
 
 ### (4) alpha transparency
-if (require('animation')) {
-  data(pollen, package = 'animation')
-  qpollen = qdata(pollen)
-  qparallel(~.)  # hold the minus key (-) till the plot is semi-transparent
+if (require("animation")) {
+    data(pollen, package = "animation")
+    qpollen <- qdata(pollen)
+    qparallel(~.)  # hold the minus key (-) till the plot is semi-transparent
 }
 
 
 
 ### (5) pressure test
-test.mat = qdata(matrix(rnorm(300000 * 10), ncol = 10))
-qparallel(~., data  = test.mat)
+test.mat <- qdata(matrix(rnorm(3e+05 * 10), ncol = 10))
+qparallel(~., data = test.mat)
 ## for large data, short ticks are automatically used instead of segments
 }
 \author{
@@ -183,4 +178,3 @@ qparallel(~., data  = test.mat)
   \code{\link{qmval}}, \code{\link{qspine}},
   \code{\link{qtime}}
 }
-

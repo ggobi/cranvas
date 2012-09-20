@@ -3,9 +3,9 @@
 \alias{prefer_width}
 \title{Preferred height and width of layers with texts}
 \usage{
-  prefer_height(text)
+prefer_height(text)
 
-  prefer_width(text, horizontal = TRUE)
+prefer_width(text, horizontal = TRUE)
 }
 \arguments{
   \item{text}{the character vector to be drawn in the
@@ -28,12 +28,13 @@
   and y-axis layers need to be adjusted dynamically.
 }
 \examples{
-prefer_height('a label'); prefer_height('this is\\na label')
-prefer_width('abc'); prefer_width('a long long label')
-prefer_width('line\\nbreaks')  # 'breaks' dominates the width because it is wider
-prefer_width('multiple\\nvertical\\nlines', horizontal = FALSE)
+prefer_height("a label")
+prefer_height("this is\\na label")
+prefer_width("abc")
+prefer_width("a long long label")
+prefer_width("line\\nbreaks")  # 'breaks' dominates the width because it is wider
+prefer_width("multiple\\nvertical\\nlines", horizontal = FALSE)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
-

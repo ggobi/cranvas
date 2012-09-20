@@ -2,8 +2,7 @@
 \alias{qmval}
 \title{Draw a missing value plot}
 \usage{
-  qmval(vars, data, horizontal = TRUE, standardize = TRUE,
-    ...)
+qmval(vars, data, horizontal = TRUE, standardize = TRUE, ...)
 }
 \arguments{
   \item{vars}{variables to show in the plot: a character
@@ -53,16 +52,16 @@ data(brfss)
 qbrfss <- qdata(brfss)
 qmval(names(brfss)[40:50], data = qbrfss)
 qmval(51:68, data = qbrfss)
-qmval(~poorhlth+fruit+greensal, data = qbrfss)
+qmval(~poorhlth + fruit + greensal, data = qbrfss)
 
 qparallel(100:110, data = qbrfss)
 
 ## TAO data
-data(tao, package = 'tourr')
+data(tao, package = "tourr")
 
 qtao <- qdata(tao, data = qtao)
 qmval(~., data = qtao)
-qmval(~., data = qtao, horizontal = FALSE, standardize = FALSE, main = 'horizontal plot with counts')
+qmval(~., data = qtao, horizontal = FALSE, standardize = FALSE, main = "horizontal plot with counts")
 qscatter(longitude, latitude, data = qtao)
 }
 \author{
@@ -74,4 +73,3 @@ qscatter(longitude, latitude, data = qtao)
   \code{\link{qparallel}}, \code{\link{qspine}},
   \code{\link{qtime}}
 }
-

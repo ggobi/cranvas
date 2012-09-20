@@ -15,11 +15,11 @@
 }
 \examples{
 library(cranvas)
-data(brfss); qbrfss = qdata(brfss)
+data(brfss)
+qbrfss <- qdata(brfss)
 
 qmval(names(brfss)[40:50])
 qmval(51:68)
-qmval(~poorhlth+fruit+greensal)
+qmval(~poorhlth + fruit + greensal)
 }
 \keyword{datasets}
-

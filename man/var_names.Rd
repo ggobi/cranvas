@@ -6,15 +6,15 @@
 \alias{var_names.numeric}
 \title{Get variable names}
 \usage{
-  var_names(vars, data)
+var_names(vars, data)
 
-  \method{var_names}{default} (vars, data)
+\method{var_names}{default}(vars, data)
 
-  \method{var_names}{character} (vars, data)
+\method{var_names}{character}(vars, data)
 
-  \method{var_names}{numeric} (vars, data)
+\method{var_names}{numeric}(vars, data)
 
-  \method{var_names}{formula} (vars, data)
+\method{var_names}{formula}(vars, data)
 }
 \arguments{
   \item{vars}{a character vector of variable names, or a
@@ -42,9 +42,10 @@
   \code{.color}).
 }
 \examples{
-var_names(~., mtcars); var_names(~disp+hp, mtcars); var_names(1:3, mtcars)
+var_names(~., mtcars)
+var_names(~disp + hp, mtcars)
+var_names(1:3, mtcars)
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
-

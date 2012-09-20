@@ -2,8 +2,8 @@
 \alias{fix_dimension}
 \title{Set the dimensions of child layers to fixed values}
 \usage{
-  fix_dimension(root, row = list(id = NULL, value = NULL),
-    column = list(id = NULL, value = NULL))
+fix_dimension(root, row = list(id = NULL, value = NULL), column = list(id = NULL, 
+    value = NULL))
 }
 \arguments{
   \item{root}{the root layer}
@@ -28,4 +28,3 @@
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
-

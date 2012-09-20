@@ -2,7 +2,7 @@
 \alias{identify_rect}
 \title{Create a rectangle to be used in identifying}
 \usage{
-  identify_rect(meta)
+identify_rect(meta)
 }
 \arguments{
   \item{meta}{the meta data containing at least
@@ -27,4 +27,3 @@
 \author{
   Yihui Xie <\url{http://yihui.name}>
 }
-

@@ -15,4 +15,3 @@ data(nrcstat)
 summary(nrcstat)
 }
 \keyword{datasets}
-

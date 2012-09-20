@@ -28,7 +28,6 @@
 library(cranvas)
 data(pigs)
 qpig <- qdata(pigs)
-qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
+qtime(TIME, ~GILTS + PROFIT + PRODUCTION + HERDSZ, qpig, shift = c(1, 4))
 }
 \keyword{datasets}
-

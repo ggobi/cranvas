@@ -70,3 +70,4 @@ Collate:
     'qspine.R'
     'qtour.R'
     'knitr.R'
+    'common-events.R'
