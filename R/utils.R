@@ -526,6 +526,7 @@ lighter = function(color, factor = 0.2) {
 ##' prefer_width('line\nbreaks')  # 'breaks' dominates the width because it is wider
 ##' prefer_width('multiple\nvertical\nlines', horizontal = FALSE)
 prefer_height = function(text) {
+    text[is.na(text)] = 'NA'
     if (all(!nzchar(text))) return(10)  # 10 pixels if text is empty
     30 * max(sapply(gregexpr('\n', text),
                     function(xx) ifelse(any(xx < 0), 0, length(xx)) + 1))
@@ -535,6 +536,7 @@ prefer_height = function(text) {
 ##' @rdname prefer_dimension
 ##' @export
 prefer_width = function(text, horizontal = TRUE) {
+    text[is.na(text)] = 'NA'
     if (horizontal)
         9 * max(nchar(unlist(strsplit(text, '\n')))) + 10 else
     15 * max(sapply(gregexpr('\n', text),
