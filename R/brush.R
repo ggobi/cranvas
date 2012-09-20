@@ -6,7 +6,8 @@ brushGen = setRefClass(
          label.gen = 'function', label.color = 'character',
          history.size = 'numeric', history.index = 'numeric', history.list = 'list',
          persistent = 'logical', persistent.color = 'character', persistent.list = 'list',
-         select.only = 'logical', draw.brush = 'logical', cursor = 'numeric')
+         select.only = 'logical', draw.brush = 'logical', cursor = 'numeric',
+         ghost = 'logical')
   )
 )
 
@@ -23,7 +24,7 @@ new_brush = function() {
     history.size = 30, history.index = 0, history.list = list(),
     persistent = FALSE, persistent.color = character(0),
     persistent.list = list(), select.only = FALSE, draw.brush = TRUE,
-    cursor = 0L
+    cursor = 0L, ghost = FALSE
   )
 }
 
