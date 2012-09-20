@@ -697,3 +697,9 @@ bound_seg = function(meta = list()) {
         if (y[1] < Y[1]) c(X[1], Y[1], X[2], Y[1]),
         if (y[2] > Y[2]) c(X[1], Y[2], X[2], Y[2]))
 }
+
+# default colors for NA's
+na_colors = function(x, color = 'gray') {
+  x[is.na(x)] = color
+  x
+}

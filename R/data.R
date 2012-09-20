@@ -66,9 +66,9 @@ qdata = function(data, color = "gray15", border = color, size = 4,
       pal = NULL
       mf[[sprintf('.%s', i)]] = if (i != 'size') {
         if (is.factor(v)) {
-          pal = hue_pal(); dscale(v, pal)
+          pal = hue_pal(); na_colors(dscale(v, pal))
         } else if (is.numeric(v)) {
-          pal = seq_gradient_pal(...); cscale(v, pal)
+          pal = seq_gradient_pal(...); na_colors(cscale(v, pal))
         } else v
       } else if (is.numeric(v)) {
         pal = (function(range = c(1, 6)) {
