@@ -190,9 +190,11 @@ qbar = function(x, data, weight = NULL, space = 0.1, main = '', horizontal = FAL
   meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout)
 
   view = qplotView(scene = scene)
-  view$setWindowTitle(sprintf('Bar plot: %s', meta$var))
+  # for weighted barchart
+  weighted_text = function() if (length(meta$weight) == 1) 'Weighted ' else ''
+  view$setWindowTitle(sprintf('%sBar plot: %s', weighted_text(), meta$var))
   meta$varChanged$connect(function() {
-    view$setWindowTitle(sprintf('Bar plot: %s', meta$var))
+    view$setWindowTitle(sprintf('%sBar plot: %s', weighted_text(), meta$var))
   })
   d.idx = add_listener(data, function(i, j) {
     switch(j, .brushed = qupdate(layer.brush),
