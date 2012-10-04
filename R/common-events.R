@@ -158,6 +158,27 @@ common_focus_out = function(layer, event, data, meta) {
   meta$active = FALSE
 }
 
+key_layer = function(meta) {
+
+  # a timer to remove the key hint after 2 secs
+  tmr = qtimer(2000, function() meta$keys = character(0))
+
+  l = qlayer(paintFun = function(layer, painter) {
+    if (!length(meta$keys) || !nzchar(meta$keys)) return()
+    lims = meta$limits
+    qdrawText(painter, meta$keys, lims[2, 1], lims[2, 2], cex = 3,
+              color = 'darkgray', halign = 'right', valign = 'top')
+  }, keyPressFun = function(layer, event) {
+    meta$keys = paste(c(meta$keys, key2text(event$key())), collapse = '+')
+    tmr$start()
+  }, limits = qrect(meta$limits))
+
+  meta$keysChanged$connect(function() {
+    qupdate(l)
+  })
+  l
+}
+
 #' Sync layer limits
 #'
 #' The limits information is stored in the meta data as \code{meta$limits}, of
