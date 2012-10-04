@@ -2,21 +2,20 @@
 \name{wages}
 \alias{wages}
 \title{Wages of male high-school dropouts}
-\format{Number of subjects: 888; Number of variables: 15; Number
-of observations, across all subjects: 6402
+\format{Number of subjects: 888; Number of variables: 15; Number of
+  observations, across all subjects: 6402
 
-\describe{ \item{\code{id}}{id numbers for each subject}
-\item{\code{lnw}}{natural log of wages, adjusted for inflation, to
-1990 dollars} \item{\code{exper}}{length of time in the workforce
-(in years). This is treated as the time variable, with \eqn{t = 0}
-for each subject starting on their first day at work. The number
-of time points and values of time points for each subject can
-differ} \item{\code{ged}}{when/if a graduate equivalency diploma
-is obtained} \item{\code{black}}{categorical indicator of race is
-black} \item{\code{hispanic}}{categorical indicator of race is
-hispanic} \item{\code{hgc}}{highest grade completed}
-\item{\code{uerate}}{unemployment rates in the local geographic
-region at each measurement time} }}
+  \describe{ \item{\code{id}}{id numbers for each subject}
+  \item{\code{lnw}}{natural log of wages, adjusted for inflation, to 1990
+  dollars} \item{\code{exper}}{length of time in the workforce (in years).
+  This is treated as the time variable, with \eqn{t = 0} for each subject
+  starting on their first day at work. The number of time points and values
+  of time points for each subject can differ} \item{\code{ged}}{when/if a
+  graduate equivalency diploma is obtained} \item{\code{black}}{categorical
+  indicator of race is black} \item{\code{hispanic}}{categorical indicator of
+  race is hispanic} \item{\code{hgc}}{highest grade completed}
+  \item{\code{uerate}}{unemployment rates in the local geographic region at
+  each measurement time} }}
 \source{
   Singer, J. D. & Willett, J. B. (2003), \emph{Applied
   Longitudinal Data Analysis}, Oxford University Press,

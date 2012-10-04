@@ -2,15 +2,15 @@
 \name{wages.demog}
 \alias{wages.demog}
 \title{Demographic data for wages of male high-school dropouts}
-\format{Number of subjects: 888; Number of variables: 6; Number
-of observations, across all subjects: 888
+\format{Number of subjects: 888; Number of variables: 6; Number of
+  observations, across all subjects: 888
 
-\describe{ \item{\code{id}}{id numbers for each subject}
-\item{\code{ged}}{if a graduate equivalency diploma ever
-is obtained} \item{\code{black}}{categorical indicator of race is
-black} \item{\code{hispanic}}{categorical indicator of race is
-hispanic} \item{\code{hgc}}{highest grade completed}
-\item{\code{race}}{categorical variable, either white, hispanic or black}}}
+  \describe{ \item{\code{id}}{id numbers for each subject}
+  \item{\code{ged}}{if a graduate equivalency diploma ever is obtained}
+  \item{\code{black}}{categorical indicator of race is black}
+  \item{\code{hispanic}}{categorical indicator of race is hispanic}
+  \item{\code{hgc}}{highest grade completed} \item{\code{race}}{categorical
+  variable, either white, hispanic or black}}}
 \source{
   Singer, J. D. & Willett, J. B. (2003), \emph{Applied
   Longitudinal Data Analysis}, Oxford University Press,
