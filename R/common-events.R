@@ -140,7 +140,7 @@ common_mouse_press = function(layer, event, data, meta) {
 #' @rdname common_events
 #' @export
 common_mouse_move = function(layer, event, data, meta) {
-  
+
 }
 #' @rdname common_events
 #' @export
