@@ -91,6 +91,6 @@ Common.meta = list(
   color = 'character', border = 'character', size = 'numeric',
   start = 'numeric', pos = 'numeric', active = 'logical',
   brush.move = 'logical', brush.size = 'numeric', brush.adj = 'numeric',
-  manual.brush = 'function', minor = 'character',
+  manual.brush = 'function', minor = 'character', keys = 'character',
   identified = 'integer', identify.labels = 'character'
 )
