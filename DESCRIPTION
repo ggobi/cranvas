@@ -2,6 +2,7 @@ Package: cranvas
 Version: 0.8.1
 Imports:
     methods,
+    scales,
     qtbase (>= 0.99.2),
     qtpaint (>= 0.8.1),
     tourr (>= 0.5),
@@ -33,8 +34,7 @@ Description: This is an R package as the next generation of
 URL: http://github.com/ggobi/cranvas
 BugReports: https://github.com/ggobi/cranvas/issues
 Depends:
-    R (>= 2.10),
-    scales
+    R (>= 2.10)
 Suggests:
     nlme,
     maps,

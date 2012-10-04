@@ -34,6 +34,7 @@
 #' @importFrom qtbase Qt
 #' @importFrom qtbase qrect qfont qsize qconnect qdataFrameModel qtimer
 #' @import qtpaint
+#' @import scales
 #' @importFrom tourr basis_init basis_random cmass dependence_tour freeze
 #'   frozen_guided_tour frozen_tour geodesic_path grand_tour guided_tour holes
 #'   lda_pp little_tour local_tour new_geodesic_path new_tour path_curves
