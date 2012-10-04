@@ -28,6 +28,21 @@ match_key = function(key, event) {
   sapply(key, function(x) e[[sprintf('Key_%s', x)]] == k, USE.NAMES = FALSE)
 }
 
+ALL_KEYS = local({
+  e = attr(Qt$Qt, 'env')
+  keys = grep('^Key_', ls(e), value = TRUE)
+  sapply(keys, function(i) e[[i]], simplify = FALSE)
+})
+
+## pass event$key() to me and I'll return you the key text
+key2text = function(key) {
+  keys = names(ALL_KEYS)
+  for (k in keys) {
+    if (ALL_KEYS[[k]] == key) return(sub('^Key_', '', k))
+  }
+  NULL
+}
+
 #' Some common processings in the keyboard and mouse events
 #'
 #' The key press and release events often involve with setting the selection
