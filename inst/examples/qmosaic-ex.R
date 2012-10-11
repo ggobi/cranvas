@@ -1,5 +1,6 @@
 library(cranvas)
 library(productplots)
+library(plyr)
 
 
 ## Simpson on board the Titanic?!
