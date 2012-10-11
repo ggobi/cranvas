@@ -280,6 +280,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   layer.xaxis = qaxis(meta = meta, side = 1, cache = .cache())
   layer.yaxis = qaxis(meta = meta, side = 2, cache = .cache())
   layer.grid = qgrid(meta = meta, cache = TRUE)
+  layer.keys = key_layer(meta)
   layer.root[0, 2] = layer.title
   layer.root[2, 2] = layer.xaxis
   layer.root[3, 2] = layer.xlab
@@ -289,6 +290,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   layer.root[1, 2] = layer.main
   layer.root[1, 2] = layer.brush
   layer.root[1, 2] = layer.identify
+  layer.root[1, 2] = layer.keys
   layer.root[1, 3] = qlayer()
 
   ## set sizes of layers (arrange the layout)
