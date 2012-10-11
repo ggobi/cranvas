@@ -512,6 +512,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     layer.xaxis = qaxis(meta = meta, side = 1)
     layer.yaxis = qaxis(meta = meta, side = 2)
     layer.grid = qgrid(meta = meta)
+    layer.keys = key_layer(meta)
     layer.root[0, 2] = layer.title
     layer.root[2, 2] = layer.xaxis
     layer.root[3, 2] = layer.xlab
@@ -520,6 +521,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
     layer.root[1, 2] = layer.grid
     layer.root[1, 2] = layer.main
     layer.root[1, 2] = layer.brush
+    layer.root[1, 2] = layer.keys
     layer.root[1, 2] = layer.identify
     layer.root[1, 3] = qlayer()
 
