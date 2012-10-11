@@ -98,6 +98,7 @@ common_key_press = function(layer, event, data, meta) {
   } else if (match_key('Delete'))
     visible(data) = !selected(data) & visible(data) else if (match_key('F5'))
       visible(data) = TRUE
+  record_keys(meta, event)
 }
 #' @rdname common_events
 #' @export
@@ -159,24 +160,25 @@ common_focus_out = function(layer, event, data, meta) {
 }
 
 key_layer = function(meta) {
-
   # a timer to remove the key hint after 2 secs
   tmr = qtimer(2000, function() meta$keys = character(0))
+  tmr$start()
 
   l = qlayer(paintFun = function(layer, painter) {
     if (!length(meta$keys) || !nzchar(meta$keys)) return()
     lims = meta$limits
-    qdrawText(painter, meta$keys, lims[2, 1], lims[2, 2], cex = 3,
-              color = 'darkgray', halign = 'right', valign = 'top')
-  }, keyPressFun = function(layer, event) {
-    meta$keys = paste(c(meta$keys, key2text(event$key())), collapse = '+')
-    tmr$start()
+    qdrawText(painter, paste(meta$keys, collapse = '+'), lims[2, 1], lims[2, 2],
+              cex = 3, color = 'darkgray', halign = 'right', valign = 'top')
   }, limits = qrect(meta$limits))
 
   meta$keysChanged$connect(function() {
     qupdate(l)
   })
   l
+}
+
+record_keys = function(meta, event) {
+  meta$keys = unique(c(meta$keys, key2text(event$key())))
 }
 
 #' Sync layer limits
