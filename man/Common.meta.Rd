@@ -2,7 +2,7 @@
 \name{Common.meta}
 \alias{Common.meta}
 \title{Common meta data structure in cranvas}
-\format{List of 24
+\format{List of 25
  $ alpha          : chr "numeric"
  $ main           : chr "character"
  $ xlim           : chr "numeric"
@@ -25,6 +25,7 @@
  $ brush.adj      : chr "numeric"
  $ manual.brush   : chr "function"
  $ minor          : chr "character"
+ $ keys           : chr "character"
  $ identified     : chr "integer"
  $ identify.labels: chr "character"}
 \usage{
