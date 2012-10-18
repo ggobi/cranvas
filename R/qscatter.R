@@ -360,20 +360,18 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   }
 
   ## attach meta to the returned value (for post-processing or debugging)
+  ## going to drop this line later
   attr(view, 'meta') = meta
-  view
+  layerList <- LayerList(layer.root = layer.root)
+  res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta)
+  res
 }
 
-Scat.meta = setRefClass(
-  "Scat_meta",
-  fields = properties(c(
-
-    Common.meta,
-
+Scat.meta = setRefClass( "Scat_meta", contains = "CommonMeta",
+  fields = properties(
     list(xvar = 'character', yvar = 'character', order = 'numeric',
          xy = 'matrix', asp = 'numeric', samesize = 'logical', dim3 = 'character')
-
-  ))
+  )
 )
 
 ## order is for keeping track of the original order of data
