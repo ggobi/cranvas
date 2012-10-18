@@ -27,6 +27,7 @@ try(update.packages(.libPaths()[1], ask = FALSE, repos = 'http://cran.r-project.
 owd = setwd("..")
 
 library(Rd2roxygen)
+library(digest)
 options(width = 80, replace.assign = TRUE)
 
 ## run roxygen and several cleaning up steps
