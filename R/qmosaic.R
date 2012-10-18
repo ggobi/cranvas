@@ -576,7 +576,7 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     attr(view, 'meta') = meta
-    view$show()
+    view
 
 
 }

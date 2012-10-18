@@ -233,7 +233,7 @@ qboxplot =
     }
 
     attr(view, 'meta') = meta
-    view$show()
+    view
 }
 
 Box.meta =

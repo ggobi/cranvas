@@ -408,7 +408,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
     qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis); qupdate(layer.main)
   })
   attr(view, 'meta') = meta
-  view$show()
+  view
 }
 
 Hist.meta = setRefClass("Hist_meta", fields = properties(c(
