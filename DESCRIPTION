@@ -47,6 +47,10 @@ Suggests:
     Rcartogram
 Collate:
     'cranvas-package.R'
+    'meta.R'
+    'LayerList-class.R'
+    'Cranvas-class.R'
+    'CranvasPlot-class.R'
     'utils.R'
     'data.R'
     'axes.R'
@@ -55,7 +59,6 @@ Collate:
     'GUI-selector.R'
     'link.R'
     'options.R'
-    'meta.R'
     'qbar.R'
     'qboxplot.R'
     'qdensity.R'
