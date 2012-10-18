@@ -94,3 +94,13 @@ Common.meta = list(
   manual.brush = 'function', minor = 'character', keys = 'character',
   identified = 'integer', identify.labels = 'character'
 )
+
+
+setClass("Meta", contains = "VIRTUAL")
+## do we have a default?
+setRefClass("CommonMeta", contain = "Meta",
+            fields = properties(Common.meta))
+
+
+
+
