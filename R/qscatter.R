@@ -363,7 +363,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   ## going to drop this line later
   attr(view, 'meta') = meta
   layerList <- LayerList(layer.root = layer.root)
-  res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta)
+  res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
   res
 }
 

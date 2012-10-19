@@ -3,11 +3,13 @@ setOldClass("QGraphicsView")
 setOldClass("Qanviz::PlotView")
 setOldClass("mutaframe")
 setOldClass("mutalist")
+setClassUnion("mutaframeORNULL", c("mutaframe","NULL"))
 setClassUnion("QGraphicsSceneORNULL", c("QGraphicsScene","NULL"))
 setClassUnion("Qanviz::PlotViewORNULL", c("Qanviz::PlotView","NULL"))
 
 setRefClass("CranvasPlot", contains = "Cranvas",
             fields = list(
+              data = "mutaframeORNULL",
               scene = "QGraphicsSceneORNULL",
               view = "Qanviz::PlotViewORNULL",
               layerList = "LayerListORNULL",
@@ -15,13 +17,13 @@ setRefClass("CranvasPlot", contains = "Cranvas",
 
 
 ## constructor API
-CranvasPlot <- function(..., scene, view, meta){
+CranvasPlot <- function(..., data, scene, view, meta){
   lst <- list(...)
   if(length(lst) == 1 && is(lst[[1]], "LayerList"))
     layerList <- lst[[1]]
   else
     layerList <- LayerList(...)
-  new("CranvasPlot", scene = scene, view = view, layerList = layerList, meta = meta)
+  new("CranvasPlot", scene = scene, view = view, layerList = layerList, meta = meta, data = data)
 }
 
 ## show method
