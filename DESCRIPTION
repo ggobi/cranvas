@@ -76,3 +76,4 @@ Collate:
     'qtour.R'
     'knitr.R'
     'common-events.R'
+    'qhist2d.R'
