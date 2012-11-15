@@ -576,15 +576,15 @@ qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = 
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     attr(view, 'meta') = meta
-    view
-
-
+    layerList <- LayerList(layer.root = layer.root)
+    res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
+    res
 }
 
 
 Mosaic.meta =
-    setRefClass("Mosaic_meta",
-                fields = properties(c(
+    setRefClass("Mosaic_meta", contains = "CommonMeta",
+                fields = properties(list(
                   var = 'character',
                   form='formula',
                   divider='character',
@@ -594,6 +594,5 @@ Mosaic.meta =
                   inactiveDivider='character',
                   mdata='data.frame',
                   hdata='data.frame',
-                  cdata='data.frame',
-                  Common.meta
-                )))
+                  cdata='data.frame'
+                    )))

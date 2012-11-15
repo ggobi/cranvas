@@ -32,6 +32,7 @@ setMethod("show", "CranvasPlot", function(object){
 })
 
 ## print method
+setGeneric("print")
 setMethod("print", "CranvasPlot", function(x){
   show(x)
 })

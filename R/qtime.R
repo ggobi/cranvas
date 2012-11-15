@@ -495,12 +495,15 @@ qtime <- function(time, data, period=NULL, group=NULL,
     view$setWindowTitle(meta$main)
     view$resize(xWidth,yWidth)
     attr(view, 'meta') = meta
-    view
+    layerList <- LayerList(layer.root = layer.root)
+    res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
+    res    
 }
 
 Time.meta =
-    setRefClass("Time_meta", fields =
-    properties(c(Common.meta,
+    setRefClass("Time_meta", contains = "CommonMeta",
+                fields =
+    properties(
                  list(varname = 'list',
                       time = 'numeric',
                       y = 'numeric',
@@ -523,7 +526,7 @@ Time.meta =
                       radius = 'numeric',
                       stroke = 'character',
                       fill = 'character',
-                      helptext = 'character'))))
+                      helptext = 'character')))
 
 
 ##' Create data for drawing time plots

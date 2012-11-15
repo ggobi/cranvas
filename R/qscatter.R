@@ -367,6 +367,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   res
 }
 
+
 Scat.meta = setRefClass( "Scat_meta", contains = "CommonMeta",
   fields = properties(
     list(xvar = 'character', yvar = 'character', order = 'numeric',

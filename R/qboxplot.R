@@ -231,23 +231,22 @@ qboxplot =
     meta$manual.brush = function(pos) {
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
-
     attr(view, 'meta') = meta
-    view
+    layerList <- LayerList(layer.root = layer.root)
+    res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
+    res
 }
 
 Box.meta =
-    setRefClass("Box_meta", fields = properties(c(
+  setRefClass("Box_meta", contains = "CommonMeta",
+              fields = properties(
+                list(vars = 'character', x = 'numeric', y = 'numeric',
+                     xvar = 'character', yvar = 'character',
+                     at = 'numeric', width = 'numeric', horizontal = 'logical',
+                     bxp.stats = 'matrix', bxp.out = 'list', points = 'logical',
+                     bxp.stats2 = 'matrix')
 
-                            Common.meta,
-
-                            list(vars = 'character', x = 'numeric', y = 'numeric',
-                                 xvar = 'character', yvar = 'character',
-                                 at = 'numeric', width = 'numeric', horizontal = 'logical',
-                                 bxp.stats = 'matrix', bxp.out = 'list', points = 'logical',
-                                 bxp.stats2 = 'matrix')
-
-                            )))
+                ))
 
 ##' Create a boxplot layer
 ##'

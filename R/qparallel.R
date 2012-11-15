@@ -431,16 +431,14 @@ qparallel =
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     attr(view, 'meta') = meta
-
-    view
+    layerList <- LayerList(layer.root = layer.root)
+    res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
+    res
 }
 
 Parallel.meta =
-    setRefClass("Parallel_meta",
-                fields = properties(c(
-
-                Common.meta,
-
+    setRefClass("Parallel_meta", contains = "CommonMeta",
+                fields = properties(
                 list(vars = 'character', glyph = 'character', names = 'character',
                      order = 'character', draw.range = 'logical',
                      plot.data = 'matrix', numeric.col = 'logical',
@@ -450,4 +448,4 @@ Parallel.meta =
                      segy0 = 'numeric', segy1 = 'numeric',
                      x0 = 'numeric', y0 = 'numeric', at = 'numeric',
                      width = 'numeric', bxp.stats = 'matrix', bxp.out = 'list')
-                )))
+                ))

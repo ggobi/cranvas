@@ -224,23 +224,20 @@ qbar = function(x, data, weight = NULL, space = 0.1, main = '', horizontal = FAL
     brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
   }
   attr(view, 'meta') = meta
-  view
+  layerList <- LayerList(layer.root = layer.root)
+  res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
+  res
 }
 
 Bar.meta = setRefClass(
-  "Bar_meta",
-  fields = properties(c(
-
-    Common.meta,
-
+  "Bar_meta", contains = "CommonMeta",
+  fields = properties(
     list(var = 'character', value = 'factor', var2 = 'character', value2 = 'factor',
          nlevel = 'integer', nlevel2 = 'integer', x = 'numeric', y = 'numeric',
          space = 'numeric', xleft = 'numeric', xright = 'numeric',
          ybottom = 'numeric', ytop = 'numeric', binmin = 'numeric',
          horizontal = 'logical', freq = 'logical', standardize = 'logical',
-         split.type = 'character', weight = 'character')
-
-  ))
+         split.type = 'character', weight = 'character'))
 )
 
 .find_split_var = function(data, meta) {

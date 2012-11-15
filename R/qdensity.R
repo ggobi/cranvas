@@ -297,14 +297,14 @@ qdensity <- function(x, data, binwidth = NULL, main = '',
 
     ## attach meta to the returned value (for post-processing or debugging)
     attr(view, 'meta') = meta
-    view
+    layerList <- LayerList(layer.root = layer.root)
+    res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
+    res
 }
 
-Dens.meta = setRefClass("Dens_meta",
-                        fields = properties(c(
-                            Common.meta,
-
+Dens.meta = setRefClass("Dens_meta", contains = "CommonMeta",
+                        fields = properties(
                             list(xvar = 'character', order = 'numeric',
                                  x = 'numeric', y = 'numeric', binwidth = 'numeric',
                                  dxy = 'list', asp = 'numeric', samesize = 'logical')
-                            )))
+                            ))

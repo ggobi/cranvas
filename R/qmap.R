@@ -400,16 +400,15 @@ qmap =
         
         ## attach meta to the returned value (for post-processing or debugging)
         attr(view, 'meta') = meta
-        view
+        layerList <- LayerList(layer.root = layer.root)
+        res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
+        res        
     }
 
 
 Map.meta =
-    setRefClass("Map_meta",
-                fields = properties(c(
-                    
-                    Common.meta,
-                    
+    setRefClass("Map_meta", contains = "CommonMeta",
+                fields = properties(
                     list(group = 'numeric',
                          start.range = 'numeric',
                          drag.mode = 'logical',
@@ -418,7 +417,7 @@ Map.meta =
                          googlemaprange = 'data.frame',
                          cartopar = 'numeric')
                     
-                )))
+                ))
 
 
 
