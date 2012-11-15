@@ -1,16 +1,16 @@
+\docType{methods}
 \name{qsave}
 \alias{qsave}
+\alias{qsave,CranvsPlot-method}
+\alias{qsave,Qanviz::PlotView-method}
 \title{Save the plot to a file}
-\usage{
-qsave(filename = "Rplot.png", view, width = 480, height = 480)
-}
 \arguments{
+  \item{obj}{the view object or CranvasPlot object(usually
+  returned by a plotting function)}
+
   \item{filename}{the file name (must have an explicit
   extension; see the references for supported image
   formats)}
-
-  \item{view}{the view object (usually returned by a
-  plotting function)}
 
   \item{width}{the desired width (pixels)}
 
@@ -29,10 +29,11 @@ library(cranvas)
 data(tennis)
 qtennis <- qdata(tennis)
 v <- qbar(matches, data = qtennis)
-qsave("tennis_bar.png", v, 480, 320)
+qsave(v, "tennis_bar.png", 480, 320)
+qsave(v$view, "tennis_bar.png", 480, 320)
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+  Yihui Xie <\url{http://yihui.name}>, Tengfei Yin
 }
 \references{
   Supported image formats:

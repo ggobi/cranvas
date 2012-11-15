@@ -412,20 +412,24 @@ get_glyph = function(shape, size = 4) {
 #' Save the plot to a file
 #'
 #' This function saves a plot view to a image file like PNG or JPEG, etc.
+#' @param obj the view object or CranvasPlot object(usually returned by a plotting function)
 #' @param filename the file name (must have an explicit extension; see the
 #'   references for supported image formats)
-#' @param view the view object (usually returned by a plotting function)
 #' @param width the desired width (pixels)
 #' @param height the desired height
 #' @return \code{TRUE} if the plot is successfully saved; otherwise \code{FALSE}
 #' @author Yihui Xie <\url{http://yihui.name}>, Tengfei Yin
 #' @references Supported image formats:
 #'   \url{http://doc.qt.nokia.com/latest/qimagewriter.html#supportedImageFormats}
-#'
 #' @export
+#' @docType methods
+#' @rdname qsave-methods
+#' @aliases qsave,Qanviz::PlotView-method
+#' @aliases qsave,CranvsPlot-method
 #' @examples library(cranvas); data(tennis); qtennis = qdata(tennis)
-#' v = qbar(matches, data = qtennis); qsave(v, 'tennis_bar.png', 480, 320)
+#' v = qbar(matches, data = qtennis); qsave(v, 'tennis_bar.png', 480, 320); qsave(v$view, 'tennis_bar.png', 480, 320)
 setGeneric("qsave", function(obj, ...) standardGeneric("qsave"))
+
 setMethod("qsave", "Qanviz::PlotView", function(obj, filename = 'Rplot.png', width = 480, height = 480){
   view = obj
   filename = file.path(normalizePath(dirname(filename)), basename(filename))
@@ -438,6 +442,7 @@ setMethod("qsave", "Qanviz::PlotView", function(obj, filename = 'Rplot.png', wid
   view$resize(size[1], size[2])  # restore size
   qimg$save(filename)
 })
+
 setMethod("qsave", "CranvasPlot", function(obj, filename = 'Rplot.png', width = 480, height = 480){
   view = obj$view
   filename = file.path(normalizePath(dirname(filename)), basename(filename))
@@ -450,6 +455,7 @@ setMethod("qsave", "CranvasPlot", function(obj, filename = 'Rplot.png', width = 
   view$resize(size[1], size[2])  # restore size
   qimg$save(filename)
 })
+
 ## qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
 ##   filename = file.path(normalizePath(dirname(filename)), basename(filename))
 ##   size = as.numeric(view$size)  # original size
