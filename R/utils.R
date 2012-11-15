@@ -418,14 +418,16 @@ get_glyph = function(shape, size = 4) {
 #' @param width the desired width (pixels)
 #' @param height the desired height
 #' @return \code{TRUE} if the plot is successfully saved; otherwise \code{FALSE}
-#' @author Yihui Xie <\url{http://yihui.name}>
+#' @author Yihui Xie <\url{http://yihui.name}>, Tengfei Yin
 #' @references Supported image formats:
 #'   \url{http://doc.qt.nokia.com/latest/qimagewriter.html#supportedImageFormats}
 #'
 #' @export
 #' @examples library(cranvas); data(tennis); qtennis = qdata(tennis)
-#' v = qbar(matches, data = qtennis); qsave('tennis_bar.png', v, 480, 320)
-qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
+#' v = qbar(matches, data = qtennis); qsave(v, 'tennis_bar.png', 480, 320)
+setGeneric("qsave", function(obj, ...) standardGeneric("qsave"))
+setMethod("qsave", "Qanviz::PlotView", function(obj, filename = 'Rplot.png', width = 480, height = 480){
+  view = obj
   filename = file.path(normalizePath(dirname(filename)), basename(filename))
   size = as.numeric(view$size)  # original size
   view$resize(width, height)
@@ -435,7 +437,30 @@ qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
   view$scene()$render(pt)
   view$resize(size[1], size[2])  # restore size
   qimg$save(filename)
-}
+})
+setMethod("qsave", "CranvasPlot", function(obj, filename = 'Rplot.png', width = 480, height = 480){
+  view = obj$view
+  filename = file.path(normalizePath(dirname(filename)), basename(filename))
+  size = as.numeric(view$size)  # original size
+  view$resize(width, height)
+  view$scene()$setBackgroundBrush(Qt$QBrush(Qt$QColor(255, 255, 255)))
+  qimg = Qt$QImage(view$sceneRect$size()$toSize(), Qt$QImage$Format_ARGB32_Premultiplied)
+  pt = Qt$QPainter(qimg)
+  view$scene()$render(pt)
+  view$resize(size[1], size[2])  # restore size
+  qimg$save(filename)
+})
+## qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
+##   filename = file.path(normalizePath(dirname(filename)), basename(filename))
+##   size = as.numeric(view$size)  # original size
+##   view$resize(width, height)
+##   view$scene()$setBackgroundBrush(Qt$QBrush(Qt$QColor(255, 255, 255)))
+##   qimg = Qt$QImage(view$sceneRect$size()$toSize(), Qt$QImage$Format_ARGB32_Premultiplied)
+##   pt = Qt$QPainter(qimg)
+##   view$scene()$render(pt)
+##   view$resize(size[1], size[2])  # restore size
+##   qimg$save(filename)
+## }
 
 near_zero = function(x) diff(range(x, na.rm = TRUE, finite = TRUE)) < 1e-7
 
