@@ -42,7 +42,7 @@
 #'   planned_tour holes cmass
 #' @importFrom SearchTrees rectLookup createTree
 #' @import plumbr
-#' @importFrom methods setRefClass
+#' @import methods
 #' @import objectSignals
 #' @import objectProperties
 #' @name cranvas-package
