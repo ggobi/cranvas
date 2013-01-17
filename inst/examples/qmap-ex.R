@@ -1,3 +1,4 @@
+library(ggmap)
 library(cranvas)
 
 ### (1) simple maps
