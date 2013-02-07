@@ -15,7 +15,7 @@ brushGen = setRefClass(
 new_brush = function() {
   # here 'mode' is explained in the documentation of mode_selection()
   brushGen$new(
-    style = list(color = "red", linewidth = 1, linetype = NULL),
+    style = list(color = yellow", linewidth = 1, linetype = NULL),
     color = "yellow", size = 4,
     mode = "none", identify = FALSE, label.gen = function(x) {
       x = t(as.data.frame(x))
