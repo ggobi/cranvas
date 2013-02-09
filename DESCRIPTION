@@ -3,6 +3,7 @@ Version: 0.8.2
 Imports:
     methods,
     scales,
+    plyr,
     qtbase (>= 0.99.2),
     qtpaint (>= 0.8.1),
     tourr (>= 0.5),
