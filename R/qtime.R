@@ -339,10 +339,12 @@ qtime <- function(time, data, period=NULL, group=NULL,
             ytmpacf <- unname(tapply(meta$ytmp,meta$yorig[,1],function(z) acf(z,lag.max=max(30,max(meta$wrap.shift)),plot=F)$acf[meta$wrap.shift[1]+1]))
             tmpprint <- paste(meta$varname$y,": ACF(lag=",meta$wrap.shift[1],"):",round(ytmpacf,2),sep="")
         } else if (length(tmp)==2) {
+            library(plyr)
             tmpdat=data.frame(ytmp=meta$ytmp,series=meta$wrap.group,label=meta$yorig[,1])
             ytmpcor <- ddply(tmpdat,'label',summarise,res=cor(ytmp[series==1][1:sum(series==2)],ytmp[series==2]))[,2]
             tmpprint <- paste(meta$varname$y,"Corr. of two series = ",round(ytmpcor,2),sep="")
         } else {
+            library(plyr)
             tmpdat=data.frame(ytmp=meta$ytmp,xtmp=factor(meta$xtmp),label=meta$yorig[,1])
             ytmpR2 <- ddply(tmpdat,'label',summarise,res=summary(lm(ytmp~xtmp))$r.squared)[,2]
             tmpprint <- paste("R square = ",round(ytmpR2,2),sep="")
