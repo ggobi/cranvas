@@ -4,3 +4,4 @@ roxygenize.R
 readme.md
 ^\.Rproj\.user$
 cranvas.Rproj
+^.*\.Rproj$
