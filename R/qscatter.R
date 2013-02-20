@@ -94,6 +94,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     }
     meta$xy[, 2] = data[, meta$yvar]
     idx = visible(data)[meta$order]
+    if (all(!idx)) idx = !idx # if you hide all the data, use original limits
     x = meta$xy[idx, 1]; meta$xlim = range(x, na.rm = TRUE, finite = TRUE)
     y = meta$xy[idx, 2]; meta$ylim = range(y, na.rm = TRUE, finite = TRUE)
     r = cbind(if (is.null(xlim)) meta$xlim else xlim,
