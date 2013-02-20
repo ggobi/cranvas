@@ -72,7 +72,7 @@ key2text = function(key) {
 #'   indicates the brush mode.
 #'
 #'   The key S acts like the middle button of the mouse (toggles between two
-#'   brush types).
+#'   brush types). The key Z toggles the zooming mode under the selection brush.
 #'
 #'   In a key release event, we set the selection mode to \code{'none'}. If
 #'   PageUp or PageDown is pressed (or equivalently use square brackets \samp{[}
@@ -117,6 +117,8 @@ common_key_release = function(layer, event, data, meta) {
     b$cursor = if (b$identify) 2L else 0L
   } else if (match_key('S')) {
     b$select.only = !b$select.only
+  } else if (match_key('Z')) {
+    b$zoom = !b$zoom
   }
 }
 #' @rdname common_events
@@ -148,7 +150,11 @@ common_mouse_move = function(layer, event, data, meta) {
 common_mouse_release = function(layer, event, data, meta) {
   b = brush(data)
   b$draw.brush = !b$select.only
-  if (!b$select.only) b$cursor = 0L  # restore to Arrow cursor
+  if (b$select.only) {
+    if (b$zoom) meta$limits = apply(rbind(meta$pos - meta$brush.size, meta$pos), 2, sort)
+  } else {
+    b$cursor = 0L  # restore to Arrow cursor
+  }
   save_brush_history(data)  # store brushing history
 }
 

@@ -7,7 +7,7 @@ brushGen = setRefClass(
          history.size = 'numeric', history.index = 'numeric', history.list = 'list',
          persistent = 'logical', persistent.color = 'character', persistent.list = 'list',
          select.only = 'logical', draw.brush = 'logical', cursor = 'numeric',
-         ghost = 'logical')
+         ghost = 'logical', zoom = 'logical')
   )
 )
 
@@ -24,7 +24,7 @@ new_brush = function() {
     history.size = 30, history.index = 0, history.list = list(),
     persistent = FALSE, persistent.color = character(0),
     persistent.list = list(), select.only = FALSE, draw.brush = TRUE,
-    cursor = 0L, ghost = FALSE
+    cursor = 0L, ghost = FALSE, zoom = FALSE
   )
 }
 
@@ -79,6 +79,8 @@ new_brush = function() {
 #' ((\code{FALSE})) or select elements only (\code{TRUE}); the subtle difference
 #' here is whether the brush should stay on the plot or not when the mouse is
 #' released}
+#'
+#' \item{zoom}{when \code{select.only == TRUE}, zoom with selection or not}
 #'
 #' \item{draw.brush}{whether to draw the brush (when the mouse is released and
 #' \code{select.only} is \code{TRUE}, then \code{draw.brush} will be
