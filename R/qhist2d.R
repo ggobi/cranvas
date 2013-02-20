@@ -8,6 +8,22 @@ qhist2d = function(x, y, data, method = c('hex', 'rect'), ...) {
   )
 }
 
+# print() or plot() method on a cranvas object
+print.cranvas = plot.cranvas = function(x) {
+  scene = qscene()
+  root = qlayer(scene)
+  for (r in x$layers) {
+    root[r$pos[1], r$pos[2]] = r$layer
+  }
+  print(qplotView(scene = scene))
+}
+
+`+.cranvas` = function(x, y) {
+  y$layer$setLimits(qrect(x$limits))
+  x$layers[[length(x$layers) + 1]] = y
+  x
+}
+
 hist2d_hex = function(x, y, data, xlim = NULL, ylim = NULL) {
   library(densityvis)
   z = as.list(match.call()[-1])
@@ -24,14 +40,25 @@ hist2d_hex = function(x, y, data, xlim = NULL, ylim = NULL) {
     qdrawPolygon(painter, hexes[, 1], hexes[, 2], fill = col)
   }
 
-  scene = qscene()
-  layer.root = qlayer(scene)
-  layer.main = qlayer(
+  layer.main = make_layer(
     paintFun = main_draw,
-    limits = qrect(meta$limits)
+    limits = qrect(meta$limits),
+    pos = c(1, 2)
   )
-  layer.root[1, 2] = layer.main
-  qplotView(scene = scene)
+  structure(list(layers = list(layer.main), limits = meta$limits), class = 'cranvas')
+}
+
+# create a layer with position info in the grid layout
+make_layer = function(..., pos) {
+  list(layer = qlayer(...), pos = pos)
+}
+
+layer_point = function(x, y, data) {
+  z = as.list(match.call()[-1])
+  xvar = as.character(z$x); yvar = as.character(z$y)
+  make_layer(paintFun = function(layer, painter) {
+    qdrawCircle(painter, data[, xvar], data[, yvar], r = 2, stroke=NA, fill = rgb(0,0,0,.5))
+  }, pos = c(1, 2))
 }
 
 hist2d_rect = function(x, y, data, xlim = NULL, ylim = NULL) {
