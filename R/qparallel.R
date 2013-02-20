@@ -169,7 +169,6 @@ qparallel =
 
     ## par-coords segments
     main_draw = function(layer, painter) {
-        cranvas_debug()
         .color = data$.color; 
         if (meta$alpha < 1) {
           .color = rgb(t(col2rgb(.color))/255, alpha=meta$alpha)
@@ -187,7 +186,6 @@ qparallel =
             qdrawGlyph(painter, draw.glyph, meta$x0, meta$y0, fill = main.col,
                        stroke = .border)
         }
-        cranvas_debug()
     }
 
     ## annotate maximum and minimum values for each axis
@@ -272,14 +270,12 @@ qparallel =
 
     ## identify segments being brushed when the mouse is moving
     brush_mouse_move = function(layer, event) {
-        cranvas_debug()
         rect = qrect(update_brush_size(meta, event))
         hits = layer$locate(rect) + 1
         ## ticks and lines are of different numbers!
         hits = ceiling(hits/ifelse(meta$glyph == 'line', meta$p - 1, meta$p))
         selected(data) = mode_selection(selected(data), hits, mode = b$mode)
         common_mouse_move(layer, event, data, meta)
-        cranvas_debug()
     }
     brush_mouse_release = function(layer, event) {
         brush_mouse_move(layer, event)
@@ -294,7 +290,6 @@ qparallel =
 
     ## draw the segments under the brush with another appearance
     brush_draw = function(layer, painter) {
-        cranvas_debug()
         .visible = which(visible(data))
         if (b$persistent && length(b$persistent.list)) {
             qlineWidth(painter) = b$size
@@ -318,7 +313,6 @@ qparallel =
             qdrawSegment(painter, tmpx[-nn], tmpy[-nn], tmpx[-1], tmpy[-1])
         }
         draw_brush(layer, painter, data, meta)
-        cranvas_debug()
     }
 
     identify_hover = function(layer, event) {
