@@ -91,6 +91,9 @@ brush(data, attr) <- value
   brush should stay on the plot or not when the mouse is
   released}
 
+  \item{zoom}{when \code{select.only == TRUE}, zoom with
+  selection or not}
+
   \item{draw.brush}{whether to draw the brush (when the
   mouse is released and \code{select.only} is \code{TRUE},
   then \code{draw.brush} will be \code{FALSE} so the brush

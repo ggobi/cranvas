@@ -63,7 +63,8 @@ common_mouse_release(layer, event, data, meta)
   mode.
 
   The key S acts like the middle button of the mouse
-  (toggles between two brush types).
+  (toggles between two brush types). The key Z toggles the
+  zooming mode under the selection brush.
 
   In a key release event, we set the selection mode to
   \code{'none'}. If PageUp or PageDown is pressed (or
