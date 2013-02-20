@@ -53,6 +53,7 @@ qmap(data, linkto = NULL, linkby = NULL, main = "", xlim = NULL, ylim = NULL, un
   in each region.
 }
 \examples{
+library(ggmap)
 library(cranvas)
 
 ### (1) simple maps the world map
