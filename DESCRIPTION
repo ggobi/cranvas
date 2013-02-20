@@ -40,6 +40,7 @@ Suggests:
     randomForest,
     tourr (>= 0.5),
     Rcartogram
+LazyData: true
 Collate:
     'cranvas-package.R'
     'meta.R'
