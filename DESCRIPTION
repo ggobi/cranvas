@@ -1,6 +1,7 @@
 Package: cranvas
 Type: Package
 Version: 0.8.2
+Date: 2013-02-20
 Maintainer: Yihui Xie <xie@yihui.name>
 License: GPL
 Title: Interactive statistical graphics based on Qt
@@ -15,11 +16,8 @@ Description: This is an R package as the next generation of GGobi, a software
     tour, scatter plot matrix, hexagons and tiles (color images), etc. Based on
     the support of several other packages, cranvas aims for speed (from Qt) and
     flexibility (from R), with the style and design borrowed from ggplot2.
-URL: http://github.com/ggobi/cranvas
+URL: http://github.com/ggobi/cranvas, http://cranvas.org
 BugReports: https://github.com/ggobi/cranvas/issues
-Depends:
-    R (>= 2.10),
-    methods
 Imports:
     methods,
     scales,
