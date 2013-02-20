@@ -33,6 +33,7 @@
 #' @example inst/examples/qtour-ex.R
 qtour = function(vars = ~., data, tour_path, aps = 1, fps = 30, rescale = TRUE,
                  sphere = FALSE, ...) {
+  library(tourr)
   if (missing(tour_path)) tour_path = grand_tour()
   data = check_data(data)
   src = last_time = tour = timer = NULL

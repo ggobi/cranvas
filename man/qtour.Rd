@@ -2,8 +2,8 @@
 \alias{qtour}
 \title{Create a tour associated with a mutaframe}
 \usage{
-qtour(vars = ~., data, tour_path = grand_tour(), aps = 1, fps = 30, rescale = TRUE, 
-    sphere = FALSE, ...)
+qtour(vars = ~., data, tour_path, aps = 1, fps = 30, rescale = TRUE, sphere = FALSE, 
+    ...)
 }
 \arguments{
   \item{vars}{variable names to be used in the tour (parsed

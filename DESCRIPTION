@@ -24,7 +24,6 @@ Imports:
     plyr,
     qtbase (>= 0.99.2),
     qtpaint (>= 0.8.1),
-    tourr (>= 0.5),
     plumbr (>= 0.6.3),
     objectSignals (>= 0.9.5),
     objectProperties,
@@ -39,6 +38,7 @@ Suggests:
     RgoogleMaps,
     animation,
     randomForest,
+    tourr (>= 0.5),
     Rcartogram
 Collate:
     'cranvas-package.R'
