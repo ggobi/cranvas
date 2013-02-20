@@ -1,8 +1,6 @@
 library(cranvas)
 
 ### (1) linking to between two tables, using common id variable
-data(wages.demog)
-data(wages)
 
 qwg = qdata(wages.demog)
 #qscatter(ged, race, data=qwg)

@@ -14,8 +14,6 @@ qstates$.color <- sample(c("red", "blue"), nrow(states), replace=TRUE)
 
 #######################
 
-data(crimes)
-
 qcrimes <- qdata(crimes)
 print(qparallel(data=qcrimes))
 
@@ -50,7 +48,6 @@ qmap(qiowa, long, lat, group, label = subregion)
 source("load.R")
 library(ggplot2)
 
-data(world)
 qworld <- qdata(world)
 
 

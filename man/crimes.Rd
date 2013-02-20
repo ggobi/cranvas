@@ -11,7 +11,6 @@
 }
 \examples{
 library(cranvas)
-data(crimes)
 qcrimes <- qdata(crimes)
 qparallel(names(crimes)[-c(1, 2)], data = qcrimes)
 }

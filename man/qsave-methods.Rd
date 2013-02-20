@@ -26,7 +26,6 @@
 }
 \examples{
 library(cranvas)
-data(tennis)
 qtennis <- qdata(tennis)
 v <- qbar(matches, data = qtennis)
 qsave(v, "tennis_bar.png", 480, 320)

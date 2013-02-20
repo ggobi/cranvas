@@ -1,13 +1,11 @@
 library(cranvas)
 ## tennis data
-data(tennis)
 
 qtennis = qdata(tennis)
 qbar(matches, data = qtennis)
 qbar(matches, data = qtennis, weight = serve.speed)
 
 ## NRC rankings
-data(nrcstat)
 
 qnrc = qdata(nrcstat, color = Control)  # Control: public or private univ
 qbar(RegCode, data = qnrc, main = 'Number of public and private colleges in each region')

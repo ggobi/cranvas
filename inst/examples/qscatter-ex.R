@@ -1,7 +1,6 @@
 library(cranvas)
 
 ### (1) tennis data
-data(tennis)
 qtennis <- qdata(tennis)
 
 qscatter(first.serve.pct, second.serve.pts, data=qtennis, xlab="First Serve %", ylab="Second Serve Points")
@@ -29,7 +28,6 @@ qflea2 = qdata(flea, color = NA, border = species, size = tars1)
 qscatter(tars1, tars2)
 
 ### (3) NRC rankings
-data(nrcstat)
 
 qnrc = qdata(nrcstat, color = RegCode)
 

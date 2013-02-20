@@ -53,7 +53,6 @@ save_brush_history(data, index = selected(data))
 }
 \examples{
 library(cranvas)
-data(nrcstat)
 qnrc <- qdata(nrcstat)
 selected(qnrc)  # all FALSE by default
 selected(qnrc)[1:5] <- TRUE  # brush first 5 rows

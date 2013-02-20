@@ -1,5 +1,4 @@
 library(cranvas)
-data(tennis)
 qtennis = qdata(tennis, color = aces)
 
 qscatter(server.pts, first.serves)

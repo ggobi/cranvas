@@ -1,5 +1,4 @@
 library(cranvas)
-data(tennis)
 str(tennis)
 
 ## the first step is always to create the data object

@@ -11,7 +11,6 @@
   statistics departments in US.
 }
 \examples{
-data(nrcstat)
 summary(nrcstat)
 }
 \keyword{datasets}

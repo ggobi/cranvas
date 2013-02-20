@@ -7,7 +7,6 @@ library(cranvas)
 # scatterplots of ratings variables, 5th vs 95th percentiles
 # parallel coords of criteria
 # lookup text window
-data(nrcstat)
 
 qnrc = qdata(nrcstat)
 rownames(qnrc) = paste(nrcstat$Institution, nrcstat$ProgramName, 

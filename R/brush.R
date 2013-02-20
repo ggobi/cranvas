@@ -187,7 +187,6 @@ brush = function(data, attr) {
 #' @export
 #' @seealso \code{\link{brush}}, \code{\link{qdata}}, \code{\link{selected}}
 #' @examples library(cranvas)
-#' data(nrcstat)
 #' qnrc = qdata(nrcstat)
 #' selected(qnrc)  # all FALSE by default
 #' selected(qnrc)[1:5] = TRUE  # brush first 5 rows

@@ -36,7 +36,6 @@ if (require('mapdata')) {
 
 
 ### (2) maps linked to other datasets
-data(crimes)
 head(crimes)
 qcrimes = qdata(crimes, color = population)  # population mapped to colors
 qcrimes = qdata(crimes, color = population, low = "#FCBBA1", high = "red")  # change the color scheme from http://colorbrewer2.org/

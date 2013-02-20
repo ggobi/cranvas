@@ -11,7 +11,6 @@
   Ames, Iowa from January 2008 to September 2012
 }
 \examples{
-data(ameshousing)
 summary(ameshousing)
 }
 \keyword{datasets}

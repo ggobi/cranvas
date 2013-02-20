@@ -77,7 +77,6 @@ qtime(time, data, period = NULL, group = NULL, shift = c(1, 4, 7, 12, 24), size 
 library(cranvas)
 
 ## example 1: NASA temperature data
-data(nasa)
 nasa2221 <- subset(nasa, Gridx == 22 & Gridy == 21)
 nasa2221$Year <- factor(nasa2221$Year)
 qnasa <- qdata(nasa2221)
@@ -108,7 +107,6 @@ qtime(Time, qRemi_time, group = ID)
 
 
 ## example 3: Wages
-data(wages)
 qwage <- qdata(wages[as.integer(as.character(wages$id)) < 2000, 1:3])
 qwage_time <- time_qdata(qwage, "lnw")
 qtime(exper, qwage_time, group = id)
@@ -117,7 +115,6 @@ qtime(exper, qwage_time, group = id)
 
 ## example 4: Lynx - for posterity Good to show off wrapping to investigate
 ## irregular series
-data(lynx)
 qlynx <- qdata(data.frame(Time = 1:114, lynx))
 qlynx_time <- time_qdata(qlynx, "lynx")
 qtime(Time, qlynx_time, shift = 1:12)
@@ -125,14 +122,12 @@ qtime(Time, qlynx_time, shift = 1:12)
 
 ## example 5: Sunspots - for posterity Good to show off wrapping to investigate
 ## irregular series
-data(sunspots)
 qsun <- qdata(data.frame(Time = 1:2820, sunspots))
 qsun_time <- time_qdata(qsun, "sunspots")
 qtime(Time, qsun_time, shift = c(1, (1:10) * 10))
 
 
 ## example 6: Pigs
-data(pigs)
 qpig <- qdata(pigs)
 qpig_time <- time_qdata(qpig, c("GILTS", "PROFIT", "PRODUCTION", "HERDSZ"))
 qtime(TIME, qpig_time, shift = c(1, 4))

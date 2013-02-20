@@ -17,7 +17,6 @@ time_qdata(regular_qdata, y)
 }
 \examples{
 library(cranvas)
-data(nasa)
 nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 qnasa <- time_qdata(nasa11, c("ts", "ps_tovs", "ca_med"))
 }

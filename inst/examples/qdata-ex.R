@@ -1,5 +1,4 @@
 library(cranvas)
-data(tennis)
 str(tennis)
 ## more Aces, closer to red; less, blue; higher speed, larger points
 qtennis = qdata(tennis, color = aces, size = serve.speed)

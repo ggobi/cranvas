@@ -1,13 +1,11 @@
 library(cranvas)
 
 ### (1) ames housing data
-data(ameshousing)
 qames <- qdata(ameshousing)
 
 qdensity(saleprice, data = qames)
 
 ### (2) tennis data
-data(tennis)
 qtennis <- qdata(tennis)
 
 qdensity(first.serve.pct, data = qtennis)

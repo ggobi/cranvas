@@ -539,7 +539,7 @@ Time.meta =
 ##' @return A mutaframe of multiple y's
 ##' @export
 ##' @examples 
-##' library(cranvas); data(nasa)
+##' library(cranvas)
 ##' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 ##' qnasa <- time_qdata(nasa11,c("ts","ps_tovs","ca_med"))
 ##'

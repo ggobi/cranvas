@@ -45,7 +45,6 @@ The code fragment and plots in Figure \ref{scat}, below shows an example of link
 \begin{quote}
 \begin{verbatim}
 require(cranvas)
-data(tennis)
 qtennis <- qdata(tennis)
 qscatter(First.Serve.Points, Second.Serve.Pts, qtennis)
 qscatter(Matches, Sets, qtennis)
@@ -173,7 +172,6 @@ The time series plot displays measurements collected in a temporal context. Figu
 \begin{framed}
 \begin{quote}
 \begin{verbatim}
-data(nasa)
 nasa11 <- subset(nasa, Gridx == 1 & Gridy == 1)
 qnasa <- qdata(nasa11)
 selected(qnasa)[1] <- TRUE
@@ -220,7 +218,6 @@ qmap(qstates, long, lat, group, region)
 \begin{framed}
 \begin{quote}
 \begin{verbatim}
-data(crimes)
 qcrimes <- qdata(crimes)
 crimes$State <- tolower(crimes$State)
 link_var(qcrimes) = "State"

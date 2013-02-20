@@ -1,5 +1,4 @@
 library(cranvas)
-data(wages)
 
 \dontrun{
 ## this is a very simple linear regression assuming each man has the same slope, which may not be entirely reasonable

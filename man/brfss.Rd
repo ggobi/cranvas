@@ -15,7 +15,6 @@
 }
 \examples{
 library(cranvas)
-data(brfss)
 qbrfss <- qdata(brfss)
 
 qmval(names(brfss)[40:50])

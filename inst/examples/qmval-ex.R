@@ -1,8 +1,6 @@
 library(cranvas)
 
 ## BRFSS data
-data(brfss)
-
 qbrfss <- qdata(brfss)
 qmval(names(brfss)[40:50], data = qbrfss)
 qmval(51:68, data = qbrfss)

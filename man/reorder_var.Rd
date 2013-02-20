@@ -45,7 +45,6 @@ reorder_var(data, type = c("none", "MDS", "ANOVA", "randomForest"), vars = names
   argument \code{x} will be used as the response variable.
 }
 \examples{
-data(tennis)
 reorder_var(tennis, type = "MDS")
 
 reorder_var(iris, type = "ANOVA", x = iris$Species)

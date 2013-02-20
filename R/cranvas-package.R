@@ -52,12 +52,10 @@ NULL
 #' January 2008 to September 2012
 #' @name ameshousing
 #' @docType data
-#' @usage data(ameshousing)
 #' @format data.frame: 1615 obs. of  10 variables
 #' @keywords datasets
 #' @source \url{http://www.cityofames.org/Assessor/index.htm}
 #' @examples
-#' data(ameshousing)
 #' summary(ameshousing)
 NULL
 
@@ -66,12 +64,10 @@ NULL
 #' This data contains the NRC rankings for all the statistics departments in US.
 #' @name nrcstat
 #' @docType data
-#' @usage data(nrcstat)
 #' @format data.frame: 61 obs. of  72 variables
 #' @keywords datasets
 #' @source \url{http://sites.nationalacademies.org/pga/resdoc/index.htm}
 #' @examples
-#' data(nrcstat)
 #' summary(nrcstat)
 NULL
 
@@ -82,7 +78,6 @@ NULL
 #' survey.
 #' @name wages
 #' @docType data
-#' @usage data(wages)
 #' @format Number of subjects: 888; Number of variables: 15; Number of
 #'   observations, across all subjects: 6402
 #'
@@ -109,7 +104,6 @@ NULL
 #' This is just the demographic data for each person recorded in the wages data.
 #' @name wages.demog
 #' @docType data
-#' @usage data(wages.demog)
 #' @format Number of subjects: 888; Number of variables: 6; Number of
 #'   observations, across all subjects: 888
 #'
@@ -132,12 +126,11 @@ NULL
 #' matches.
 #' @name tennis
 #' @docType data
-#' @usage data(tennis)
 #' @format data.frame: 25 obs. of  18 variables
 #' @keywords datasets
 #' @source 2006 Australian Open mens tennis matches.
 #' @examples library(cranvas)
-#' data(tennis); qtennis = qdata(tennis)
+#' qtennis = qdata(tennis)
 #'
 #' qscatter(first.serve.pts, second.serve.pts, data = qtennis)
 #' qscatter(matches, sets, data = qtennis)
@@ -151,12 +144,11 @@ NULL
 #' plots.
 #' @name brfss
 #' @docType data
-#' @usage data(brfss)
 #' @format data.frame: 245 obs. of  409 variables
 #' @keywords datasets
 #' @source \url{http://www.cdc.gov/BRFSS/}
 #' @examples library(cranvas)
-#' data(brfss); qbrfss = qdata(brfss)
+#' qbrfss = qdata(brfss)
 #'
 #' qmval(names(brfss)[40:50])
 #' qmval(51:68)
@@ -168,12 +160,10 @@ NULL
 #' Counts of different crimes by state across the USA
 #' @name crimes
 #' @docType data
-#' @usage data(crimes)
 #' @format data.frame: 50 obs. of 12 variables
 #' @keywords datasets
 #' @source \url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
 #' @examples library(cranvas)
-#' data(crimes)
 #' qcrimes <- qdata(crimes)
 #' qparallel(names(crimes)[-c(1,2)], data=qcrimes)
 NULL
@@ -185,12 +175,10 @@ NULL
 #' and Graphics Data Expo competition.
 #' @name nasa
 #' @docType data
-#' @usage data(nasa)
 #' @format data.frame: 50 obs. of 13 variables
 #' @keywords datasets
 #' @source \url{http://stat-computing.org/dataexpo/2006/}
 #' @examples library(cranvas)
-#' data(nasa)
 #' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 #' qnasa <- qdata(nasa11)
 #' qtime(TimeIndx,~ts,qnasa,shift=c(1,12))
@@ -201,7 +189,6 @@ NULL
 #' Multivariate time series data originally from Andrews and Herzberg (1985).
 #' @name pigs
 #' @docType data
-#' @usage data(pigs)
 #' @format data.frame: 48 obs. of 11 variables \describe{\item{\code{TIME}}{Time
 #'   index, from 1 to 48} \item{\code{YEAR}}{Year, from 1967 to 1978}
 #'   \item{\code{QUARTER}}{Quarter index, take value in 1,2,3,4}
@@ -218,7 +205,6 @@ NULL
 #'   Springer-Verlag, New York, NY. URL:
 #'   \url{http://lib.stat.cmu.edu/datasets/Andrews/}
 #' @examples library(cranvas)
-#' data(pigs)
 #' qpig <- qdata(pigs)
 #' qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
 NULL
@@ -230,12 +216,10 @@ NULL
 #' interaction.
 #' @name world
 #' @docType data
-#' @usage data(world)
 #' @format data.frame: 48 obs. of 11 variables
 #' @keywords datasets
 #' @source maps package
 #' @examples library(cranvas)
-#' data(world)
 #' qworld = map_qdata('world')
 #' qmap(qworld)
 NULL

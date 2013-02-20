@@ -98,7 +98,6 @@ remove_link(qflea, id)
 
 
 #### (2) tennis data: without a splitting variable
-data(tennis)
 
 qtennis <- qdata(tennis, color = "white", border = "black")
 

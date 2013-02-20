@@ -30,7 +30,6 @@
 }
 \examples{
 library(cranvas)
-data(wages)
 
 \dontrun{
 ## this is a very simple linear regression assuming each man has the same

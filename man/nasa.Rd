@@ -14,7 +14,6 @@
 }
 \examples{
 library(cranvas)
-data(nasa)
 nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 qnasa <- qdata(nasa11)
 qtime(TimeIndx, ~ts, qnasa, shift = c(1, 12))

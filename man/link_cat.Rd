@@ -51,8 +51,6 @@ link_cat(mf1, var1, mf2 = NULL, var2 = NULL)
 library(cranvas)
 
 ### (1) linking to between two tables, using common id variable
-data(wages.demog)
-data(wages)
 
 qwg <- qdata(wages.demog)
 # qscatter(ged, race, data=qwg)

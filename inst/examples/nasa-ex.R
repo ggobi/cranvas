@@ -2,7 +2,6 @@
 ## http://stat-computing.org/dataexpo/2006/
 library(cranvas)
 
-data(nasa)
 qnasa <- qdata(nasa)
 
 qscatter(Long, Lat, data = qnasa)

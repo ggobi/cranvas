@@ -42,7 +42,6 @@ id = link_cat(qflea, 'species')
 remove_link(qflea, id)
 
 ### (2) NRC rankings
-data(nrcstat)
 qnrc = qdata(nrcstat, color = RegCode)
 
 ## Overview: type, rankings

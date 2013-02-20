@@ -53,7 +53,6 @@ extend_ranges = function(x, f = qpar("mar")) {
 #' @author Yihui Xie <\url{http://yihui.name}>
 #' @export
 #' @examples
-#' data(tennis)
 #' reorder_var(tennis, type = 'MDS')
 #'
 #' reorder_var(iris, type = 'ANOVA', x = iris$Species)
@@ -426,7 +425,7 @@ get_glyph = function(shape, size = 4) {
 #' @rdname qsave-methods
 #' @aliases qsave,Qanviz::PlotView-method
 #' @aliases qsave,CranvsPlot-method
-#' @examples library(cranvas); data(tennis); qtennis = qdata(tennis)
+#' @examples library(cranvas); qtennis = qdata(tennis)
 #' v = qbar(matches, data = qtennis); qsave(v, 'tennis_bar.png', 480, 320); qsave(v$view, 'tennis_bar.png', 480, 320)
 setGeneric("qsave", function(obj, ...) standardGeneric("qsave"))
 
