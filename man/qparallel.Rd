@@ -125,7 +125,7 @@ remove_link(qflea, id)
 qnrc <- qdata(nrcstat, color = RegCode)
 
 ## Overview: type, rankings
-qparallel(13:10, main = "Overview of Rankings", glyph = "tick", horizontal = TRUE, 
+qparallel(13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick", horizontal = TRUE, 
     boxplot = TRUE)
 
 ## link to a droplist (institution names)
