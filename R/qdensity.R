@@ -262,7 +262,7 @@ qdensity <- function(x, data, binwidth = NULL, main = '',
         idx = which(j == c(meta$xvar, '.brushed', '.color', '.border'))
         if (length(idx) < 1) {
             compute_coords(); compute_aes()
-            meta$samesize = diff(range(data$.size, na.rm = TRUE, finite = TRUE)) < 1e-7
+            meta$samesize = near_constant(data$.size)
             qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
             layer.main$invalidateIndex(); qupdate(layer.main)
             return()

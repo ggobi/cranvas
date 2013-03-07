@@ -48,7 +48,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   meta = Scat.meta$new(xvar = as.character(z$x), yvar = as.character(z$y),
                        xy = matrix(nrow = nrow(data), ncol = 2), active = TRUE,
                        alpha = alpha, main = main, asp = asp, minor = 'xy',
-                       samesize = diff(range(data$.size, na.rm=TRUE, finite=TRUE)) < 1e-7)
+                       samesize = near_constant(data$.size)
 
   ## set default xlab/ylab if not provided
   if (is.null(xlab)) meta$xlab = meta$xvar
@@ -306,7 +306,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     idx = which(j == c(meta$xvar, meta$yvar, '.brushed', '.visible', '.color', '.border'))
     if (length(idx) < 1) {
       compute_coords(); compute_aes()
-      meta$samesize = diff(range(data$.size, na.rm = TRUE, finite = TRUE)) < 1e-7
+      meta$samesize = near_constant(data$.size)
       qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
       qupdate(layer.main)
       return()

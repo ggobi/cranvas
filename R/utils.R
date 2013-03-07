@@ -467,7 +467,7 @@ setMethod("qsave", "CranvasPlot", function(obj, filename = 'Rplot.png', width = 
 ##   qimg$save(filename)
 ## }
 
-near_zero = function(x) diff(range(x, na.rm = TRUE, finite = TRUE)) < 1e-7
+near_constant = function(x) diff(range(x, na.rm = TRUE, finite = TRUE)) < 1e-7
 
 # data limits x and y; plot limits X and Y; return a matrix to draw segments to
 # denote boundaries

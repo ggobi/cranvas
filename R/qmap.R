@@ -479,7 +479,7 @@ map_qdata =
         qdata(data.frame(names = df$names, labels = labels, stringsAsFactors = FALSE),
               color = color, border = border, size = size, ...)
     xy = as.data.frame(df[1:2])
-    if (cartogram && length(size) > 1 && !all(diff(size) < 1e-7)) {
+    if (cartogram && length(size) > 1 && !near_constant(size)) {
         ## FIXME: cartogram() depends on the magnitude of size!!! so I did not use mf$.size
         xy = cart_polygon(xy$x, xy$y, df$names, size, diffuse, ...)
         xy$origx = df$x
