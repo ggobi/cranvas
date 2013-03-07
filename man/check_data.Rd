@@ -2,34 +2,25 @@
 \alias{check_data}
 \title{Check if a data object was created by qdata()}
 \usage{
-check_data(data, convert = TRUE)
+check_data(data)
 }
 \arguments{
   \item{data}{a data object}
-
-  \item{convert}{whether to convert the input data by
-  \code{\link{qdata}}}
 }
 \value{
-  If \code{convert == FALSE}, this function only returns a
-  logical value indicating whether the data object was
-  created by \code{\link{qdata}}, otherwise it will be
-  converted if it was not from \code{qdata(data)}.
+  The data object created by \code{\link{qdata}()}.
 }
 \description{
   Data objects created by \code{\link{qdata}} has a special
-  token. If an object was not created in that way, it can
-  be converted by \code{\link{qdata}}.
-}
-\details{
-  This function is designed for developers to check the
-  validity of data objects.
+  token, which is checked by this function. If the data
+  object was not created by \code{qdata}, it will be
+  automatically converted (with a warning message).
 }
 \examples{
 check_data(cbind(x = 1:5, y = 6:10))
-check_data(1:8, convert = FALSE)
-check_data(qdata(mtcars), convert = FALSE)  # TRUE
+check_data(head(mtcars))
+check_data(qdata(head(mtcars)))
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+  Yihui Xie
 }
