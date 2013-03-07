@@ -259,30 +259,25 @@ link_type = function(data) {
 
 #' Check if a data object was created by qdata()
 #'
-#' Data objects created by \code{\link{qdata}} has a special token. If an object
-#' was not created in that way, it can be converted by \code{\link{qdata}}.
-#'
-#' This function is designed for developers to check the validity of data
-#' objects.
+#' Data objects created by \code{\link{qdata}} has a special token, which is
+#' checked by this function. If the data object was not created by \code{qdata},
+#' it will be automatically converted (with a warning message).
 #' @param data a data object
-#' @param convert whether to convert the input data by \code{\link{qdata}}
-#' @return If \code{convert == FALSE}, this function only returns a logical
-#'   value indicating whether the data object was created by
-#'   \code{\link{qdata}}, otherwise it will be converted if it was not from
-#'   \code{qdata(data)}.
-#' @author Yihui Xie <\url{http://yihui.name}>
+#' @return The data object created by \code{\link{qdata}()}.
+#' @author Yihui Xie
 #' @export
 #' @examples check_data(cbind(x = 1:5, y = 6:10))
-#' check_data(1:8, convert = FALSE); check_data(qdata(mtcars), convert = FALSE)  # TRUE
-check_data = function(data, convert = TRUE) {
-  is_qdata = identical(attr(data, 'Generator'), 'cranvas')
-  if (!convert) return(is_qdata)
-  if (is_qdata) data else {
-    message(paste(strwrap('Automatically converting to a mutaframe... Interaction will work based on this data, but will not link to any other plots. For linking to work, use qdata() to create data objects.'), collapse = '\n'))
+#' check_data(head(mtcars)); check_data(qdata(head(mtcars)))
+check_data = function(data) {
+  if (is_qdata(data)) data else {
+    warning('Automatically converting to a mutaframe... Interaction will work
+            based on this data, but will not link to any other plots. For
+            linking to work, use qdata() to create data objects.')
     qdata(data)
   }
 }
 
+is_qdata = function(data) identical(attr(data, 'Generator'), 'cranvas')
 
 `.data_scales<-` = function(data, node1, node2, value) {
   attr(data, 'Scales')[[node1]][[node2]] <- value

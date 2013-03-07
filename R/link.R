@@ -35,7 +35,7 @@
 ##' @example inst/examples/link_cat-ex.R
 link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
     link2 = !is.null(mf2)
-    if (!check_data(mf1, FALSE) || (link2 && !check_data(mf2, FALSE)))
+    if (!is_qdata(mf1) || (link2 && !is_qdata(mf2)))
         stop('the mutaframes must be created from qdata()')
     if (is.null(var1) || (link2 && is.null(var2)))
         stop("must specify linking variables")
@@ -89,7 +89,7 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
 ##' @example inst/examples/link_knn-ex.R
 link_knn = function(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10) {
     link2 = !is.null(mf2)
-    if (!check_data(mf1, FALSE) || (link2 && !check_data(mf2, FALSE)))
+    if (!is_qdata(mf1) || (link2 && !is_qdata(mf2)))
         stop('the mutaframes must be created from qdata()')
     if (is.null(var1) || (link2 && is.null(var2)))
         stop("must specify linking variables")
