@@ -1,4 +1,5 @@
 library(ggmap)
+library(RgoogleMaps)
 library(cranvas)
 
 ### (1) simple maps
