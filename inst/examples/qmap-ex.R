@@ -11,6 +11,7 @@ qmap(qstate)
 
 # get a google map background
 # The packages ggmap and RgoogleMaps must be installed.
+# Warning: ggmap also has a function named qmap.
 qmap(qstate, googleMap=TRUE)
 
 # a simple demonstration of colors
