@@ -20,10 +20,22 @@
 ##' brushed status are in sync with this data
 ##' @param linkby the variable in the \code{linkto} data to be used as
 ##' a linking variable (see \code{\link{link_cat}})
+##' @param unibrushcolor whether to use multiple colors for the brush, i.e., 
+##' whether to transparentize the unbrushed polygons.
+##' @param googleMap whether to have a google map background. The packages 
+##' \pkg{ggmap} and \pkg{RgoogleMaps} must be installed.
+##' @param place a mutaframe created by \code{\link{qdata}} indicating
+##' the locations that will be shown on the map.
+##' @param path a mutaframe of locations created by \code{\link{qdata}}. 
+##' A path will be drawn on the map in the order of the mutaframe.
+##' @param text a mutaframe of locations and names.
+##' @param cartostep a value between 0 and 1. When a cartogram is drawn,
+##' the left arrow and right arrow can be used to evolve the map between
+##' the original map and the cartogram. cartostep controls the evolving speed.
 ##' @inheritParams qbar
 ##' @return A map
 ##' @export
-##' @author Heike Hofmann and Yihui Xie
+##' @author Heike Hofmann and Yihui Xie and Xiaoyue Cheng
 ##' @example inst/examples/qmap-ex.R
 qmap =
     function(data, linkto = NULL, linkby = NULL,
@@ -137,7 +149,7 @@ qmap =
             meta$googlezoom = -1
             google_draw = function(layer,painter) {                
                 bound=as.matrix(meta$limits)
-                googlezoom1=min(MaxZoom(bound[,1], bound[,2], c(640, 640)))                
+                googlezoom1=min(RgoogleMaps::MaxZoom(bound[,1], bound[,2], c(640, 640)))                
                 googlezoom2=round(log(360/max(diff(bound[,1]),diff(bound[,2])),1.8))
                 googlezoom=min(googlezoom1,googlezoom2)
                 rangecond=any(meta$googlemaprange$ll.lon>c(0.9,0.1)%*%bound[,1],
@@ -147,10 +159,10 @@ qmap =
                 if (meta$googlezoom!=googlezoom | rangecond) {
                     meta$googlezoom=googlezoom
                     message("Extracting the Google map...")
-                    map=get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),zoom = meta$googlezoom, scale = 2, ...)
+                    map=ggmap::get_googlemap(center = c(lon = mean(bound[,1]), lat = mean(bound[,2])),zoom = meta$googlezoom, scale = 2, ...)
                     meta$googlemaprange=attr(map, "bb")
                     meta$googlecolor=as.vector(map[1:1280, 1:1280])
-                    realxy=XY2LatLon(list(lat=mean(bound[,2]),lon=mean(bound[,1]),zoom=meta$googlezoom),seq(-320,319.5,0.5),seq(-320,319.5,0.5))
+                    realxy=RgoogleMaps::XY2LatLon(list(lat=mean(bound[,2]),lon=mean(bound[,1]),zoom=meta$googlezoom),seq(-320,319.5,0.5),seq(-320,319.5,0.5))
                     reallocat=expand.grid(realxy[,2],rev(realxy[,1]))
                     meta$googlex=reallocat$Var1
                     meta$googley=reallocat$Var2
@@ -441,6 +453,7 @@ Map.meta =
 ##' will be determined by the \code{size} parameter in the data
 ##' (i.e. \code{data$.size}); see \code{\link{cart_polygon}} for
 ##' details
+##' @param diffuse passed into \code{\link{cart_polygon}}. Default to be 5.
 ##' @param ... passed to \code{\link{cart_polygon}}
 ##' @return A mutaframe of region names and labels, with an attribute
 ##' \code{MapData} containing the coordinates of polygons.
@@ -485,8 +498,11 @@ map_qdata =
 ##' transformed coordinates using the \pkg{Rcartogram} package.
 ##' @param x,y the x and y coordinates of original polygons (polygons
 ##' are separated by \code{NA}'s)
+##' @param name the names of original polygons
 ##' @param size the size vector of polygons (length must be equal to
 ##' the number of polygons, i.e. the number of \code{NA}'s plus 1)
+##' @param diffuse a positive value to control the diffusing/shrinking rate
+##' @param blank.init fill the NA's of the grids with blank.init * min(size)
 ##' @param nrow,ncol numbers to define a grid for the cartogram
 ##' algorithm (see references in \pkg{Rcartogram}); this can affect
 ##' the convergence and speed of the algorithm, so may need to be
