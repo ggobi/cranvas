@@ -1,5 +1,3 @@
-library(ggmap)
-library(RgoogleMaps)
 library(cranvas)
 
 ### (1) simple maps
@@ -12,6 +10,7 @@ qstate = map_qdata('state')
 qmap(qstate)
 
 # get a google map background
+# The packages ggmap and RgoogleMaps must be installed.
 qmap(qstate, googleMap=TRUE)
 
 # a simple demonstration of colors
