@@ -420,6 +420,6 @@ Hist.meta = setRefClass("Hist_meta", contains = "CommonMeta",
        xleft = 'numeric', xright = 'numeric', ybottom = 'numeric', ytop = 'numeric',
        split.type = 'character', spine = 'logical', nlevel = 'integer', nlevel2 = 'integer',
        freq = 'logical', standardize = 'logical', binwidth = 'numeric',
-       multiplier = 'numeric', binmin = 'numeric')
+       multiplier = 'numeric', binmin = 'numeric', weight = 'character')
 
 ))
