@@ -269,3 +269,18 @@ mode_selection = function(x, y, mode = "none") {
   switch(mode, none = y, and = x & y, or = x | y, xor = xor(x, y), not = x & !y,
          complement = !y, y)
 }
+
+#' Register new handlers on a plot object
+#' @export
+register_handlers = function(plot, ..., add = TRUE) {
+  meta = plot$meta
+  fs = list(...)
+  for (i in names(fs)) {
+    meta$handlers[[i]] = if (add) append(meta$handlers[[i]], fs[[i]]) else list(fs[[i]])
+  }
+}
+
+run_handler = function(handler, layer, event) {
+  if (!is.list(handler)) stop('invalid handler (must be a list of functions)')
+  lapply(handler, function(h) h(layer, event))
+}
