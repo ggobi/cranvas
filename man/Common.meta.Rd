@@ -2,7 +2,7 @@
 \name{Common.meta}
 \alias{Common.meta}
 \title{Common meta data structure in cranvas}
-\format{List of 25
+\format{List of 26
  $ alpha          : chr "numeric"
  $ main           : chr "character"
  $ xlim           : chr "numeric"
@@ -27,7 +27,8 @@
  $ minor          : chr "character"
  $ keys           : chr "character"
  $ identified     : chr "integer"
- $ identify.labels: chr "character"}
+ $ identify.labels: chr "character"
+ $ handlers       : chr "list"}
 \usage{
 Common.meta
 }
@@ -110,6 +111,9 @@ Common.meta
   \item{identified, identify.labels}{the identified indices
   and the text label to draw in the plot for the identified
   cases}
+
+  \item{handlers}{a list of event handlers (functions of
+  two arguments: layer and event)}
 
   \item{active}{logical: if the current plot window is
   active}}

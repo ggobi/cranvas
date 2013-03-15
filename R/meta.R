@@ -66,6 +66,9 @@
 #' \item{identified, identify.labels}{the identified indices and the text label
 #' to draw in the plot for the identified cases}
 #'
+#' \item{handlers}{a list of event handlers (functions of two arguments: layer
+#' and event)}
+#'
 #' \item{active}{logical: if the current plot window is active}}
 #' @examples library(objectSignals)
 #' My.meta = setRefClass("My_meta", fields = objectProperties::properties(c(Common.meta,
