@@ -192,7 +192,9 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     common_mouse_release(layer, event, data, meta)
     brush_mouse_move(layer, event)
   }
-  key_press = function(layer, event) {
+
+  key_press = function(layer, event) run_handler(meta$handlers$keypress, layer, event)
+  meta$handlers$keypress = list(function(layer, event) {
     common_key_press(layer, event, data, meta)
     shift = event$modifiers() == Qt$Qt$ShiftModifier
     if (shift && length(i <- which(match_key(c('Left', 'Right', 'Up', 'Down'))))) {
@@ -203,10 +205,13 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
       ## change size
       data$.size = pmax(0.1, c(1.1, 0.9)[i] * data$.size)
     }
-  }
-  key_release = function(layer, event) {
+  })
+
+  key_release = function(layer, event) run_handler(meta$handlers$keyrelease, layer, event)
+  meta$handlers$keyrelease = list(function(layer, event) {
     common_key_release(layer, event, data, meta)
-  }
+  })
+
   mouse_wheel = function(layer, event) {
     pos = as.numeric(event$pos())
     lim = meta$limits

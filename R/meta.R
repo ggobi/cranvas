@@ -92,7 +92,7 @@ Common.meta = list(
   start = 'numeric', pos = 'numeric', active = 'logical',
   brush.move = 'logical', brush.size = 'numeric', brush.adj = 'numeric',
   manual.brush = 'function', minor = 'character', keys = 'character',
-  identified = 'integer', identify.labels = 'character'
+  identified = 'integer', identify.labels = 'character', handlers = 'list'
 )
 
 
