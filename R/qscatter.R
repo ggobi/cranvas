@@ -44,19 +44,20 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   b = brush(data)
   z = as.list(match.call()[-1])
 
-  ## initialize meta
-  meta = Scat.meta$new(xvar = as.character(z$x), yvar = as.character(z$y),
-                       xy = matrix(nrow = nrow(data), ncol = 2), active = TRUE,
-                       alpha = alpha, main = main, asp = asp, minor = 'xy',
-                       samesize = near_constant(data$.size)
-
-  ## set default xlab/ylab if not provided
+  # initialize meta
+  meta = Scat.meta$new(
+    xvar = as.character(z$x), yvar = as.character(z$y), active = TRUE,
+    xy = matrix(nrow = nrow(data), ncol = 2), alpha = alpha, main = main,
+    asp = asp, minor = 'xy', samesize = near_constant(data$.size)
+  )
+  # set default xlab/ylab if not provided
   if (is.null(xlab)) meta$xlab = meta$xvar
   if (is.null(ylab)) meta$ylab = meta$yvar
+  # users may provide expressions not in data, e.g. x = 'foo'; qscatter(x)
   if (!(meta$xvar %in% names(data))) meta$xvar = x
   if (!(meta$yvar %in% names(data))) meta$yvar = y
 
-  ## tour: color, size, transparency could be decided by proj3
+  # tour: color, size, transparency could be decided by proj3
   if ('proj3' %in% colnames(data)) {
     if (which(colnames(data) == 'proj3')[1] > which(colnames(data) == '.border')) {
       dim3 = c('proj1','proj2','proj3')
