@@ -209,9 +209,9 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
     if (!b$identify || !length(idx <- meta$identified)) return()
     k = .find_intersect(meta$value, idx, meta$nlevel)
     meta$identify.labels = sprintf(
-      'bin: (%s]\ncount: %s\nproportion: %.2f%%',
-      paste(meta$breaks[range(idx %% meta$nlevel) + c(1, 2)], collapse = ','),
-      sum(k), mean(k) * 100
+      'bin: (%s]\ncount: %s/%s\nproportion: %.1f/%.1f%%',
+      paste(round(meta$breaks[range(idx %% meta$nlevel) + c(1, 2)], 1), collapse = ','),
+      sum(k & data$.brushed), sum(k), sum(k & data$.brushed)/sum(k)*100, mean(k) * 100
     )
     draw_identify(layer, painter, data, meta)
     idx = idx + 1

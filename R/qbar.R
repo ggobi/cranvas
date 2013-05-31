@@ -135,13 +135,13 @@ qbar = function(x, data, weight = NULL, space = 0.1, main = '', horizontal = FAL
     k = .find_intersect(meta$value, idx, meta$nlevel)
     vis = visible(data) & k
     meta$identify.labels = sprintf(
-      '%s = %s%s\ncounts: %s\nproportion: %.2f%%',
+      '%s = %s%s\ncounts: %s/%s\nproportion: %.1f%%/%.1f%%',
       meta$var, shQuote(paste(unique(meta$value[k]), collapse = ', ')),
       if (length(meta$var2)) {
         sprintf('\n(%s = %s)', meta$var2,
                 paste(shQuote(unique(meta$value2[k])), collapse = ', '))
       } else '',
-      sum(vis), mean(vis) * 100)
+      sum(vis&data$.brushed), sum(vis),sum(vis&data$.brushed)/sum(vis)*100, mean(vis) * 100)
     draw_identify(layer, painter, data, meta)
     idx = idx + 1
     qdrawRect(painter, meta$xleft[idx], meta$ybottom[idx], meta$xright[idx],
