@@ -32,7 +32,7 @@ qdensity <- function(x, data, binwidth = NULL, main = '',
     z = as.list(match.call()[-1])
     ## initialize meta
     meta = Dens.meta$new(xvar = as.character(z$x), active = TRUE, alpha = .5, 
-                         main = main, minor = 'xy', samesize = near_zero(data$.size))
+                         main = main, minor = 'xy', samesize = near_constant(data$.size))
     ## set default xlab if not provided
     if (is.null(xlab)) meta$xlab = meta$xvar
 
