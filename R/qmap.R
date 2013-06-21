@@ -427,8 +427,10 @@ Map.meta =
                          outofbounds = 'matrix',
                          googlezoom = 'integer',
                          googlemaprange = 'data.frame',
-                         cartopar = 'numeric')
-                    
+                         googlecolor = 'character',
+                         googlex = 'numeric',
+                         googley = 'numeric',
+                         cartopar = 'numeric')                    
                 ))
 
 
