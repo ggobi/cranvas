@@ -47,8 +47,8 @@
 
 qtime <- function(time, data, period=NULL, group=NULL,
                    shift=c(1,4,7,12,24), size=3, alpha=1, asp=NULL, 
-                   similarity.index=is.null(period) && is.null(group),
-                   help.text=TRUE, main=NULL, xlab=NULL, ylab=NULL,...){
+                   similarity.index=TRUE, help.text=TRUE,
+                   main=NULL, xlab=NULL, ylab=NULL,...){
     
     #####################
     ## data processing ##----------
@@ -58,12 +58,13 @@ qtime <- function(time, data, period=NULL, group=NULL,
     call <- as.list(match.call()[-1])
     b <- brush(data)
     meta <- Time.meta$new(varname = list(x = as.character(call$time)), minor = 'xy') 
-    time_meta_initialize(meta,call,data=data,period=period, group=group, wrap=wrap,
+    time_meta_initialize(meta, call, data=data, period=period, group=group,
                          shift=shift, size=size, alpha=alpha, asp=asp, 
                          main=main, xlab=xlab, ylab=ylab)
+    if ('g' %in% names(meta$varname) & similarity.index) similarity.index = FALSE 
     meta$active <- TRUE
     tree <- createTree(data.frame(x=meta$xtmp,y=meta$ytmp))
-    
+
     ####################
     ## event handlers ##----------
     ####################
@@ -432,7 +433,7 @@ qtime <- function(time, data, period=NULL, group=NULL,
     query_layer <- qlayer(paintFun=query_draw, limits=qrect(meta$limits))
     if (similarity.index) similarity_layer <- qlayer(paintFun=similarity_draw, limits=qrect(meta$limits))
     if (help.text) helptext_layer <- qlayer(paintFun=helptext_draw, limits=qrect(meta$limits))
-    
+
     layer.root[0, 2] = layer.title
     if (help.text) layer.root[0, 2] = helptext_layer
     layer.root[2, 2] = layer.xaxis
@@ -528,7 +529,17 @@ Time.meta =
                       radius = 'numeric',
                       stroke = 'character',
                       fill = 'character',
-                      helptext = 'character')))
+                      helptext = 'character',
+                      singleVarLen = 'integer',
+                      nyvar = 'integer',
+                      ylist = 'data.frame',
+                      hitscol = 'integer',
+                      hitsrow = 'integer',
+                      vertconst = 'numeric',
+                      linkID = 'character',
+                      shiftUP = 'logical',
+                      shiftDOWN = 'logical',
+                      serie.start = 'logical')))
 
 
 ##' Create data for drawing time plots
@@ -598,7 +609,7 @@ time_qdata <- function(regular_qdata, y) {
 
 
 ##' Initialize the Time.meta
-time_meta_initialize <- function(meta,call,data,period, group,
+time_meta_initialize <- function(meta, call, data, period, group,
                                  shift, size, alpha, asp,
                                  main, xlab, ylab,...){
     

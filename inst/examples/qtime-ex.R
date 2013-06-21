@@ -12,7 +12,7 @@ qscatter(data=qnasa,ts,ps_tovs)
 
 qtime(TimeIndx,qnasa1,Year,shift=1)
 qtime(TimeIndx,qnasa2,shift=c(1,12))
-qtime(TimeIndx,qnasa2,Year)
+qtime(TimeIndx,qnasa2,period=Year)
 
 
 ## example 2: Remifentanil in the nlme package
