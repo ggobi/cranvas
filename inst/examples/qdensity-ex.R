@@ -32,6 +32,3 @@ qdensity(tars2, data = qflea)
 qdensity(aede1, data = qflea)
 qdensity(aede3, data = qflea)
 
-#### test colors
-qflea <- qdata(flea, color = species)
-qdensity(tars1, data = qflea)

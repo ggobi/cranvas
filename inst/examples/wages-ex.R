@@ -9,6 +9,6 @@ wage2$lnw0 = predict(fit, data.frame(id=unique(wages$id), exper=0))
 wage2$lnw6 = predict(fit, data.frame(id=unique(wages$id), exper=6))
 qwage2=qdata(wage2,color=hispanic)
 
-qhist(lnw0, main = 'Wages on the first day')
-qhist(lnw6, main = 'Wages after 6 years')
+qhist(lnw0, data=qwage2, main = 'Wages on the first day')
+qhist(lnw6, data=qwage2, main = 'Wages after 6 years')
 }

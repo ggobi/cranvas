@@ -20,7 +20,7 @@ remove_link(qwg, id[2])
 data(flea, package = 'tourr')
 
 qflea = qdata(flea, color = species)
-qhist(tars1)  # an ordinary histogram; try brushing
+qhist(tars1,data=qflea)  # an ordinary histogram; try brushing
 
 ## now we link qflea to itself by species
 id = link_cat(qflea, 'species')

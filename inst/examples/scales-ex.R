@@ -1,9 +1,10 @@
 library(cranvas)
+library(scales)
 qtennis = qdata(tennis, color = aces)
 
-qscatter(server.pts, first.serves)
-qparallel(10:14)  # variables including Aces
-qscatter(server.pts, aces)
+qscatter(server.pts, first.serves, data=qtennis)
+qparallel(10:14, data=qtennis)  # variables including Aces
+qscatter(server.pts, aces, data=qtennis)
 
 
 ## now notice the color changes in the plot
