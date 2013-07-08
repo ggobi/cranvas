@@ -585,9 +585,8 @@ time_qdata <- function(regular_qdata, y) {
         change_forward <<- TRUE
         tmp <- sort(unique(which(newdat$.brushed) %% nrow(regular_qdata)),decreasing=FALSE)
         if (0 %in% tmp) {tmp=c(tmp[-1],nrow(regular_qdata))}
-        if (!length(tmp)) tmp <- FALSE
         tmpbrush <- rep(FALSE,nrow(regular_qdata))
-        tmpbrush[tmp] <- TRUE
+        if (length(tmp)) tmpbrush[tmp] <- TRUE
         regular_qdata$.brushed <- tmpbrush
         change_back <<- FALSE
         change_forward <<- FALSE
@@ -597,9 +596,8 @@ time_qdata <- function(regular_qdata, y) {
         change_forward <<- TRUE
         change_back <<- TRUE
         tmp <- which(regular_qdata$.brushed)+(0:(ycol-1))*nrow(regular_qdata)
-        if (!length(tmp)) tmp <- FALSE
         tmpbrush <- rep(FALSE,nrow(newdat))
-        tmpbrush[tmp] <- TRUE
+        if (length(tmp)) tmpbrush[tmp] <- TRUE
         newdat$.brushed <- tmpbrush
         change_back <<- FALSE
         change_forward <<- FALSE
