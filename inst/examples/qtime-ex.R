@@ -4,28 +4,24 @@ library(cranvas)
 nasa2221 <- subset(nasa, Gridx == 22 & Gridy == 21)
 nasa2221$Year <- factor(nasa2221$Year)
 qnasa <- qdata(nasa2221)
-qnasa1 <- time_qdata(qnasa,"ts","TimeIndx")
-qnasa2 <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"),"TimeIndx")
 
-qtime(qnasa1,shift=c(1,12))
-qscatter(data=qnasa,ts,ps_tovs)
+qtime(TimeIndx,ts,qnasa,shift=c(1,12))
+qscatter(ts,ps_tovs,data=qnasa)
 
-qtime(qnasa1,Year,shift=1)
-qtime(qnasa2,shift=c(1,12))
-qtime(qnasa2,period=Year)
+qtime("TimeIndx","ts",qnasa,Year,shift=1)
+qtime(TimeIndx,c("ts","ps_tovs","ca_med"),qnasa,shift=c(1,12))
+qtime("TimeIndx",c(ts,ps_tovs,ca_med),qnasa,period=Year)
 
 
 ## example 2: Remifentanil in the nlme package
 library(nlme)
 qRem <- qdata(Remifentanil[complete.cases(Remifentanil) & Remifentanil$ID==1,])
-qRem_time <- time_qdata(qRem,"conc","Time")
-qtime(qRem_time)
+qtime(Time, conc, qRem)
 
 Remi <- Remifentanil[complete.cases(Remifentanil),]
 Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
-qRemi_time <- time_qdata(qRemi,"conc","Time")
-qtime(qRemi_time,group=ID)
+qtime(Time, conc, qRemi, group=ID)
 # for categorical brushing self-link dataset by ID:
 # id <- link_cat(qRemi, "ID")
 # remove_link(qRemi, id)
@@ -33,8 +29,7 @@ qtime(qRemi_time,group=ID)
 
 ## example 3: Wages
 qwage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
-qwage_time <- time_qdata(qwage, "lnw", "exper")
-qtime(qwage_time,group=id)
+qtime(exper, lnw, qwage, group=id)
 # id <- link_cat(wage, "id")
 # remove_link(wage, id)
 
@@ -42,18 +37,15 @@ qtime(qwage_time,group=id)
 ## example 4: Lynx - for posterity
 # Good to show off wrapping to investigate irregular series
 qlynx <- qdata(data.frame(Time=1:114, lynx))
-qlynx_time <- time_qdata(qlynx,"lynx","Time")
-qtime(qlynx_time, shift=1:12)
+qtime(Time, lynx, qlynx, shift=1:12)
 
 
 ## example 5: Sunspots - for posterity
 # Good to show off wrapping to investigate irregular series
 qsun <- qdata(data.frame(Time=1:2820, sunspots))
-qsun_time <- time_qdata(qsun,"sunspots","Time")
-qtime(qsun_time, shift=c(1,(1:10)*10))
+qtime(Time, sunspots, qsun, shift=c(1,(1:10)*10))
 
 
 ## example 6: Pigs
 qpig <- qdata(pigs)
-qpig_time <- time_qdata(qpig,c("GILTS","PROFIT","PRODUCTION","HERDSZ"),"TIME")
-qtime(qpig_time, shift=c(1,4))
+qtime(TIME, c("GILTS","PROFIT","PRODUCTION","HERDSZ"), qpig, shift=c(1,4))
