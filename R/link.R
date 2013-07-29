@@ -36,6 +36,8 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
     stop('the mutaframes must be created from qdata()')
   if (is.null(var1) || (link2 && is.null(var2)))
     stop("must specify linking variables")
+  if (link2 && length(var1) != length(var2))
+      stop("the length of two keys must be the same")
   # is a mutaframe changed? a token to control the listener and avoid infinite recursion
   change1 = change2 = FALSE
   id = c(add_listener(mf1, function(i, j) {
@@ -43,15 +45,15 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
     change2 <<- TRUE
     # mf1 changed --> query var1 --> match var2 --> change mf2$.brushed
     # update mf2$.brushed according to mf1's selected categories
-    ulink = unique(mf1[, var1][mf1$.brushed])
+    ulink = unique(as.data.frame(mf1)[mf1$.brushed, var1])
     if (link2) {
-      mf2$.brushed = mf2[, var2] %in% ulink
-    } else mf1$.brushed = mf1[, var1] %in% ulink
+      mf2$.brushed = checkrow(mf2[, var2], ulink)
+    } else mf1$.brushed = checkrow(mf1[, var1], ulink)
     change2 <<- FALSE
   }), if (link2) add_listener(mf2, function(i, j) {
     if (j != '.brushed' || change2) return()
     change1 <<- TRUE
-    mf1$.brushed = mf1[, var1] %in% unique(mf2[, var2][mf2$.brushed])
+    mf1$.brushed = checkrow(mf1[, var1], unique(as.data.frame(mf2)[mf2$.brushed, var2]))
     change1 <<- FALSE
   }))
   l1 = attr(mf1, 'Link'); l1$linkid = c(l1$linkid, id[1])
@@ -59,6 +61,20 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
     l2 = attr(mf2, 'Link'); l2$linkid = c(l2$linkid, id[2])
   }
   id
+}
+
+checkrow=function(a,b){
+    if (is.vector(a)){
+        return(a %in% b)
+    }
+    a=as.data.frame(a)
+    b=as.data.frame(b)
+    s=matrix(nrow=nrow(a),ncol=ncol(a))
+    for (i in 1:ncol(a)){
+        s[,i]=a[,i] %in% b[,i]
+    }
+    res=as.logical(unlist(apply(s,1,prod)))
+    return(res)
 }
 
 #' k-Nearest neighbor linking
