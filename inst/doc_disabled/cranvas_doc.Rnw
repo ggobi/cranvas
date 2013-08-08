@@ -1213,37 +1213,11 @@ is introduced in Section \ref{sub:Categorical-linking}.
 Generally speaking, all the objects and views from the same data set
 are linked in a chain. A lot of links created by the listeners (see
 Section \ref{sub:Listener}) are embedded in the \texttt{q-}functions.
-Figure \ref{fig:An-example-system-linkage} shows an example system
-of the linkage. 
-
-\begin{center}
-\begin{figure}[H]
-\begin{centering}
-\includegraphics[width=0.6\textwidth]{figure/cranvas_link_1}
-\par\end{centering}
-
-\caption{\label{fig:An-example-system-linkage}An example system of linkage.
-B is the mutaframe, C and D are the reference classes, A and E are
-the views, all the arrows are the listeners.}
-\end{figure}
-
-\par\end{center}
 
 In some cases users may need an additional short link to brush points
 from two data sets. So \texttt{cranvas} provides the functions to
-build two types of linkage for the problems in Figure \ref{fig:self-cross-linkage}.
-
-\begin{center}
-\begin{figure}[H]
-\begin{centering}
-\includegraphics[width=0.6\textwidth]{figure/cranvas_link_2}
-\par\end{centering}
-
-\caption{\label{fig:self-cross-linkage}Two types of linkage. Left: self-linkage
-to the mutaframe itself. Right: cross linkage between two mutaframes.}
-\end{figure}
-
-\par\end{center}
+build two types of linkage for both self linkage and cross linkage 
+between two mutaframes. 
 
 
 \subsubsection{Categorical linking\label{sub:Categorical-linking}}
