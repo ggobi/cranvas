@@ -59,7 +59,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     time <- as.character(call$time)
     y <- as.character(call$y)
     if(y[1] == "c") y <- y[-1]
-    data <- time_qdata(data, y, time)
+    data <- time_qdata(data, y, time, c(time,as.character(call$period),as.character(call$group)))
     b <- brush(data)
     meta <- Time.meta$new(varname = list(x = time), minor = 'xy') 
     time_meta_initialize(meta, call, data=data, period=period, group=group,
@@ -561,7 +561,7 @@ Time.meta =
 ##' qnasa <- qdata(nasa11)
 ##' qnasa1 <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"), "TimeIndx")
 ##'
-time_qdata <- function(regular_qdata, y, timeVar) {
+time_qdata <- function(regular_qdata, y, timeVar, link) {
     ycol <- length(y)
     data <- as.data.frame(regular_qdata)
     usecol <- colnames(data) %in% c(".brushed",".visible",".color",".border",".size")
@@ -585,7 +585,7 @@ time_qdata <- function(regular_qdata, y, timeVar) {
                     border = as.character(settingh[,4]), 
                     size = settingh[,5], brushed = settingh[,1], 
                     visible = settingh[,2])
-    link_cat(newdat,timeVar,regular_qdata,timeVar)
+    link_cat(newdat,link,regular_qdata,link)
     attr(newdat,"timeVar") <- timeVar
     return(newdat)
 }
