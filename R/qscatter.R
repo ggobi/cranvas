@@ -178,30 +178,83 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
   }
 
   tree = createTree(meta$xy)  # build a search tree
-  brush_mouse_move = function(layer, event) {
+  
+  #Altered by Kaiser
+  brush_mouse_move_release = function(layer, event) {
     rect = update_brush_size(meta, event)
     rect[1, ] = rect[1, ] - meta$brush.adj
     rect[2, ] = rect[2, ] + meta$brush.adj
     if (!(b$select.only && b$draw.brush)) {
       hits = rectLookup(tree, rect[1, ], rect[2, ])
       selected(data) = mode_selection(selected(data), hits, mode = b$mode)
-    } else qupdate(layer.brush)
+    } else { 
+		cat('qupdate\n')
+		qupdate(layer.brush)
+	}
     common_mouse_move(layer, event, data, meta)
-  }
+  } 
+  
+  #Altered by Kaiser
+  brush_mouse_move = function(layer, event) {
+    #timer -- Added by Kaiser
+	x = Sys.time()
+	xc = as.numeric(x)
+	global_time <- attr(brush_mouse_move,"static_gt")
+	if(is.null(global_time)){
+		global_time <- 0
+	}
+	xg=as.numeric(global_time+0.11)
+	if(xc<xg){
+		return()
+	}
+	attr(brush_mouse_move,"static_gt") <<- xc
+    #timer
+  
+	# actual drawing related work
+    rect = update_brush_size(meta, event)
+    rect[1, ] = rect[1, ] - meta$brush.adj
+    rect[2, ] = rect[2, ] + meta$brush.adj
+    if (!(b$select.only && b$draw.brush)) {
+      hits = rectLookup(tree, rect[1, ], rect[2, ])
+      selected(data) = mode_selection(selected(data), hits, mode = b$mode)
+    } else { 
+		cat('qupdate\n')
+		qupdate(layer.brush)
+	}
+    common_mouse_move(layer, event, data, meta)
+  }	
+  
+  
+  m_hits = 0
+  
   brush_mouse_release = function(layer, event) {
     common_mouse_release(layer, event, data, meta)
-    brush_mouse_move(layer, event)
+    brush_mouse_move_release(layer, event)
   }
 
   key_press = function(layer, event) run_handler(meta$handlers$keypress, layer, event)
   meta$handlers$keypress = list(function(layer, event) {
+    #timer -- Added by Kaiser
+	x = Sys.time()
+	xc = as.numeric(x)
+	global_time <- attr(key_press,"static_gt")
+	if(is.null(global_time)){
+		global_time <- 0
+	}
+	xg=as.numeric(global_time+0.11)
+	if(xc<xg){
+		return()
+	}
+	attr(key_press,"static_gt") <<- xc
+    #timer  
+	
+	#actual key_press event handling
     common_key_press(layer, event, data, meta)
     shift = event$modifiers() == Qt$Qt$ShiftModifier
     if (shift && length(i <- which(match_key(c('Left', 'Right', 'Up', 'Down'))))) {
       j = c(1, 1, 2, 2)[i]; k = c(1, -1, -1, 1)[i]
       meta$limits[, j] = extend_ranges(meta$limits[, j], k * c(1, -1) * 0.02)
       update_limits(meta$limits)
-      qupdate(layer.grid)
     } else if (length(i <- which(match_key(c('Up', 'Down'))))) {
       ## change size
       data$.size = pmax(0.1, c(1.1, 0.9)[i] * data$.size)
