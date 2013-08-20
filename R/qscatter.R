@@ -255,6 +255,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
       j = c(1, 1, 2, 2)[i]; k = c(1, -1, -1, 1)[i]
       meta$limits[, j] = extend_ranges(meta$limits[, j], k * c(1, -1) * 0.02)
       update_limits(meta$limits)
+	  qupdate(layer.grid)
     } else if (length(i <- which(match_key(c('Up', 'Down'))))) {
       ## change size
       data$.size = pmax(0.1, c(1.1, 0.9)[i] * data$.size)
