@@ -211,12 +211,11 @@ record_keys = function(meta, event) {
 #' @examples ## sync_limits(meta, layer1, layer2, layer3)
 sync_limits = function(meta, ...) {
   l = list(...)
-  l = l[!is.na(l)]
   meta$limitsChanged$connect(function() {
     meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 30
     meta$pos = meta$limits[2:3]
     r = qrect(meta$limits)
-    sapply(l, function(x) x$setLimits(r))
+    lapply(l, function(x) if (inherits(x, 'Qanviz::RLayer')) x$setLimits(r))
   })
 }
 
