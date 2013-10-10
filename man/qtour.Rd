@@ -63,7 +63,6 @@ qtour(vars = ~., data, tour_path, aps = 1, fps = 30, rescale = TRUE, sphere = FA
 }
 \examples{
 library(cranvas)
-library(reshape)
 library(tourr)
 data(flea, package = "tourr")
 

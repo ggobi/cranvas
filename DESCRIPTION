@@ -32,7 +32,6 @@ Imports:
 Suggests:
     nlme,
     maps,
-    reshape,
     mapdata,
     ggmap,
     RgoogleMaps,

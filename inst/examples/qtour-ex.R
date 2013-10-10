@@ -1,5 +1,4 @@
 library(cranvas)
-library(reshape)
 library(tourr)
 data(flea, package = 'tourr')
 
