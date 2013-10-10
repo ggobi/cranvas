@@ -57,9 +57,10 @@ qparallel(100:110, data = qbrfss)
 ## TAO data
 data(tao, package = "tourr")
 
-qtao <- qdata(tao, data = qtao)
+qtao <- qdata(tao)
 qmval(~., data = qtao)
-qmval(~., data = qtao, horizontal = FALSE, standardize = FALSE, main = "horizontal plot with counts")
+qmval(~., data = qtao, horizontal = FALSE, standardize = FALSE, 
+    main = "horizontal plot with counts")
 qscatter(longitude, latitude, data = qtao)
 }
 \author{

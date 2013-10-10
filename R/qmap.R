@@ -445,7 +445,7 @@ Map.meta = setRefClass(
 #' @param ... passed to \code{\link{cart_polygon}}
 #' @return A mutaframe of region names and labels, with an attribute
 #'   \code{MapData} containing the coordinates of polygons.
-#' @author Yihui Xie
+#' @author Yihui Xie and Xiaoyue Cheng
 #' @export
 #' @examples library(cranvas); map_qdata('state'); map_qdata('county', 'iowa')
 map_qdata = function(

@@ -2,8 +2,8 @@
 \alias{qbar}
 \title{Draw a bar plot}
 \usage{
-qbar(x, data, weight = NULL, space = 0.1, main = "", horizontal = FALSE, standardize = FALSE, 
-    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
+qbar(x, data, weight = NULL, space = 0.1, main = "", horizontal = FALSE, 
+    standardize = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
 }
 \arguments{
   \item{x}{a variable name (will be coerced to a factor if

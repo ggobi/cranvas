@@ -69,17 +69,16 @@ qtitanic <- qdata(titanic, color = Survived)
 qtitanic$.brushed <- qtitanic$Survived == "Yes"
 ## passengers have a higher probability of survival than crew members ...
 print(qmosaic(qtitanic, Freq ~ Passenger, divider = c("hspine")))
-## unless sex is taken into account: the conditional association between
-## Passenger and Survival changes to the opposite: both male and female crew
-## members had better changes of survival than their counterparts on the
-## passenger side.
+## unless sex is taken into account: the conditional association between Passenger
+## and Survival changes to the opposite: both male and female crew members had
+## better changes of survival than their counterparts on the passenger side.
 print(qmosaic(qtitanic, Freq ~ Passenger | Sex, divider = c("hspine", "hspine")))
 
 ## this is an example of the Simpson's paradox, and is due to the strong
 ## association between crew membership and gender.
 print(qmosaic(qtitanic, Freq ~ Sex + Passenger, divider = c("vspine", "hspine")))
 
-#######################
+####################### 
 data(happy)
 qhappy <- qdata(happy, color = happy)
 

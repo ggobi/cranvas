@@ -7,7 +7,8 @@ qnrc = qdata(nrcstat, color = RegCode)
 ## automatically brush the bar plot
 brush(qnrc, 'style')$color = 'brown'
 l = attr(o1$view, 'meta')$limits
-p = approx(runif(50, l[1, 1], l[2, 1]), runif(50, l[1, 2], l[2, 2]), n = 500)  # interpolate some random positions
+# interpolate some random positions
+p = approx(runif(50, l[1, 1], l[2, 1]), runif(50, l[1, 2], l[2, 2]), n = 500)
 manual_brush(o1$view, cbind(p$x, p$y), pause = 0.1)
 
 ## can also brush the par-coords plot

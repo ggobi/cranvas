@@ -3,8 +3,8 @@
 \title{Draw boxplots for several variables in the data or a continuous
 variable vs a categorical variable}
 \usage{
-qboxplot(vars, data, at = NULL, width = NULL, horizontal = FALSE, main = "", xlim = NULL, 
-    ylim = NULL, xlab = NULL, ylab = NULL, points = FALSE)
+qboxplot(vars, data, at = NULL, width = NULL, horizontal = FALSE, main = "", 
+    xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL, points = FALSE)
 }
 \arguments{
   \item{vars}{a list of variables (a character vector), or

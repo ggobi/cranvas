@@ -16,6 +16,9 @@ map_qdata(database, regions = ".", color = "gray50", border = "gray90", size = 4
   parameter in the data (i.e. \code{data$.size}); see
   \code{\link{cart_polygon}} for details}
 
+  \item{diffuse}{passed into \code{\link{cart_polygon}}.
+  Default to be 5.}
+
   \item{...}{passed to \code{\link{cart_polygon}}}
 
   \item{color}{colors of graphical elements (default dark
@@ -57,5 +60,5 @@ map_qdata("state")
 map_qdata("county", "iowa")
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+  Yihui Xie and Xiaoyue Cheng
 }

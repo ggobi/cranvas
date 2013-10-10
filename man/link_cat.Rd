@@ -66,17 +66,34 @@ id <- link_cat(qwages, var1 = "id", qwg, var2 = "id")
 remove_link(qwages, id[1])
 remove_link(qwg, id[2])
 
+### (1.5) linking between two datasets, using several id variables
+id <- link_cat(qwages, var1 = c("black", "hispanic"), qwg, var2 = c("black", "hispanic"))
+
+qscatter(exper, lnw, data = qwages, alpha = 0.5)
+qbar(black, data = qwg)
+qbar(hispanic, data = qwg)
+
+remove_link(qwages, id[1])
+remove_link(qwg, id[2])
+
 ### (2) linking to oneself through a categorical variable
 data(flea, package = "tourr")
 
 qflea <- qdata(flea, color = species)
-qhist(tars1)  # an ordinary histogram; try brushing
+qhist(tars1, data = qflea)  # an ordinary histogram; try brushing
 
 ## now we link qflea to itself by species
 id <- link_cat(qflea, "species")
 ## brush the plot and see what happens
 
 remove_link(qflea, id)  # remove this linking; back to normal linking again
+
+### (2.5) link to oneself by several categorical variables
+idmulti <- link_cat(qwages, c("ged", "black", "hispanic"))
+
+qscatter(exper, lnw, data = qwages, alpha = 0.5)
+
+remove_link(qwages, idmulti)
 
 ### (3) link the original data with a frequency table
 tab2 <- as.data.frame(table(flea$species))

@@ -313,7 +313,8 @@ prefer_width = function(text, horizontal = TRUE) {
 #' @export
 #' @examples library(qtpaint); s = qscene()
 #' qlayer(s, paintFun = function(layer, painter){d = one_pixel(painter)
-#' qdrawSegment(painter, .1, seq(0,1,.1), .1 + d[1], seq(0,1,.1))  # one pixel segments
+#' # one pixel segments
+#' qdrawSegment(painter, .1, seq(0,1,.1), .1 + d[1], seq(0,1,.1))
 #' qdrawRect(painter, .3, .4, .3 + d[1], .4 + d[2]) # one pixel rectangle
 #' }, limits = qrect(c(0, 1), c(0, 1)))
 #' qplotView(scene = s)

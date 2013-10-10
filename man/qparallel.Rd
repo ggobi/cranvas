@@ -172,7 +172,7 @@ qparallel(~., data = test.mat)
 ## for large data, short ticks are automatically used instead of segments
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+  Yihui Xie
 }
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
