@@ -38,6 +38,7 @@ Suggests:
     animation,
     randomForest,
     tourr (>= 0.5),
+    knitr,
     Rcartogram
 LazyData: true
 Collate:

@@ -1,5 +1,6 @@
 # helpr function to save cranvas plots to png in knitr
 qsave_knit = function(before, options, envir) {
+  library(knitr)
   if (before || options$fig.num == 0L || !length(options$view)) return()
   my_save = function(name, view) {
     qsave(name, view, width = options$dpi * options$fig.width, 
