@@ -160,7 +160,7 @@ qparallel = function(
   meta$brush.size = c(1, -1) * apply(meta$limits, 2, diff) / 15
 
   draw.glyph = switch(
-    meta$glyph, tick = qglyphSegment(d = ifelse(horizontal, pi/2, 0)),
+    meta$glyph, tick = qglyphSegment(direction = ifelse(horizontal, pi/2, 0)),
     circle = qglyphCircle(), square = qglyphSquare(),
     triangle = qglyphTriangle()
   )
