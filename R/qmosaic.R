@@ -1,7 +1,7 @@
 
 constructCondition <- function (hdata) {
-  require(reshape2)
-  require(plyr)
+  library(reshape2)
+  library(plyr)
 
   hdata$ID <- 1:nrow(hdata)
   res.melt <- melt(hdata,id.var="ID")
