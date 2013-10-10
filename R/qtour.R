@@ -116,10 +116,10 @@ Tour.meta$methods(
     timer$start()
   },
   slower = function() {
-    aps <<- meta$aps * 0.9
+    aps <<- aps * 0.9
   },
   faster = function() {
-    aps <<- meta$aps * 1.1
+    aps <<- aps * 1.1
   },
   setSpeed = function(ratio) {
     aps <<- aps.init * ratio
