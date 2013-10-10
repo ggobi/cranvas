@@ -31,14 +31,14 @@ paste_formula <- function(form) {
 
 
 find_x_label <- function(form, divider) {
-  parsed <- parse_product_formula(form)
+  parsed <- productplots::parse_product_formula(form)
   vars <- c(parsed$marg, parsed$cond)
   xlabs <- rev(vars[grep("h",divider)])
   paste(xlabs,"", collapse="+ ")
 }
 
 find_y_label <- function(form, divider) {
-  parsed <- parse_product_formula(form)
+  parsed <- productplots::parse_product_formula(form)
   vars <- c(parsed$marg, parsed$cond)
   ylabs <- rev(vars[grep("v",divider)])
   paste(ylabs,"", collapse="+ ")  
@@ -47,7 +47,7 @@ find_y_label <- function(form, divider) {
 settitle <- function(form) {
 #  browser()
   if (!is.null(form))
-    paste_formula(parse_product_formula(form))
+    paste_formula(productplots::parse_product_formula(form))
 }
 
 extractVars <- function(form) {
@@ -78,7 +78,7 @@ extractVars <- function(form) {
 ##' @author Heike Hofmann
 ##' @export
 ##' @example inst/examples/qmosaic-ex.R
-qmosaic <- function(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE, subset=NULL, colour="grey30", main=NULL, ...) {
+qmosaic <- function(data, formula, divider = productplots::mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE, subset=NULL, colour="grey30", main=NULL, ...) {
     data = check_data(data)
     b = brush(data)
     b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush

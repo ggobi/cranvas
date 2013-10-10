@@ -3,8 +3,8 @@
 \title{Mosaic plot.
 Create a mosaicplot using a formula (as described in prodplot)}
 \usage{
-qmosaic(data, formula, divider = mosaic(), cascade = 0, scale_max = TRUE, na.rm = FALSE, 
-    subset = NULL, colour = "grey30", main = NULL, ...)
+qmosaic(data, formula, divider = productplots::mosaic(), cascade = 0, scale_max = TRUE, 
+    na.rm = FALSE, subset = NULL, colour = "grey30", main = NULL, ...)
 }
 \arguments{
   \item{data}{a mutaframe which is typically built upon a
