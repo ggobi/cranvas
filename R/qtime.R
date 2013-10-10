@@ -591,7 +591,7 @@ time_qdata <- function(regular_qdata, y, timeVar, link) {
 }
 
 
-##' Initialize the Time.meta
+# Initialize the Time.meta
 time_meta_initialize <- function(meta, call, data, period, group,
                                  shift, size, alpha, asp,
                                  main, xlab, ylab,...){
@@ -712,7 +712,7 @@ time_meta_initialize <- function(meta, call, data, period, group,
 }
 
 
-##' Set limits for yaxis in qtime
+# Set limits for yaxis in qtime
 meta.yaxis <- function(meta) {
     if (meta$shiftUP) {
         meta$yat <- 1:meta$nyvar+0.5
@@ -740,7 +740,7 @@ meta.yaxis <- function(meta) {
     }
 }
 
-##' Draw the selected data in qtime
+# Draw the selected data in qtime
 selected_draw <- function(meta,b,hits,painter){
     qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[hits], 
                meta$ytmp[hits], stroke = b$color, fill = b$color) 
@@ -761,8 +761,8 @@ selected_draw <- function(meta,b,hits,painter){
     }
 }
 
-##' key M for switching the serie mode
-##' on the serie mode users can drag any serie horizontally
+# key M for switching the serie mode on the serie mode users can drag any serie
+# horizontally
 switch_serie_mode = function(meta,data){
     if (meta$drag.mode) {
         meta$drag.mode <- FALSE
@@ -787,14 +787,13 @@ switch_serie_mode = function(meta,data){
     }
 }
 
-##' key G for shifting the wrapping gear
-##' i.e. changing the period/frequency
+# key G for shifting the wrapping gear, i.e. changing the period/frequency
 shift_wrap_gear = function(meta){
     meta$wrap.shift <- c(meta$wrap.shift[-1],meta$wrap.shift[1])
     #qupdate(layer.WRAPtext)
 }
 
-##' key U for separating the groups by shifting up
+# key U for separating the groups by shifting up
 separate_group <- function(meta){
     if (meta$nyvar>1 & meta$shift) {
         for (i in 1:meta$nyvar){
@@ -813,7 +812,7 @@ separate_group <- function(meta){
     meta.yaxis(meta)
 }
 
-##' key D for mixing the groups
+# key D for mixing the groups
 mix_group <- function(meta){
     meta$shiftUP <- FALSE
     if (meta$nyvar>1 & meta$shift) {
@@ -838,7 +837,7 @@ mix_group <- function(meta){
     meta.yaxis(meta)
 }
 
-##' key Right for wrapping
+# key Right for wrapping
 wrap_forward <- function(meta,data,crt_range){
     hits <- selected(data)[meta$orderEnter]
     if (meta$serie.mode & sum(hits)) {
@@ -875,7 +874,7 @@ wrap_forward <- function(meta,data,crt_range){
     meta$xlabels <- format(meta$xat)
 }
 
-##' key Left for back wrapping
+# key Left for back wrapping
 wrap_backward <- function(meta,data,crt_range){    
     if (meta$shift) {
         meta$xtmp <- meta$time
@@ -921,7 +920,7 @@ wrap_backward <- function(meta,data,crt_range){
     meta$xlabels <- format(meta$xat)
 }
 
-##' key Up/Down for adjusting the point size / line width
+# key Up/Down for adjusting the point size / line width
 size_up <- function(meta){
     meta$radius <- meta$radius + 1
 }
@@ -929,7 +928,7 @@ size_down <- function(meta){
     meta$radius <- max(0.1, meta$radius - 1)
 }
 
-##' key Plus/Minus for alpha blending
+# key Plus/Minus for alpha blending
 alpha_plus <- function(meta){
     meta$alpha <- max(0.01, 1/nrow(data), min(1, 1.1 * meta$alpha))
 }
