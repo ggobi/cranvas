@@ -17,8 +17,8 @@
 library(cranvas)
 qbrfss <- qdata(brfss)
 
-qmval(names(brfss)[40:50])
-qmval(51:68)
-qmval(~poorhlth + fruit + greensal)
+qmval(names(brfss)[40:50], data = qbrfss)
+qmval(51:68, data = qbrfss)
+qmval(~poorhlth + fruit + greensal, data = qbrfss)
 }
 \keyword{datasets}
