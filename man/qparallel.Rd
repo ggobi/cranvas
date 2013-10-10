@@ -2,10 +2,11 @@
 \alias{qparallel}
 \title{Draw a parallel coordinates plot}
 \usage{
-qparallel(vars = ~., data, scale = "range", names = break_str(vars), na.action = na_impute, 
-    center = NULL, order = c("none", "MDS", "ANOVA", "randomForest"), horizontal = FALSE, 
-    glyph = c("auto", "line", "tick", "circle", "square", "triangle"), boxplot = FALSE, 
-    width = NULL, jitter = NULL, amount = NULL, main = "", alpha = 1)
+qparallel(vars = ~., data, scale = "range", names = break_str(vars), 
+    na.action = na_impute, center = NULL, order = c("none", "MDS", "ANOVA", 
+        "randomForest"), horizontal = FALSE, glyph = c("auto", "line", 
+        "tick", "circle", "square", "triangle"), boxplot = FALSE, width = NULL, 
+    jitter = NULL, amount = NULL, main = "", alpha = 1)
 }
 \arguments{
   \item{scale}{data standardizing method; possible values
@@ -88,7 +89,8 @@ qflea <- qdata(flea, color = species)
 qparallel(~., data = qflea)  # all variables
 qparallel(~aede1 + aede2 + aede3, data = qflea)  # 3 variables
 qparallel(1:4, data = qflea)  # first 4 variables
-qparallel(c("head", "aede1", "tars2", "aede3"), data = qflea)  # input variables by names
+# input variables by names
+qparallel(c("head", "aede1", "tars2", "aede3"), data = qflea)
 
 ## scaling
 qparallel(~., data = qflea, main = "scale columns individually to [0, 1]")
@@ -101,7 +103,8 @@ qparallel(~., data = qflea, center = median, boxplot = TRUE)
 
 ## ordering
 qparallel(~., data = qflea, order = "MDS")  # similar variables together
-qparallel(~., data = qflea, order = "ANOVA")  # color is covariate, order by ANOVA p-value
+# color is covariate, order by ANOVA p-value
+qparallel(~., data = qflea, order = "ANOVA")
 ## we can use arrow keys to manually order the variables
 
 ## horizontal direction
@@ -125,8 +128,8 @@ remove_link(qflea, id)
 qnrc <- qdata(nrcstat, color = RegCode)
 
 ## Overview: type, rankings
-qparallel(13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick", horizontal = TRUE, 
-    boxplot = TRUE)
+qparallel(13:10, data = qnrc, main = "Overview of Rankings", glyph = "tick", 
+    horizontal = TRUE, boxplot = TRUE)
 
 ## link to a droplist (institution names)
 record_selector(Institution, qnrc)

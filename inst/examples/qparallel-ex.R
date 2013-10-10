@@ -8,7 +8,8 @@ qflea = qdata(flea, color = species)
 qparallel(~., data = qflea)  # all variables
 qparallel(~aede1+aede2+aede3, data = qflea)  # 3 variables
 qparallel(1:4, data = qflea)  # first 4 variables
-qparallel(c('head','aede1','tars2','aede3'), data = qflea)  # input variables by names
+# input variables by names
+qparallel(c('head','aede1','tars2','aede3'), data = qflea)
 
 ## scaling
 qparallel(~., data = qflea, main = 'scale columns individually to [0, 1]')
@@ -21,7 +22,8 @@ qparallel(~., data = qflea, center = median, boxplot = TRUE)
 
 ## ordering
 qparallel(~., data = qflea, order = 'MDS')  # similar variables together
-qparallel(~., data = qflea, order = 'ANOVA')  # color is covariate, order by ANOVA p-value
+# color is covariate, order by ANOVA p-value
+qparallel(~., data = qflea, order = 'ANOVA')
 ## we can use arrow keys to manually order the variables
 
 ## horizontal direction
