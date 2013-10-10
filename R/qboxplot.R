@@ -161,7 +161,7 @@ qboxplot =
     layer.main =
         qlayer(paintFun = main_draw, mousePressFun = brush_mouse_press,
                mouseReleaseFun = brush_mouse_release,
-               mouseMove = brush_mouse_move,
+               mouseMoveFun = brush_mouse_move,
                keyPressFun = key_press, keyReleaseFun = key_release,
                focusInFun = function(layer, event) {
                    common_focus_in(layer, event, data, meta)

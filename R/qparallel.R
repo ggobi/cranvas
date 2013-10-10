@@ -344,7 +344,7 @@ qparallel = function(
   layer.main = qlayer(
     paintFun = main_draw,
     mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-    mouseMove = brush_mouse_move, keyPressFun = brush_key_press,
+    mouseMoveFun = brush_mouse_move, keyPressFun = brush_key_press,
     keyReleaseFun = brush_key_release, hoverMoveFun = identify_hover,
     focusInFun = function(layer, event) common_focus_in(layer, event, data, meta),
     focusOutFun = function(layer, event) common_focus_out(layer, event, data, meta),

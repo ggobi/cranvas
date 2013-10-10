@@ -424,7 +424,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
                                 hoverLeaveFun = query_hover_leave,
                                 mousePressFun = brush_mouse_press, 
                                 mouseReleaseFun = brush_mouse_release,
-                                mouseMove = brush_mouse_move,
+                                mouseMoveFun = brush_mouse_move,
                                 wheelFun = mouse_wheel,
                                 keyPressFun = key_press,
                                 focusInFun = function(layer, event) {

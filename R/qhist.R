@@ -315,7 +315,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
   layer.main = qlayer(
     paintFun = main_draw,
     mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-    mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
+    mouseMoveFun = brush_mouse_move, hoverMoveFun = identify_hover,
     keyPressFun = key_press, keyReleaseFun = key_release, wheelFun = mouse_wheel,
     focusInFun = function(layer, event) {
       common_focus_in(layer, event, data, meta)
@@ -329,7 +329,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
   layer.cues = qlayer(
     paintFun = cue_draw,
     mousePressFun = cue_mouse_press, mouseReleaseFun = cue_mouse_release,
-    mouseMove = cue_mouse_move, hoverMoveFun = cue_hover,
+    mouseMoveFun = cue_mouse_move, hoverMoveFun = cue_hover,
     keyPressFun = key_press, keyReleaseFun = key_release,
     focusInFun = function(layer, event) {
       common_focus_in(layer, event, data, meta)

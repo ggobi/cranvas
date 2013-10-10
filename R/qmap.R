@@ -305,7 +305,7 @@ qmap = function(
   layer.main = qlayer(
     paintFun = main_draw,
     mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-    mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
+    mouseMoveFun = brush_mouse_move, hoverMoveFun = identify_hover,
     keyPressFun = key_press, keyReleaseFun = key_release,
     wheelFun = mouse_wheel,
     focusInFun = function(layer, event) {

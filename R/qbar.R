@@ -152,7 +152,7 @@ qbar = function(x, data, weight = NULL, space = 0.1, main = '', horizontal = FAL
   layer.main = qlayer(
     paintFun = main_draw,
     mousePressFun = brush_mouse_press, mouseReleaseFun = brush_mouse_release,
-    mouseMove = brush_mouse_move, hoverMoveFun = identify_hover,
+    mouseMoveFun = brush_mouse_move, hoverMoveFun = identify_hover,
     keyPressFun = key_press, keyReleaseFun = key_release,
     focusInFun = function(layer, event) {
       common_focus_in(layer, event, data, meta)
