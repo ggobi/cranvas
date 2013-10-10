@@ -178,6 +178,7 @@ NULL
 #' @format data.frame: 50 obs. of 13 variables
 #' @keywords datasets
 #' @source \url{http://stat-computing.org/dataexpo/2006/}
+#' @example inst/examples/nasa-ex.R
 #' @examples library(cranvas)
 #' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 #' qnasa <- qdata(nasa11)

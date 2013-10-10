@@ -17,5 +17,12 @@ library(cranvas)
 nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 qnasa <- qdata(nasa11)
 qtime(TimeIndx, ts, qnasa, shift = c(1, 12))
+
+library(cranvas)
+qnasa <- qdata(nasa)
+
+qscatter(Long, Lat, data = qnasa)
+qscatter(TimeIndx, tsa_tovs, data = qnasa)
+qparallel(data = qnasa)
 }
 \keyword{datasets}
