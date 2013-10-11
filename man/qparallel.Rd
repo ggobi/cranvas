@@ -12,7 +12,7 @@ qparallel(vars = ~., data, scale = "range", names = break_str(vars),
   \item{scale}{data standardizing method; possible values
   are \code{'range'} (scale columns individually to [0,
   1]), \code{'I'} (do not transform; use original values),
-  \code{'var'} (make each column of mean 0 var 1), and
+  \code{'sd'} (make each column of mean 0 sd 1), and
   \code{'global'} (scale all the columns to [0, 1] using
   global minimum and maximum); other character strings here
   means to use custom functions (see examples below)}
@@ -95,7 +95,7 @@ qparallel(c("head", "aede1", "tars2", "aede3"), data = qflea)
 ## scaling
 qparallel(~., data = qflea, main = "scale columns individually to [0, 1]")
 qparallel(~., data = qflea, scale = "I", main = "unscaled data")
-qparallel(~., data = qflea, scale = "var", main = "mean 0 variance 1")
+qparallel(~., data = qflea, scale = "sd", main = "mean 0 sd 1")
 qparallel(~., data = qflea, scale = "global", main = "scale globally to [0, 1]")
 
 ## centering by median; add boxplots to assist understanding
@@ -161,7 +161,8 @@ qmval(~., data = mf)
 if (require("animation")) {
     data(pollen, package = "animation")
     qpollen <- qdata(pollen)
-    qparallel(~.)  # hold the minus key (-) till the plot is semi-transparent
+    qparallel(~., data = qpollen)
+    # hold the minus key (-) till the plot is semi-transparent
 }
 
 

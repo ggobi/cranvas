@@ -80,8 +80,10 @@ flea_tour$pause()
 
 ## adjust speed
 flea_tour$start()
-flea_tour$speed(2)  # speed up (twice as fast)
-flea_tour$speed(0.5)  # slow down
+flea_tour$setSpeed(2)  # speed up (twice as fast)
+flea_tour$setSpeed(0.5)  # slow down
+flea_tour$faster()
+flea_tour$slower()
 
 ## change the type of tour
 flea_tour$tour_path <- guided_tour(holes, d = 3)
