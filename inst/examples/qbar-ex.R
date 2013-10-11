@@ -17,8 +17,8 @@ qbar(RegCode, data = qnrc, horizontal = TRUE)  # horizontal plot
 qbar(RegCode, data = qnrc, standardize = TRUE)  # standardize to 1
 
 ## use border color to split the bars
-qnrc2 = qdata(nrcstat, data = qnrc, color = 'white', border = Control)
-qbar(RegCode, data = qnrc)
+qnrc2 = qdata(nrcstat, color = 'white', border = Control)
+qbar(RegCode, data = qnrc2)
 
 ## happy data
 library(productplots)
