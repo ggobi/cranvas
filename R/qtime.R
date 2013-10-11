@@ -502,9 +502,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     view$setWindowTitle(meta$main)
     view$resize(xWidth,yWidth)
     attr(view, 'meta') = meta
-    layerList <- LayerList(layer.root = layer.root)
-    res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
-    res    
+    view
 }
 
 Time.meta =

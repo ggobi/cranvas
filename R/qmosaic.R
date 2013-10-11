@@ -576,9 +576,7 @@ qmosaic <- function(data, formula, divider = productplots::mosaic(), cascade = 0
         brush_mouse_move(layer = layer.main, event = list(pos = function() pos))
     }
     attr(view, 'meta') = meta
-    layerList <- LayerList(layer.root = layer.root)
-    res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
-    res
+    view
 }
 
 

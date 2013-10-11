@@ -408,9 +408,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
     qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis); qupdate(layer.main)
   })
   attr(view, 'meta') = meta
-  layerList <- LayerList(layer.root = layer.root)
-  res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
-  res
+  view
 }
 
 Hist.meta = setRefClass("Hist_meta", contains = "CommonMeta",

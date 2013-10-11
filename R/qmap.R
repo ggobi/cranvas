@@ -405,9 +405,7 @@ qmap = function(
 
   ## attach meta to the returned value (for post-processing or debugging)
   attr(view, 'meta') = meta
-  layerList <- LayerList(layer.root = layer.root)
-  res <- CranvasPlot(layerList, scene = scene, view = view, meta = meta, data = data)
-  res
+  view
 }
 
 
