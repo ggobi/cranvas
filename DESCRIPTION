@@ -44,9 +44,6 @@ LazyData: true
 Collate:
     'cranvas-package.R'
     'meta.R'
-    'LayerList-class.R'
-    'Cranvas-class.R'
-    'CranvasPlot-class.R'
     'utils.R'
     'data.R'
     'axes.R'
