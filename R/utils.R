@@ -488,3 +488,22 @@ na_colors = function(x, color = 'gray') {
   x[is.na(x)] = color
   x
 }
+
+# different scaling methods
+rescale = function(x, type = 'range', ...) {
+  switch(
+    type, range = rescale_range(x, ...), I = x, rank = rank(x, ...),
+    sd = rescale_sd(x, ...),
+    robust = (x - median(x, na.rm = TRUE)) / mad(x, na.rm = TRUE)
+  )
+}
+
+rescale_range = function(x, range = c(0, 1)) {
+  x = (x - min(x, na.rm = TRUE)) / diff(range(x, na.rm = TRUE))
+  x * (range[2] - range[1]) + range[1]
+}
+
+rescale_sd = function(x, mean = 0, sd = 1) {
+  x = (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  x * sd + mean
+}

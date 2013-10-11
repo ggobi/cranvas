@@ -110,7 +110,7 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     meta$color = data$.color[ord][idx]; meta$border = data$.border[ord][idx]
     meta$size = data$.size[ord][idx]
     if (length(meta$dim3)) {
-      dim3scale=(1-rescaler(data[ord,meta$dim3][idx],type='range'))*0.66+0.33
+      dim3scale = rescale_range(data[ord,meta$dim3][idx], c(0.99, 0.33))
       meta$color = alpha(meta$color, dim3scale)
       meta$border = alpha(meta$border, dim3scale)
     #  meta$size = meta$size * dim3scale

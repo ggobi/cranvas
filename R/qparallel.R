@@ -82,12 +82,12 @@ qparallel = function(
       )  # jittering
     }
 
-    scale = switch(scale, range = function(x) {
-      xna = x[!is.na(x)]
-      (x - min(xna))/(max(xna) - min(xna))
-    }, var = base::scale, I = identity, global = function(x) {
-      (x - min(meta$plot.data))/diff(range(meta$plot.data, na.rm = TRUE))
-    }, get(scale))
+    scale = switch(
+      scale, range = rescale_range, sd = rescale_sd, I = identity,
+      global = function(x) {
+        (x - min(meta$plot.data)) / diff(range(meta$plot.data, na.rm = TRUE))
+      }, get(scale)
+    )
     meta$plot.data = apply(meta$plot.data, 2, scale)  # standardizing
 
     if (!is.null(center)) {
