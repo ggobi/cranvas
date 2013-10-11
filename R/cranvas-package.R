@@ -207,7 +207,7 @@ NULL
 #'   \url{http://lib.stat.cmu.edu/datasets/Andrews/}
 #' @examples library(cranvas)
 #' qpig <- qdata(pigs)
-#' qtime(TIME, ~GILTS+PROFIT+PRODUCTION+HERDSZ, qpig, shift=c(1,4))
+#' qtime(TIME, c("GILTS","PROFIT","PRODUCTION","HERDSZ"), qpig, shift=c(1,4))
 NULL
 
 #' Coordinates of the world map
