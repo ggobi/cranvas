@@ -18,6 +18,8 @@ Description: This is an R package as the next generation of GGobi, a software
     flexibility (from R), with the style and design borrowed from ggplot2.
 URL: http://github.com/ggobi/cranvas, http://cranvas.org
 BugReports: https://github.com/ggobi/cranvas/issues
+Depends:
+    R (>= 2.10.0)
 Imports:
     methods,
     scales,
