@@ -12,7 +12,7 @@
 #' @inheritParams qbar
 #' @param scale data standardizing method; possible values are \code{'range'}
 #'   (scale columns individually to [0, 1]), \code{'I'} (do not transform; use
-#'   original values), \code{'var'} (make each column of mean 0 var 1), and
+#'   original values), \code{'sd'} (make each column of mean 0 sd 1), and
 #'   \code{'global'} (scale all the columns to [0, 1] using global minimum and
 #'   maximum); other character strings here means to use custom functions (see
 #'   examples below)
