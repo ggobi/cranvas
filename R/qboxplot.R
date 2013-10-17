@@ -207,7 +207,7 @@ qboxplot =
     view$setWindowTitle(paste("Boxplot:", if (length(meta$vars))
                               paste(meta$vars, collapse = ', ') else
                               paste(meta$yvar, meta$xvar, sep = ' ~ ')))
-    view$resize(480 * sqrt(length(unique(meta$x))/3), 480)
+    view$resize(480 * sqrt(length(unique(if (horizontal) meta$y else meta$x))/3), 480)
 
     d.idx = add_listener(data, function(i, j) {
         idx = which(j == c('.brushed', '.color', '.border'))
