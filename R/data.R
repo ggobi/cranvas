@@ -94,7 +94,8 @@ qdata = function(data, color = "gray15", border = color, size = 4,
   ## whenever the scales information is changed, update data columns
   update_scales = function(comp) {
     if (length(l[[comp]]) && is.function(pal <- l[[comp]]$palette)) {
-      v = eval(l[[comp]]$variable, envir = mf)
+      v = l[[comp]]$variable
+      v = if (is.language(v)) eval(v, envir = mf) else mf[[v]]
       if (comp %in% c('color', 'border')) {
         mf[[sprintf('.%s', comp)]] = if (is.numeric(v))
           cscale(v, pal) else if (is.factor(v)) dscale(v, pal) else {
