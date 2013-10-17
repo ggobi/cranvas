@@ -3,7 +3,7 @@ qsave_knit = function(before, options, envir) {
   library(knitr)
   if (before || options$fig.num == 0L || !length(options$view)) return()
   my_save = function(name, view) {
-    qsave(name, view, width = options$dpi * options$fig.width, 
+    qsave(name, view, width = options$dpi * options$fig.width,
         height = options$dpi * options$fig.height)
   }
   n = options$fig.num; view = options$view

@@ -31,7 +31,7 @@
 #' \code{\link{common_mouse_release}}, \code{\link{common_key_press}} and
 #' \code{\link{common_key_release}} for common interactions in all plots, and
 #' the documentation of specific plots for other possible interactions.
-#' @importFrom qtbase Qt 
+#' @importFrom qtbase Qt
 #' @importFrom qtbase qrect qfont qsize qconnect qdataFrameModel qtimer
 #' @import qtpaint
 #' @import scales
