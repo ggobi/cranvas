@@ -28,8 +28,7 @@ qsave(filename = "Rplot.png", view, width = 480, height = 480)
 library(cranvas)
 qtennis <- qdata(tennis)
 v <- qbar(matches, data = qtennis)
-qsave(v, "tennis_bar.png", 480, 320)
-qsave(v$view, "tennis_bar.png", 480, 320)
+qsave("tennis_bar.png", v, 480, 320)
 }
 \author{
   Yihui Xie

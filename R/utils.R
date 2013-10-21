@@ -426,7 +426,7 @@ get_glyph = function(shape, size = 4) {
 #' @export
 #' @examples library(cranvas); qtennis = qdata(tennis)
 #' v = qbar(matches, data = qtennis)
-#' qsave(v, 'tennis_bar.png', 480, 320); qsave(v$view, 'tennis_bar.png', 480, 320)
+#' qsave('tennis_bar.png', v, 480, 320)
 qsave = function(filename = 'Rplot.png', view, width = 480, height = 480) {
   filename = file.path(normalizePath(dirname(filename)), basename(filename))
   size = as.numeric(view$size)  # original size
