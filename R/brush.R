@@ -261,12 +261,8 @@ update_brush_size = function(meta, event) {
   if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
   meta$pos = as.numeric(event$pos())
   if (length(meta$start) == 0) meta$start = meta$pos
-  ## simple click: don't change meta$brush.size
-  if (!all(meta$pos == meta$start)) {
-    if (length(meta$brush.move) && !meta$brush.move) {
-      meta$brush.size = meta$brush.size + meta$pos - meta$start
-      meta$start = meta$pos
-    }
+  if (length(meta$brush.move) && !meta$brush.move) {
+    meta$brush.size = meta$pos - meta$start
   }
   apply(rbind(meta$pos - meta$brush.size, meta$pos), 2, sort)
 }

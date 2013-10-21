@@ -148,10 +148,13 @@ common_mouse_move = function(layer, event, data, meta) {
 #' @rdname common_events
 #' @export
 common_mouse_release = function(layer, event, data, meta) {
+  meta$start = numeric(0)
   b = brush(data)
   b$draw.brush = !b$select.only
   if (b$select.only) {
-    if (b$zoom) meta$limits = apply(rbind(meta$pos - meta$brush.size, meta$pos), 2, sort)
+    if (b$zoom && !all(meta$brush.size == c(0, 0))) {
+      meta$limits = apply(rbind(meta$pos - meta$brush.size, meta$pos), 2, sort)
+    }
   } else {
     b$cursor = 0L  # restore to Arrow cursor
   }
