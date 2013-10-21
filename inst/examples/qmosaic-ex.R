@@ -46,3 +46,5 @@ data(happy)
 qhappy <- qdata(happy)
 qmosaic(qhappy, ~ happy, "hbar")
 qmosaic(qhappy, ~ happy + age, c("hspine", "vspine"))
+
+cranvas_off()

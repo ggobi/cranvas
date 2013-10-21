@@ -91,3 +91,5 @@ vote.num = c(9, 10, 6, 55, 9, 7, 3, 3, 27, 15, 4, 21, 11, 7, 6, 8, 9,
 
 qstate3 = map_qdata('state', color = vote.res, size = vote.num, cartogram = TRUE)
 qmap(qstate3)
+
+cranvas_off()

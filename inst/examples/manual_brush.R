@@ -13,3 +13,5 @@ manual_brush(o1, cbind(p$x, p$y), pause = if (interactive()) 0.1 else 0)
 
 ## can also brush the par-coords plot
 manual_brush(o2, as.matrix(expand.grid(seq(0, 1, 0.1), (1:4)-.1)), pause = if (interactive()) 0.2 else 0)
+
+cranvas_off()

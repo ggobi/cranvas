@@ -476,3 +476,15 @@ rescale_sd = function(x, mean = 0, sd = 1) {
   x = (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
   x * sd + mean
 }
+
+#' Close all Qt applications in the current R session
+#'
+#' This function closes all Qt applications, including the plot windows from
+#' \pkg{cranvas} and any other applications created from \pkg{qtbase}. To some
+#' extent, it is like \code{\link{graphics.off}()}, but you should be cautious
+#' about its strong side effects (it may closes the applications that you do not
+#' wish to close).
+#' @export
+cranvas_off = function() {
+  invisible(Qt$QApplication$closeAllWindows())
+}

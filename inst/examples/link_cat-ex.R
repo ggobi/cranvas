@@ -60,3 +60,5 @@ qbar(type, data = qflea2, standardize = TRUE)
 ## remove the linking on two datasets respectively
 remove_link(qflea, id[1])
 remove_link(qflea2, id[2])
+
+cranvas_off()

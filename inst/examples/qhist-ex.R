@@ -32,5 +32,6 @@ qhist(first.serve.pct, data = qtennis, horizontal = TRUE)
 qhist(serve.speed, data = qtennis)
 qhist(serve.speed, data = qtennis, freq = FALSE)  # density
 
-
 #### see help(wages) for yet another example
+
+cranvas_off()

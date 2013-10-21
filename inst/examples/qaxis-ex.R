@@ -19,3 +19,5 @@ fix_dimension(r, row = list(id = c(0, 2), value = c(30, 30)),
               column = list(id = 0, value = 30))
 
 qplotView(scene = s)
+
+cranvas_off()

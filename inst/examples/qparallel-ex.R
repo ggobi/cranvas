@@ -91,3 +91,5 @@ if (require('animation')) {
 test.mat = qdata(matrix(rnorm(300000 * 10), ncol = 10))
 qparallel(~., data  = test.mat)
 ## for large data, short ticks are automatically used instead of segments
+
+cranvas_off()

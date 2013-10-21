@@ -49,3 +49,5 @@ qtime(Time, sunspots, qsun, shift=c(1,(1:10)*10))
 ## example 6: Pigs
 qpig <- qdata(pigs)
 qtime(TIME, c("GILTS","PROFIT","PRODUCTION","HERDSZ"), qpig, shift=c(1,4))
+
+cranvas_off()

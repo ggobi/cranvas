@@ -28,3 +28,4 @@ var.ord <- order(nrc.medctr[13, ]) + 19
 qparallel(qnrc, vars = var.ord, main = "Other Indicators", center = median, 
     horizontal = TRUE, glyph = "tick", boxplot = TRUE)
  
+cranvas_off()

@@ -32,3 +32,4 @@ qdensity(tars2, data = qflea)
 qdensity(aede1, data = qflea)
 qdensity(aede3, data = qflea)
 
+cranvas_off()

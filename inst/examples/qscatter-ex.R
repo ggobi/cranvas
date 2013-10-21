@@ -51,3 +51,4 @@ df = qdata(data.frame(x = rnorm(n), y = rnorm(n),
     z = gl(4, n/4)), color = z)
 qscatter(x, y, data=df)
 
+cranvas_off()

@@ -29,3 +29,4 @@ flea_tour$tour_path = grand_tour(d = 3)
 ## do sphering
 flea_tour$sphere = TRUE
 
+cranvas_off()

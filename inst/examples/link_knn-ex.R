@@ -1,4 +1,3 @@
-library(cranvas)
 
 ### (1) linking to oneself
 data(flea, package = 'tourr')
@@ -33,3 +32,5 @@ id = link_knn(mf1, c('tars1', 'tars2'), mf2, c('tars1', 'tars2'))
 
 remove_link(mf1, id[1])
 remove_link(mf2, id[2])
+
+cranvas_off()
