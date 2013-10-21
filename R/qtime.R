@@ -552,12 +552,11 @@ Time.meta =
 ##' @param timeVar the variable indicating time. It is used to link two mutaframes.
 ##' @inheritParams qdata
 ##' @return A mutaframe of multiple y's
-##' @export
 ##' @examples 
 ##' library(cranvas)
 ##' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
 ##' qnasa <- qdata(nasa11)
-##' qnasa1 <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"), "TimeIndx")
+##' tqnasa <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"), "TimeIndx", "TimeIndx")
 ##'
 time_qdata <- function(regular_qdata, y, timeVar, link) {
     ycol <- length(y)
