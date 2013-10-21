@@ -11,15 +11,15 @@ qtitanic <- qdata(titanic, color=Survived)
 
 qtitanic$.brushed <- qtitanic$Survived=="Yes"
 ## passengers have a higher probability of survival than crew members ...
-print(qmosaic(qtitanic, Freq ~ Passenger, divider=c("hspine")))
-## unless sex is taken into account: the conditional association between Passenger 
-## and Survival changes to the opposite: both male and female crew members had better 
+qmosaic(qtitanic, Freq ~ Passenger, divider=c("hspine"))
+## unless sex is taken into account: the conditional association between Passenger
+## and Survival changes to the opposite: both male and female crew members had better
 ## changes of survival than their counterparts on the passenger side.
-print(qmosaic(qtitanic, Freq ~ Passenger|Sex, divider=c("hspine", "hspine")))
+qmosaic(qtitanic, Freq ~ Passenger|Sex, divider=c("hspine", "hspine"))
 
 ## this is an example of the Simpson's paradox, and is due to the strong association
 ## between crew membership and gender.
-print(qmosaic(qtitanic, Freq ~ Sex+Passenger, divider=c("vspine", "hspine")))
+qmosaic(qtitanic, Freq ~ Sex+Passenger, divider=c("vspine", "hspine"))
 
 #######################
 data(happy)
@@ -33,15 +33,15 @@ qmosaic(qhappy, ~happy, divider=c("hbar"))
 qbar(sex, qhappy)
 
 
-print(qmosaic(qtitanic, Freq ~ Sex + Age + Class))
-print(qbar(Survived, data=qtitanic))
+qmosaic(qtitanic, Freq ~ Sex + Age + Class)
+qbar(Survived, data=qtitanic)
 
-print(qmosaic(qtitanic, Freq ~ Survived, "hbar")) 
-print(qmosaic(qtitanic, Freq ~ Age, "hbar")) 
-print(qmosaic(qtitanic, Freq ~ Sex, "hbar")) 
-print(qmosaic(qtitanic, Freq ~ Class, "hbar")) 
+qmosaic(qtitanic, Freq ~ Survived, "hbar")
+qmosaic(qtitanic, Freq ~ Age, "hbar")
+qmosaic(qtitanic, Freq ~ Sex, "hbar")
+qmosaic(qtitanic, Freq ~ Class, "hbar")
 
-print(qmosaic(qtitanic, Freq ~ Sex + Survived | Class, divider=c("vspine", "hspine", "hspine")))
+qmosaic(qtitanic, Freq ~ Sex + Survived | Class, divider=c("vspine", "hspine", "hspine"))
 data(happy)
 qhappy <- qdata(happy)
 qmosaic(qhappy, ~ happy, "hbar")
