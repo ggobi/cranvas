@@ -545,19 +545,14 @@ Time.meta =
                       serie.start = 'logical')))
 
 
-##' Create data for drawing time plots
-##' 
-##' @param data a data frame for time plot
-##' @param y a vertor of all the variable names of interest
-##' @param timeVar the variable indicating time. It is used to link two mutaframes.
-##' @inheritParams qdata
-##' @return A mutaframe of multiple y's
-##' @examples 
-##' library(cranvas)
-##' nasa11 <- subset(nasa, Gridx == 22 & Gridy == 21)
-##' qnasa <- qdata(nasa11)
-##' tqnasa <- time_qdata(qnasa,c("ts","ps_tovs","ca_med"), "TimeIndx", "TimeIndx")
-##'
+## Create data for drawing time plots
+## 
+## @param data a data frame for time plot
+## @param y a vertor of all the variable names of interest
+## @param timeVar the variable indicating time. It is used to link two mutaframes.
+## @param link the variable(s) to link time_qdata and qdata
+## @inheritParams qdata
+## @return A mutaframe of multiple y's
 time_qdata <- function(regular_qdata, y, timeVar, link) {
     ycol <- length(y)
     data <- as.data.frame(regular_qdata)
