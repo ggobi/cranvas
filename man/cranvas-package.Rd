@@ -63,4 +63,6 @@ qboxplot(~points + first.serve.pts + second.serve.pts, data = qtennis)
 qparallel(~., data = qtennis, names = names(tennis), horizontal = TRUE)
 
 record_selector(name, data = qtennis)  # a simple GUI to show the names
+
+cranvas_off()
 }

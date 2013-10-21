@@ -126,6 +126,7 @@ n <- 1e+06  # a million still works (at least for me)
 df <- qdata(data.frame(x = rnorm(n), y = rnorm(n), z = gl(4, n/4)), color = z)
 qscatter(x, y, data = df)
 
+cranvas_off()
 }
 \author{
   Heike Hofmann, Di Cook, Yihui Xie

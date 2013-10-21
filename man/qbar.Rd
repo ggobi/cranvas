@@ -99,6 +99,8 @@ qbar(RegCode, data = qnrc2)
 library(productplots)
 qhappy <- qdata(happy, color = happy)
 qbar(happy, data = qhappy)
+
+cranvas_off()
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

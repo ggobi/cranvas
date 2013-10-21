@@ -92,6 +92,8 @@ attr(qtennis, "Shadow")  # should be NULL, since no misssing values here
 ## we can also use the default dark gray
 qtennis <- qdata(tennis)
 qhist(double.faults, data = qtennis)
+
+cranvas_off()
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

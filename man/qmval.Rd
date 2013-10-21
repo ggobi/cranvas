@@ -62,6 +62,8 @@ qmval(~., data = qtao)
 qmval(~., data = qtao, horizontal = FALSE, standardize = FALSE, 
     main = "horizontal plot with counts")
 qscatter(longitude, latitude, data = qtao)
+
+cranvas_off()
 }
 \author{
   Heike Hofmann and Yihui Xie

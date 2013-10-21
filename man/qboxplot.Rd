@@ -93,6 +93,8 @@ qboxplot(tars1 ~ species, data = qflea, points = TRUE)
 ## show points with colors
 qflea2 <- qdata(flea, color = species)
 qboxplot(~aede1 + aede2 + aede3, data = qflea2, points = TRUE)
+
+cranvas_off()
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

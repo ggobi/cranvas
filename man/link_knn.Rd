@@ -38,7 +38,6 @@ link_knn(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10)
   implemented at the moment.
 }
 \examples{
-library(cranvas)
 
 ### (1) linking to oneself
 data(flea, package = "tourr")
@@ -73,6 +72,8 @@ id <- link_knn(mf1, c("tars1", "tars2"), mf2, c("tars1", "tars2"))
 
 remove_link(mf1, id[1])
 remove_link(mf2, id[2])
+
+cranvas_off()
 }
 \author{
   Yihui Xie <\url{http://yihui.name}>

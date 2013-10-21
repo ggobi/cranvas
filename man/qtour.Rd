@@ -94,7 +94,8 @@ flea_tour$tour_path <- grand_tour(d = 3)
 ## do sphering
 flea_tour$sphere <- TRUE
 
+cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+  Yihui Xie and Di Cook
 }

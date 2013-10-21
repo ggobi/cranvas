@@ -40,11 +40,7 @@ qdensity(x, data, binwidth = NULL, main = "", xlim = NULL, ylim = NULL, xlab = N
   of points; Arrow \code{Left}/\code{Right} de-/in-creases
   binwidth for density; Key \code{Z} toggle zoom on/off
   (default is off); mouse click & drag will specify a zoom
-  window, reset to default window by click/no drag; Key
-  \code{X} toggles focal zoom on/off (default is off);
-  mouse click & drag will specify a zoom window, zoom out
-  by pressing \code{Shift} key; Key \code{R} resets data
-  range to original scale.
+  window.
 
   Note there are two short tickmarks in the plot denoting
   the binwidth.
@@ -84,6 +80,7 @@ qdensity(tars2, data = qflea)
 qdensity(aede1, data = qflea)
 qdensity(aede3, data = qflea)
 
+cranvas_off()
 }
 \seealso{
   Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
