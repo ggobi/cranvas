@@ -164,7 +164,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
         switch(key, 
                M = switch_serie_mode(meta, data),
                G = shift_wrap_gear(meta),
-               H = switch_horizon_graph(meta),
+               H = switch_horizon_graph(meta, data),
                U = separate_group(meta),
                D = mix_group(meta),
                Left = wrap_backward(meta,data,crt_range),
@@ -187,24 +187,29 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     
     main_circle_draw <- function(layer,painter){
         maxgroup = max(meta$wrap.group)
-        color = alpha(data$.color, seq(0,1,length=maxgroup+1)[meta$wrap.group+1])
+        color = alpha(data$.color, seq(0,1,length=maxgroup+1)[meta$wrap.group+1]*meta$alpha)
         qdrawGlyph(painter, qglyphCircle(r = meta$radius), meta$xtmp, meta$ytmp,
-                   fill=alpha(color,meta$alpha), stroke=alpha(color,meta$alpha))
+                       fill=color, stroke=color)
     }
     
     main_line_draw <- function(layer,painter){
         qlineWidth(painter) <- meta$radius / 2
         maxgroup = max(meta$wrap.group)
-        color=gray(seq(0,0.6,length=max(meta$wrap.group,na.rm=TRUE)))
+        color = alpha(data$.color, seq(0,1,length=maxgroup+1)[meta$wrap.group+1]*meta$alpha)
         for (j in 1:meta$nyvar) {
             for (k in unique(meta$vargroup)) {
                 for (i in 1:maxgroup) {
                     if (sum(meta$wrap.group==i & meta$vargroup==k)){
                         tmprow <- 1:meta$singleVarLen + meta$singleVarLen * (j-1)
-                        qdrawLine(painter,
-                                  meta$xtmp[meta$wrap.group==i & meta$vargroup==k & 1:length(meta$xtmp) %in% tmprow],
-                                  meta$ytmp[meta$wrap.group==i & meta$vargroup==k & 1:length(meta$ytmp) %in% tmprow],
-                                  stroke=alpha(color[maxgroup+1-i],meta$alpha))
+                        idx = meta$wrap.group==i & meta$vargroup==k & 1:length(meta$xtmp) %in% tmprow
+                        if (sum(idx)!=1){
+                            qdrawSegment(painter,
+                                         meta$xtmp[idx][-sum(idx)],
+                                         meta$ytmp[idx][-sum(idx)],
+                                         meta$xtmp[idx][-1],
+                                         meta$ytmp[idx][-1],
+                                         stroke=color[idx][-1])
+                        }
                     }
                 }
             }
@@ -447,8 +452,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     layer.root[1, 0] = layer.ylab
     layer.root[1, 2] = layer.grid
     if (similarity.index) layer.root[1, 2] = similarity_layer
-    layer.root[1, 2] = main_circle_layer
     layer.root[1, 2] = main_line_layer
+    layer.root[1, 2] = main_circle_layer
     layer.root[1, 2] = brush_layer
     layer.root[1, 2] = query_layer
     layer.root[1, 3] = qlayer() 
@@ -791,7 +796,7 @@ shift_wrap_gear = function(meta){
 }
 
 # key H for turning on/off the horizon graph mode
-switch_horizon_graph = function(meta){
+switch_horizon_graph = function(meta,data){
     meta$horizon.mode = !meta$horizon.mode
     if (meta$horizon.mode) {
         meta$horizon.baseline = matrix(NA,ncol=meta$nyvar,nrow=length(unique(meta$vargroup)))
@@ -804,6 +809,7 @@ switch_horizon_graph = function(meta){
                 tmp = meta$ytmp[idx]-meta$horizon.baseline[k,j]
                 meta$horizon.sign[idx] = sign(tmp)
                 meta$ytmp[idx] = abs(tmp)+meta$horizon.baseline[k,j]
+                data$.color[idx] = c('#E69F00','grey15','#56B4E9')[sign(tmp)+2]
             }
         }
     } else {
@@ -813,6 +819,7 @@ switch_horizon_graph = function(meta){
                 meta$ytmp[idx] = (meta$ytmp[idx]-meta$horizon.baseline[k,j])*meta$horizon.sign[idx]+meta$horizon.baseline[k,j]
             }
         }
+        data$.color = 'grey15'
     }
 }
 
