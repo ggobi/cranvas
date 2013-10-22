@@ -156,7 +156,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     
     key_press <- function(layer, event){
         crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
-        keys <- c('M','G','U','D','Left','Right','Up','Down','Plus','Minus')
+        keys <- c('M','G','H','U','D','Left','Right','Up','Down','Plus','Minus')
         meta$shift <- shift_on(event)
         key <- keys[match_key(keys,event)]
         if (!length(key)) return()
@@ -164,6 +164,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
         switch(key, 
                M = switch_serie_mode(meta, data),
                G = shift_wrap_gear(meta),
+               H = switch_horizon_graph(meta),
                U = separate_group(meta),
                D = mix_group(meta),
                Left = wrap_backward(meta,data,crt_range),
@@ -521,6 +522,9 @@ Time.meta =
                       shadow.matrix = 'data.frame',
                       drag.mode = 'logical',
                       serie.mode = 'logical',
+                      horizon.mode = 'logical',
+                      horizon.baseline = 'matrix',
+                      horizon.sign = 'numeric',
                       shift = 'logical',
                       query.pos = 'numeric',  
                       wrap.group = 'numeric',
@@ -686,6 +690,7 @@ time_meta_initialize <- function(meta, call, data, period, group,
     meta$stroke <- data$.border[meta$orderEnter]
     meta$fill <- data$.color[meta$orderEnter]
     meta$serie.mode <- FALSE
+    meta$horizon.mode <- FALSE
     
     ## Brush etc.
     meta$pos <- c(NA, NA)
@@ -783,6 +788,32 @@ switch_serie_mode = function(meta,data){
 shift_wrap_gear = function(meta){
     meta$wrap.shift <- c(meta$wrap.shift[-1],meta$wrap.shift[1])
     #qupdate(layer.WRAPtext)
+}
+
+# key H for turning on/off the horizon graph mode
+switch_horizon_graph = function(meta){
+    meta$horizon.mode = !meta$horizon.mode
+    if (meta$horizon.mode) {
+        meta$horizon.baseline = matrix(NA,ncol=meta$nyvar,nrow=length(unique(meta$vargroup)))
+        rownames(meta$horizon.baseline) = unique(meta$vargroup)
+        meta$horizon.sign = rep(NA, length(meta$ytmp))
+        for (j in 1:meta$nyvar){
+            for (k in unique(meta$vargroup)){
+                idx = meta$ylist[,j] & meta$vargroup==k
+                meta$horizon.baseline[k,j] = mean(meta$ytmp[idx])
+                tmp = meta$ytmp[idx]-meta$horizon.baseline[k,j]
+                meta$horizon.sign[idx] = sign(tmp)
+                meta$ytmp[idx] = abs(tmp)+meta$horizon.baseline[k,j]
+            }
+        }
+    } else {
+        for (j in 1:meta$nyvar){
+            for (k in unique(meta$vargroup)){
+                idx = meta$ylist[,j] & meta$vargroup==k
+                meta$ytmp[idx] = (meta$ytmp[idx]-meta$horizon.baseline[k,j])*meta$horizon.sign[idx]+meta$horizon.baseline[k,j]
+            }
+        }
+    }
 }
 
 # key U for separating the groups by shifting up
