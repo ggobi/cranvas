@@ -588,6 +588,7 @@ Time.meta =
                       horizon.mode = 'logical',
                       horizon.baseline = 'matrix',
                       horizon.sign = 'numeric',
+                      horizon.color = 'character',
                       shift = 'logical',
                       query.pos = 'numeric',  
                       wrap.group = 'numeric',
@@ -865,6 +866,7 @@ shift_wrap_gear = function(meta){
 switch_horizon_graph = function(meta,data){
     meta$horizon.mode = !meta$horizon.mode
     if (meta$horizon.mode) {
+      meta$horizon.color = data$.color
         meta$horizon.baseline = matrix(NA,ncol=meta$nyvar,nrow=length(unique(meta$vargroup)))
         rownames(meta$horizon.baseline) = unique(meta$vargroup)
         meta$horizon.sign = rep(NA, length(meta$ytmp))
@@ -885,7 +887,7 @@ switch_horizon_graph = function(meta,data){
                 meta$ytmp[idx] = (meta$ytmp[idx]-meta$horizon.baseline[k,j])*meta$horizon.sign[idx]+meta$horizon.baseline[k,j]
             }
         }
-        data$.color = 'grey15'
+        data$.color = meta$horizon.color
     }
 }
 
