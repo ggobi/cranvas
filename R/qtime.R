@@ -106,7 +106,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
               meta$area[rowidx*6,'y'] = NA
               meta$area[((rowidx[1]-1)*6+1):((s-1)*6),'yvar'] = meta$varname$y[j]
               meta$area[((rowidx[1]-1)*6+1):((s-1)*6),'gvar'] = levels(meta$vargroup)[k]
-              meta$area.color[rowidx] = alpha(data$.color[line_idx][-1],color_seq[i+1]*meta$alpha)
+              meta$area.color[rowidx] = alpha(data$.color[line_idx][-1],color_seq[i+1]*meta$alpha*0.5)
             }
           }
         }
@@ -888,6 +888,10 @@ switch_horizon_graph = function(meta,data){
             }
         }
         data$.color = meta$horizon.color
+    }
+    if (meta$shift | !meta$horizon.mode) {
+      meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
+      meta.yaxis(meta)
     }
 }
 
