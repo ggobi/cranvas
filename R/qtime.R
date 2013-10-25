@@ -38,6 +38,7 @@
 ##' @param asp Ratio between width and height of the plot.
 ##' @param similarity.index Whether to show the statistics which measure the similarity between series when wrapping. It gives the ACF, corr, and R square for one, two, and more series respectively.
 ##' @param help.text Whether to show the instruction. All the text will disappear in 2 seconds after the interaction.
+##' @param fun.base a function to compute the baseline of the area plot
 ##' @param main main title for the plot.
 ##' @param xlab label on horizontal axis, default is name of x variable
 ##' @param ylab label on vertical axis, default is name of y variable
@@ -48,6 +49,7 @@
 qtime <- function(time, y, data, period=NULL, group=NULL,
                   shift=c(1,4,7,12,24), size=3, alpha=1, asp=NULL, 
                   similarity.index=TRUE, help.text=TRUE,
+                  fun.base=min,
                   main=NULL, xlab=NULL, ylab=NULL,...){
     
     #####################
@@ -69,6 +71,48 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     meta$active <- TRUE
     tree <- createTree(data.frame(x=meta$xtmp,y=meta$ytmp))
 
+    compute_area = function(){
+      s=0
+      maxgroup = max(meta$wrap.group)
+      color_seq = seq(0,1,length=maxgroup+1)
+      nlines = nrow(unique(data.frame(data[,c('.variable',meta$varname$g)],meta$wrap.group)))
+      area_seq = 6*(length(meta$xtmp)-nlines)
+      tmp = rep(NA,area_seq)
+      meta$area = data.frame(x=tmp,y=tmp,yvar=tmp,gvar=tmp)
+      meta$area.color = rep('gray15',area_seq/6)
+      for (j in 1:meta$nyvar) {
+        idx = data[,meta$varname$y[j]]
+        meta$area.baseline[,j] = fun.base(meta$ytmp[idx],na.rm=TRUE)
+        for (k in 1:meta$ngvar) {
+          group_idx = idx & meta$vargroup==levels(meta$vargroup)[k]
+          meta$area.baseline[k,j] = meta$area.baseline[k,j]+
+            (as.integer(meta$vargroup[group_idx])[1]-1)*meta$vertconst
+          for (i in 1:maxgroup) {
+            line_idx = group_idx & meta$wrap.group==i
+            if (sum(line_idx) > 1) {
+              s = s + (sum(line_idx)-1)
+              rowidx = s+1 - (sum(line_idx)-1):1
+              meta$area[rowidx*6-5,'x'] = meta$xtmp[line_idx][-sum(line_idx)]
+              meta$area[rowidx*6-4,'x'] = meta$xtmp[line_idx][-sum(line_idx)]
+              meta$area[rowidx*6-3,'x'] = meta$xtmp[line_idx][-1]
+              meta$area[rowidx*6-2,'x'] = meta$xtmp[line_idx][-1]
+              meta$area[rowidx*6-1,'x'] = meta$xtmp[line_idx][-sum(line_idx)]
+              meta$area[rowidx*6,'x'] = NA
+              meta$area[rowidx*6-5,'y'] = meta$ytmp[line_idx][-sum(line_idx)]
+              meta$area[rowidx*6-4,'y'] = meta$area.baseline[k,j]
+              meta$area[rowidx*6-3,'y'] = meta$area.baseline[k,j]
+              meta$area[rowidx*6-2,'y'] = meta$ytmp[line_idx][-1]
+              meta$area[rowidx*6-1,'y'] = meta$ytmp[line_idx][-sum(line_idx)]
+              meta$area[rowidx*6,'y'] = NA
+              meta$area[((rowidx[1]-1)*6+1):((s-1)*6),'yvar'] = meta$varname$y[j]
+              meta$area[((rowidx[1]-1)*6+1):((s-1)*6),'gvar'] = levels(meta$vargroup)[k]
+              meta$area.color[rowidx] = alpha(data$.color[line_idx][-1],color_seq[i+1]*meta$alpha)
+            }
+          }
+        }
+      }
+    }
+    
     ####################
     ## event handlers ##----------
     ####################
@@ -156,7 +200,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     
     key_press <- function(layer, event){
         crt_range <- diff(range(meta$xtmp,na.rm=TRUE))+1
-        keys <- c('M','G','H','U','D','Left','Right','Up','Down','Plus','Minus')
+        keys <- c('M','G','H','U','D','R','Left','Right','Up','Down','Plus','Minus')
         meta$shift <- shift_on(event)
         key <- keys[match_key(keys,event)]
         if (!length(key)) return()
@@ -167,6 +211,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
                H = switch_horizon_graph(meta, data),
                U = separate_group(meta),
                D = mix_group(meta),
+               R = switch_area_mode(meta),
                Left = wrap_backward(meta,data,crt_range),
                Right = wrap_forward(meta,data,crt_range),
                Up = size_up(meta),
@@ -177,6 +222,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
         tree <<- createTree(data.frame(x=meta$xtmp,y=meta$ytmp))
         qupdate(main_circle_layer)
         qupdate(main_line_layer)
+        qupdate(main_area_layer)
         timer$start()      
     }
     
@@ -214,6 +260,12 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
                 }
             }
         }
+    }
+    
+    main_area_draw <- function(layer,painter){
+      if (! meta$area.mode) return()
+      compute_area()
+      qdrawPolygon(painter, meta$area$x, meta$area$y, stroke=meta$area.color, fill=meta$area.color)
     }
     
     brush_draw <- function(layer, painter) {
@@ -439,6 +491,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
                                     common_focus_out(layer, event, data, meta)
                                 }, clip=TRUE)
     main_line_layer <- qlayer(paintFun=main_line_draw,limits=qrect(meta$limits),clip=TRUE)
+    main_area_layer <- qlayer(paintFun=main_area_draw,limits=qrect(meta$limits),clip=TRUE)
     brush_layer <- qlayer(paintFun=brush_draw, limits=qrect(meta$limits))
     query_layer <- qlayer(paintFun=query_draw, limits=qrect(meta$limits))
     if (similarity.index) similarity_layer <- qlayer(paintFun=similarity_draw, limits=qrect(meta$limits))
@@ -452,6 +505,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     layer.root[1, 0] = layer.ylab
     layer.root[1, 2] = layer.grid
     if (similarity.index) layer.root[1, 2] = similarity_layer
+    layer.root[1, 2] = main_area_layer
     layer.root[1, 2] = main_line_layer
     layer.root[1, 2] = main_circle_layer
     layer.root[1, 2] = brush_layer
@@ -496,7 +550,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     b$cursorChanged$connect(function() {
         set_cursor(view, b$cursor)
     })
-    sync_limits(meta, main_circle_layer,main_line_layer,
+    sync_limits(meta, main_circle_layer,main_line_layer,main_area_layer,
                 query_layer, brush_layer,
                 if (similarity.index){similarity_layer} else {NA},
                 if (help.text) {helptext_layer} else {NA})
@@ -524,6 +578,10 @@ Time.meta =
                       orderBack = 'numeric',
                       xtmp = 'numeric',
                       ytmp = 'numeric',
+                      area = 'data.frame',
+                      area.baseline = 'matrix',
+                      area.color = 'character',
+                      area.mode = 'logical',
                       shadow.matrix = 'data.frame',
                       drag.mode = 'logical',
                       serie.mode = 'logical',
@@ -535,6 +593,7 @@ Time.meta =
                       wrap.group = 'numeric',
                       wrap.shift = 'numeric',
                       vargroup = 'factor',
+                      ngvar = 'integer',
                       zoomsize = 'numeric',
                       limits = 'matrix',
                       radius = 'numeric',
@@ -595,7 +654,7 @@ time_qdata <- function(regular_qdata, y, timeVar, link) {
 # Initialize the Time.meta
 time_meta_initialize <- function(meta, call, data, period, group,
                                  shift, size, alpha, asp,
-                                 main, xlab, ylab,...){
+                                 main, xlab, ylab, ...){
     
     ## X axis setting
     meta$time <- as.data.frame(data)[,attr(data,"timeVar")]
@@ -666,6 +725,13 @@ time_meta_initialize <- function(meta, call, data, period, group,
     meta$ytmp <- meta$y
     meta$ylab <- ifelse(is.null(ylab), paste(meta$varname$y,collapse=', '), ylab)
     meta$ylab.init <- meta$ylab
+    
+    ## Area
+    meta$ngvar <- length(unique(meta$vargroup))
+    meta$area.baseline <- matrix(NA, nrow=meta$ngvar, ncol=meta$nyvar)
+    rownames(meta$area.baseline) <- levels(meta$vargroup)
+    colnames(meta$area.baseline) <- meta$varname$y
+    meta$area.mode <- FALSE
     
     ## Other settings
     meta$drag.mode <- FALSE
@@ -865,6 +931,11 @@ mix_group <- function(meta){
     } 
     meta$limits[3:4] <-  extend_ranges(range(meta$ytmp,na.rm=TRUE))
     meta.yaxis(meta)
+}
+
+# key F for turning on/off the area mode
+switch_area_mode <- function(meta){
+  meta$area.mode <- !meta$area.mode
 }
 
 # key Right for wrapping
