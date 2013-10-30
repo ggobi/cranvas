@@ -22,6 +22,7 @@ Remi <- Remifentanil[complete.cases(Remifentanil),]
 Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
 qtime(Time, conc, qRemi, group=ID)
+qscatter(Amt, conc, data=qRemi)
 # for categorical brushing self-link dataset by ID:
 # id <- link_cat(qRemi, "ID")
 # remove_link(qRemi, id)
