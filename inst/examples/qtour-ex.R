@@ -6,10 +6,11 @@ qflea = qdata(flea, color = species)
 flea_tour = qtour(1:6, data = qflea, tour_path = grand_tour(3))
 flea_tour$start()
 
-Sys.sleep(.5)  # need a pause to generate projections
+#Sys.sleep(.5)  # need a pause to generate projections
 qscatter(proj1, proj2, data = qflea, xlim = c(-.8, .8), ylim = c(-.8, .8), xlab="Projection 1", ylab="Projection 2")
 qparallel(~proj1+proj2+proj3, data = qflea)
-qhist(proj1, data = qflea, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0, 10))
+#qhist(proj1, data = qflea, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0, 15))
+qhist(proj1, data = qflea, breaks=seq(-1, 1, 0.1), ybreaks = seq(0, 20, 5))
 
 flea_tour$pause()
 

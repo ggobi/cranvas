@@ -21,8 +21,10 @@
 #' spine = TRUE)}.
 #' @param x the name of the numeric variable to be used to draw the histogram or
 #'   spine plot
-#' @param bins the desired number of bins
+#' @param bins the desired number of bins, default=30, overridden by binwidth if provided
 #' @param binwidth the bin width (\code{range(x) / bins} by default)
+#' @param breaks sets break points, mostly for use with the tour
+#' @param ybreaks sets vertical axis, mostly for use with the tour
 #' @param freq draw the frequencies (\code{TRUE}) or densities (\code{FALSE})
 #'   (only applies to histogram)
 #' @param spine if \code{TRUE}, draw a spine plot (bar widths proportional to
@@ -34,31 +36,64 @@
 #' @export
 #' @family plots
 #' @example inst/examples/qhist-ex.R
-qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
+qhist = function(x, data, bins = 30, binwidth = NULL, breaks = NULL, ybreaks = NULL, 
+                 freq = TRUE, main = '',
                  horizontal = FALSE, spine = FALSE, xlim = NULL, ylim = NULL,
                  xlab = NULL, ylab = NULL) {
   data = check_data(data)
+  # Do we need to check if bins and binwidth are compatible?
   b = brush(data)
   b$select.only = TRUE; b$draw.brush = FALSE  # a selection brush
   cueOn = FALSE
+  if (!is.null(ybreaks)) ylim = range(ybreaks)
   meta = Hist.meta$new(
     var = as.character(as.list(match.call()[-1])$x), freq = freq, alpha = 1,
     horizontal = horizontal, main = main, active = TRUE, standardize = spine,
     spine = spine, multiplier = 1
   )
-  initial_bins = function(default = TRUE) {
+  initialize_bins = function() {
     d = data[, meta$var]
     ## temporarily steal from hadley's densityvis
-    r = range(d, na.rm = TRUE, finite = TRUE)
-    if (diff(r) < 1e-7 && default) {
+    if (!is.null(breaks)) {
+      meta$breaks <- breaks
+    }
+    else {
+      if (is.null(xlim)) 
+        r = range(d, na.rm = TRUE, finite = TRUE)
+      else
+        r = xlim
+      if (diff(r) < 1e-7) {
+        meta$breaks = r
+        meta$binwidth = diff(r)
+      } 
+      else {
+        if (is.null(binwidth)) 
+          meta$binwidth = diff(r) / bins 
+        else 
+          meta$binwidth = binwidth
+        if (is.null(xlim)) # Only adjust bins to center on midpoint if limits not provided
+          meta$breaks = seq(r[1], r[2] + meta$binwidth, meta$binwidth) - meta$binwidth / 2
+        else
+          meta$breaks = seq(r[1], r[2] + meta$binwidth, meta$binwidth)
+    }
+    }
+  }
+  resize_bins = function() {
+    d = data[, meta$var]
+    ## temporarily steal from hadley's densityvis
+    if (is.null(xlim)) 
+      r = range(d, na.rm = TRUE, finite = TRUE)
+    else
+      r = xlim
+    if (diff(r) < 1e-7) {
       meta$breaks = r
       meta$binwidth = diff(r)
     } else {
-      if (default) meta$binwidth = if (is.null(binwidth)) diff(r) / bins else binwidth
+      #if (default) meta$binwidth = if (is.null(binwidth)) diff(r) / bins else binwidth
       meta$breaks = seq(r[1], r[2] + meta$binwidth, meta$binwidth) - meta$binwidth / 2
     }
   }
-  initial_bins()
+  initialize_bins()
   compute_coords = function(reset = TRUE) {
     if (meta$spine) meta$freq = meta$standardize = TRUE else meta$standardize = FALSE
     idx = visible(data)
@@ -73,14 +108,43 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
     tmp[!is.finite(tmp)] = 0  # consider division by 0
     meta$y = c(tmp)
     meta$x = rep(meta$breaks[-1] - meta$binwidth / 2, meta$nlevel2)
-    if (reset) {
-      meta$xat = axis_loc(meta$breaks); meta$yat = axis_loc(c(0, meta$y))
+    if (reset) { # Should only make axes pretty if breaks not provided
+      if (!is.null(breaks)) {
+        xlim <- range(breaks)
+        meta$xat = seq(xlim[1], xlim[2], length.out=5)
+      }
+      else {
+        if (!is.null(xlim))
+          meta$xat = seq(xlim[1], xlim[2], length.out=5)
+        else # (is.null(xlim))
+          meta$xat = axis_loc(meta$breaks)
+      #else {
+         #meta$xat = meta$breaks
+      #  meta$xat = seq(xlim[1], xlim[2], length.out=5)
+      }
+      if (!is.null(ybreaks)) {
+        meta$yat = ybreaks
+      }
+      else {
+        if (!is.null(ylim))
+          meta$yat = seq(ylim[1], ylim[2], length.out=5)
+        else # (is.null(xlim))
+          meta$yat = axis_loc(c(0, meta$y))
+        #else {
+        #meta$xat = meta$breaks
+        #  meta$xat = seq(xlim[1], xlim[2], length.out=5)
+      }
+#      if (is.null(ylim))
+#        meta$yat = axis_loc(c(0, meta$y))
+#      else
+#       meta$yat = seq(ylim[1], ylim[2], length.out=5)
       meta$xlabels = format(meta$xat)
       meta$ylabels = format(meta$yat)
       meta$xlab = if (is.null(xlab)) meta$var else xlab
       meta$ylab = if (is.null(ylab)) {
         if (meta$spine) 'Proportion' else if (meta$freq) 'Frequency' else 'Density'
       } else ylab
+      cat("making axes","\n")
     }
     if (meta$spine) {
       meta$xright = cumsum(table(meta$value[idx])) / sum(idx)  # [0,1], prop counts
@@ -96,7 +160,9 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
       }
       meta$xleft = rep(meta$xleft, meta$nlevel2)
       meta$xright = rep(meta$xright, meta$nlevel2)
-    } else {
+    } 
+    else {
+      cat("here ",nb, meta$nlevel2,"\n")
       meta$xleft = rep(meta$breaks[-nb], meta$nlevel2)
       meta$xright = rep(meta$breaks[-1], meta$nlevel2)
     }
@@ -105,14 +171,18 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
       ## there seems to be an ugly bug in qt: rectangles with small height not drawn
       meta$multiplier = k = 1 / max(meta$ytop) * 10
       meta$ybottom = meta$ybottom * k; meta$ytop = meta$ytop * k
-      if (reset) meta$yat = meta$yat * k; if (!is.null(ylim)) ylim = ylim * k
+      if (reset) meta$yat = meta$yat * k
+      #if (!is.null(ylim)) ylim = ylim * k
     }
-    if (reset) meta$limits = extend_ranges(
-      cbind(if (is.null(xlim)) range(c(meta$xleft, meta$xright)) else xlim,
-            if (is.null(ylim)) range(c(meta$ybottom, meta$ytop)) else ylim)
-    )
+    if (reset) { # Only extend ranges if limits not given in initial call
+      meta$limits <- cbind(if (is.null(xlim)) 
+        extend_ranges(range(c(meta$xleft, meta$xright))) else xlim, 
+                           if (is.null(ylim))  
+        extend_ranges(range(c(meta$ybottom, meta$ytop))) else ylim)       
+    }
     meta$minor = ifelse(meta$spine, ifelse(meta$horizontal, 'x', 'y'), 'xy')
   }
+  #compute_coords(reset=FALSE)
   compute_coords()
   compute_colors = function() {
     .bar_compute_colors(data, meta)
@@ -133,7 +203,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
     } else {
       x0 = min(meta$xleft); y0 = y1 = min(meta$ybottom); x1 = max(meta$xright)
     }
-    qdrawSegment(painter, x0, y0, x1, y1) # draw a baseline
+     qdrawSegment(painter, x0, y0, x1, y1) # draw a baseline
   }
   brush_mouse_press = function(layer, event) {
     common_mouse_press(layer, event, data, meta)
@@ -185,7 +255,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
         meta$binwidth = meta$binmin
         message('binwidth too small!')
       }
-      initial_bins(default = FALSE)  # use new binwidth
+      resize_bins()  # use new binwidth
       layer.cues$invalidateIndex()
       return()
     } else if (length(i <- which(match_key(c('Left', 'Right'))))) {
@@ -241,7 +311,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
           meta$binwidth = meta$binmin
           message('binwidth too small!')
         }
-        initial_bins(default = FALSE)  # use new binwidth
+        resize_bins()  # use new binwidth
         layer.cues$invalidateIndex()
         qupdate(layer.cues)
         return()
@@ -371,7 +441,7 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
   meta$mainChanged$connect(set_layout)
   meta$xlabChanged$connect(set_layout); meta$ylabChanged$connect(set_layout)
   meta$xlabelsChanged$connect(set_layout); meta$ylabelsChanged$connect(set_layout);
-
+  
   view = qplotView(scene = scene)
   view$setWindowTitle(paste(ifelse(meta$spine, "Spine plot:", "Histogram:"), meta$var))
   meta$varChanged$connect(function() {
@@ -380,15 +450,15 @@ qhist = function(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = '',
   view$resize(480, 480)
   d.idx = add_listener(data, function(i, j) {
     idx = which(j == c(meta$var, '.brushed', '.color', '.border'))
-    if (length(idx) < 1) {
+    if (length(idx) < 1) { # DI SAYS: why do bins need to be recalculated here???
       compute_coords(); compute_colors(); flip_coords()
       qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
       layer.main$invalidateIndex(); qupdate(layer.main)
       return()
     } else if (idx == 4) idx = 3
-    switch(idx, initial_bins(), qupdate(layer.brush), {
+    switch(idx, initialize_bins(), qupdate(layer.brush), {
       compute_colors(); qupdate(layer.main)
-    })
+    }) # Not sure whether this is a resize or initialize bins
   })
   qconnect(layer.main, 'destroyed', function(x) {
     ## b$colorChanged$disconnect(b.idx)

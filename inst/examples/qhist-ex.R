@@ -5,6 +5,8 @@ data(flea, package = 'tourr')
 qflea = qdata(flea, color = species)
 
 qhist(tars1, data = qflea)
+## Use the up/down arrows to change binwidth, or the vertical bars on screen
+## Right/left arrows change minimum bin (anchor) value
 qhist(tars2, data = qflea, freq = FALSE, main = 'density of tars2')
 qhist(aede1, data = qflea, ylim = c(0, 10), main = 'fix y-axis limits')
 qhist(head, data = qflea, horizontal = TRUE)
