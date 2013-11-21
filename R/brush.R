@@ -260,8 +260,7 @@ save_brush_history = function(data, index = selected(data)) {
 update_brush_size = function(meta, event) {
   if (missing(event)) event = get('event', sys.frame(1))  # get event from the callback
   meta$pos = as.numeric(event$pos())
-  if (length(meta$start) == 0) meta$start = meta$pos
-  if (length(meta$brush.move) && !meta$brush.move) {
+  if (length(meta$start) == 2 && length(meta$brush.move) && !meta$brush.move) {
     meta$brush.size = meta$pos - meta$start
   }
   apply(rbind(meta$pos - meta$brush.size, meta$pos), 2, sort)
