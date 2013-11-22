@@ -267,7 +267,7 @@ qscatter = function(x, y, data, edges=NULL, main = '', xlim = NULL, ylim = NULL,
     }, focusOutFun = function(layer, event) {
       common_focus_out(layer, event, data, meta)
     },
-    limits = qrect(meta$limits), clip = TRUE, cache = .cache())
+    limits = qrect(meta$limits), clip = TRUE, cache = TRUE)
   layer.brush = qlayer(paintFun = brush_draw, limits = qrect(meta$limits))
   layer.identify = qlayer(paintFun = identify_draw, limits = qrect(meta$limits))
   layer.title = qmtext(meta = meta, side = 3, cache = .cache())
