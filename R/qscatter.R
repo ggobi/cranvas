@@ -22,6 +22,7 @@
 #' @param y the name of the y variable (if missing, \code{x} will be plotted
 #'   against its indices, i.e., \code{y} will become \code{x} and \code{x} will
 #'   be indices)
+#' @param edges matrix of two columns to indicate which lines to connect
 #' @inheritParams qbar
 #' @param asp aspect ratio (ratio of the physical height of a plot to its width;
 #'   unlike other R graphics systems, this will \emph{not} affect the ranges of
@@ -37,7 +38,7 @@
 #'   former, and \code{\link[qtpaint]{qdrawGlyph}} for the latter).
 #' @export
 #' @example inst/examples/qscatter-ex.R
-qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
+qscatter = function(x, y, data, edges=NULL, main = '', xlim = NULL, ylim = NULL,
                     xlab = NULL, ylab = NULL, asp = 1, alpha = 1, unibrushcolor = TRUE) {
 
   data = check_data(data)
@@ -141,6 +142,11 @@ qscatter = function(x, y, data, main = '', xlim = NULL, ylim = NULL,
     } else {
       qdrawCircle(painter, meta$xy[ord, 1][idx], meta$xy[ord, 2][idx], r = meta$size,
                   stroke = stroke, fill = fill)
+    }
+    if (!is.null(edges)) {
+      qdrawSegment(painter, meta$xy[ord[edges[, 1]], 1][idx], meta$xy[ord[edges[, 1]], 2][idx], 
+                   meta$xy[ord[edges[, 2]], 1][idx], meta$xy[ord[edges[, 2]], 2][idx], 
+                   stroke=stroke)
     }
     if (!is.null(bd <- bound_seg(meta)))
       qdrawSegment(painter, bd[, 1], bd[, 2], bd[, 3], bd[, 4], stroke = "red")

@@ -8,6 +8,9 @@ flea_tour$start()
 
 #Sys.sleep(.5)  # need a pause to generate projections
 qscatter(proj1, proj2, data = qflea, xlim = c(-.8, .8), ylim = c(-.8, .8), xlab="Projection 1", ylab="Projection 2")
+qscatter(proj1, proj2, edges=matrix(c(1:5, 2:6), ncol=2, byrow=T), 
+         data = qflea, xlim = c(-.8, .8), ylim = c(-.8, .8), 
+         xlab="Projection 1", ylab="Projection 2")
 qparallel(~proj1+proj2+proj3, data = qflea)
 #qhist(proj1, data = qflea, binwidth = 0.05, xlim = c(-1, 1), ylim = c(0, 15))
 qhist(proj1, data = qflea, breaks=seq(-1, 1, 0.1), ybreaks = seq(0, 20, 5))
