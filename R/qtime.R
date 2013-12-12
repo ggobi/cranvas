@@ -265,7 +265,7 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
     main_area_draw <- function(layer,painter){
       if (! meta$area.mode) return()
       compute_area()
-      qdrawPolygon(painter, meta$area$x, meta$area$y, stroke=meta$area.color, fill=meta$area.color)
+      qdrawPolygon(painter, meta$area$x, meta$area$y, stroke=alpha(meta$area.color,0.01), fill=meta$area.color)
     }
     
     brush_draw <- function(layer, painter) {
@@ -642,8 +642,11 @@ time_qdata <- function(regular_qdata, y, timeVar, link) {
         }
     }
     newdat$.variable <- as.factor(newdat$.variable)
-    newdat <- qdata(newdat,color = as.character(settingh[,3]), 
-                    border = as.character(settingh[,4]), 
+    newdat <- qdata(newdat,
+                    color = if (all(settingh[,3]=='gray15') && ycol>1) {
+                      .variable} else {as.character(settingh[,3])}, 
+                    border = if (all(settingh[,4]=='gray15') && ycol>1) {
+                      .variable} else {as.character(settingh[,4])}, 
                     size = settingh[,5], brushed = settingh[,1], 
                     visible = settingh[,2])
     link_cat(newdat,link,regular_qdata,link)
@@ -812,21 +815,36 @@ meta.yaxis <- function(meta) {
 # Draw the selected data in qtime
 selected_draw <- function(meta,b,hits,painter){
     qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$xtmp[hits], 
-               meta$ytmp[hits], stroke = b$color, fill = b$color) 
+               meta$ytmp[hits], stroke = b$color, fill = b$color)
     qlineWidth(painter) <- max(meta$radius,1)
-    for (i in 1:meta$nyvar){
-        for (k in unique(meta$vargroup)) {
-            for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
-                idxtmp <- (meta$wrap.group==j & meta$vargroup==k & meta$ylist[,i] & hits)
-                if (sum(idxtmp)){                 
-                    xtmp <- meta$xtmp
-                    ytmp <- meta$ytmp
-                    xtmp[!idxtmp] <- NA
-                    ytmp[!idxtmp] <- NA
-                    qdrawLine(painter, xtmp, ytmp, stroke=b$color)
-                }
+    for (i in 1:meta$nyvar) {
+      for (k in 1:meta$ngvar) {
+        for (j in 1:max(meta$wrap.group,na.rm=TRUE)) {
+          if (sum(meta$wrap.group==j & meta$vargroup==levels(meta$vargroup)[k])){
+            idx = meta$wrap.group==j & meta$vargroup==levels(meta$vargroup)[k] & meta$ylist[,i] & hits
+            if (sum(idx)>1){
+              xtmp <- meta$xtmp
+              ytmp <- meta$ytmp
+              xtmp[!idx] <- NA
+              ytmp[!idx] <- NA
+              dftmp = data.frame(sx=xtmp[-length(xtmp)],sy=ytmp[-length(ytmp)],ex=xtmp[-1],ey=ytmp[-1])
+              dftmp = dftmp[complete.cases(dftmp),]
+              qdrawSegment(painter,dftmp$sx,dftmp$sy,
+                           dftmp$ex,dftmp$ey,stroke=b$color)
+              if (meta$area.mode & nrow(dftmp)>0) {
+                base = meta$area.baseline[k,i]
+                dftmp$edx = dftmp$ex ; dftmp$edy = base
+                dftmp$sdx = dftmp$sx ; dftmp$sdy = base
+                dftmp$sx2 = dftmp$sx ; dftmp$sy2 = dftmp$sy
+                dftmp$sepx = NA ; dftmp$sepy = NA
+                xtmp = as.vector(as.matrix(t(dftmp[,(0:5)*2+1])))
+                ytmp = as.vector(as.matrix(t(dftmp[,(1:6)*2])))
+                qdrawPolygon(painter, xtmp, ytmp, stroke=alpha(b$color,0.01), fill=alpha(b$color,0.8))
+              }
             }
+          }
         }
+      }
     }
 }
 
