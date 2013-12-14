@@ -184,6 +184,8 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
         meta$limits[2,1] <- min(meta$limits[2,1],max(tmprange))
         meta$drag.mode <- ifelse(meta$limits[1,1]<=min(tmprange) & meta$limits[2,1]>=max(tmprange), FALSE, TRUE)
         timer$start()
+        meta$xat <- axis_loc(meta$limits[1:2,1])
+        meta$xlabels <- format(meta$xat)
     }
     
     query_hover <- function(item, event, ...) {
@@ -272,21 +274,11 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
         
         if (any(is.na(meta$pos))) return()
         
-        if (meta$drag.mode) {     
-            qupdate(main_circle_layer)
-            qupdate(main_line_layer)
-            return()
-        }
-        
         hits <- selected(data)[meta$orderEnter]
-        if (meta$serie.mode) {
-            if (!any(hits)) return()   
-            #meta$xtmp[hits] <- meta$xtmp[hits] + meta$pos[1] - meta$start[1]
-            selected_draw(meta,b,hits,painter)
-            return()
-        }
-        
         if (any(hits)) selected_draw(meta,b,hits,painter)
+        
+        if (meta$drag.mode | meta$serie.mode) return()
+        
         draw_brush(layer, painter, data, meta)
     }
     
@@ -335,14 +327,14 @@ qtime <- function(time, y, data, period=NULL, group=NULL,
                 infodata <- as.character(unlist(info[1,idx]))
                 infostring <- paste(infoname, infodata, collapse = "\n", sep = ": ")
             } else {
-                xymin <- unlist(lapply(info[, idx], min, na.rm = TRUE))
-                xymax <- unlist(lapply(info[, idx], max, na.rm = TRUE))
-                if (max(table(info[,3]))==1){          
+                xymin <- unlist(lapply(info[, idx], function(x) ifelse(is.numeric(x),min(x,na.rm=TRUE),"")))
+                xymax <- unlist(lapply(info[, idx], function(x) ifelse(is.numeric(x),max(x,na.rm=TRUE),paste(unique(x),collapse=', '))))
+                if (length(table(info[,3]))==1){
                     infostring <- paste(as.character(unlist(info[1,idx-1])), paste(xymin, xymax, sep = " - "),
                                         collapse = "\n", sep = ": ")
-                    infostring <- paste(length(hits),"points\n", infostring)
+                    infostring <- paste("    ",length(hits),"points\n", infostring)
                 } else {
-                    infoname <- c(as.character(unlist(info[1,idx-1])[-2]),unique(info[,3]))
+                    infoname <- c(as.character(unlist(info[1,idx-1])[-2]),levels(factor(info[,3])))
                     xymin <- c(xymin[-2],tapply(info[,4],info[,3],min))
                     xymax <- c(xymax[-2],tapply(info[,4],info[,3],max))
                     infodata <- paste(xymin, xymax, sep = " - ")
