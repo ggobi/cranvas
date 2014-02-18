@@ -24,8 +24,8 @@ draw_identify = function(layer, painter, data, meta) {
   if (!length(meta$identify.labels)) return()
   b = brush(data)
   qfont(painter) = Qt$QFont('Monospace')
-  bgwidth = qstrWidth(painter, meta$identify.labels)
-  bgheight = qstrHeight(painter, meta$identify.labels)
+  bgwidth = qstrWidth(painter, meta$identify.labels)[1]
+  bgheight = qstrHeight(painter, meta$identify.labels)[1]
   # adjust drawing directions when close to the boundary
   hflag = meta$limits[2] - meta$pos[1] > bgwidth  # draw to the right
   vflag = meta$pos[2] - meta$limits[3] > bgheight # draw to the bottom
