@@ -127,7 +127,7 @@ qtime2 = function(time, y, data, group=NULL,
   
   key_press = function(layer, event){
     common_key_press(layer, event, tdata, meta)
-    keys = c('M','G','H','U','D','R','Left','Right','Up','Down')
+    keys = c('M','G','H','U','D','R','Y','Left','Right','Up','Down')
     meta$shiftKey = shift_on(event)
     key = keys[match_key(keys,event)]
     if (!length(key)) return()
@@ -139,6 +139,7 @@ qtime2 = function(time, y, data, group=NULL,
            U = separate_group(meta),
            D = mix_group(meta),
            R = switch_area_mode(meta),
+           Y = y_wrap_forward(meta,tdata),
            Left = x_wrap_backward(meta,tdata,crt_range),
            Right = x_wrap_forward(meta,tdata,crt_range),
            Up = size_up(meta),
@@ -361,7 +362,7 @@ Time.meta2 = setRefClass("Time_meta2",
                         fields = properties(list(
                         varname = 'list', # including the variable names for y, x, idgroup
                         ngroup = 'list', # including the number of groups for y, idgroup
-                        data = 'data.frame', # with x,yorig,xtmp,ytmp,vargroup,idgroup,xwrapgroup,finalgroup,order,htvar,htid,htxwrap,htfinal,areabaseline
+                        data = 'data.frame', # with x,yorig,xtmp,ytmp,vargroup,idgroup,xwrapgroup,finalgroup,order,htvar,htid,htywrap,htfinal,areabaseline
                         mode = 'list', # including area,yfold,xwrap,zoom,serie,idSep,varUP,varDOWN
                         area = 'list', # including x,y,poly,color
                         hits = 'list',
@@ -461,13 +462,13 @@ time_meta_initialize2 = function(meta, call, data,
   ## Other groups
   meta$data$xwrapgroup = 1
   meta$ngroup$xwrap = 1
-  #meta$data$ywrapgroup = 1
-  #meta$ngroup$ywrap = 1
+  meta$data$ywrapgroup = 1
+  meta$ngroup$ywrap = 1
   
   ## Group y-axis
   meta$data$htvar=0
   meta$data$htid=0
-  meta$data$htxwrap=0
+  meta$data$htywrap=0
   
   ## order the data by vargroup, idgroup, and x
   orderEnter = order(meta$data$vargroup, meta$data$idgroup, meta$data$x, decreasing=FALSE)
@@ -478,7 +479,7 @@ time_meta_initialize2 = function(meta, call, data,
   meta$mode$area = FALSE
   meta$mode$yfold = FALSE
   meta$mode$xwrap = FALSE
-  #meta$mode$ywrap = FALSE
+  meta$mode$ywrap = FALSE
   meta$mode$zoom = FALSE
   meta$mode$serie = FALSE
   meta$mode$idSep = FALSE
@@ -487,6 +488,7 @@ time_meta_initialize2 = function(meta, call, data,
   
   ## Other
   meta$steplen$xwrap = shift
+  meta$steplen$ywrap = (0:5)*2
   meta$steplen$id = 0 # vertconst
   meta$steplen$zoom = diff(range(meta$data$xtmp, na.rm = TRUE)) # zoomsize
   meta$shiftKey = FALSE
@@ -521,9 +523,11 @@ time_meta_initialize2 = function(meta, call, data,
 
 # Update the groups of points to make the line
 update_meta_group = function(meta){
-  meta$data$finalgroup = paste(meta$data$vargroup, meta$data$idgroup, meta$data$xwrapgroup)
+  meta$data$finalgroup = paste(meta$data$vargroup, meta$data$idgroup, 
+                               meta$data$xwrapgroup, meta$data$ywrapgroup)
   meta$data$vidgroup = paste(meta$data$vargroup, meta$data$idgroup)
-  meta$data$htfinal = sum(meta$data$htvar, meta$data$htid, meta$data$htxwrap)
+  meta$data = meta$data[order(meta$data$finalgroup),]
+  #meta$data$htfinal = sum(meta$data$htvar, meta$data$htid, meta$data$htywrap)
   meta$ngroup$final = length(unique(meta$data$finalgroup))
   meta$ngroup$vid = length(unique(meta$data$vidgroup))
   meta$ngroup$xwrap = length(unique(meta$data$xwrapgroup))
@@ -540,7 +544,7 @@ update_meta_wrap_color = function(meta, data){
 compute_area = function(meta, fun.base){
   update_meta_group(meta)
   areabaseline = tapply(meta$data$ytmp,meta$data$vidgroup,fun.base,na.rm=TRUE)
-  meta$data$areabaseline = areabaseline[meta$data$vidgroup]    
+  meta$data$areabaseline = areabaseline[meta$data$vidgroup]
   meta$area$lastrow = which(c(diff(as.integer(factor(meta$data$finalgroup)))!=0,TRUE))
   meta$area$firstrow = c(1,(meta$area$lastrow+1))
   meta$area$firstrow = meta$area$firstrow[-length(meta$area$firstrow)]
@@ -549,7 +553,7 @@ compute_area = function(meta, fun.base){
                            x3=meta$data$xtmp[-meta$area$firstrow],
                            x4=meta$data$xtmp[-meta$area$lastrow],
                            x5=meta$data$xtmp[-meta$area$lastrow], x6=NA)
-  tmpbase = meta$data$areabaseline+meta$data$htfinal
+  tmpbase = meta$data$areabaseline
   meta$area$y = data.frame(y1=tmpbase[-meta$area$lastrow],
                            y2=tmpbase[-meta$area$firstrow],
                            y3=meta$data$ytmp[-meta$area$firstrow],
@@ -664,13 +668,16 @@ switch_horizon_graph = function(meta,data){
 # key U for separating the groups by shifting up
 separate_group = function(meta){
   if (meta$ngroup$y>1 & meta$shiftKey) {
-    meta$data$ytmp = meta$data$yscaled + as.integer(meta$data$vargroup)
+    meta$data$htvar = as.integer(meta$data$vargroup)
+    meta$data$ytmp = meta$data$yscaled + meta$data$htvar
     meta$mode$varUP = TRUE
   } else if (meta$ngroup$id>1) {
     meta$steplen$id = meta$steplen$id + 0.05
     if (meta$steplen$id>1) meta$steplen$id = 1
-    for (j in unique(meta$data$vargroup)) {
-      meta$data$ytmp[meta$data$vargroup==j] = (meta$data$yscaled[meta$data$vargroup==j]-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE))+(as.integer(meta$data$idgroup)-1)*meta$steplen$id
+    meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id
+    for (j in unique(meta$data$vargroup)) {   
+      tmprows = (meta$data$vargroup==j)
+      meta$data$ytmp[tmprows] = (meta$data$yscaled[tmprows]-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid[tmprows]
     }
   }
   meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
@@ -681,6 +688,7 @@ separate_group = function(meta){
 mix_group = function(meta){
   meta$mode$varUP = FALSE
   if (meta$ngroup$y>1 & meta$shiftKey) {
+    meta$data$htvar = 0
     meta$data$ytmp = meta$data$yscaled
     meta$mode$varDOWN = TRUE
   } else {
@@ -688,11 +696,14 @@ mix_group = function(meta){
       meta$steplen$id = meta$steplen$id - 0.05
       if (meta$steplen$id<0) meta$steplen$id = 0
       if (!meta$steplen$id) {
+        meta$data$htid = 0
         meta$data$ytmp = meta$data$yscaled
         meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))      
       } else {
+        meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id
         for (j in unique(meta$data$vargroup)) {
-          meta$data$ytmp[meta$data$vargroup==j] = (meta$data$yscaled[meta$data$vargroup==j]-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE))+(as.integer(meta$data$idgroup)-1)*meta$steplen$id
+          tmprows = (meta$data$vargroup==j)
+          meta$data$ytmp[tmprows] = (meta$data$yscaled[tmprows]-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid[tmprows]
         }
       }
     }
@@ -701,7 +712,7 @@ mix_group = function(meta){
   meta_yaxis(meta)
 }
 
-# key Right for wrapping
+# key Right for x-wrapping
 x_wrap_forward = function(meta,data,crt_range){
   hits = selected(data)[meta$data$order]
   if (meta$mode$serie & sum(hits)) {
@@ -740,7 +751,7 @@ x_wrap_forward = function(meta,data,crt_range){
   meta$xlabels = format(meta$xat)
 }
 
-# key Left for back wrapping
+# key Left for x-backward-wrapping
 x_wrap_backward = function(meta,data,crt_range){    
   if (meta$shiftKey) {
     meta$data$xtmp = meta$data$x
@@ -785,6 +796,42 @@ x_wrap_backward = function(meta,data,crt_range){
   update_meta_wrap_color(meta,data)
   meta$xat = axis_loc(meta$limits[1:2])
   meta$xlabels = format(meta$xat)
+}
+
+# key ? for y-wrapping
+y_wrap_forward = function(meta,data){
+  meta$steplen$ywrap = meta$steplen$ywrap[c(2:6,1)]
+  if (meta$steplen$ywrap[1] == 0){
+    meta$data$ywrapgroup = 1
+    meta$data$ytmp = meta$data$yscaled
+    return()
+  }
+  meta$mode$area = TRUE  
+  cutbound = tapply(meta$data$yscaled,meta$data$vargroup,function(x){
+    seq(min(x),max(x),length=meta$steplen$ywrap+1)
+  })
+  cutbound = lapply(cutbound,function(x){
+    x[1]=x[1]-1
+    x[meta$steplen$ywrap+1]=x[meta$steplen$ywrap+1]+1
+    return(x)})
+  meta$data$ywrapgroup = 0
+  for (i in 1:meta$ngroup$y){
+    tmprows = (meta$data$vargroup==levels(meta$data$vargroup)[i])
+    meta$data$ywrapgroup[tmprows] = as.integer(cut(meta$data$yscaled[tmprows],cutbound[[i]]))
+    if (meta$mode$yfold){
+      tmpbound = cutbound[[i]]
+      tmpbound[1:(meta$steplen$ywrap/2)] = tmpbound[1:(meta$steplen$ywrap/2)+1]
+      meta$data$ytmp[tmprows] = meta$data$yscaled[tmprows] - tmpbound[meta$data$ywrapgroup[tmprows]]
+      tmpfold = (meta$data$ywrapgroup[tmprows] > meta$steplen$ywrap/2)
+      meta$data$ytmp[tmprows] = meta$data$ytmp[tmprows] * c(-1,1)[tmpfold+1]
+    } else {
+      tmpbound = cutbound[[i]]
+      tmpbound[1] = tmpbound[1] + 1
+      meta$data$ytmp[tmprows] = meta$data$yscaled[tmprows] - tmpbound[meta$data$ywrapgroup[tmprows]]
+    }
+  }
+  update_meta_group(meta)
+  update_meta_wrap_color(meta,data)
 }
 
 # key Up/Down for adjusting the point size / line width
