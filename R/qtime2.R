@@ -364,6 +364,7 @@ Time.meta2 = setRefClass("Time_meta2",
                         ngroup = 'list', # including the number of groups for y, idgroup
                         data = 'data.frame', # with x,yorig,xtmp,ytmp,vargroup,idgroup,xwrapgroup,finalgroup,order,htvar,htid,htywrap,htfinal,areabaseline
                         mode = 'list', # including area,yfold,xwrap,zoom,serie,idSep,varUP,varDOWN
+                        line = 'list', # including xs,xe,ys,ye
                         area = 'list', # including x,y,poly,color
                         hits = 'list',
                         steplen = 'list',
@@ -526,7 +527,6 @@ update_meta_group = function(meta){
   meta$data$finalgroup = paste(meta$data$vargroup, meta$data$idgroup, 
                                meta$data$xwrapgroup, meta$data$ywrapgroup)
   meta$data$vidgroup = paste(meta$data$vargroup, meta$data$idgroup)
-  meta$data = meta$data[order(meta$data$finalgroup),]
   #meta$data$htfinal = sum(meta$data$htvar, meta$data$htid, meta$data$htywrap)
   meta$ngroup$final = length(unique(meta$data$finalgroup))
   meta$ngroup$vid = length(unique(meta$data$vidgroup))
@@ -538,6 +538,14 @@ update_meta_wrap_color = function(meta, data){
   color_seq = seq(1,0,length=meta$ngroup$xwrap+1)
   meta$data$fill = color_seq[meta$data$xwrapgroup]
   meta$data$stroke = color_seq[meta$data$xwrapgroup]
+}
+
+# Set up meta$line
+compute_line = function(meta){
+  update_meta_group(meta)
+  if (meta$mode$ywrap){
+    return()
+  }
 }
 
 # Set up meta$area
@@ -803,35 +811,59 @@ y_wrap_forward = function(meta,data){
   meta$steplen$ywrap = meta$steplen$ywrap[c(2:6,1)]
   if (meta$steplen$ywrap[1] == 0){
     meta$data$ywrapgroup = 1
-    meta$data$ytmp = meta$data$yscaled
+    if (meta$mode$yfold){
+      meta$data$ytmp = abs(meta$data$hrznydiff) + meta$data$hrznbaseline
+    }else{
+      meta$data$ytmp = meta$data$yscaled
+    }
+    meta$limits[3:4] = extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
+    meta$yat = axis_loc(meta$limits[3:4])
+    meta$ylabels = format(meta$yat)
     return()
   }
   meta$mode$area = TRUE  
   cutbound = tapply(meta$data$yscaled,meta$data$vargroup,function(x){
-    seq(min(x),max(x),length=meta$steplen$ywrap+1)
+    seq(min(x),max(x),length=meta$steplen$ywrap[1]+1)
   })
-  cutbound = lapply(cutbound,function(x){
+  cutbound2 = lapply(cutbound,function(x){
     x[1]=x[1]-1
-    x[meta$steplen$ywrap+1]=x[meta$steplen$ywrap+1]+1
+    x[meta$steplen$ywrap[1]+1]=x[meta$steplen$ywrap[1]+1]+1
     return(x)})
   meta$data$ywrapgroup = 0
+  meta$data[,paste('ywrapline',1:(meta$steplen$ywrap[1]),sep='')] = NA
   for (i in 1:meta$ngroup$y){
     tmprows = (meta$data$vargroup==levels(meta$data$vargroup)[i])
-    meta$data$ywrapgroup[tmprows] = as.integer(cut(meta$data$yscaled[tmprows],cutbound[[i]]))
+    meta$data$ywrapgroup[tmprows] = as.integer(cut(meta$data$yscaled[tmprows],cutbound2[[i]]))
     if (meta$mode$yfold){
       tmpbound = cutbound[[i]]
-      tmpbound[1:(meta$steplen$ywrap/2)] = tmpbound[1:(meta$steplen$ywrap/2)+1]
+      tmpbound[1:(meta$steplen$ywrap[1]/2)] = tmpbound[1:(meta$steplen$ywrap[1]/2)+1]
       meta$data$ytmp[tmprows] = meta$data$yscaled[tmprows] - tmpbound[meta$data$ywrapgroup[tmprows]]
-      tmpfold = (meta$data$ywrapgroup[tmprows] > meta$steplen$ywrap/2)
+      tmpfold = (meta$data$ywrapgroup[tmprows] > meta$steplen$ywrap[1]/2)
       meta$data$ytmp[tmprows] = meta$data$ytmp[tmprows] * c(-1,1)[tmpfold+1]
     } else {
       tmpbound = cutbound[[i]]
-      tmpbound[1] = tmpbound[1] + 1
       meta$data$ytmp[tmprows] = meta$data$yscaled[tmprows] - tmpbound[meta$data$ywrapgroup[tmprows]]
+    }
+    for (j in 1:(meta$steplen$ywrap[1])) {
+      tmpline = which(meta$data$ywrapgroup==j)
+      meta$data[tmpline,paste('ywrapline',j,sep='')] = meta$data$ytmp[tmpline]
+      tmpboundary = intersect(setdiff(c(tmpline-1,tmpline+1),tmpline),1:nrow(meta$data))
+      tmpupper = tmpboundary[meta$data$ywrapgroup[tmpboundary]>j]
+      tmplower = tmpboundary[meta$data$ywrapgroup[tmpboundary]<j]
+      if (meta$mode$yfold & j<=(meta$steplen$ywrap[1]/2) ) {
+        tmp = tmpupper
+        tmpupper = tmplower
+        tmplower = tmp
+      }
+      meta$data[tmpupper,paste('ywrapline',j,sep='')] = diff(tmpbound[1:2])
+      meta$data[tmplower,paste('ywrapline',j,sep='')] = 0
     }
   }
   update_meta_group(meta)
   update_meta_wrap_color(meta,data)
+  meta$limits[3:4] = extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
+  meta$yat = axis_loc(meta$limits[3:4])
+  meta$ylabels = format(meta$yat)
 }
 
 # key Up/Down for adjusting the point size / line width
