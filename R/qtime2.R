@@ -23,7 +23,7 @@ qtime2 = function(time, y, data, group=NULL,
   tree = createTree(data.frame(x=meta$data$xtmp,y=meta$data$ytmp))
   update_meta_group(meta)
   update_meta_wrap_color(meta,tdata)
-  compute_area(meta,fun.base)
+  compute_area(meta,tdata,fun.base)
   
   ####################
   ## event handlers ##----------
@@ -168,26 +168,16 @@ qtime2 = function(time, y, data, group=NULL,
   
   line_draw = function(layer,painter){
     qlineWidth(painter) = meta$radius / 2
-    color = alpha(tdata$.color[meta$data$order], meta$data$fill*meta$alpha)
-    for (i in unique(meta$data$finalgroup)){
-      idx = meta$data$finalgroup == i
-      if (sum(idx)!=1){
-        qdrawSegment(painter,
-                     meta$data$xtmp[idx][-sum(idx)],
-                     meta$data$ytmp[idx][-sum(idx)],
-                     meta$data$xtmp[idx][-1],
-                     meta$data$ytmp[idx][-1],
-                     stroke=color[idx][-sum(idx)])
-      }
-    }
+    compute_line(meta, tdata)
+    qdrawSegment(painter,meta$line$df$xs,meta$line$df$ys,
+                 meta$line$df$xe,meta$line$df$ye,stroke=meta$line$df$col)
   }
   
   area_draw = function(layer,painter){
     if (! meta$mode$area) return()
-    compute_area(meta, fun.base)
-    color = alpha(tdata$.color[meta$data$order],meta$area$color)[-meta$area$lastrow]
+    compute_area(meta, tdata, fun.base)
     qdrawPolygon(painter, meta$area$poly$x, meta$area$poly$y, 
-                 stroke=alpha(color,0.01), fill=color)
+                 stroke=alpha(meta$area$color,0.01), fill=meta$area$color)
   }
   
   brush_draw = function(layer, painter) {
@@ -195,7 +185,7 @@ qtime2 = function(time, y, data, group=NULL,
     if (any(is.na(meta$pos))) return()
     
     hits = selected(tdata)[meta$data$order]
-    if (any(hits)) {compute_area(meta, fun.base); selected_draw(meta,b,hits,painter)}
+    if (any(hits)) {compute_area(meta, tdata, fun.base); selected_draw(meta,b,hits,painter)}
     
     if (meta$mode$zoom || meta$mode$serie) return()
     
@@ -247,7 +237,7 @@ qtime2 = function(time, y, data, group=NULL,
     }
     if (meta$mode$varUP) {
       qdrawText(painter,tmpprint,
-                rep(meta$limits[1,1],meta$ngroup$y),meta$yat-0.5,
+                rep(meta$limits[1,1],meta$ngroup$y),meta$yat-diff(meta$yat[1:2])/2,
                 halign='left',valign='bottom',color='gray50')
     } else {
       qdrawText(painter,paste(tmpprint,collapse="\n"),
@@ -364,7 +354,7 @@ Time.meta2 = setRefClass("Time_meta2",
                         ngroup = 'list', # including the number of groups for y, idgroup
                         data = 'data.frame', # with x,yorig,xtmp,ytmp,vargroup,idgroup,xwrapgroup,finalgroup,order,htvar,htid,htywrap,htfinal,areabaseline
                         mode = 'list', # including area,yfold,xwrap,zoom,serie,idSep,varUP,varDOWN
-                        line = 'list', # including xs,xe,ys,ye
+                        line = 'list', # including df,firstrow,lastrow
                         area = 'list', # including x,y,poly,color
                         hits = 'list',
                         steplen = 'list',
@@ -524,8 +514,7 @@ time_meta_initialize2 = function(meta, call, data,
 
 # Update the groups of points to make the line
 update_meta_group = function(meta){
-  meta$data$finalgroup = paste(meta$data$vargroup, meta$data$idgroup, 
-                               meta$data$xwrapgroup, meta$data$ywrapgroup)
+  meta$data$finalgroup = paste(meta$data$vargroup, meta$data$idgroup, meta$data$xwrapgroup)
   meta$data$vidgroup = paste(meta$data$vargroup, meta$data$idgroup)
   #meta$data$htfinal = sum(meta$data$htvar, meta$data$htid, meta$data$htywrap)
   meta$ngroup$final = length(unique(meta$data$finalgroup))
@@ -541,36 +530,60 @@ update_meta_wrap_color = function(meta, data){
 }
 
 # Set up meta$line
-compute_line = function(meta){
+compute_line = function(meta, data){
   update_meta_group(meta)
+  tmpcolor = alpha(data$.color[meta$data$order],meta$data$fill*meta$alpha)
   if (meta$mode$ywrap){
+    meta$line$df = data.frame()
+    for (i in unique(meta$data$finalgroup)){
+      tmpdat = meta$data[meta$data$finalgroup==i,]
+      tmpn = nrow(tmpdat)
+      for (j in paste('ywrapline',1:(meta$steplen$ywrap[1]),sep='')){
+        tmpline = data.frame(xs=tmpdat$xtmp[-tmpn],
+                             ys=tmpdat[-tmpn,j],
+                             xe=tmpdat$xtmp[-1],
+                             ye=tmpdat[-1,j],
+                             col=tmpcolor[meta$data$finalgroup==i][-tmpn],
+                             id=which(meta$data$finalgroup==i)[-tmpn])
+        meta$line$df = rbind(meta$line$df, tmpline[complete.cases(tmpline),])
+      }
+    }
     return()
   }
+  meta$line$lastrow = which(c(diff(as.integer(factor(meta$data$finalgroup)))!=0,TRUE))
+  meta$line$firstrow = c(1,(meta$line$lastrow[-length(meta$line$lastrow)]+1))
+  meta$line$df = data.frame(xs=meta$data$xtmp[-meta$line$lastrow],
+                            ys=meta$data$ytmp[-meta$line$lastrow],
+                            xe=meta$data$xtmp[-meta$line$firstrow],
+                            ye=meta$data$ytmp[-meta$line$firstrow],
+                            col=tmpcolor[-meta$line$lastrow],
+                            id=(1:nrow(meta$data))[-meta$line$lastrow])
 }
 
 # Set up meta$area
-compute_area = function(meta, fun.base){
-  update_meta_group(meta)
-  areabaseline = tapply(meta$data$ytmp,meta$data$vidgroup,fun.base,na.rm=TRUE)
-  meta$data$areabaseline = areabaseline[meta$data$vidgroup]
-  meta$area$lastrow = which(c(diff(as.integer(factor(meta$data$finalgroup)))!=0,TRUE))
-  meta$area$firstrow = c(1,(meta$area$lastrow+1))
-  meta$area$firstrow = meta$area$firstrow[-length(meta$area$firstrow)]
-  meta$area$x = data.frame(x1=meta$data$xtmp[-meta$area$lastrow],
-                           x2=meta$data$xtmp[-meta$area$firstrow],
-                           x3=meta$data$xtmp[-meta$area$firstrow],
-                           x4=meta$data$xtmp[-meta$area$lastrow],
-                           x5=meta$data$xtmp[-meta$area$lastrow], x6=NA)
-  tmpbase = meta$data$areabaseline
-  meta$area$y = data.frame(y1=tmpbase[-meta$area$lastrow],
-                           y2=tmpbase[-meta$area$firstrow],
-                           y3=meta$data$ytmp[-meta$area$firstrow],
-                           y4=meta$data$ytmp[-meta$area$lastrow],
-                           y5=tmpbase[-meta$area$lastrow], y6=NA)
+compute_area = function(meta, data, fun.base){
+  compute_line(meta, data)
+  tmpcolor = alpha(data$.color[meta$data$order],meta$data$fill*meta$alpha/2)
+  meta$area$x = data.frame(x1=meta$line$df$xs,x2=meta$line$df$xe,x3=meta$line$df$xe,
+                           x4=meta$line$df$xs,x5=meta$line$df$xs,x6=NA)
+  if (meta$mode$ywrap){
+    areabaseline = meta$data$htvar[meta$line$df$id]
+    meta$area$y = data.frame(y1=areabaseline,y2=areabaseline,y3=meta$line$df$ye,
+                             y4=meta$line$df$ys,y5=areabaseline,y6=NA)
+    meta$area$color = tmpcolor[meta$line$df$id]
+  } else {
+    areabaseline = tapply(meta$data$ytmp,meta$data$vidgroup,fun.base,na.rm=TRUE)
+    meta$data$areabaseline = areabaseline[meta$data$vidgroup]
+    meta$area$y = data.frame(y1=meta$data$areabaseline[-meta$line$lastrow],
+                             y2=meta$data$areabaseline[-meta$line$lastrow],
+                             y3=meta$line$df$ye, y4=meta$line$df$ys,
+                             y5=meta$data$areabaseline[-meta$line$lastrow],
+                             y6=NA)
+    meta$area$color = tmpcolor[-meta$line$lastrow]
+  }
   meta$area$poly = data.frame(x=as.vector(as.matrix(t(meta$area$x))),
                               y=as.vector(as.matrix(t(meta$area$y))),
                               group=rep(1:nrow(meta$area$x),each=6))
-  meta$area$color = meta$data$fill*meta$alpha/2
 }
 
 # Draw the selected data in qtime
@@ -578,7 +591,7 @@ selected_draw = function(meta,b,hits,painter){
   qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$data$xtmp[hits], 
              meta$data$ytmp[hits], stroke = b$color, fill = b$color)
   qlineWidth(painter) = max(meta$radius,1)
-  idx = (hits[-length(hits)] & hits[-1])[-meta$area$lastrow]
+  idx = (hits[-length(hits)] & hits[-1])[-meta$line$lastrow]
   qdrawSegment(painter,meta$area$x[idx,4],meta$area$y[idx,4],
                meta$area$x[idx,3],meta$area$y[idx,3],stroke=b$color)
   if (meta$mode$area){
@@ -591,7 +604,8 @@ selected_draw = function(meta,b,hits,painter){
 # Set limits for yaxis in qtime
 meta_yaxis = function(meta) {
   if (meta$mode$varUP) {
-    meta$yat = 1:meta$ngroup$y+0.5
+    tmpyat = sort(unique(meta$data$htvar))
+    meta$yat = tmpyat + diff(tmpyat[1:2])/2
     meta$ylabels = meta$varname$y
     meta$ylab = ""
   } else if (meta$mode$varDOWN) {
@@ -676,7 +690,7 @@ switch_horizon_graph = function(meta,data){
 # key U for separating the groups by shifting up
 separate_group = function(meta){
   if (meta$ngroup$y>1 & meta$shiftKey) {
-    meta$data$htvar = as.integer(meta$data$vargroup)
+    meta$data$htvar = as.integer(meta$data$vargroup) - 1
     meta$data$ytmp = meta$data$yscaled + meta$data$htvar
     meta$mode$varUP = TRUE
   } else if (meta$ngroup$id>1) {
@@ -810,29 +824,36 @@ x_wrap_backward = function(meta,data,crt_range){
 y_wrap_forward = function(meta,data){
   meta$steplen$ywrap = meta$steplen$ywrap[c(2:6,1)]
   if (meta$steplen$ywrap[1] == 0){
+    if (meta$mode$varUP) {
+      meta$data$htvar = (as.integer(meta$data$vargroup) - 1)
+    } else {
+      meta$data$htvar = 0
+    }
     meta$data$ywrapgroup = 1
     if (meta$mode$yfold){
-      meta$data$ytmp = abs(meta$data$hrznydiff) + meta$data$hrznbaseline
+      meta$data$ytmp = abs(meta$data$hrznydiff) + meta$data$hrznbaseline + meta$data$htvar
     }else{
-      meta$data$ytmp = meta$data$yscaled
+      meta$data$ytmp = meta$data$yscaled + meta$data$htvar
     }
     meta$limits[3:4] = extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
-    meta$yat = axis_loc(meta$limits[3:4])
-    meta$ylabels = format(meta$yat)
+    meta_yaxis(meta)
+    meta$mode$ywrap = FALSE
     return()
   }
-  meta$mode$area = TRUE  
+  meta$mode$area = TRUE
+  meta$mode$ywrap = TRUE
   cutbound = tapply(meta$data$yscaled,meta$data$vargroup,function(x){
     seq(min(x),max(x),length=meta$steplen$ywrap[1]+1)
   })
+  meta$data$htvar = (as.integer(meta$data$vargroup) - 1)*diff(cutbound[[1]][1:2])
   cutbound2 = lapply(cutbound,function(x){
     x[1]=x[1]-1
     x[meta$steplen$ywrap[1]+1]=x[meta$steplen$ywrap[1]+1]+1
     return(x)})
-  meta$data$ywrapgroup = 0
+  meta$data$ywrapgroup = 1
   meta$data[,paste('ywrapline',1:(meta$steplen$ywrap[1]),sep='')] = NA
   for (i in 1:meta$ngroup$y){
-    tmprows = (meta$data$vargroup==levels(meta$data$vargroup)[i])
+    tmprows = (meta$data$vargroup==meta$varname$y[i])
     meta$data$ywrapgroup[tmprows] = as.integer(cut(meta$data$yscaled[tmprows],cutbound2[[i]]))
     if (meta$mode$yfold){
       tmpbound = cutbound[[i]]
@@ -844,10 +865,11 @@ y_wrap_forward = function(meta,data){
       tmpbound = cutbound[[i]]
       meta$data$ytmp[tmprows] = meta$data$yscaled[tmprows] - tmpbound[meta$data$ywrapgroup[tmprows]]
     }
+    meta$data$ytmp[tmprows] = meta$data$ytmp[tmprows] + meta$data$htvar[tmprows]
     for (j in 1:(meta$steplen$ywrap[1])) {
-      tmpline = which(meta$data$ywrapgroup==j)
+      tmpline = which(meta$data$ywrapgroup==j & tmprows)
       meta$data[tmpline,paste('ywrapline',j,sep='')] = meta$data$ytmp[tmpline]
-      tmpboundary = intersect(setdiff(c(tmpline-1,tmpline+1),tmpline),1:nrow(meta$data))
+      tmpboundary = setdiff(which(tmprows),tmpline)
       tmpupper = tmpboundary[meta$data$ywrapgroup[tmpboundary]>j]
       tmplower = tmpboundary[meta$data$ywrapgroup[tmpboundary]<j]
       if (meta$mode$yfold & j<=(meta$steplen$ywrap[1]/2) ) {
@@ -855,15 +877,18 @@ y_wrap_forward = function(meta,data){
         tmpupper = tmplower
         tmplower = tmp
       }
-      meta$data[tmpupper,paste('ywrapline',j,sep='')] = diff(tmpbound[1:2])
-      meta$data[tmplower,paste('ywrapline',j,sep='')] = 0
+      meta$data[tmpupper,paste('ywrapline',j,sep='')] = diff(tmpbound[1:2]) + meta$data$htvar[tmpline][1]
+      meta$data[tmplower,paste('ywrapline',j,sep='')] = meta$data$htvar[tmpline][1]
     }
   }
   update_meta_group(meta)
   update_meta_wrap_color(meta,data)
-  meta$limits[3:4] = extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
-  meta$yat = axis_loc(meta$limits[3:4])
-  meta$ylabels = format(meta$yat)
+  if (meta$ngroup$y > 1) {
+    meta$limits[3:4] = extend_ranges(c(0,meta$ngroup$y*diff(tmpbound[1:2])))
+  } else {
+    meta$limits[3:4] = extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
+  }
+  meta_yaxis(meta)
 }
 
 # key Up/Down for adjusting the point size / line width
