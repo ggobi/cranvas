@@ -22,7 +22,7 @@ qtime2 = function(time, y, data, group=NULL,
   meta$active = TRUE
   tree = createTree(data.frame(x=meta$data$xtmp,y=meta$data$ytmp))
   update_meta_group(meta)
-  update_meta_wrap_color(meta,tdata)
+  update_meta_xwrap_color(meta,tdata)
   compute_area(meta,tdata,fun.base)
   
   ####################
@@ -135,7 +135,7 @@ qtime2 = function(time, y, data, group=NULL,
     switch(key, 
            M = switch_serie_mode(meta, tdata),
            G = shift_wrap_gear(meta),
-           H = switch_horizon_graph(meta, tdata),
+           F = switch_fold_mode(meta, tdata),
            U = separate_group(meta),
            D = mix_group(meta),
            R = switch_area_mode(meta),
@@ -523,7 +523,7 @@ update_meta_group = function(meta){
 }
 
 # Update the colors of points when wrapping
-update_meta_wrap_color = function(meta, data){
+update_meta_xwrap_color = function(meta, data){
   color_seq = seq(1,0,length=meta$ngroup$xwrap+1)
   meta$data$fill = color_seq[meta$data$xwrapgroup]
   meta$data$stroke = color_seq[meta$data$xwrapgroup]
@@ -664,10 +664,15 @@ switch_area_mode = function(meta){
   meta$mode$area = !meta$mode$area
 }
 
-# key H for turning on/off the horizon graph mode
-switch_horizon_graph = function(meta,data){
+# key F for fold/unfold the time series by mean
+switch_fold_mode = function(meta,data){
   meta$mode$yfold = !meta$mode$yfold
   if (meta$mode$yfold) {
+    if (meta$steplen$id == 0) {
+      meta$data$ytmp = meta$data$yscaled + meta$data$htvar
+    } else {
+      meta$data$ytmp =  (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid
+    }
     hrznbaseline = tapply(meta$data$ytmp,meta$data$vidgroup,mean,na.rm=TRUE)
     meta$data$hrznbaseline = hrznbaseline[meta$data$vidgroup]
     meta$data$hrznydiff = meta$data$ytmp - meta$data$hrznbaseline
@@ -697,10 +702,7 @@ separate_group = function(meta){
     meta$steplen$id = meta$steplen$id + 0.05
     if (meta$steplen$id>1) meta$steplen$id = 1
     meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id
-    for (j in unique(meta$data$vargroup)) {   
-      tmprows = (meta$data$vargroup==j)
-      meta$data$ytmp[tmprows] = (meta$data$yscaled[tmprows]-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid[tmprows]
-    }
+    meta$data$ytmp = (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid
   }
   meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
   meta_yaxis(meta)
@@ -723,10 +725,7 @@ mix_group = function(meta){
         meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))      
       } else {
         meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id
-        for (j in unique(meta$data$vargroup)) {
-          tmprows = (meta$data$vargroup==j)
-          meta$data$ytmp[tmprows] = (meta$data$yscaled[tmprows]-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid[tmprows]
-        }
+        meta$data$ytmp = (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid
       }
     }
   } 
@@ -768,7 +767,7 @@ x_wrap_forward = function(meta,data,crt_range){
     meta$limits[1:2] = extend_ranges(meta$data$xtmp)
   }
   update_meta_group(meta)
-  update_meta_wrap_color(meta,data)
+  update_meta_xwrap_color(meta,data)
   meta$xat = axis_loc(meta$limits[1:2])
   meta$xlabels = format(meta$xat)
 }
@@ -815,7 +814,7 @@ x_wrap_backward = function(meta,data,crt_range){
     }
   }
   update_meta_group(meta)
-  update_meta_wrap_color(meta,data)
+  update_meta_xwrap_color(meta,data)
   meta$xat = axis_loc(meta$limits[1:2])
   meta$xlabels = format(meta$xat)
 }
@@ -829,17 +828,28 @@ y_wrap_forward = function(meta,data){
     meta$mode$ywrap = FALSE
     meta$data$ywrapgroup = 1
     meta$data$ytmp = if (meta$mode$yfold){
-      abs(meta$data$hrznydiff) + meta$data$hrznbaseline + meta$data$htvar
-    } else {meta$data$yscaled + meta$data$htvar}
+      meta$data$hrznbaseline + abs(meta$data$hrznydiff)
+    } else if (meta$steplen$id == 0){
+      meta$data$yscaled + meta$data$htvar
+    } else {
+      (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid
+    }
     meta$limits[3:4] = extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
     meta_yaxis(meta)
     return()
   }
   meta$mode$area = TRUE
   meta$mode$ywrap = TRUE
-  cutbound = tapply(meta$data$yscaled,meta$data$vargroup,function(x){
-    seq(min(x),max(x),length=meta$steplen$ywrap[1]+1)
-  })
+  if (meta$mode$yfold){
+    cutbound = tapply(meta$data$hrznbaseline + abs(meta$data$hrznydiff),
+                      meta$data$vargroup,function(x){
+                        seq(min(x),max(x),length=meta$steplen$ywrap[1]/2+1)
+                        })
+  }else{
+    cutbound = tapply(meta$data$yscaled,meta$data$vargroup,function(x){
+      seq(min(x),max(x),length=meta$steplen$ywrap[1]+1)
+    })
+  }
   meta$data$htvar = (as.integer(meta$data$vargroup)-1) * diff(cutbound[[1]][1:2])*1.05
   cutbound2 = lapply(cutbound,function(x){
     x[1]=x[1]-1
@@ -875,7 +885,7 @@ y_wrap_forward = function(meta,data){
     }
   }
   update_meta_group(meta)
-  update_meta_wrap_color(meta,data)
+  update_meta_xwrap_color(meta,data)
   if (meta$ngroup$y > 1) {
     meta$limits[3:4] = extend_ranges(c(0,meta$ngroup$y*diff(cutbound[[1]][1:2])))
   } else {
