@@ -12,5 +12,8 @@ Encoding: UTF-8
 RnwWeave: knitr
 LaTeX: pdfLaTeX
 
+AutoAppendNewline: Yes
+StripTrailingWhitespace: Yes
+
 BuildType: Package
 PackageInstallArgs: -v; cd cranvas; make docs #
