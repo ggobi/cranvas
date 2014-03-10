@@ -15,11 +15,10 @@ extend_ranges(x, f = qpar("mar"))
   or 4 (extending x-axis and y-axis respectively)}
 }
 \value{
-  a vector or a matrix of ranges corresponding to the input
-  \code{x}
+a vector or a matrix of ranges corresponding to the input \code{x}
 }
 \description{
-  This is useful for setting a margin in the plot region.
+This is useful for setting a margin in the plot region.
 }
 \examples{
 extend_ranges(c(0, 1))
@@ -33,5 +32,5 @@ extend_ranges(m, f = c(0.1, 0.2))
 extend_ranges(m, f = c(0.2, 0.2, 0.1, 0.1))
 }
 \author{
-  Yihui Xie
+Yihui Xie
 }

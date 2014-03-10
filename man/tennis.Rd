@@ -4,11 +4,11 @@
 \title{Dataset of 2006 Australian Open mens tennis matches}
 \format{data.frame: 25 obs. of  18 variables}
 \source{
-  2006 Australian Open mens tennis matches.
+2006 Australian Open mens tennis matches.
 }
 \description{
-  The data contains statistics from the 2006 Australian
-  Open mens tennis matches.
+The data contains statistics from the 2006 Australian Open mens tennis
+matches.
 }
 \examples{
 library(cranvas)

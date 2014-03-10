@@ -13,18 +13,17 @@ remove_link(data, id = link_id(data))
   \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
-  the listeners are removed
+the listeners are removed
 }
 \description{
-  This function removes the linking (listeners) in
-  mutaframes.
+This function removes the linking (listeners) in mutaframes.
 }
 \examples{
 ## see ?link_cat
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{link_knn}}, \code{\link{link_cat}}
+\code{\link{link_knn}}, \code{\link{link_cat}}
 }

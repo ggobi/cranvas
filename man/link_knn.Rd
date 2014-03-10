@@ -20,22 +20,19 @@ link_knn(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10)
   \code{NULL} means \code{mf1} will be linked to itself}
 }
 \value{
-  Similar to categorical linking (\code{\link{link_cat}}),
-  this function also links two mutaframes together (or one
-  mutaframe to itself), and id's of listeners are returned.
+Similar to categorical linking (\code{\link{link_cat}}), this
+  function also links two mutaframes together (or one mutaframe to itself),
+  and id's of listeners are returned.
 }
 \description{
-  When a number of elements in a data are brushed, their
-  k-nearest neighbors (based on a certain distance measure)
-  are brushed as well.
+When a number of elements in a data are brushed, their k-nearest neighbors
+(based on a certain distance measure) are brushed as well.
 }
 \details{
-  A center point for the variables based on the selected
-  rows is calculated in the first dataset, then the k
-  nearest rows in the second dataset (if not provided, it
-  will be the same as the first dataset) to this center are
-  selected. Only the Euclidean distance has been
-  implemented at the moment.
+A center point for the variables based on the selected rows is calculated in
+the first dataset, then the k nearest rows in the second dataset (if not
+provided, it will be the same as the first dataset) to this center are
+selected. Only the Euclidean distance has been implemented at the moment.
 }
 \examples{
 
@@ -76,5 +73,5 @@ remove_link(mf2, id[2])
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

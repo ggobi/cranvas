@@ -15,12 +15,12 @@ match_key(key, event)
   leave this argument blank)}
 }
 \value{
-  \code{TRUE} for the matched keys, and \code{FALSE} for
-  those not matched
+\code{TRUE} for the matched keys, and \code{FALSE} for those not
+  matched
 }
 \description{
-  This is a simple wrapper function to test if the given
-  keys are hit in the keyboard event.
+This is a simple wrapper function to test if the given keys are hit in the
+keyboard event.
 }
 \examples{
 library(qtbase)
@@ -34,8 +34,8 @@ r <- qlayer(s, keyPressFun = key_press)
 qplotView(scene = s)
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \references{
-  \url{http://doc.qt.nokia.com/latest/qt.html#Key-enum}
+\url{http://doc.qt.nokia.com/latest/qt.html#Key-enum}
 }

@@ -23,82 +23,68 @@ brush(data, attr) <- value
   \item{value}{the value of the brush attribute}
 }
 \value{
-  The function \code{\link{brush}} returns the brush object
-  or the attribute of the brush; note the brush object can
-  be further manipulated with other methods -- see examples
-  below.
+The function \code{\link{brush}} returns the brush object or the
+  attribute of the brush; note the brush object can be further manipulated
+  with other methods -- see examples below.
 }
 \description{
-  The brush object in \pkg{cranvas} is essentially an
-  environment, and we can manipulate objects in this
-  environment.
+The brush object in \pkg{cranvas} is essentially an environment, and we can
+manipulate objects in this environment.
 }
 \details{
-  The list of attributes in the brush (they can be accessed
-  by the \code{$} method):
+The list of attributes in the brush (they can be accessed by the \code{$}
+method):
 
-  \describe{
+\describe{
 
-  \item{style}{a list containing \code{color},
-  \code{linewidth} and \code{linetype} defining the style
-  of the brush (rectangle) -- not to be confused with the
-  color of the brushed elements}
+\item{style}{a list containing \code{color}, \code{linewidth} and
+\code{linetype} defining the style of the brush (rectangle) -- not to be
+confused with the color of the brushed elements}
 
-  \item{color, size}{the color and size of the brushed
-  elements}
+\item{color, size}{the color and size of the brushed elements}
 
-  \item{mode}{the brush mode: can be \code{'none'}
-  (default), \code{'and'}, \code{'or'}, \code{'xor'},
-  \code{'not'} or \code{'complement'}; see
-  \code{\link{mode_selection}} for details}
+\item{mode}{the brush mode: can be \code{'none'} (default), \code{'and'},
+\code{'or'}, \code{'xor'}, \code{'not'} or \code{'complement'}; see
+\code{\link{mode_selection}} for details}
 
-  \item{identify}{logical: \code{TRUE} (turn on the
-  identify mode) or \code{FALSE} (the brush mode)}
+\item{identify}{logical: \code{TRUE} (turn on the identify mode) or
+\code{FALSE} (the brush mode)}
 
-  \item{label.gen}{a function to be used to generate the
-  labels (based on the identified data) to show in the
-  identify mode; the default function just prints the
-  identified data as a character string}
+\item{label.gen}{a function to be used to generate the labels (based on the
+identified data) to show in the identify mode; the default function just
+prints the identified data as a character string}
 
-  \item{label.color}{the color for the label in the
-  identify mode}
+\item{label.color}{the color for the label in the identify mode}
 
-  \item{history.size}{the size of brush history, i.e. how
-  many brushing operations to be recorded; default to be
-  30}
+\item{history.size}{the size of brush history, i.e. how many brushing
+operations to be recorded; default to be 30}
 
-  \item{history.list}{the list of indices of the brushed
-  elements; we can go back and forth in the brush history
-  according to this list}
+\item{history.list}{the list of indices of the brushed elements; we can go
+back and forth in the brush history according to this list}
 
-  \item{history.index}{the current index of the brush
-  history}
+\item{history.index}{the current index of the brush history}
 
-  \item{persistent}{persistent (\code{TRUE}) or transient
-  (\code{FALSE}) brushing; in the persistent brushing mode,
-  the attributes of the brushed elements will be changed
-  permanently}
+\item{persistent}{persistent (\code{TRUE}) or transient (\code{FALSE})
+brushing; in the persistent brushing mode, the attributes of the brushed
+elements will be changed permanently}
 
-  \item{persistent.color}{a color vector to store the
-  colors of persistently brushed elements}
+\item{persistent.color}{a color vector to store the colors of persistently
+brushed elements}
 
-  \item{persistent.list}{the persistent brushing history (a
-  list of indices of the brushed elements)}
+\item{persistent.list}{the persistent brushing history (a list of indices of
+the brushed elements)}
 
-  \item{select.only}{is the mouse used to brush graphical
-  elements ((\code{FALSE})) or select elements only
-  (\code{TRUE}); the subtle difference here is whether the
-  brush should stay on the plot or not when the mouse is
-  released}
+\item{select.only}{is the mouse used to brush graphical elements
+((\code{FALSE})) or select elements only (\code{TRUE}); the subtle difference
+here is whether the brush should stay on the plot or not when the mouse is
+released}
 
-  \item{zoom}{when \code{select.only == TRUE}, zoom with
-  selection or not}
+\item{zoom}{when \code{select.only == TRUE}, zoom with selection or not}
 
-  \item{draw.brush}{whether to draw the brush (when the
-  mouse is released and \code{select.only} is \code{TRUE},
-  then \code{draw.brush} will be \code{FALSE} so the brush
-  will go away)} \item{cursor}{the cursor type (an integer;
-  see \code{\link{set_cursor}})}}
+\item{draw.brush}{whether to draw the brush (when the mouse is released and
+\code{select.only} is \code{TRUE}, then \code{draw.brush} will be
+\code{FALSE} so the brush will go away)} \item{cursor}{the cursor type (an
+integer; see \code{\link{set_cursor}})}}
 }
 \examples{
 library(cranvas)
@@ -139,8 +125,8 @@ b$label.gen <- function(x) {
 }
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{qdata}}
+\code{\link{qdata}}
 }

@@ -37,21 +37,19 @@ size_title(data) <- value
   scalar)}
 }
 \value{
-  The corresponding scale information in \code{data} is set
-  to \code{value}.
+The corresponding scale information in \code{data} is set to
+  \code{value}.
 }
 \description{
-  These functions provide ways to modify the palettes,
-  variables to create aesthetics and their titles in a data
-  object created by \code{\link{qdata}}. Currently
-  supported aesthetics are about color, border and size of
-  graphical elements.
+These functions provide ways to modify the palettes, variables to create
+aesthetics and their titles in a data object created by \code{\link{qdata}}.
+Currently supported aesthetics are about color, border and size of graphical
+elements.
 }
 \details{
-  All these information is called ``scales'' (in the
-  \pkg{ggplot2} term) and stored in \code{attr(data,
-  'Scales')}. Usually palette functions are from the
-  \pkg{scales} package.
+All these information is called ``scales'' (in the \pkg{ggplot2} term) and
+stored in \code{attr(data, 'Scales')}. Usually palette functions are from the
+\pkg{scales} package.
 }
 \examples{
 library(cranvas)
@@ -73,5 +71,5 @@ color_title(qtennis) <- "First Serves"  # change title; to be used in legend
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

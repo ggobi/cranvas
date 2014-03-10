@@ -13,14 +13,13 @@
   herd size} \item{\code{PRODUCTION}}{Number of clean pig meat slaughtered}
   \item{\code{HERDSZ}}{Actual breeding herd size}}}
 \source{
-  Andrews, D.F. and Herzberg, A.M. (1985), \emph{Data - A
-  Collection of Problems from Many Fields for the Student
-  and Research Worker}, Springer-Verlag, New York, NY. URL:
+Andrews, D.F. and Herzberg, A.M. (1985), \emph{Data - A Collection of
+  Problems from Many Fields for the Student and Research Worker},
+  Springer-Verlag, New York, NY. URL:
   \url{http://lib.stat.cmu.edu/datasets/Andrews/}
 }
 \description{
-  Multivariate time series data originally from Andrews and
-  Herzberg (1985).
+Multivariate time series data originally from Andrews and Herzberg (1985).
 }
 \examples{
 library(cranvas)

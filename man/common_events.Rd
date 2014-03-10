@@ -26,15 +26,14 @@ common_mouse_release(layer, event, data, meta)
   \item{meta}{the meta data for a plot}
 }
 \value{
-  \code{NULL}
+\code{NULL}
 }
 \description{
-  The key press and release events often involve with
-  setting the selection mode of the \code{\link{brush}},
-  the alpha transparency, and deleting selected elements,
-  and so on. Mouse press, release, move and hover are often
-  related to brushing and identifying cases. These
-  functions implement these common processes.
+The key press and release events often involve with setting the selection
+mode of the \code{\link{brush}}, the alpha transparency, and deleting
+selected elements, and so on. Mouse press, release, move and hover are often
+related to brushing and identifying cases. These functions implement these
+common processes.
 }
 \section{Mouse Events}{
   Left click to brush the plot with a rectangle brush, and
@@ -75,8 +74,8 @@ common_mouse_release(layer, event, data, meta)
 ## see the source code of qbar() or qparallel()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{brush}}
+\code{\link{brush}}
 }

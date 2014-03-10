@@ -30,13 +30,12 @@ cart_polygon(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = 0.8
   \code{\link[Rcartogram]{cartogram}}}
 }
 \value{
-  A data frame of two columns \code{x} and \code{y}
-  (coordinates of transformed polygons)
+A data frame of two columns \code{x} and \code{y} (coordinates of
+  transformed polygons)
 }
 \description{
-  Based on the given sizes of polygons, this function
-  calculates the transformed coordinates using the
-  \pkg{Rcartogram} package.
+Based on the given sizes of polygons, this function calculates the
+transformed coordinates using the \pkg{Rcartogram} package.
 }
 \examples{
 library(cranvas)
@@ -58,5 +57,5 @@ polygon(res$x, res$y, border = "red", lty = 2, lwd = 2)  # transformed polygons
 ## see map_qdata() for examples of real maps
 }
 \author{
-  Yihui Xie and Xiaoyue Cheng
+Yihui Xie and Xiaoyue Cheng
 }

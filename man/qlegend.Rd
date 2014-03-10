@@ -18,11 +18,11 @@ qlegend(parent = NULL, data = NULL, vertical = TRUE, ...)
   \code{\link[qtpaint]{qlayer}}}
 }
 \value{
-  a layer object
+a layer object
 }
 \description{
-  This function creates a legend layer.
+This function creates a legend layer.
 }
 \author{
-  Heike Hofmann
+Heike Hofmann
 }

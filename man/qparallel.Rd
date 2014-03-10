@@ -63,20 +63,18 @@ qparallel(vars = ~., data, scale = "range", names = break_str(vars),
   \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
-  A par-coords plot
+A par-coords plot
 }
 \description{
-  This function creates a parallel coordinates plot
-  (par-coords) for variables in a data, with each line
-  representing a row.
+This function creates a parallel coordinates plot (par-coords) for variables
+in a data, with each line representing a row.
 }
 \details{
-  See \code{\link{common_key_press}} for a series of common
-  interactions. Interactions specific to par-coords
-  include: press \code{R} to toggle the min/max labels; the
-  arrow keys are used to adjust the order of the variables
-  and flip the values of variables (like a mirror
-  reflection) when the axes are selected by the brush.
+See \code{\link{common_key_press}} for a series of common interactions.
+Interactions specific to par-coords include: press \code{R} to toggle the
+min/max labels; the arrow keys are used to adjust the order of the variables
+and flip the values of variables (like a mirror reflection) when the axes are
+selected by the brush.
 }
 \examples{
 library(cranvas)
@@ -175,11 +173,11 @@ qparallel(~., data = test.mat)
 cranvas_off()
 }
 \author{
-  Yihui Xie
+Yihui Xie
 }
 \seealso{
-  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
-  \code{\link{qdensity}}, \code{\link{qhist}},
-  \code{\link{qmval}}, \code{\link{qspine}},
+Other plots: \code{\link{qbar}}; \code{\link{qboxplot}};
+  \code{\link{qdensity}}; \code{\link{qhist}},
+  \code{\link{qspine}}; \code{\link{qmval}};
   \code{\link{qtime}}
 }

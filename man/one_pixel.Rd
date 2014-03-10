@@ -8,12 +8,12 @@ one_pixel(painter)
   \item{painter}{the painter of a layer}
 }
 \value{
-  A numeric vector of length 2 (width and height).
+A numeric vector of length 2 (width and height).
 }
 \description{
-  This function calculates the relative size of one pixel
-  in a layer coordinate system, since it has different
-  relative dimensions in different coordinate systems.
+This function calculates the relative size of one pixel in a layer coordinate
+system, since it has different relative dimensions in different coordinate
+systems.
 }
 \examples{
 library(qtpaint)
@@ -27,5 +27,5 @@ qlayer(s, paintFun = function(layer, painter) {
 qplotView(scene = s)
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

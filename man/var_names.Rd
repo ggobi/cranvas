@@ -24,22 +24,19 @@ var_names(vars, data)
   \item{data}{the data containing the variables}
 }
 \value{
-  A character vector
+A character vector
 }
 \description{
-  It is often flexible to input variables in plotting
-  functions, and this generic function convert most common
-  inputs (character, numeric or formula) to a character
-  vector of variable names.
+It is often flexible to input variables in plotting functions, and this
+generic function convert most common inputs (character, numeric or formula)
+to a character vector of variable names.
 }
 \details{
-  Numeric indices are converted to character names
-  according to the positions of variables in the data;
-  \code{\link[base]{all.vars}} is used to extract all
-  variable names in a formula, and the special formula
-  \code{~ .} is treated differently: it means all variables
-  in the data except thoese names starting with a dot (e.g.
-  \code{.color}).
+Numeric indices are converted to character names according to the positions
+of variables in the data; \code{\link[base]{all.vars}} is used to extract all
+variable names in a formula, and the special formula \code{~ .} is treated
+differently: it means all variables in the data except thoese names starting
+with a dot (e.g. \code{.color}).
 }
 \examples{
 var_names(~., mtcars)
@@ -47,5 +44,5 @@ var_names(~disp + hp, mtcars)
 var_names(1:3, mtcars)
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

@@ -45,20 +45,20 @@ qboxplot(vars, data, at = NULL, width = NULL, horizontal = FALSE, main = "",
   \item{ylab}{y-axis title}
 }
 \value{
-  A boxplot
+A boxplot
 }
 \description{
-  This function can draw side-by-side boxplots for all the
-  variables in a data frame or boxplots for a continous
-  variable vs a categorical variable.
+This function can draw side-by-side boxplots for all the variables
+in a data frame or boxplots for a continous variable vs a
+categorical variable.
 }
 \details{
-  Common interactions are documented in
-  \code{\link{common_key_press}}. Note boxplots also
-  supports brushing and can respond to brushing in other
-  plots. When we brush in other plots which are based on
-  the same data, there will be ``child'' boxplots in this
-  plot showing the distributions of the brushed data.
+Common interactions are documented in
+\code{\link{common_key_press}}. Note boxplots  also supports
+brushing and can respond to brushing in other plots. When we brush
+in other plots which are based on the same data, there will be
+``child'' boxplots in this plot showing the distributions of the
+brushed data.
 }
 \examples{
 library(cranvas)
@@ -97,11 +97,11 @@ qboxplot(~aede1 + aede2 + aede3, data = qflea2, points = TRUE)
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  Other plots: \code{\link{qbar}}, \code{\link{qdensity}},
-  \code{\link{qhist}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qspine}},
+Other plots: \code{\link{qbar}}; \code{\link{qdensity}};
+  \code{\link{qhist}}, \code{\link{qspine}};
+  \code{\link{qmval}}; \code{\link{qparallel}};
   \code{\link{qtime}}
 }

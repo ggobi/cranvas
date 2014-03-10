@@ -3,8 +3,8 @@
 \title{Draw a time plot}
 \usage{
 qtime(time, y, data, period = NULL, group = NULL, shift = c(1, 4, 7, 12, 24), size = 3, 
-    alpha = 1, asp = NULL, similarity.index = TRUE, help.text = TRUE, main = NULL, 
-    xlab = NULL, ylab = NULL, ...)
+    alpha = 1, asp = NULL, similarity.index = TRUE, help.text = TRUE, fun.base = min, 
+    main = NULL, xlab = NULL, ylab = NULL, ...)
 }
 \arguments{
   \item{time}{the variable indicating time on the
@@ -43,6 +43,9 @@ qtime(time, y, data, period = NULL, group = NULL, shift = c(1, 4, 7, 12, 24), si
   \item{help.text}{Whether to show the instruction. All the
   text will disappear in 2 seconds after the interaction.}
 
+  \item{fun.base}{a function to compute the baseline of the
+  area plot}
+
   \item{main}{main title for the plot.}
 
   \item{xlab}{label on horizontal axis, default is name of
@@ -52,28 +55,30 @@ qtime(time, y, data, period = NULL, group = NULL, shift = c(1, 4, 7, 12, 24), si
   variable}
 }
 \description{
-  Draw a time-series plot.
+Draw a time-series plot.
 }
 \details{
-  Arrow up/down: in-/de-crease size of points. Arrow
-  left/right: wrap the time series when wrap=TRUE, while
-  zoom in/out with the center of the last clicked dot when
-  wrap=FALSE. Shift + right: when wrap=TRUE, the time
-  series will be folded directly to the width of maximal
-  value in argument shift. Shift + left: time series will
-  be backed to the original xaxis position, no matter wrap
-  is TRUE or FALSE. Key '+'/'-': de-/in-crease alpha level
-  (starts at alpha=1 by default). Key 'u'/'d': separate/mix
-  the series groups by shifting them up and down. Shift +
-  'u'/'d': for multivariate y's, separate/mix them by
-  shifting up and down. Key 'g': change the wrapping period
-  circularly in the values of parameter 'shift'. Key 'm':
-  Switch the mode for series selecting. Default to be off.
-  When there are more than one series in the plot, users
-  can turn it on to hold a series and shift the series
-  horizontally by dragging with the mouse. Wheel: Zoom
-  in/out. Then users can drag the series horizontally to
-  see the details.
+Arrow up/down: in-/de-crease size of points.
+Arrow left/right: wrap the time series when wrap=TRUE, while zoom
+in/out with the center of the last clicked dot when wrap=FALSE.
+Shift + right: when wrap=TRUE, the time series will be folded
+directly to the width of maximal value in argument shift.
+Shift + left: time series will be backed to the original xaxis
+position, no matter wrap is TRUE or FALSE.
+Key '+'/'-': de-/in-crease alpha level (starts at alpha=1 by
+default).
+Key 'u'/'d': separate/mix the series groups by shifting them up
+and down.
+Shift + 'u'/'d': for multivariate y's, separate/mix them by shifting
+up and down.
+Key 'g': change the wrapping period circularly in the values of
+parameter 'shift'.
+Key 'm': Switch the mode for series selecting. Default to be off.
+When there are more than one series in the plot, users can turn it
+on to hold a series and shift the series horizontally by dragging
+with the mouse.
+Wheel: Zoom in/out. Then users can drag the series horizontally
+to see the details.
 }
 \examples{
 library(cranvas)
@@ -100,6 +105,7 @@ Remi <- Remifentanil[complete.cases(Remifentanil), ]
 Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
 qtime(Time, conc, qRemi, group = ID)
+qscatter(Amt, conc, data = qRemi)
 # for categorical brushing self-link dataset by ID: id <- link_cat(qRemi, 'ID')
 # remove_link(qRemi, id)
 
@@ -129,8 +135,8 @@ qtime(TIME, c("GILTS", "PROFIT", "PRODUCTION", "HERDSZ"), qpig, shift = c(1, 4))
 cranvas_off()
 }
 \seealso{
-  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
-  \code{\link{qdensity}}, \code{\link{qhist}},
-  \code{\link{qmval}}, \code{\link{qparallel}},
-  \code{\link{qspine}}
+Other plots: \code{\link{qbar}}; \code{\link{qboxplot}};
+  \code{\link{qdensity}}; \code{\link{qhist}},
+  \code{\link{qspine}}; \code{\link{qmval}};
+  \code{\link{qparallel}}
 }

@@ -34,25 +34,23 @@ qmtext(parent = NULL, meta = NULL, side = 1, text = "", x = 0.5, y = 0.5, cex = 
   \code{\link[qtpaint]{qlayer}}}
 }
 \value{
-  a layer object
+a layer object
 }
 \description{
-  This function is similar to
-  \code{\link[graphics]{mtext}}, which draws text into the
-  margin of a plot. A slight difference is this function
-  creates a layer which can be put anywhere in the layout.
-  We can also create a title layer with this function.
+This function is similar to \code{\link[graphics]{mtext}}, which
+draws text into the margin of a plot. A slight difference is this
+function creates a layer which can be put anywhere in the layout.
+We can also create a title layer with this function.
 }
 \details{
-  As in R base graphics, the margin means the bottom, left,
-  top and right area of the main plot region. This function
-  will adjust the direction of the text according to the
-  side to which it is drawn, e.g., the left or right side
-  will make the text vertical.
+As in R base graphics, the margin means the bottom, left, top and
+right area of the main plot region. This function will adjust the
+direction of the text according to the side to which it is drawn,
+e.g., the left or right side will make the text vertical.
 }
 \note{
-  The limits of the text layer is [0, 1] both horizontally
-  and vertically by default.
+The limits of the text layer is [0, 1] both horizontally and
+vertically by default.
 }
 \examples{
 library(cranvas)
@@ -78,9 +76,8 @@ r[1, 2] <- m4
 print(qplotView(scene = s))
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link[graphics]{mtext}},
-  \code{\link[qtpaint]{qlayer}}
+\code{\link[graphics]{mtext}}, \code{\link[qtpaint]{qlayer}}
 }

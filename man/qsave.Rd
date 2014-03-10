@@ -17,12 +17,10 @@ qsave(filename = "Rplot.png", view, width = 480, height = 480)
   \item{height}{the desired height}
 }
 \value{
-  \code{TRUE} if the plot is successfully saved; otherwise
-  \code{FALSE}
+\code{TRUE} if the plot is successfully saved; otherwise \code{FALSE}
 }
 \description{
-  This function saves a plot view to a image file like PNG
-  or JPEG, etc.
+This function saves a plot view to a image file like PNG or JPEG, etc.
 }
 \examples{
 library(cranvas)
@@ -31,9 +29,9 @@ v <- qbar(matches, data = qtennis)
 qsave("tennis_bar.png", v, 480, 320)
 }
 \author{
-  Yihui Xie
+Yihui Xie
 }
 \references{
-  Supported image formats:
+Supported image formats:
   \url{http://doc.qt.nokia.com/latest/qimagewriter.html#supportedImageFormats}
 }

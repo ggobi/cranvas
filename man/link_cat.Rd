@@ -17,35 +17,30 @@ link_cat(mf1, var1, mf2 = NULL, var2 = NULL)
   of \code{mf2}}
 }
 \value{
-  The mutaframes will be linked together by their linking
-  variables (listeners are added to mutaframes), and the
-  id's of the listeners attached on each mutaframe will be
-  returned as a vector (first element for the first
+The mutaframes will be linked together by their linking variables
+  (listeners are added to mutaframes), and the id's of the listeners attached
+  on each mutaframe will be returned as a vector (first element for the first
   mutaframe; second element for the second one).
 }
 \description{
-  This function links two mutaframes together (or one
-  mutaframe to itself) by a common categorical variable so
-  that whenever one element (or multiple elements) in a
-  category (or multiple categories) is brushed, all
-  elements in this (these) categories will be brushed.
+This function links two mutaframes together (or one mutaframe to itself) by a
+common categorical variable so that whenever one element (or multiple
+elements) in a category (or multiple categories) is brushed, all elements in
+this (these) categories will be brushed.
 }
 \details{
-  Categorical linking is achieved by a series of logical
-  operations: first, look for which rows are brushed in the
-  first mutaframe, and find out the values of its linking
-  variable as well as the categories they belong to, then
-  look for which elements of the linking variable in the
-  second mutaframe (possibly the same mutaframe) are in
-  these categories, and brush these elements (corresponding
-  to rows).
+Categorical linking is achieved by a series of logical operations: first,
+look for which rows are brushed in the first mutaframe, and find out the
+values of its linking variable as well as the categories they belong to, then
+look for which elements of the linking variable in the second mutaframe
+(possibly the same mutaframe) are in these categories, and brush these
+elements (corresponding to rows).
 
-  The implementation is through listeners on mutaframes
-  from the \pkg{plumbr} package. It may be important keep
-  track of the id's of listeners to avoid unnecessary
-  burden of updating data objects in a linking chain.
-  Listeners can be detached from mutaframes by
-  \code{\link{remove_link}} (see examples below).
+The implementation is through listeners on mutaframes from the \pkg{plumbr}
+package. It may be important keep track of the id's of listeners to avoid
+unnecessary burden of updating data objects in a linking chain. Listeners can
+be detached from mutaframes by \code{\link{remove_link}} (see examples
+below).
 }
 \examples{
 library(cranvas)
@@ -114,8 +109,8 @@ remove_link(qflea2, id[2])
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{qdata}}
+\code{\link{qdata}}
 }

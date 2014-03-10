@@ -8,22 +8,22 @@ qpar(...)
   \item{...}{options of the form \code{tag = value}}
 }
 \value{
-  the current list of parameters or set new options
+the current list of parameters or set new options
 }
 \description{
-  This function can set or query the graphical parameters
-  in the \pkg{cranvas} package.
+This function can set or query the graphical parameters in the \pkg{cranvas}
+package.
 }
 \details{
-  Current options include:
+Current options include:
 
-  \describe{
+\describe{
 
-  \item{cache}{whether to enable cache for graphics layers}
+\item{cache}{whether to enable cache for graphics layers}
 
-  \item{mar}{a percentage for the plot margin}
+\item{mar}{a percentage for the plot margin}
 
-  }
+}
 }
 \examples{
 str(qpar())  # all default parameters
@@ -32,8 +32,8 @@ qpar(mar = 0.05)  # the degree to extend the plot margin (inner margin)
 qpar(op)  # restore
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link[graphics]{par}}
+\code{\link[graphics]{par}}
 }

@@ -15,16 +15,16 @@ fix_dimension(root, row = list(id = NULL, value = NULL), column = list(id = NULL
   values}
 }
 \value{
-  The dimensions of child layers are set to given values,
-  and their stretch factors are set to 0.
+The dimensions of child layers are set to given values, and their
+  stretch factors are set to 0.
 }
 \description{
-  This function makes use of the grid layout of a root
-  layer to set the size of its child layers.
+This function makes use of the grid layout of a root layer to set the size of
+its child layers.
 }
 \examples{
 ## see ?qaxis
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

@@ -16,15 +16,14 @@ draw_brush(layer, painter, data, meta)
   components: \code{meta$pos} and \code{meta$brush.size})}
 }
 \value{
-  \code{NULL}
+\code{NULL}
 }
 \description{
-  Draw a rectangle with a spot according to the information
-  in the meta data.
+Draw a rectangle with a spot according to the information in the meta data.
 }
 \examples{
 ## see the source code of, e.g., qbar() for its usage
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

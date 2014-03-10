@@ -30,20 +30,16 @@ qdensity(x, data, binwidth = NULL, main = "", xlim = NULL, ylim = NULL, xlab = N
   default)}
 }
 \description{
-  Draw a univariate density plot, with a rug plot
-  underneath.
+Draw a univariate density plot, with a rug plot underneath.
 }
 \details{
-  Common interactions are documented in
-  \code{\link{common_key_press}}. Specific interactions
-  include: Arrow \code{Up}/\code{Down} in-/de-creases size
-  of points; Arrow \code{Left}/\code{Right} de-/in-creases
-  binwidth for density; Key \code{Z} toggle zoom on/off
-  (default is off); mouse click & drag will specify a zoom
-  window.
+Common interactions are documented in \code{\link{common_key_press}}.
+Specific interactions include: Arrow \code{Up}/\code{Down} in-/de-creases
+size of points; Arrow \code{Left}/\code{Right} de-/in-creases binwidth for
+density; Key \code{Z} toggle zoom on/off (default is off); mouse click &
+drag will specify a zoom window.
 
-  Note there are two short tickmarks in the plot denoting
-  the binwidth.
+Note there are two short tickmarks in the plot denoting the binwidth.
 }
 \examples{
 library(cranvas)
@@ -83,8 +79,8 @@ qdensity(aede3, data = qflea)
 cranvas_off()
 }
 \seealso{
-  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
-  \code{\link{qhist}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qspine}},
+Other plots: \code{\link{qbar}}; \code{\link{qboxplot}};
+  \code{\link{qhist}}, \code{\link{qspine}};
+  \code{\link{qmval}}; \code{\link{qparallel}};
   \code{\link{qtime}}
 }

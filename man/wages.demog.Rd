@@ -12,15 +12,13 @@
   \item{\code{hgc}}{highest grade completed} \item{\code{race}}{categorical
   variable, either white, hispanic or black}}}
 \source{
-  Singer, J. D. & Willett, J. B. (2003), \emph{Applied
-  Longitudinal Data Analysis}, Oxford University Press,
-  Oxford, UK. It is a subset of data collected in the
-  National Longitudinal Survey of Youth (NLSY) described at
+Singer, J. D. & Willett, J. B. (2003), \emph{Applied Longitudinal
+  Data Analysis}, Oxford University Press, Oxford, UK. It is a subset of data
+  collected in the National Longitudinal Survey of Youth (NLSY) described at
   \url{http://www.bls.gov/nls/nlsdata.htm}.
 }
 \description{
-  This is just the demographic data for each person
-  recorded in the wages data.
+This is just the demographic data for each person recorded in the wages data.
 }
 \examples{
 library(cranvas)
@@ -88,4 +86,3 @@ remove_link(qflea2, id[2])
 
 cranvas_off()
 }
-\keyword{datasets}

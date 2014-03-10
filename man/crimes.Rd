@@ -4,10 +4,10 @@
 \title{US Crimes data from 2009}
 \format{data.frame: 50 obs. of 12 variables}
 \source{
-  \url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
+\url{http://www.fbi.gov/about-us/cjis/ucr/ucr}
 }
 \description{
-  Counts of different crimes by state across the USA
+Counts of different crimes by state across the USA
 }
 \examples{
 library(cranvas)

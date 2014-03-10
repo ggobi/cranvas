@@ -12,12 +12,11 @@ lighter(color, factor = 0.2)
   either a vector or a scalar)}
 }
 \value{
-  The modified color vector.
+The modified color vector.
 }
 \description{
-  This function first converts colors to the RGB and HSV
-  space, then modifies the brightness (the \code{V}
-  component in HSV) by an amount.
+This function first converts colors to the RGB and HSV space, then modifies
+the brightness (the \code{V} component in HSV) by an amount.
 }
 \examples{
 lighter(palette())
@@ -33,5 +32,5 @@ for (f in seq(0, 1, length = 20)) {
 }
 }
 \author{
-  Heike Hofmann and Yihui Xie
+Heike Hofmann and Yihui Xie
 }

@@ -3,8 +3,9 @@
 \alias{qspine}
 \title{Draw a histogram or a spine plot}
 \usage{
-qhist(x, data, bins = 30, binwidth = NULL, freq = TRUE, main = "", horizontal = FALSE, 
-    spine = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, ylab = NULL)
+qhist(x, data, bins = 30, binwidth = NULL, breaks = NULL, ybreaks = NULL, freq = TRUE, 
+    main = "", horizontal = FALSE, spine = FALSE, xlim = NULL, ylim = NULL, xlab = NULL, 
+    ylab = NULL)
 
 qspine(x, data, ...)
 }
@@ -12,10 +13,17 @@ qspine(x, data, ...)
   \item{x}{the name of the numeric variable to be used to
   draw the histogram or spine plot}
 
-  \item{bins}{the desired number of bins}
+  \item{bins}{the desired number of bins, default=30,
+  overridden by binwidth if provided}
 
   \item{binwidth}{the bin width (\code{range(x) / bins} by
   default)}
+
+  \item{breaks}{sets break points, mostly for use with the
+  tour}
+
+  \item{ybreaks}{sets vertical axis, mostly for use with
+  the tour}
 
   \item{freq}{draw the frequencies (\code{TRUE}) or
   densities (\code{FALSE}) (only applies to histogram)}
@@ -46,34 +54,29 @@ qspine(x, data, ...)
   \item{ylab}{y-axis title}
 }
 \value{
-  A histogram or a spine plot
+A histogram or a spine plot
 }
 \description{
-  Draw an interactive histogram or spine plot based on a
-  continuous variable, optionally split by a categorical
-  variable. It supports some common keyboard interactions
-  (see \code{\link{common_key_press}}) as well as other
-  interactions specific to histograms and spine plots.
+Draw an interactive histogram or spine plot based on a continuous variable,
+optionally split by a categorical variable. It supports some common keyboard
+interactions (see \code{\link{common_key_press}}) as well as other
+interactions specific to histograms and spine plots.
 }
 \details{
-  The splitting variable is usually specified in
-  \code{\link{qdata}} as the \code{color} or \code{border}
-  argument; if it is present, each bar in the plot will be
-  split into categories.
+The splitting variable is usually specified in \code{\link{qdata}} as the
+\code{color} or \code{border} argument; if it is present, each bar in the
+plot will be split into categories.
 
-  Arrow keys can be used to change the binwidth as well as
-  the breakpoints in the plot. Up and Down can increase and
-  decrease the binwidth respectively; Left and Right can
-  move the breakpoints of the bins to the left (smaller) or
-  right (larger). Mouse wheel helps zoom in/out of the
-  plot.
+Arrow keys can be used to change the binwidth as well as the breakpoints in
+the plot. Up and Down can increase and decrease the binwidth respectively;
+Left and Right can move the breakpoints of the bins to the left (smaller) or
+right (larger). Mouse wheel helps zoom in/out of the plot.
 
-  In the identify mode, the breakpoints of the bin(s) as
-  well as counts and proportion of cases in the bin(s) are
-  shown as text labels in the plot.
+In the identify mode, the breakpoints of the bin(s) as well as counts and
+proportion of cases in the bin(s) are shown as text labels in the plot.
 
-  The function \code{\link{qspine}} is a short-hand version
-  of \code{qhist(..., spine = TRUE)}.
+The function \code{\link{qspine}} is a short-hand version of \code{qhist(...,
+spine = TRUE)}.
 }
 \examples{
 library(cranvas)
@@ -83,6 +86,8 @@ data(flea, package = "tourr")
 qflea <- qdata(flea, color = species)
 
 qhist(tars1, data = qflea)
+## Use the up/down arrows to change binwidth, or the vertical bars on screen
+## Right/left arrows change minimum bin (anchor) value
 qhist(tars2, data = qflea, freq = FALSE, main = "density of tars2")
 qhist(aede1, data = qflea, ylim = c(0, 10), main = "fix y-axis limits")
 qhist(head, data = qflea, horizontal = TRUE)
@@ -115,10 +120,10 @@ qhist(serve.speed, data = qtennis, freq = FALSE)  # density
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
-  \code{\link{qdensity}}, \code{\link{qmval}},
-  \code{\link{qparallel}}, \code{\link{qtime}}
+Other plots: \code{\link{qbar}}; \code{\link{qboxplot}};
+  \code{\link{qdensity}}; \code{\link{qmval}};
+  \code{\link{qparallel}}; \code{\link{qtime}}
 }

@@ -17,14 +17,12 @@ selected(data) <- value
   row names to brush the corresponding rows}
 }
 \value{
-  The function \code{\link{selected}} returns the logical
-  vector corresponding to whether the observations are
-  selected or not
+The function \code{\link{selected}} returns the logical vector
+  corresponding to whether the observations are selected or not
 }
 \description{
-  The column \code{.brushed} controls which observations
-  are being brushed (i.e. those \code{TRUE}'s are
-  selected).
+The column \code{.brushed} controls which observations are being brushed
+(i.e. those \code{TRUE}'s are selected).
 }
 \examples{
 df <- qdata(mtcars)
@@ -40,8 +38,8 @@ selected(df)
 selected(df) <- "Honda Civic"  # brush by row names
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link{qdata}}
+\code{\link{qdata}}
 }

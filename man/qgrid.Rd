@@ -34,18 +34,17 @@ qgrid(parent = NULL, meta = NULL, xat, yat, xlim, ylim, minor = "xy", ...)
   \code{\link[qtpaint]{qlayer}}}
 }
 \value{
-  a layer object
+a layer object
 }
 \description{
-  A layer with gray background and white grid lines
-  corresponding to axis tick marks. Minor grid lines are
-  optional and thinner.
+A layer with gray background and white grid lines corresponding to
+axis tick marks. Minor grid lines are optional and thinner.
 }
 \note{
-  If \code{meta} is not \code{NULL}, it is supposed to be a
-  reference object, and an event will be attached on
-  \code{meta$limits} so that the limits of the grid layer
-  will sync with \code{meta$limits} dynamically.
+If \code{meta} is not \code{NULL}, it is supposed to be a
+reference object, and an event will be attached on
+\code{meta$limits} so that the limits of the grid layer will sync
+with \code{meta$limits} dynamically.
 }
 \examples{
 library(cranvas)
@@ -66,9 +65,8 @@ r[1, 1] <- m
 print(qplotView(scene = s))
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link[graphics]{grid}},
-  \code{\link[qtpaint]{qlayer}}
+\code{\link[graphics]{grid}}, \code{\link[qtpaint]{qlayer}}
 }

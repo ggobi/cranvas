@@ -8,16 +8,15 @@ link_id(data)
   \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
-  A character vector of id's.
+A character vector of id's.
 }
 \description{
-  This function returns the id's of listeners attached on a
-  data for linking, and these id's can be used to remove
-  the linking.
+This function returns the id's of listeners attached on a data for linking,
+and these id's can be used to remove the linking.
 }
 \examples{
 ## see ?link_cat
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

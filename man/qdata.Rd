@@ -31,40 +31,33 @@ qdata(data, color = "gray15", border = color, size = 4, brushed = FALSE, visible
   visible (default all \code{TRUE})}
 }
 \value{
-  a mutaframe with attributes for interaction
+a mutaframe with attributes for interaction
 }
 \description{
-  This function will first check if the names of some
-  pre-defined row attributes (e.g. \code{.color},
-  \code{.brushed}) exist in the column names of the data
-  (will issue an error if they do); then append these
-  columns to the original data to create an augmented data
-  as a \code{\link[plumbr]{mutaframe}}; in the end add some
-  attributes to the mutaframe for the purpose of
-  interaction (mainly the \code{\link{brush}} object and
-  the linking specification).
+This function will first check if the names of some pre-defined row
+attributes (e.g. \code{.color}, \code{.brushed}) exist in the column names of
+the data (will issue an error if they do); then append these columns to the
+original data to create an augmented data as a
+\code{\link[plumbr]{mutaframe}}; in the end add some attributes to the
+mutaframe for the purpose of interaction (mainly the \code{\link{brush}}
+object and the linking specification).
 }
 \details{
-  When the three arguments \code{color}, \code{border} and
-  \code{size} take values as variable names in \code{data},
-  default palettes will be used to generate colors and
-  sizes. The sequential color gradient palette
-  (\code{\link[scales]{seq_gradient_pal}}) will be applied
-  to continuous variables, and the hue palette
-  (\code{\link[scales]{hue_pal}}) will be applied to
-  categorical variables. The area palette
-  (\code{\link[scales]{area_pal}}) is used to create a size
-  vector when the size variable is continuous. An attribute
-  \code{attr(data, 'Scales')} is attached to the returned
-  mutaframe, which will help specific plots to generate
-  legends. This attribute is of the form \code{list(color =
-  list(title, variable, palette))}. Whenever any component
-  is changed, the corresponding aesthetics will be updated
-  automatically; for example, if we change the palette
-  function for \code{color}, the colors \code{data$.color}
-  will be updated using the new palette. See
-  \code{\link{color_pal<-}} for a list of functions on how
-  to modify scales information.
+When the three arguments \code{color}, \code{border} and \code{size} take
+values as variable names in \code{data}, default palettes will be used to
+generate colors and sizes. The sequential color gradient palette
+(\code{\link[scales]{seq_gradient_pal}}) will be applied to continuous
+variables, and the hue palette (\code{\link[scales]{hue_pal}}) will be
+applied to categorical variables. The area palette
+(\code{\link[scales]{area_pal}}) is used to create a size vector when the
+size variable is continuous. An attribute \code{attr(data, 'Scales')} is
+attached to the returned mutaframe, which will help specific plots to
+generate legends. This attribute is of the form \code{list(color =
+list(title, variable, palette))}. Whenever any component is changed, the
+corresponding aesthetics will be updated automatically; for example, if we
+change the palette function for \code{color}, the colors \code{data$.color}
+will be updated using the new palette. See \code{\link{color_pal<-}} for a
+list of functions on how to modify scales information.
 }
 \examples{
 library(cranvas)
@@ -96,8 +89,8 @@ qhist(double.faults, data = qtennis)
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link[plumbr]{mutaframe}}, \code{\link{brush}}
+\code{\link[plumbr]{mutaframe}}, \code{\link{brush}}
 }

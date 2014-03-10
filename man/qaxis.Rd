@@ -31,20 +31,20 @@ qaxis(parent = NULL, meta = NULL, side = 1, at = NULL, labels = NULL, ...)
   \code{\link[qtpaint]{qlayer}}}
 }
 \value{
-  a layer object
+a layer object
 }
 \description{
-  This function creates an axis layer which contains tick
-  marks and labels at given locations.
+This function creates an axis layer which contains tick marks and
+labels at given locations.
 }
 \note{
-  The vertical range of the x-axis is [0, 1], and the
-  horizontal limit of y-axis is [0, 1].
+The vertical range of the x-axis is [0, 1], and the
+horizontal limit of y-axis is [0, 1].
 
-  If \code{meta} is not \code{NULL}, it is supposed to be a
-  reference object, and an event will be attached on
-  \code{meta$limits} so that the limits of the axis layer
-  will sync with \code{meta$limits} dynamically.
+If \code{meta} is not \code{NULL}, it is supposed to be a
+reference object, and an event will be attached on
+\code{meta$limits} so that the limits of the axis layer will sync
+with \code{meta$limits} dynamically.
 }
 \examples{
 library(cranvas)
@@ -74,9 +74,8 @@ qplotView(scene = s)
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  \code{\link[graphics]{axis}},
-  \code{\link[qtpaint]{qlayer}}
+\code{\link[graphics]{axis}}, \code{\link[qtpaint]{qlayer}}
 }

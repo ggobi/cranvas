@@ -22,26 +22,23 @@ qmval(vars, data, horizontal = TRUE, standardize = TRUE, ...)
   height of each bar to 1}
 }
 \value{
-  A missing value plot
+A missing value plot
 }
 \description{
-  A missing value plot shows the counts or proportions of
-  missing values in each variable. It is essentially a
-  stacked bar plot, i.e. a bar plot of variables split by
-  the logical vectors of missingness of observations.
+A missing value plot shows the counts or proportions of missing values in
+each variable. It is essentially a stacked bar plot, i.e. a bar plot of
+variables split by the logical vectors of missingness of observations.
 }
 \details{
-  As usual, common interactions are defined in
-  \code{\link{common_key_press}}. Brushing on a missing
-  value plot has a slightly different meaning with brushing
-  other types of plots: if a rectangle is brushed in a
-  missing value plot, all rows in the orginal data in which
-  the current variable is brushed (i.e. either missing or
-  non-missing) are brushed; on the other hand, the brushed
-  rows in the original data will also be reflected in the
-  missing value plot.
+As usual, common interactions are defined in \code{\link{common_key_press}}.
+Brushing on a missing value plot has a slightly different meaning with
+brushing other types of plots: if a rectangle is brushed in a missing value
+plot, all rows in the orginal data in which the current variable is brushed
+(i.e. either missing or non-missing) are brushed; on the other hand, the
+brushed rows in the original data will also be reflected in the missing value
+plot.
 
-  This plot is built upon the bar plot \code{\link{qbar}}.
+This plot is built upon the bar plot \code{\link{qbar}}.
 }
 \examples{
 library(cranvas)
@@ -66,11 +63,11 @@ qscatter(longitude, latitude, data = qtao)
 cranvas_off()
 }
 \author{
-  Heike Hofmann and Yihui Xie
+Heike Hofmann and Yihui Xie
 }
 \seealso{
-  Other plots: \code{\link{qbar}}, \code{\link{qboxplot}},
-  \code{\link{qdensity}}, \code{\link{qhist}},
-  \code{\link{qparallel}}, \code{\link{qspine}},
+Other plots: \code{\link{qbar}}; \code{\link{qboxplot}};
+  \code{\link{qdensity}}; \code{\link{qhist}},
+  \code{\link{qspine}}; \code{\link{qparallel}};
   \code{\link{qtime}}
 }

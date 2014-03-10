@@ -37,22 +37,20 @@ map_qdata(database, regions = ".", color = "gray50", border = "gray90", size = 4
   sizes, it must be a numeric variable}
 }
 \value{
-  A mutaframe of region names and labels, with an attribute
+A mutaframe of region names and labels, with an attribute
   \code{MapData} containing the coordinates of polygons.
 }
 \description{
-  This function converts maps data in the \pkg{maps}
-  package to a suitable format for \pkg{cranvas}.
-  Optionally it transforms the data to make cartograms.
+This function converts maps data in the \pkg{maps} package to a suitable
+format for \pkg{cranvas}. Optionally it transforms the data to make
+cartograms.
 }
 \details{
-  The function \code{\link[maps]{map}} is used to convert
-  maps data to a list, then the region names are stored in
-  a mutaframe created by \code{\link{qdata}}; the polygon
-  coordinates are stored in an attribute \code{MapData}. If
-  multiple polygons belong to the same upper-level region,
-  the column \code{labels} will store the upper-level
-  region names.
+The function \code{\link[maps]{map}} is used to convert maps data to a list,
+then the region names are stored in a mutaframe created by
+\code{\link{qdata}}; the polygon coordinates are stored in an attribute
+\code{MapData}. If multiple polygons belong to the same upper-level region,
+the column \code{labels} will store the upper-level region names.
 }
 \examples{
 library(cranvas)
@@ -60,5 +58,5 @@ map_qdata("state")
 map_qdata("county", "iowa")
 }
 \author{
-  Yihui Xie and Xiaoyue Cheng
+Yihui Xie and Xiaoyue Cheng
 }

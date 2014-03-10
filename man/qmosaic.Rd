@@ -39,20 +39,13 @@ qmosaic(data, formula, divider = productplots::mosaic(), cascade = 0, scale_max 
 
   \item{...}{}
 }
-\value{
-  NULL
-}
 \description{
-  Interactive elements for mosaic plots are arrow keys for
-  navigating through the mosaic hierarchy: arrow up reduces
-  complexity of the mosaic by one variable, arrow down
-  increases the complexity by one, if possible. Arrow left
-  and right rotate a previously included variable into the
-  last split position. Conditioning/Unconditioning is done
-  with keys 'C' and 'U' Keys 'B' and 'S" switch to bar and
-  spine representation, respectively Key 'R' rotates the
-  last split variable between horizontal and vertical
-  display.
+Interactive elements for mosaic plots are arrow keys for navigating through the mosaic hierarchy:
+arrow up reduces complexity of the mosaic by one variable, arrow down increases the complexity by one, if possible.
+Arrow left and right rotate a previously included variable into the last split position.
+Conditioning/Unconditioning is done with keys 'C' and 'U'
+Keys 'B' and 'S" switch to bar and spine representation, respectively
+Key 'R' rotates the last split variable between horizontal and vertical display.
 }
 \examples{
 library(cranvas)
@@ -108,5 +101,5 @@ qmosaic(qhappy, ~happy + age, c("hspine", "vspine"))
 cranvas_off()
 }
 \author{
-  Heike Hofmann
+Heike Hofmann
 }

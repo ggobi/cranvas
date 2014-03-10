@@ -17,21 +17,25 @@
   \item{\code{uerate}}{unemployment rates in the local geographic region at
   each measurement time} }}
 \source{
-  Singer, J. D. & Willett, J. B. (2003), \emph{Applied
-  Longitudinal Data Analysis}, Oxford University Press,
-  Oxford, UK. It is a subset of data collected in the
-  National Longitudinal Survey of Youth (NLSY) described at
+Singer, J. D. & Willett, J. B. (2003), \emph{Applied Longitudinal
+  Data Analysis}, Oxford University Press, Oxford, UK. It is a subset of data
+  collected in the National Longitudinal Survey of Youth (NLSY) described at
   \url{http://www.bls.gov/nls/nlsdata.htm}.
 }
 \description{
-  The data was collected to track the labor experiences of
-  male high-school dropouts. The men were between 14 and 17
-  years old at the time of the first survey.
+The data was collected to track the labor experiences of male high-school
+dropouts. The men were between 14 and 17 years old at the time of the first
+survey.
 }
 \examples{
 library(cranvas)
 
 \dontrun{
+
+data(wages)
+qwages <- qdata(wages)
+qtime(exper, lnw, qwages, group = id)  # Too slow right now
+
 ## this is a very simple linear regression assuming each man has the same slope,
 ## which may not be entirely reasonable
 fit <- lm(lnw ~ exper + id, data = wages)
@@ -45,4 +49,3 @@ qhist(lnw0, data = qwage2, main = "Wages on the first day")
 qhist(lnw6, data = qwage2, main = "Wages after 6 years")
 }
 }
-\keyword{datasets}

@@ -17,11 +17,10 @@ manual_brush(obj, pos, pause = 0)
   \code{pos}; each element used after each mouse position)}
 }
 \value{
-  \code{NULL}
+\code{NULL}
 }
 \description{
-  We can brush a plot via command line rather than using
-  the mouse.
+We can brush a plot via command line rather than using the mouse.
 }
 \examples{
 library(cranvas)
@@ -45,5 +44,5 @@ manual_brush(o2, as.matrix(expand.grid(seq(0, 1, 0.1), (1:4) - 0.1)),
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

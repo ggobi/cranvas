@@ -12,11 +12,11 @@ na_impute(x, method = "below.min")
   value 20\% below the mininum} }}
 }
 \value{
-  the imputed data
+the imputed data
 }
 \description{
-  Impute data by some simple methods.
+Impute data by some simple methods.
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }

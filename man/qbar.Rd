@@ -40,37 +40,32 @@ qbar(x, data, weight = NULL, space = 0.1, main = "", horizontal = FALSE,
   \item{ylab}{y-axis title}
 }
 \value{
-  A bar plot
+A bar plot
 }
 \description{
-  This function creates a bar plot based on a categorical
-  variable to show the counts of all categories. Another
-  categorical variable can be used to further split each
-  bar into sub-categories, which will make the bar plot a
-  representation of a contingency table. The splitting
-  variable can be specified in \code{\link{qdata}} using
-  either the \code{color} argument or the \code{border}
-  argument.
+This function creates a bar plot based on a categorical variable to show the
+counts of all categories. Another categorical variable can be used to further
+split each bar into sub-categories, which will make the bar plot a
+representation of a contingency table. The splitting variable can be
+specified in \code{\link{qdata}} using either the \code{color} argument or
+the \code{border} argument.
 }
 \details{
-  All the common interactions like brushing and deleting
-  are documented in \code{\link{common_key_press}}.
+All the common interactions like brushing and deleting are documented in
+\code{\link{common_key_press}}.
 
-  In the identify mode (press the key \code{?} to toggle
-  between brush and identify mode), the variable and its
-  identified values are shown as a text label in the plot,
-  along with the counts and proportion of the identified
-  categories. If the bar plot is split by an additional
-  categorical variable, it will also be shown in the label.
+In the identify mode (press the key \code{?} to toggle between brush and
+identify mode), the variable and its identified values are shown as a text
+label in the plot, along with the counts and proportion of the identified
+categories. If the bar plot is split by an additional categorical variable,
+it will also be shown in the label.
 
-  A zero-count category is represented by a one-pixel
-  rectangle, which is a useful visual hint to indicate the
-  presence of this category.
+A zero-count category is represented by a one-pixel rectangle, which is a
+useful visual hint to indicate the presence of this category.
 
-  The x-axis (or y-axis when \code{horizontal = TRUE})
-  tickmark locations are from 1 to \code{n} shifted to the
-  right by 0.5 (i.e. 1.5, 2.5, ...), where \code{n} is the
-  number of levels of the factor variable to be plotted.
+The x-axis (or y-axis when \code{horizontal = TRUE}) tickmark locations are
+from 1 to \code{n} shifted to the right by 0.5 (i.e. 1.5, 2.5, ...), where
+\code{n} is the number of levels of the factor variable to be plotted.
 }
 \examples{
 library(cranvas)
@@ -103,11 +98,11 @@ qbar(happy, data = qhappy)
 cranvas_off()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
 \seealso{
-  Other plots: \code{\link{qboxplot}},
-  \code{\link{qdensity}}, \code{\link{qhist}},
-  \code{\link{qmval}}, \code{\link{qparallel}},
-  \code{\link{qspine}}, \code{\link{qtime}}
+Other plots: \code{\link{qboxplot}};
+  \code{\link{qdensity}}; \code{\link{qhist}},
+  \code{\link{qspine}}; \code{\link{qmval}};
+  \code{\link{qparallel}}; \code{\link{qtime}}
 }

@@ -2,7 +2,7 @@
 \name{Common.meta}
 \alias{Common.meta}
 \title{Common meta data structure in cranvas}
-\format{List of 26
+\format{\preformatted{List of 26
  $ alpha          : chr "numeric"
  $ main           : chr "character"
  $ xlim           : chr "numeric"
@@ -28,95 +28,83 @@
  $ keys           : chr "character"
  $ identified     : chr "integer"
  $ identify.labels: chr "character"
- $ handlers       : chr "list"}
+ $ handlers       : chr "list"
+}}
 \usage{
 Common.meta
 }
 \description{
-  A meta data is created with reference classes
-  (\code{\link[methods]{setRefClass}}) in the \pkg{methods}
-  and signaling fields in the \pkg{objectProperties}
-  package (\code{\link[objectProperties]{properties}}). It
-  is used to make several plotting routines more
-  modularized (e.g. the axes and background layers).
+A meta data is created with reference classes
+(\code{\link[methods]{setRefClass}}) in the \pkg{methods} and signaling
+fields in the \pkg{objectProperties} package
+(\code{\link[objectProperties]{properties}}). It is used to make several
+plotting routines more modularized (e.g. the axes and background layers).
 }
 \details{
-  This object only provides a template for the common meta
-  data, we have to call
-  \code{\link[objectProperties]{properties}} in order to
-  \emph{really} create a meta object.
+This object only provides a template for the common meta data, we have to
+call \code{\link[objectProperties]{properties}} in order to \emph{really}
+create a meta object.
 
-  We can use \code{Meta.template$new()} to generate an
-  object, which is essentially an environment. This
-  environment object is dynamic in the sense that no matter
-  where we copy it to or how we modify the components in
-  it, all its copies can sync with each other. This free us
-  from considering lexical scopes frequently when we do
-  interactive graphics, which often involves with global or
-  local changes of variables.
+We can use \code{Meta.template$new()} to generate an object, which is
+essentially an environment. This environment object is dynamic in the sense
+that no matter where we copy it to or how we modify the components in it, all
+its copies can sync with each other. This free us from considering lexical
+scopes frequently when we do interactive graphics, which often involves with
+global or local changes of variables.
 
-  Another advantage is that we can attach events on this
-  object. When a component is changed, an event can be
-  triggered (see examples below).
+Another advantage is that we can attach events on this object. When a
+component is changed, an event can be triggered (see examples below).
 
-  The common meta structure contains the following
-  components:
+The common meta structure contains the following components:
 
-  \describe{
+\describe{
 
-  \item{alpha}{the alpha transparency}
+\item{alpha}{the alpha transparency}
 
-  \item{main}{the main title}
+\item{main}{the main title}
 
-  \item{xlim, ylim}{the real x- and y-axis limits
-  calculated from original data}
+\item{xlim, ylim}{the real x- and y-axis limits calculated from original
+data}
 
-  \item{xat, yat}{the tickmarks locations on the x and y
-  axis}
+\item{xat, yat}{the tickmarks locations on the x and y axis}
 
-  \item{xlab, ylab}{x and y axis titles}
+\item{xlab, ylab}{x and y axis titles}
 
-  \item{xlabels, ylabels}{the tickmarks labels}
+\item{xlabels, ylabels}{the tickmarks labels}
 
-  \item{minor}{possible values are \code{''}, \code{'x'},
-  \code{'y'} and \code{'xy'}, indicating which axis to draw
-  minor grid lines}
+\item{minor}{possible values are \code{''}, \code{'x'}, \code{'y'} and
+\code{'xy'}, indicating which axis to draw minor grid lines}
 
-  \item{limits}{the limits of the main plot layer (it is
-  often the case that some other layers need to sync with
-  the main plot layer in limits, so this component is very
-  important)}
+\item{limits}{the limits of the main plot layer (it is often the case that
+some other layers need to sync with the main plot layer in limits, so this
+component is very important)}
 
-  \item{color, border, size}{the real color, border and
-  size vectors used to draw the graphical elements, which
-  can be different from the corresponding columns in the
-  original data}
+\item{color, border, size}{the real color, border and size vectors used to
+draw the graphical elements, which can be different from the corresponding
+columns in the original data}
 
-  \item{start, pos}{the starting position and the current
-  position of the cursor}
+\item{start, pos}{the starting position and the current position of the
+cursor}
 
-  \item{brush.move}{indicating if the brush is in the move
-  mode (if not, the brush will be resized when mouse moves}
+\item{brush.move}{indicating if the brush is in the move mode (if not, the
+brush will be resized when mouse moves}
 
-  \item{brush.size}{the size of the brush rectangle (a
-  numeric vector of length 2)}
+\item{brush.size}{the size of the brush rectangle (a numeric vector of length
+2)}
 
-  \item{brush.adj}{the amount of x and y adjustment for the
-  brush rectangle to capture a graphical element without
-  having to cover its center}
+\item{brush.adj}{the amount of x and y adjustment for the brush rectangle to
+capture a graphical element without having to cover its center}
 
-  \item{manual.brush}{a function to manually brush the plot
-  given the mouse position}
+\item{manual.brush}{a function to manually brush the plot given the mouse
+position}
 
-  \item{identified, identify.labels}{the identified indices
-  and the text label to draw in the plot for the identified
-  cases}
+\item{identified, identify.labels}{the identified indices and the text label
+to draw in the plot for the identified cases}
 
-  \item{handlers}{a list of event handlers (functions of
-  two arguments: layer and event)}
+\item{handlers}{a list of event handlers (functions of two arguments: layer
+and event)}
 
-  \item{active}{logical: if the current plot window is
-  active}}
+\item{active}{logical: if the current plot window is active}}
 }
 \examples{
 library(objectSignals)
@@ -140,7 +128,6 @@ meta$pos <- c(2, 0)
 ls(meta)  # list all the objects in it
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
-\keyword{datasets}
 \keyword{internal}

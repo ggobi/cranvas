@@ -16,15 +16,14 @@ qbxp(data, meta, subset = FALSE, ...)
   \item{data}{a mutaframe created by \code{\link{qdata}}}
 }
 \value{
-  a layer object
+a layer object
 }
 \description{
-  A ``low-level'' plotting function to create a boxplot
-  layer.
+A ``low-level'' plotting function to create a boxplot layer.
 }
 \examples{
 ## see source code of qboxplot()
 }
 \author{
-  Yihui Xie <\url{http://yihui.name}>
+Yihui Xie <\url{http://yihui.name}>
 }
