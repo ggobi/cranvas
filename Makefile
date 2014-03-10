@@ -1,5 +1,4 @@
 docs:
-	rm -r man/;\
 	Rscript -e 'options(replace.assign=TRUE)' -e 'library(Rd2roxygen)'\
 	        -e 'setwd("..")' -e 'rab("cranvas", install = TRUE)'
 
