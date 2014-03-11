@@ -127,7 +127,7 @@ qtime2 = function(time, y, data, group=NULL,
   
   key_press = function(layer, event){
     common_key_press(layer, event, tdata, meta)
-    keys = c('M','G','H','U','D','R','Y','Left','Right','Up','Down')
+    keys = c('M','G','F','U','D','R','Y','Left','Right','Up','Down')
     meta$shiftKey = shift_on(event)
     key = keys[match_key(keys,event)]
     if (!length(key)) return()
@@ -416,7 +416,7 @@ time_meta_initialize2 = function(meta, call, data,
   meta$singleVarLen = attr(data,"regular_nrow")
   data = as.data.frame(data)
   
-  meta$data = data.frame(x = data[,meta$varname$x],
+  meta$data = data.frame(x = as.numeric(data[,meta$varname$x]),
                          yorig = data$.value)
   
   ## X axis setting
@@ -481,7 +481,7 @@ time_meta_initialize2 = function(meta, call, data,
   
   ## Other
   meta$steplen$xwrap = shift
-  meta$steplen$ywrap = (0:6)*2
+  meta$steplen$ywrap = 1:8
   meta$steplen$id = 0 # vertconst
   meta$steplen$zoom = diff(range(meta$data$xtmp, na.rm = TRUE)) # zoomsize
   meta$shiftKey = FALSE
@@ -531,6 +531,29 @@ update_meta_xwrap_color = function(meta, data){
   meta$data$stroke = color_seq[meta$data$xwrapgroup]
 }
 
+# Update the height of variables -- htvar
+update_meta_htvar = function(meta){
+  meta$data$htvar = if (meta$mode$varUP & meta$steplen$id>0) {
+    (as.integer(meta$data$vargroup)-1) * (1 + (meta$ngroup$id-1)*meta$steplen$id) * 1.02
+  } else if (meta$mode$varUP) {
+    (as.integer(meta$data$vargroup)-1) * 1.02
+  } else 0
+  if (meta$mode$ywrap) meta$data$htvar = meta$data$htvar * diff(meta$cutbound$orig[[1]][1:2]) * 1.05
+}
+
+# Get the horizontal lines to cut the series
+compute_cutbound = function(meta){
+  tmp = if (meta$mode$yfold){meta$data$hrznbaseline + abs(meta$data$hrznydiff)}else{meta$data$yscaled}
+  meta$cutbound$orig = tapply(tmp,meta$data$vargroup,function(x){
+    seq(min(x),max(x),length=meta$steplen$ywrap[1]+1)
+  })
+  meta$cutbound$cut = lapply(meta$cutbound$orig,function(x){
+    x[1]=x[1]-1
+    x[meta$steplen$ywrap[1]+1]=x[meta$steplen$ywrap[1]+1]+1
+    return(x)})
+  meta$cutbound$diff = sapply(meta$cutbound$orig,function(x){x[2]-x[1]})
+}
+
 # Set up meta$line
 compute_line = function(meta, data){
   update_meta_group(meta)
@@ -539,14 +562,15 @@ compute_line = function(meta, data){
     meta$line$df = data.frame()
     for (i in 1:length(meta$ywrapline)){
       for (j in 1:length(meta$ywrapline[[i]])){
-        tmpdat = meta$ywrapline[[i]][[j]]
-        tmprow = rownames(meta$data) %in% rownames(tmpdat)
+        tmpdat = meta$ywrapline[[i]][[j]]$data
+        tmprow = sapply(tmpdat$id,function(x) which(rownames(meta$data)==x))
+        tmpn = nrow(tmpdat)
         tmpline = data.frame(xs=tmpdat$xtmp[-tmpn],
                              ys=tmpdat$ytmp[-tmpn],
                              xe=tmpdat$xtmp[-1],
                              ye=tmpdat$ytmp[-1],
                              col=tmpcolor[tmprow][-tmpn],
-                             id=which(tmprow)[-tmpn])
+                             id=tmprow[-tmpn])
         meta$line$df = rbind(meta$line$df, tmpline[complete.cases(tmpline),])
       }
     }
@@ -818,42 +842,13 @@ x_wrap_backward = function(meta,data,crt_range){
   meta$xlabels = format(meta$xat)
 }
 
-# update htvar
-update_meta_htvar = function(meta){
-  meta$data$htvar = if (meta$mode$varUP & meta$steplen$id>0) {
-    (as.integer(meta$data$vargroup)-1) * (1 + (meta$ngroup$id-1)*meta$steplen$id) * 1.02
-  } else if (meta$mode$varUP) {
-    (as.integer(meta$data$vargroup)-1) * 1.02
-  } else 0
-  if (meta$mode$ywrap) meta$data$htvar = meta$data$htvar * diff(meta$cutbound$orig[[1]][1:2]) * 1.05
-}
-
-# get the horizontal lines to cut the series
-compute_cutbound = function(meta){
-  if (meta$mode$yfold){
-    meta$cutbound$orig = tapply(meta$data$hrznbaseline + abs(meta$data$hrznydiff),
-                           meta$data$vargroup,function(x){
-                             seq(min(x),max(x),length=meta$steplen$ywrap[1]/2+1)
-                           })
-  }else{
-    meta$cutbound$orig = tapply(meta$data$yscaled,meta$data$vargroup,function(x){
-      seq(min(x),max(x),length=meta$steplen$ywrap[1]+1)
-    })
-  }
-  meta$cutbound$cut = lapply(meta$cutbound$orig,function(x){
-    x[1]=x[1]-1
-    x[meta$steplen$ywrap[1]+1]=x[meta$steplen$ywrap[1]+1]+1
-    return(x)})
-  meta$cutbound$diff = sapply(meta$cutbound$orig,function(x){x[2]-x[1]})
-}
-
 # key Y for y-wrapping, and Shift+Y for y-backward-wrapping
 y_wrap_forward = function(meta,data){
   # shift the ywrap for one step to the left or right
   l = length(meta$steplen$ywrap)
   meta$steplen$ywrap = if (meta$shiftKey){meta$steplen$ywrap[c(l,1:(l-1))]} else {meta$steplen$ywrap[c(2:l,1)]}
   # when the ywrap mode is off, reset ytmp
-  if (meta$steplen$ywrap[1] == 0){
+  if (meta$steplen$ywrap[1] == 1){
     update_meta_htvar(meta)
     meta$mode$ywrap = FALSE
     meta$data$ywrapgroup = 1
@@ -869,10 +864,9 @@ y_wrap_forward = function(meta,data){
   # when the ywrap mode is on
   meta$mode$area = TRUE
   meta$mode$ywrap = TRUE
-  update_meta_htvar(meta)
   compute_cutbound(meta)
+  update_meta_htvar(meta)
   meta$data$ywrapgroup = 1
-  meta$data[,paste('ywrapline',1:(meta$steplen$ywrap[1]),sep='')] = NA
   ytmp = if (meta$mode$yfold) {meta$data$hrznbaseline + abs(meta$data$hrznydiff)} else {meta$data$yscaled}
   # for each variable, calculate the new ywrapgroup and ytmp
   for (i in 1:meta$ngroup$y){
@@ -880,32 +874,118 @@ y_wrap_forward = function(meta,data){
     meta$data$ywrapgroup[tmprows] = as.integer(cut(ytmp[tmprows],meta$cutbound$cut[[i]]))
     meta$data$ytmp[tmprows] = ytmp[tmprows] - meta$cutbound$orig[[i]][meta$data$ywrapgroup[tmprows]] + meta$data$htvar[tmprows] + meta$data$htid[tmprows]
   }
-
   # for each wrapped line, get the coordinates
-  ngroup_ywrap = meta$steplen$ywrap[1]/ifelse(meta$mode$yfold,2,1)
+  meta$ywrapline = list()
   for (i in unique(meta$data$vidgroup)){
     tmpdata = meta$data[meta$data$vidgroup==i,,drop=FALSE]
-    for (j in 1:ngroup_ywrap) {
-      meta$ywrapline[[i]][[j]] = tmpdata[,c('xtmp','ytmp'),drop=FALSE]
+    tmpdata$yscaled = ytmp[meta$data$vidgroup==i]
+    tmpvargroup = tmpdata$vargroup[1]
+    for (j in 1:meta$steplen$ywrap[1]) {
+      meta$ywrapline[[i]][[j]] = list(data=tmpdata[,c('xtmp','ytmp'),drop=FALSE])
+      meta$ywrapline[[i]][[j]]$data$id = rownames(meta$ywrapline[[i]][[j]]$data)
+      
       dominant = which(tmpdata$ywrapgroup==j)
-      recessive_up = (tmpdata$ywrapgroup[-nrow(tmpdata)] < j & tmpdata$ywrapgroup[-1] > j)
-      recessive_dn = (tmpdata$ywrapgroup[-nrow(tmpdata)] > j & tmpdata$ywrapgroup[-1] < j)
       boundary = setdiff(1:nrow(tmpdata),dominant)
-      dominant_left = boundary[diff(boundary)>1]
-      dominant_right = boundary[(diff(boundary)>1)+1]     
       boundary_upper = boundary[tmpdata$ywrapgroup[boundary]>j]
-      boundary_lower = boundary[tmpdata$ywrapgroup[boundary]<j]
       
-      meta$ywrapline[[i]][[j]][-dominant,'ytmp'] = tmpdata$htvar[dominant][1] + tmpdata$htid[dominant][1]
-      meta$ywrapline[[i]][[j]][boundary_upper,'ytmp'] = meta$ywrapline[[i]][[j]][boundary_upper,'ytmp'] + meta$cutbound$diff[i]
-      meta$ywrapline[[i]][[j]][dominant_left,'xtmp'] = tmpdata$xtmp[dominant_left]+(meta$cutbound$orig[pmax(tmpdata$ywrapgroup[dominant_left],tmpdata$ywrapgroup[dominant_left+1])]-tmpdata$yscaled[dominant_left])/(tmpdata$yscaled[dominant_left+1]-tmpdata$yscaled[dominant_left])*(tmpdata$xtmp[dominant_left+1]-tmpdata$xtmp[dominant_left])
-      meta$ywrapline[[i]][[j]][dominant_right,'xtmp'] = tmpdata$xtmp[dominant_right-1]+(meta$cutbound$orig[pmax(tmpdata$ywrapgroup[dominant_right-1],tmpdata$ywrapgroup[dominant_right])]-tmpdata$yscaled[dominant_right-1])/(tmpdata$yscaled[dominant_right]-tmpdata$yscaled[dominant_right-1])*(tmpdata$xtmp[dominant_right]-tmpdata$xtmp[dominant_right-1])
+      dominant_left = boundary[c(diff(boundary)>1,TRUE)]
+      if (rev(dominant_left)[1]==nrow(tmpdata)) dominant_left = dominant_left[-nrow(tmpdata)]
+      meta$ywrapline[[i]][[j]]$dominant_left_upper = intersect(dominant_left,boundary_upper)
+      meta$ywrapline[[i]][[j]]$dominant_left_lower = setdiff(dominant_left,boundary_upper)
       
-      meta$ywrapline[[i]][[j]][recessive_up,'xtmp'] = tmpdata$xtmp[recessive_up]+(meta$cutbound$orig[j]-tmpdata$yscaled[recessive_up])/(tmpdata$yscaled[recessive_up+1]-tmpdata$yscaled[recessive_up])*(tmpdata$xtmp[recessive_up+1]-tmpdata$xtmp[recessive_up])
-      meta$ywrapline[[i]][[j]][recessive_up+1,'xtmp'] = tmpdata$xtmp[recessive_up]+(meta$cutbound$orig[j+1]-tmpdata$yscaled[recessive_up])/(tmpdata$yscaled[recessive_up+1]-tmpdata$yscaled[recessive_up])*(tmpdata$xtmp[recessive_up+1]-tmpdata$xtmp[recessive_up])
+      dominant_right = boundary[c(1,which(diff(boundary)>1)+1)]
+      if (dominant_right[1]==1) dominant_right = dominant_right[-1]
+      meta$ywrapline[[i]][[j]]$dominant_right_upper = intersect(dominant_right,boundary_upper)
+      meta$ywrapline[[i]][[j]]$dominant_right_lower = setdiff(dominant_right,boundary_upper)
       
-      meta$ywrapline[[i]][[j]][recessive_dn,'xtmp'] = tmpdata$xtmp[recessive_dn]+(meta$cutbound$orig[j+1]-tmpdata$yscaled[recessive_dn])/(tmpdata$yscaled[recessive_dn+1]-tmpdata$yscaled[recessive_dn])*(tmpdata$xtmp[recessive_dn+1]-tmpdata$xtmp[recessive_dn])
-      meta$ywrapline[[i]][[j]][recessive_dn+1,'xtmp'] = tmpdata$xtmp[recessive_dn]+(meta$cutbound$orig[j]-tmpdata$yscaled[recessive_dn])/(tmpdata$yscaled[recessive_dn+1]-tmpdata$yscaled[recessive_dn])*(tmpdata$xtmp[recessive_dn+1]-tmpdata$xtmp[recessive_dn])
+      meta$ywrapline[[i]][[j]]$recessive_up = which(tmpdata$ywrapgroup[-nrow(tmpdata)] < j & tmpdata$ywrapgroup[-1] > j)
+      meta$ywrapline[[i]][[j]]$recessive_dn = which(tmpdata$ywrapgroup[-nrow(tmpdata)] > j & tmpdata$ywrapgroup[-1] < j)
+      
+      meta$ywrapline[[i]][[j]]$data[-dominant,'ytmp'] = tmpdata$htvar[dominant][1] + tmpdata$htid[dominant][1]
+      if (length(boundary_upper)) meta$ywrapline[[i]][[j]]$data[boundary_upper,'ytmp'] = meta$ywrapline[[i]][[j]]$data[boundary_upper,'ytmp'] + meta$cutbound$diff[tmpvargroup]
+      
+      
+      crosspoint_x = function(x1,y1,x2,y2,h){
+        x1+(h-y1)/(y2-y1)*(x2-x1)
+      }
+
+      if (length(meta$ywrapline[[i]][[j]]$dominant_left_upper)){
+        addpoints_left = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$dominant_left_upper,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_left$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_left_upper],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_left_upper],
+                                           tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_left_upper+1],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_left_upper+1],
+                                           meta$cutbound$orig[[tmpvargroup]][tmpdata$ywrapgroup[meta$ywrapline[[i]][[j]]$dominant_left_upper+1]+1])
+        addpoints_right = data.frame()
+        meta$ywrapline[[i]][[j]]$data = rbind(meta$ywrapline[[i]][[j]]$data, addpoints_left, addpoints_right)
+      }
+      
+      if (length(meta$ywrapline[[i]][[j]]$dominant_left_lower)){
+        addpoints_left = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$dominant_left_lower,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_left$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_left_lower],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_left_lower],
+                                           tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_left_lower+1],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_left_lower+1],
+                                           meta$cutbound$orig[[tmpvargroup]][tmpdata$ywrapgroup[meta$ywrapline[[i]][[j]]$dominant_left_lower+1]])
+        addpoints_right = data.frame()
+        meta$ywrapline[[i]][[j]]$data = rbind(meta$ywrapline[[i]][[j]]$data, addpoints_left, addpoints_right)
+      }
+      
+      if (length(meta$ywrapline[[i]][[j]]$dominant_right_upper)){
+        addpoints_right = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$dominant_right_upper,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_right$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_right_upper],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_right_upper],
+                                            tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_right_upper-1],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_right_upper-1],
+                                            meta$cutbound$orig[[tmpvargroup]][tmpdata$ywrapgroup[meta$ywrapline[[i]][[j]]$dominant_right_upper-1]+1])
+        addpoints_left = data.frame()
+        meta$ywrapline[[i]][[j]]$data = rbind(meta$ywrapline[[i]][[j]]$data, addpoints_left, addpoints_right)
+      }
+      
+      if (length(meta$ywrapline[[i]][[j]]$dominant_right_lower)){
+        addpoints_right = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$dominant_right_lower,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_right$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_right_lower],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_right_lower],
+                                            tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_right_lower-1],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_right_lower-1],
+                                            meta$cutbound$orig[[tmpvargroup]][tmpdata$ywrapgroup[meta$ywrapline[[i]][[j]]$dominant_right_lower-1]])
+        addpoints_left = data.frame()
+        meta$ywrapline[[i]][[j]]$data = rbind(meta$ywrapline[[i]][[j]]$data, addpoints_left, addpoints_right)
+      }
+            
+      if (length(meta$ywrapline[[i]][[j]]$recessive_up)){
+        addpoints_left = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$recessive_up,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_left$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_up],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_up],
+                                           tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_up+1],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_up+1],
+                                           meta$cutbound$orig[[tmpvargroup]][j])
+        addpoints_right = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$recessive_up+1,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_right$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_up],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_up],
+                                            tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_up+1],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_up+1],
+                                            meta$cutbound$orig[[tmpvargroup]][j+1])
+        meta$ywrapline[[i]][[j]]$data = rbind(meta$ywrapline[[i]][[j]]$data, addpoints_left, addpoints_right)
+      }
+      
+      if (length(meta$ywrapline[[i]][[j]]$recessive_dn)){      
+        addpoints_left = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$recessive_dn,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_left$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_dn],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_dn],
+                                           tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_dn+1],
+                                           tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_dn+1],
+                                           meta$cutbound$orig[[tmpvargroup]][j+1])
+        addpoints_right = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$recessive_dn+1,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_right$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_dn],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_dn],
+                                            tmpdata$xtmp[meta$ywrapline[[i]][[j]]$recessive_dn+1],
+                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$recessive_dn+1],
+                                            meta$cutbound$orig[[tmpvargroup]][j])
+        meta$ywrapline[[i]][[j]]$data = rbind(meta$ywrapline[[i]][[j]]$data, addpoints_left, addpoints_right)
+      }
+      
+      meta$ywrapline[[i]][[j]]$data = meta$ywrapline[[i]][[j]]$data[order(meta$ywrapline[[i]][[j]]$data$xtmp),]
     }
   }
 
