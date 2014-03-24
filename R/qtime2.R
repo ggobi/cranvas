@@ -889,7 +889,7 @@ y_wrap_forward = function(meta,data){
       boundary_upper = boundary[tmpdata$ywrapgroup[boundary]>j]
       
       dominant_left = boundary[c(diff(boundary)>1,TRUE)]
-      if (rev(dominant_left)[1]==nrow(tmpdata)) dominant_left = dominant_left[-nrow(tmpdata)]
+      if (rev(dominant_left)[1]==nrow(tmpdata)) dominant_left = dominant_left[-length(dominant_left)]
       meta$ywrapline[[i]][[j]]$dominant_left_upper = intersect(dominant_left,boundary_upper)
       meta$ywrapline[[i]][[j]]$dominant_left_lower = setdiff(dominant_left,boundary_upper)
       
@@ -921,7 +921,8 @@ y_wrap_forward = function(meta,data){
       }
       
       if (length(meta$ywrapline[[i]][[j]]$dominant_left_lower)){
-        addpoints_left = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$dominant_left_lower,c('xtmp','ytmp','id'),drop=FALSE]
+        addpoints_left = meta$ywrapline[[i]][[j]]$data[meta$ywrapline[[i]][[j]]$dominant_left_lower,c('xtmp','ytmp'),drop=FALSE]
+        addpoints_left$id = meta$ywrapline[[i]][[j]]$data$id[meta$ywrapline[[i]][[j]]$dominant_left_lower+1]
         addpoints_left$xtmp = crosspoint_x(tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_left_lower],
                                            tmpdata$yscaled[meta$ywrapline[[i]][[j]]$dominant_left_lower],
                                            tmpdata$xtmp[meta$ywrapline[[i]][[j]]$dominant_left_lower+1],
