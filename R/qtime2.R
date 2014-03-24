@@ -1,6 +1,6 @@
 qtime2 = function(time, y, data, group=NULL,
                   shift=c(1,4,7,12,24), alpha=1, size=2, asp=NULL, 
-                  series.stats=TRUE, fun.base=min,
+                  series.stats=ifelse(nrow(data)<1000,TRUE,FALSE), fun.base=min,
                   main=NULL, xlab=NULL, ylab=NULL,...){
   
   #####################
@@ -230,10 +230,12 @@ qtime2 = function(time, y, data, group=NULL,
       }))
       tmpprint = paste(meta$varname$y,": Corr. of two series = ",round(ytmpcor,2),sep="")
     } else {
+      if (nrow(meta$data)>1000) print(paste("Before the model:", Sys.time()))
       ytmpR2 = as.vector(by(meta$data[,c('xtmp','ytmp')],meta$data$vargroup,function(x){
         res=summary(lm(x$ytmp~factor(x$xtmp)))$r.squared
       }))
       tmpprint = paste(meta$varname$y,": R square = ",round(ytmpR2,2),sep="")
+      if (nrow(meta$data)>1000) print(paste("After the model:", Sys.time()))
     }
     if (meta$mode$varUP) {
       qdrawText(painter,tmpprint,
@@ -473,6 +475,7 @@ time_meta_initialize2 = function(meta, call, data,
   meta$mode$yfold = FALSE
   meta$mode$xwrap = FALSE
   meta$mode$ywrap = FALSE
+  meta$mode$period = FALSE
   meta$mode$zoom = FALSE
   meta$mode$serie = FALSE
   meta$mode$idSep = FALSE
@@ -627,6 +630,13 @@ selected_draw = function(meta,b,hits,painter){
   }
 }
 
+# Set limits for xaxis in qtime
+meta_xaxis = function(meta) {
+  meta$limits[1:2] = extend_ranges(meta$data$xtmp)
+  meta$xat = axis_loc(meta$limits[1:2])
+  meta$xlabels = format(meta$xat)
+}
+
 # Set limits for yaxis in qtime
 meta_yaxis = function(meta) {
   if (meta$mode$varUP) {
@@ -725,6 +735,10 @@ separate_group = function(meta){
     meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id
     if (meta$mode$varUP) meta$data$htvar = (as.integer(meta$data$vargroup)-1) * (1+(meta$ngroup$id-1)*meta$steplen$id)
     meta$data$ytmp = (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htid + meta$data$htvar
+  } else if (meta$ngroup$y == 1 && meta$ngroup$id == 1) {
+    meta$mode$period = TRUE
+    meta$data$htperiod = as.integer(meta$data$xwrapgroup) - 1
+    meta$data$ytmp = (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htperiod
   }
   meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
   meta_yaxis(meta)
@@ -737,6 +751,10 @@ mix_group = function(meta){
     meta$data$htvar = 0
     meta$data$ytmp = meta$data$yscaled
     meta$mode$varDOWN = TRUE
+  } else if (meta$ngroup$y == 1 && meta$ngroup$id == 1) {
+    meta$mode$period = FALSE
+    meta$data$htperiod = 0
+    meta$data$ytmp = meta$data$yscaled
   } else {
     if (meta$ngroup$id>1) {
       meta$steplen$id = meta$steplen$id - 0.05
@@ -758,12 +776,17 @@ mix_group = function(meta){
 
 # key Right for x-wrapping
 x_wrap_forward = function(meta,data,crt_range){
-  hits = selected(data)[meta$data$order]
-  if (meta$mode$serie & sum(hits)) {
-    if (min(meta$data$xtmp[hits],na.rm=TRUE)<=max(meta$data$x,na.rm=TRUE)){
-      meta$data$xtmp[hits] = meta$data$xtmp[hits] + diff(range(meta$data$x,na.rm=TRUE))/meta$singleVarLen
+  if (meta$mode$serie) {
+    hits = selected(data)[meta$data$order]
+    if (sum(hits)) {
+      if (min(meta$data$xtmp[hits],na.rm=TRUE)<=max(meta$data$x,na.rm=TRUE)){
+        meta$data$xtmp[hits] = meta$data$xtmp[hits] + diff(range(meta$data$x,na.rm=TRUE))/meta$singleVarLen
+      }
+      meta_xaxis(meta)
     }
-  } else if (meta$shiftKey) {
+    return()
+  }
+  if (meta$shiftKey) {
     zoombound = max(meta$steplen$xwrap)
     if (zoombound<2) zoombound = diff(range(meta$data$x,na.rm=TRUE))/4
     meta$data$xtmp = meta$data$x %% zoombound
@@ -772,8 +795,7 @@ x_wrap_forward = function(meta,data,crt_range){
       meta$data$xwrapgroup[meta$data$xtmp==0] = meta$data$xwrapgroup[which(meta$data$xtmp==0)-1]
       meta$data$xtmp[meta$data$xtmp==0] = zoombound
     }
-    meta$limits[1:2] = extend_ranges(meta$data$xtmp)
-  } else if (!meta$mode$serie) {
+  } else {
     zoombound = crt_range-meta$steplen$xwrap[1]
     if (meta$steplen$xwrap[1]==1 & zoombound<3){
       zoombound = 3
@@ -787,12 +809,15 @@ x_wrap_forward = function(meta,data,crt_range){
       meta$data$xwrapgroup[meta$data$xtmp==0] = meta$data$xwrapgroup[which(meta$data$xtmp==0)-1]
       meta$data$xtmp[meta$data$xtmp==0] = zoombound
     }
-    meta$limits[1:2] = extend_ranges(meta$data$xtmp)
   }
   update_meta_group(meta)
   update_meta_xwrap_color(meta,data)
-  meta$xat = axis_loc(meta$limits[1:2])
-  meta$xlabels = format(meta$xat)
+  meta_xaxis(meta)
+  if (meta$mode$period){
+    meta$data$htperiod = as.integer(meta$data$xwrapgroup) - 1
+    meta$data$ytmp = (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htperiod
+    meta$limits[3:4] = extend_ranges(meta$data$ytmp)
+  }
 }
 
 # key Left for x-backward-wrapping
@@ -801,8 +826,13 @@ x_wrap_backward = function(meta,data,crt_range){
     meta$data$xtmp = meta$data$x
     meta$data$xwrapgroup = 1
     meta$steplen$zoom = diff(range(meta$data$xtmp, na.rm = TRUE))
-    meta$limits[1:2] = extend_ranges(meta$data$xtmp)
     meta$mode$zoom = FALSE
+    if (meta$mode$period) {
+      meta$data$ytmp = meta$data$yscaled
+      meta$mode$period=FALSE
+      meta$limits[3:4] = extend_ranges(meta$data$ytmp)
+      meta_yaxis(meta)
+    }
   } else {
     hits = selected(data)[meta$data$order]
     if (meta$mode$serie & sum(hits)) {
@@ -833,13 +863,19 @@ x_wrap_backward = function(meta,data,crt_range){
           meta$data$xtmp[meta$data$xtmp==0] = zoombound
         }
       }
-      meta$limits[1:2] = extend_ranges(meta$data$xtmp)
+      if (meta$mode$period){
+        meta$data$htperiod = as.integer(meta$data$xwrapgroup) - 1
+        if (any(meta$data$htperiod > 0)) {
+          meta$data$ytmp = (meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE)) + meta$data$htperiod
+        } else {meta$mode$period=FALSE; meta$data$ytmp = meta$data$yscaled}
+        meta$limits[3:4] = extend_ranges(meta$data$ytmp)
+        meta_yaxis(meta)
+      }
     }
   }
   update_meta_group(meta)
   update_meta_xwrap_color(meta,data)
-  meta$xat = axis_loc(meta$limits[1:2])
-  meta$xlabels = format(meta$xat)
+  meta_xaxis(meta)
 }
 
 # key Y for y-wrapping, and Shift+Y for y-backward-wrapping
