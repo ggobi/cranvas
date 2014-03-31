@@ -51,4 +51,23 @@ qtime(Time, sunspots, qsun, shift=c(1,(1:10)*10))
 qpig <- qdata(pigs)
 qtime(TIME, c("GILTS","PROFIT","PRODUCTION","HERDSZ"), qpig, shift=c(1,4))
 
+
+## example 7: flu trends
+flu.data <- read.table("http://www.google.org/flutrends/us/data.txt", skip=11, sep=",", header=TRUE)
+# Get only states
+flu.data <- flu.data[, c(1, 3:53)]
+# Melt data, and rename variables
+library(reshape)
+flu.melt <- melt(flu.data, id.vars="Date")
+flu.melt$Date <- as.Date(flu.melt$Date)
+colnames(flu.melt)[2] <- "State"
+colnames(flu.melt)[3] <- "FluSearches"
+flu.melt$days <- as.vector(difftime(flu.melt$Date,as.Date('2002-12-31')))
+# winter of 2014
+flu2014 <- subset(flu.melt, days>3960)
+ord <- names(sort(tapply(flu2014$FluSearches,flu2014$State,function(x)which(x>(max(x)/5*3))[1])))
+flu2014$State <- factor(flu2014$State,levels=ord)
+qflu <- qdata(flu2014)
+qtime(days, FluSearches, data=qflu, group="State")
+
 cranvas_off()
