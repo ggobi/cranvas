@@ -131,7 +131,6 @@ qtime2 = function(time, y, data, group=NULL,
     meta$shiftKey = shift_on(event)
     key = keys[match_key(keys,event)]
     if (!length(key)) return()
-    crt_range = diff(range(meta$data$xtmp,na.rm=TRUE))+1
     switch(key, 
            M = switch_serie_mode(meta, tdata),
            G = shift_wrap_gear(meta),
@@ -140,8 +139,8 @@ qtime2 = function(time, y, data, group=NULL,
            D = mix_group(meta),
            R = switch_area_mode(meta),
            Y = y_wrap_forward(meta,tdata),
-           Left = x_wrap_backward(meta,tdata,crt_range),
-           Right = x_wrap_forward(meta,tdata,crt_range),
+           Left = x_wrap_backward(meta,tdata),
+           Right = x_wrap_forward(meta,tdata),
            Up = size_up(meta),
            Down = size_down(meta)
     )
@@ -484,10 +483,10 @@ time_meta_initialize2 = function(meta, call, data,
   
   ## Other
   meta$steplen$xwrap = shift
+  meta$steplen$xzoom = diff(range(meta$data$x,na.rm=TRUE))+1
   meta$steplen$ywrap = 0.9
   meta$steplen$yzoom = 1
   meta$steplen$id = 0 # vertconst
-  meta$steplen$zoom = diff(range(meta$data$xtmp, na.rm = TRUE)) # zoomsize
   meta$shiftKey = FALSE
   meta$linkID = NULL
   
@@ -529,11 +528,26 @@ update_meta_group = function(meta){
   meta$mode$xwrap = ifelse(meta$ngroup$xwrap>1,TRUE,FALSE) 
 }
 
-# Update the colors of points when wrapping
+# Update the colors of points when x-wrapping
 update_meta_xwrap_color = function(meta, data){
   color_seq = seq(1,0,length=meta$ngroup$xwrap+1)
   meta$data$fill = color_seq[meta$data$xwrapgroup]
   meta$data$stroke = color_seq[meta$data$xwrapgroup]
+}
+
+# Update the xtmp when x-wrapping
+update_meta_xwrap = function(meta){
+  meta$data$xtmp = meta$data$x-min(meta$data$x,na.rm=TRUE)+1
+  meta$data$xwrapgroup = ceiling(meta$data$xtmp/meta$steplen$xzoom)
+  meta$data$xtmp = meta$data$xtmp %% meta$steplen$xzoom
+  if (all(meta$data$xtmp == meta$data$xtmp[1])){
+    message('Can not wrap forward any longer. Please use the left arrow to wrap backward.')
+  }
+  if (sum(meta$data$xtmp==0)){
+    meta$data$xwrapgroup[meta$data$xtmp==0] = meta$data$xwrapgroup[which(meta$data$xtmp==0)-1]
+    meta$data$xtmp[meta$data$xtmp==0] = meta$steplen$xzoom
+  }
+  meta$data$xtmp = meta$data$xtmp + min(meta$data$x,na.rm=TRUE)-1
 }
 
 # Update the height of variables -- htvar
@@ -779,7 +793,7 @@ mix_group = function(meta){
 }
 
 # key Right for x-wrapping
-x_wrap_forward = function(meta,data,crt_range){
+x_wrap_forward = function(meta,data){
   if (meta$mode$serie) {
     hits = selected(data)[meta$data$order]
     if (sum(hits)) {
@@ -791,27 +805,22 @@ x_wrap_forward = function(meta,data,crt_range){
     return()
   }
   if (meta$shiftKey) {
-    zoombound = max(meta$steplen$xwrap)
-    if (zoombound<2) zoombound = diff(range(meta$data$x,na.rm=TRUE))/4
-    meta$data$xtmp = meta$data$x %% zoombound
-    meta$data$xwrapgroup = ceiling(meta$data$x/zoombound)
-    if (sum(meta$data$xtmp==0)){
-      meta$data$xwrapgroup[meta$data$xtmp==0] = meta$data$xwrapgroup[which(meta$data$xtmp==0)-1]
-      meta$data$xtmp[meta$data$xtmp==0] = zoombound
-    }
+    meta$steplen$xzoom = max(meta$steplen$xwrap)
+    if (meta$steplen$xzoom<2) meta$steplen$xzoom = diff(range(meta$data$x,na.rm=TRUE))/4
+    update_meta_xwrap(meta)
   } else {
-    zoombound = crt_range-meta$steplen$xwrap[1]
-    if (meta$steplen$xwrap[1]==1 & zoombound<3){
-      zoombound = 3
-    } else if (meta$steplen$xwrap[1]!=1 & zoombound<meta$steplen$xwrap[1]){
-      zoombound = crt_range %% meta$steplen$xwrap[1]
-      if (!zoombound) zoombound = meta$steplen$xwrap[1]
-    }
-    meta$data$xtmp = meta$data$x %% zoombound
-    meta$data$xwrapgroup = ceiling(meta$data$x/zoombound)
-    if (sum(meta$data$xtmp==0)){
-      meta$data$xwrapgroup[meta$data$xtmp==0] = meta$data$xwrapgroup[which(meta$data$xtmp==0)-1]
-      meta$data$xtmp[meta$data$xtmp==0] = zoombound
+    crt_range = diff(range(meta$data$xtmp,na.rm=TRUE))+1
+    b = max(c(3,min(abs(diff(meta$data$x)))))
+    while (diff(range(meta$data$xtmp,na.rm=TRUE))+1 >= crt_range &
+           meta$steplen$xzoom > max(c(b,meta$steplen$xwrap[1])) ) {
+      meta$steplen$xzoom = meta$steplen$xzoom - meta$steplen$xwrap[1]
+      if (meta$steplen$xwrap[1]==1 & meta$steplen$xzoom<b){
+        meta$steplen$xzoom = b
+      } else if (meta$steplen$xwrap[1]!=1 & meta$steplen$xzoom<meta$steplen$xwrap[1]){
+        meta$steplen$xzoom = meta$steplen$xzoom %% meta$steplen$xwrap[1]
+        #if (meta$steplen$xzoom<=0) meta$steplen$xzoom = meta$steplen$xwrap[1]
+      }
+      update_meta_xwrap(meta)
     }
   }
   update_meta_group(meta)
@@ -825,11 +834,11 @@ x_wrap_forward = function(meta,data,crt_range){
 }
 
 # key Left for x-backward-wrapping
-x_wrap_backward = function(meta,data,crt_range){    
+x_wrap_backward = function(meta,data){    
   if (meta$shiftKey) {
     meta$data$xtmp = meta$data$x
     meta$data$xwrapgroup = 1
-    meta$steplen$zoom = diff(range(meta$data$xtmp, na.rm = TRUE))
+    meta$steplen$xzoom = diff(range(meta$data$x, na.rm=TRUE))+1
     meta$mode$zoom = FALSE
     if (meta$mode$period) {
       meta$data$ytmp = meta$data$yscaled
@@ -844,28 +853,14 @@ x_wrap_backward = function(meta,data,crt_range){
         meta$data$xtmp[hits] = meta$data$xtmp[hits] - diff(range(meta$data$x,na.rm=TRUE))/meta$singleVarLen
       }
     } else if (!meta$mode$serie) {
-      zoombound = crt_range+meta$steplen$xwrap[1]
-      if (zoombound>(meta$steplen$zoom+min(meta$data$x,na.rm=TRUE))) {
-        zoombound = meta$steplen$zoom+min(meta$data$x,na.rm=TRUE)
-      }
-      meta$data$xtmp = meta$data$x %% zoombound
-      meta$data$xwrapgroup = ceiling(meta$data$x/zoombound)
-      if (sum(meta$data$xtmp==0)){
-        meta$data$xwrapgroup[meta$data$xtmp==0] = meta$data$xwrapgroup[which(meta$data$xtmp==0)-1]
-        meta$data$xtmp[meta$data$xtmp==0] = zoombound
-      }
+      crt_range = diff(range(meta$data$xtmp,na.rm=TRUE))+1 
       while (diff(range(meta$data$xtmp,na.rm=TRUE))+1 <= crt_range &
-               zoombound<meta$steplen$zoom+min(meta$data$x,na.rm=TRUE)) {
-        zoombound = zoombound+max(meta$steplen$xwrap)
-        if (zoombound>(meta$steplen$zoom+min(meta$data$x,na.rm=TRUE))) {
-          zoombound = meta$steplen$zoom+min(meta$data$x,na.rm=TRUE)
+             meta$steplen$xzoom < diff(range(meta$data$x,na.rm=TRUE))+1) {
+        meta$steplen$xzoom = meta$steplen$xzoom + meta$steplen$xwrap[1]
+        if (meta$steplen$xzoom > diff(range(meta$data$x,na.rm=TRUE))+1) {
+          meta$steplen$xzoom = diff(range(meta$data$x,na.rm=TRUE))+1
         }
-        meta$data$xtmp = meta$data$x %% zoombound
-        meta$data$xwrapgroup = ceiling(meta$data$x/zoombound)
-        if (sum(meta$data$xtmp==0)){
-          meta$data$xwrapgroup[meta$data$xtmp==0] = meta$data$xwrapgroup[which(meta$data$xtmp==0)-1]
-          meta$data$xtmp[meta$data$xtmp==0] = zoombound
-        }
+        update_meta_xwrap(meta)
       }
       if (meta$mode$period){
         meta$data$htperiod = as.integer(meta$data$xwrapgroup) - 1
