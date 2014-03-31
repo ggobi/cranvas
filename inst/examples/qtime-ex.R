@@ -38,7 +38,7 @@ qtime(exper, lnw, qwage, group=id)
 ## example 4: Lynx - for posterity
 # Good to show off wrapping to investigate irregular series
 qlynx <- qdata(data.frame(Time=1:114, lynx))
-qtime(Time, lynx, qlynx, shift=1:12)
+qtime(Time, lynx, qlynx, shift=1:13)
 
 
 ## example 5: Sunspots - for posterity
@@ -68,6 +68,6 @@ flu2014 <- subset(flu.melt, days>3960)
 ord <- names(sort(tapply(flu2014$FluSearches,flu2014$State,function(x)which(x>(max(x)/5*3))[1])))
 flu2014$State <- factor(flu2014$State,levels=ord)
 qflu <- qdata(flu2014)
-qtime(days, FluSearches, data=qflu, group="State")
+qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,35,91))
 
 cranvas_off()
