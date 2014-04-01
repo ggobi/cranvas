@@ -8,9 +8,9 @@ qnasa <- qdata(nasa2221)
 qtime(TimeIndx,ts,qnasa,shift=c(1,12))
 qscatter(ts,ps_tovs,data=qnasa)
 
-qtime("TimeIndx","ts",qnasa,Year,shift=1)
-qtime(TimeIndx,c("ts","ps_tovs","ca_med"),qnasa,shift=c(1,12))
-qtime("TimeIndx",c(ts,ps_tovs,ca_med),qnasa,period=Year)
+qtime("TimeIndx","ts",qnasa,Year,shift=c(1,12))
+qtime(TimeIndx,c("ts","ca_med","ps_tovs"),qnasa,shift=c(1,12))
+qtime("TimeIndx",c(ts,ca_med,ps_tovs),qnasa,Year)
 
 
 ## example 2: Remifentanil in the nlme package
@@ -44,7 +44,7 @@ qtime(Time, lynx, qlynx, shift=1:13)
 ## example 5: Sunspots - for posterity
 # Good to show off wrapping to investigate irregular series
 qsun <- qdata(data.frame(Time=1:2820, sunspots))
-qtime(Time, sunspots, qsun, shift=c(1,(1:10)*10))
+qtime(Time, sunspots, qsun, shift=c(1,c(1,6,7,13,26)*10))
 
 
 ## example 6: Pigs
