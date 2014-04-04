@@ -677,7 +677,7 @@ compute_area = function(meta, data, fun.base){
                              y4=meta$line$df$ys,y5=areabaseline,y6=NA)
     meta$area$color = tmpcolor[meta$line$df$id]
   } else {
-    areabaseline = tapply(meta$data$ytmp,meta$data$vidgroup,fun.base,na.rm=TRUE)
+    areabaseline = tapply(meta$data$ytmp,meta$data$vidgroup,fun.base)
     meta$data$areabaseline = areabaseline[meta$data$vidgroup]
     meta$area$y = data.frame(y1=meta$data$areabaseline[-meta$line$lastrow],
                              y2=meta$data$areabaseline[-meta$line$lastrow],
