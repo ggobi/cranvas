@@ -63,6 +63,8 @@ flu.melt$Date <- as.Date(flu.melt$Date)
 colnames(flu.melt)[2] <- "State"
 colnames(flu.melt)[3] <- "FluSearches"
 flu.melt$days <- as.vector(difftime(flu.melt$Date,as.Date('2002-12-31')))
+qflu <- qdata(flu.melt)
+qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,364))
 # winter of 2014
 flu2014 <- subset(flu.melt, days>3960)
 ord <- names(sort(tapply(flu2014$FluSearches,flu2014$State,function(x)which(x>(max(x)/5*3))[1])))
