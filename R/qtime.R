@@ -521,6 +521,7 @@ time_meta_initialize = function(meta, call, data,
   meta$data$htvar=0
   meta$data$htid=0
   meta$data$htywrap=0
+  meta$data$htperiod=0
   
   ## order the data by vargroup, idgroup, and x
   orderEnter = order(meta$data$vargroup, meta$data$idgroup, meta$data$x, decreasing=FALSE)
@@ -677,8 +678,9 @@ compute_area = function(meta, data, fun.base){
                              y4=meta$line$df$ys,y5=areabaseline,y6=NA)
     meta$area$color = tmpcolor[meta$line$df$id]
   } else {
-    areabaseline = tapply(meta$data$ytmp,meta$data$vidgroup,fun.base)
-    meta$data$areabaseline = areabaseline[meta$data$vidgroup]
+    areabaseline = tapply(meta$data$ytmp,meta$data$vargroup,fun.base)
+    meta$data$areabaseline = meta$data$htvar + meta$data$htid + meta$data$htperiod
+    if (all(meta$data$areabaseline==0)) meta$data$areabaseline = areabaseline[meta$data$vargroup]
     meta$area$y = data.frame(y1=meta$data$areabaseline[-meta$line$lastrow],
                              y2=meta$data$areabaseline[-meta$line$lastrow],
                              y3=meta$line$df$ye, y4=meta$line$df$ys,
