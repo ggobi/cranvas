@@ -164,7 +164,7 @@ qtime = function(time, y, data, group=NULL,
         hitgroup = hitgroup[hitgroup$vidgroup==hitgroupname,,drop=FALSE]
       }
       hitsall = which(meta$data$vidgroup==hitgroup$vidgroup[1])
-      selected(tdata) = hitsall[meta$data$order]   
+      selected(tdata) = meta$data$order[hitsall]
       qupdate(layer.brush)
       return()
     }
@@ -268,7 +268,7 @@ qtime = function(time, y, data, group=NULL,
   stats_draw = function(layer, painter){
     if (meta$ngroup$id > 1) return()
     if (meta$ngroup$xwrap == 1){
-      ytmpacf = unname(tapply(meta$data$ytmp,meta$data$vargroup,function(z) acf(z,lag.max=max(30,max(meta$steplen$xwrap)),plot=FALSE)$acf[meta$steplen$xwrap[1]+1]))
+      ytmpacf = unname(tapply(meta$data$yscaled,meta$data$vargroup,function(z) acf(z,lag.max=max(30,max(meta$steplen$xwrap)),plot=FALSE)$acf[meta$steplen$xwrap[1]+1]))
       tmpprint = paste(meta$varname$y,": ACF(lag=",meta$steplen$xwrap[1],"):",round(ytmpacf,2),sep="")
     } else if (meta$ngroup$xwrap==2) {
       ytmpcor = as.vector(by(meta$data[,c('ytmp','xwrapgroup')],meta$data$vargroup,function(x){
@@ -621,7 +621,11 @@ update_meta_htvar = function(meta){
 
 # Get the horizontal lines to cut the series
 compute_cutbound = function(meta){
-  tmp = if (meta$mode$yfold){meta$data$hrznbaseline + abs(meta$data$hrznydiff)}else{meta$data$yscaled}
+  tmp = if (meta$mode$yfold){
+      meta$data$hrznbaseline + abs(meta$data$hrznydiff)
+    } else if (meta$steplen$id==0) {
+      meta$data$yscaled
+    } else {(meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE))}
   meta$cutbound$diff = tapply(tmp,meta$data$vargroup,function(x){
     diff(range(x))*meta$steplen$yzoom})
   meta$cutbound$orig = tapply(tmp,meta$data$vargroup,function(x){
@@ -673,7 +677,7 @@ compute_area = function(meta, data, fun.base){
   meta$area$x = data.frame(x1=meta$line$df$xs,x2=meta$line$df$xe,x3=meta$line$df$xe,
                            x4=meta$line$df$xs,x5=meta$line$df$xs,x6=NA)
   if (meta$mode$ywrap){
-    areabaseline = meta$data$htvar[meta$line$df$id]
+    areabaseline = (meta$data$htvar + meta$data$htid)[meta$line$df$id]
     meta$area$y = data.frame(y1=areabaseline,y2=areabaseline,y3=meta$line$df$ye,
                              y4=meta$line$df$ys,y5=areabaseline,y6=NA)
     meta$area$color = tmpcolor[meta$line$df$id]
@@ -944,6 +948,7 @@ y_wrap_forward = function(meta,data){
   meta$steplen$yzoom = meta$steplen$yzoom * if (meta$shiftKey){1/meta$steplen$ywrap} else {meta$steplen$ywrap}
   if (meta$steplen$yzoom>1) meta$steplen$yzoom=1
   if (meta$steplen$yzoom<0.1) meta$steplen$yzoom=0.1
+  meta$data$htid = (as.integer(meta$data$idgroup)-1)*(meta$steplen$id+0.05) * meta$steplen$yzoom
   meta$ngroup$ywrap = ceiling(1/meta$steplen$yzoom)
   # when the ywrap mode is off, reset ytmp
   if (meta$steplen$yzoom == 1){
@@ -952,9 +957,9 @@ y_wrap_forward = function(meta,data){
     meta$data$ywrapgroup = 1
     meta$data$ytmp = meta$data$htvar + meta$data$htid + if (meta$mode$yfold){
       meta$data$hrznbaseline + abs(meta$data$hrznydiff)
-    } else {
+    } else if (meta$steplen$id==0) {
       meta$data$yscaled
-    }
+    } else {(meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE))}
     meta$limits[3:4] = extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
     meta_yaxis(meta)
     return()
@@ -965,7 +970,7 @@ y_wrap_forward = function(meta,data){
   compute_cutbound(meta)
   update_meta_htvar(meta)
   meta$data$ywrapgroup = 1
-  ytmp = if (meta$mode$yfold) {meta$data$hrznbaseline + abs(meta$data$hrznydiff)} else {meta$data$yscaled}
+  ytmp = if (meta$mode$yfold) {meta$data$hrznbaseline + abs(meta$data$hrznydiff)} else if (meta$steplen$id==0) {meta$data$yscaled} else {(meta$data$yscaled-min(meta$data$yscaled,na.rm=TRUE))/diff(range(meta$data$yscaled,na.rm=TRUE))}
   # for each variable, calculate the new ywrapgroup and ytmp
   for (i in 1:meta$ngroup$y){
     tmprows = (meta$data$vargroup==meta$varname$y[i])
@@ -983,6 +988,7 @@ y_wrap_forward = function(meta,data){
       meta$ywrapline[[i]][[j]]$data$id = rownames(meta$ywrapline[[i]][[j]]$data)
       
       dominant = which(tmpdata$ywrapgroup==j)
+      if (length(dominant) && all(dominant==1:nrow(tmpdata))) next
       boundary = setdiff(1:nrow(tmpdata),dominant)
       boundary_upper = boundary[tmpdata$ywrapgroup[boundary]>j]
       
@@ -999,7 +1005,11 @@ y_wrap_forward = function(meta,data){
       meta$ywrapline[[i]][[j]]$recessive_up = which(tmpdata$ywrapgroup[-nrow(tmpdata)] < j & tmpdata$ywrapgroup[-1] > j)
       meta$ywrapline[[i]][[j]]$recessive_dn = which(tmpdata$ywrapgroup[-nrow(tmpdata)] > j & tmpdata$ywrapgroup[-1] < j)
       
-      meta$ywrapline[[i]][[j]]$data[-dominant,'ytmp'] = tmpdata$htvar[dominant][1] + tmpdata$htid[dominant][1]
+      if (length(dominant)) {
+        meta$ywrapline[[i]][[j]]$data[-dominant,'ytmp'] = tmpdata$htvar[dominant][1] + tmpdata$htid[dominant][1]
+      } else {
+        meta$ywrapline[[i]][[j]]$data[,'ytmp'] = tmpdata$htvar[1] + tmpdata$htid[1]
+      }
       if (length(boundary_upper)) meta$ywrapline[[i]][[j]]$data[boundary_upper,'ytmp'] = meta$ywrapline[[i]][[j]]$data[boundary_upper,'ytmp'] + meta$cutbound$diff[tmpvargroup]
       
       
