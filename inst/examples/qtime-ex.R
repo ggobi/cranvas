@@ -21,7 +21,10 @@ nasa2221$Gridx <- factor(nasa2221$Gridx)
 qnasa <- qdata(nasa2221)
 qtime("TimeIndx",c(ts,ca_med,o3_tovs),qnasa,Gridx,shift=c(1,12))
 qscatter(o3_tovs,ts,data=qnasa)
-
+library(ggplot2)
+nasa.locs <- subset(cranvas::nasa, TimeIndx == 1)
+nasa.locs$loc <- paste(nasa.locs$Gridx, nasa.locs$Gridy, sep=",")
+qplot(Long, Lat, data=nasa.locs, geom="text", label = loc)
 
 ## example 2: Remifentanil in the nlme package
 library(nlme)
@@ -39,11 +42,47 @@ qscatter(Amt, conc, data=qRemi)
 
 
 ## example 3: Wages
-qwage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
-qtime(exper, lnw, qwage, group=id)
+library(dplyr)
+wages.num <- summarise(group_by(wages, id), n=length(lnw))
+indx <- wages.num$id[wages.num$n > 11]
+wages.sub <- subset(wages, id %in% indx)
+nindiv <- length(unique(wages.sub$id))
+wages.sub$idno <- factor(wages.sub$id, labels=1:nindiv)
+wages.sub.demog <- summarise(group_by(wages.sub, idno), n=length(lnw),
+                       avlnw = mean(lnw, na.rm=T),
+                       #trendlnw = lsfit(exper, lnw)$coef[2],
+                       trendlnw = max(lnw, na.rm=T) - min(lnw, na.rm=T),
+                       black = black[1],
+                       hispanic = hispanic[1],
+                       ged = ged[1], hgc = hgc[1],
+                       avunemp = mean(uerate, na.rm=T))
+#qwage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
+qwages <- qdata(wages.sub[,c(11,2:3)])
+qtime(exper, lnw, qwages, group=idno)
 # id <- link_cat(wage, "id")
 # remove_link(wage, id)
 
+indx <- wages.num$id[wages.num$n > 3]
+wages.sub2 <- subset(wages, id %in% indx)
+wages.sub2.demog <- summarise(group_by(wages.sub2, id), n=length(lnw),
+                             avlnw = mean(lnw, na.rm=T),
+                             #trendlnw = coefficients(lm(lnw ~ exper))[2],
+                             rangelnw = max(lnw, na.rm=T) - min(lnw, na.rm=T),
+                             sdlnw = sd(lnw, na.rm=T),
+                             startlnw = lnw[1],
+                             endlnw = lnw[length(lnw)],
+                             black = black[1],
+                             hispanic = hispanic[1],
+                             ged = ged[1], hgc = hgc[1],
+                             avunemp = mean(uerate, na.rm=T))
+qwages <- qdata(wages.sub2[,1:3])
+qwages.demog <- qdata(wages.sub2.demog)
+id = link_cat(qwages.demog, "id", qwages, "id")
+qtime(exper, lnw, qwages, group=id)
+qscatter(startlnw, endlnw, qwages.demog)
+remove_link(qwages.demog, id[1])
+remove_link(qwages, id[2])
+# Now need to link scatterplots of demographics with time series
 
 ## example 4: Lynx - for posterity
 # Good to show off wrapping to investigate irregular series
@@ -73,6 +112,8 @@ flu.melt$Date <- as.Date(flu.melt$Date)
 colnames(flu.melt)[2] <- "State"
 colnames(flu.melt)[3] <- "FluSearches"
 flu.melt$days <- as.vector(difftime(flu.melt$Date,as.Date('2002-12-31')))
+summary(flu.melt$Date)
+flu.melt$Date[flu.melt$days>2500&flu.melt$days<2520]
 qflu <- qdata(flu.melt)
 qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,364))
 # winter of 2014
