@@ -53,7 +53,7 @@ link_cat = function(mf1, var1, mf2 = NULL, var2 = NULL) {
   }), if (link2) add_listener(mf2, function(i, j) {
     if (j != '.brushed' || change2) return()
     change1 <<- TRUE
-    mf1$.brushed = checkrow(mf1[, var1], unique(as.data.frame(mf2)[mf2$.brushed, var2]))
+    mf1$.brushed = checkrow(as.data.frame(mf1)[, var1], unique(as.data.frame(mf2)[mf2$.brushed, var2]))
     change1 <<- FALSE
   }))
   l1 = attr(mf1, 'Link'); l1$linkid = c(l1$linkid, id[1])

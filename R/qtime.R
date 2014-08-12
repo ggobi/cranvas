@@ -721,7 +721,16 @@ meta_xaxis = function(meta) {
 
 # Set limits for yaxis in qtime
 meta_yaxis = function(meta) {
-  if (meta$mode$varUP) {
+  if (meta$steplen$id) {
+    #if (meta$ngroup$y>1) {
+    #  meta$yat = meta$data$htid[!duplicated(meta$data$vidgroup)]+0.5*meta$steplen$id
+    #  meta$ylabels = format(unique(meta$data$vidgroup))
+    #} else {
+      meta$yat = meta$data$htid[!duplicated(meta$data$idgroup)]+0.5*meta$steplen$id*ifelse(meta$mode$varUP,meta$ngroup$y,1)
+      meta$ylabels = format(unique(meta$data$idgroup))
+    #}
+    meta$ylab = meta$varname$g
+  } else if (meta$mode$varUP) {
     tmpyat = sort(unique(meta$data$htvar))
     meta$yat = tmpyat + diff(tmpyat[1:2])/2
     meta$ylabels = meta$varname$y
@@ -732,18 +741,18 @@ meta_yaxis = function(meta) {
     meta$ylab = paste(meta$varname$y,collapse=', ')
     meta$mode$varUP = FALSE
   } else {
-    if (meta$ngroup$id==1 | !meta$steplen$id){
+    #if (meta$ngroup$id==1 | !meta$steplen$id){
       meta$yat = axis_loc(meta$limits[3:4])
-    } else {
-      meta$yat = (1:meta$ngroup$id-0.5)*meta$steplen$id
-    }
-    if (meta$steplen$id==0) {
+    #} else {
+    #  meta$yat = (1:meta$ngroup$id-0.5)*meta$steplen$id
+    #}
+    #if (meta$steplen$id==0) {
       meta$ylabels = format(meta$yat)
       meta$ylab = meta$ylab.init
-    } else {
-      meta$ylabels = format(unique(meta$data$idgroup))
-      meta$ylab = meta$varname$g
-    }
+    #} else {
+    #  meta$ylabels = format(unique(meta$data$idgroup))
+    #  meta$ylab = meta$varname$g
+    #}
   }
 }
 
@@ -754,7 +763,7 @@ switch_serie_mode = function(meta,data){
     meta$mode$serie = FALSE
     return()
   }
-  if (meta$ngroup$id>1){
+  if (meta$ngroup$id>1 & meta$ngroup$y==1){
     meta$mode$serie = !meta$mode$serie
     if (!meta$mode$serie) {
       remove_listener(data,meta$linkID)
@@ -767,7 +776,7 @@ switch_serie_mode = function(meta,data){
         meta$mode$serie = FALSE
       }
     }
-  } else if (meta$ngroup$y>1) {
+  } else if (meta$ngroup$vid>1) {
     meta$mode$serie = !meta$mode$serie
   }
 }
@@ -809,7 +818,8 @@ switch_fold_mode = function(meta,data){
 separate_group = function(meta){
   if (meta$ngroup$y>1 & meta$shiftKey) {
     meta$data$htvar = as.integer(meta$data$vargroup) - 1
-    meta$data$ytmp = meta$data$yscaled + meta$data$htvar
+    meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id*meta$ngroup$y
+    meta$data$ytmp = meta$data$yscaled + meta$data$htvar + meta$data$htid
     meta$mode$varUP = TRUE
   } else if (meta$ngroup$id>1) {
     meta$steplen$id = meta$steplen$id + 0.05
@@ -831,19 +841,21 @@ mix_group = function(meta){
   meta$mode$varUP = FALSE
   if (meta$ngroup$y>1 & meta$shiftKey) {
     meta$data$htvar = 0
-    meta$data$ytmp = meta$data$yscaled
+    meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id
+    meta$data$ytmp = meta$data$yscaled + meta$data$htid + meta$data$htvar
     meta$mode$varDOWN = TRUE
   } else if (meta$ngroup$y == 1 && meta$ngroup$id == 1 && meta$mode$period) {
     meta$mode$period = FALSE
     meta$data$htperiod = 0
-    meta$data$ytmp = meta$data$yscaled
+    meta$data$ytmp = meta$data$yscaled + meta$data$htid + meta$data$htvar
   } else {
     if (meta$ngroup$id>1) {
       meta$steplen$id = meta$steplen$id - 0.05
       if (meta$steplen$id<0) meta$steplen$id = 0
       if (!meta$steplen$id) {
         meta$data$htid = 0
-        meta$data$ytmp = meta$data$yscaled
+        #meta$data$htvar = as.integer(meta$data$vargroup) - 1
+        meta$data$ytmp = meta$data$yscaled + meta$data$htid + meta$data$htvar
         meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))      
       } else {
         meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id

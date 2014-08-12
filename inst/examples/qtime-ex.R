@@ -13,6 +13,16 @@ qtime(TimeIndx,c("ts","ca_med","ps_tovs"),qnasa,shift=c(1,12))
 qtime("TimeIndx",c(ts,ca_med,ps_tovs),qnasa,Year)
 
 
+##
+nasa2221 <- subset(nasa, Gridx %in% c(14,17,20) & Gridy == 21)
+#nasa2221 <- subset(nasa, Gridy == 21)
+nasa2221$Year <- factor(nasa2221$Year)
+nasa2221$Gridx <- factor(nasa2221$Gridx)
+qnasa <- qdata(nasa2221)
+qtime("TimeIndx",c(ts,ca_med,o3_tovs),qnasa,Gridx,shift=c(1,12))
+qscatter(o3_tovs,ts,data=qnasa)
+
+
 ## example 2: Remifentanil in the nlme package
 library(nlme)
 qRem <- qdata(Remifentanil[complete.cases(Remifentanil) & Remifentanil$ID==1,])
