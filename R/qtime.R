@@ -722,13 +722,13 @@ meta_xaxis = function(meta) {
 # Set limits for yaxis in qtime
 meta_yaxis = function(meta) {
   if (meta$steplen$id) {
-    #if (meta$ngroup$y>1) {
-    #  meta$yat = meta$data$htid[!duplicated(meta$data$vidgroup)]+0.5*meta$steplen$id
-    #  meta$ylabels = format(unique(meta$data$vidgroup))
-    #} else {
+    if (meta$mode$varUP) {
+      meta$yat = (meta$data$htid+meta$data$htvar)[!duplicated(meta$data$vidgroup)]+0.5*meta$steplen$id
+      meta$ylabels = format(unique(meta$data$vidgroup))
+    } else {
       meta$yat = meta$data$htid[!duplicated(meta$data$idgroup)]+0.5*meta$steplen$id*ifelse(meta$mode$varUP,meta$ngroup$y,1)
       meta$ylabels = format(unique(meta$data$idgroup))
-    #}
+    }
     meta$ylab = meta$varname$g
   } else if (meta$mode$varUP) {
     tmpyat = sort(unique(meta$data$htvar))
@@ -838,11 +838,12 @@ separate_group = function(meta){
 
 # key D for mixing the groups
 mix_group = function(meta){
-  meta$mode$varUP = FALSE
+  # meta$mode$varUP = FALSE
   if (meta$ngroup$y>1 & meta$shiftKey) {
     meta$data$htvar = 0
     meta$data$htid = (as.integer(meta$data$idgroup)-1)*meta$steplen$id
     meta$data$ytmp = meta$data$yscaled + meta$data$htid + meta$data$htvar
+    meta$mode$varUP = FALSE
     meta$mode$varDOWN = TRUE
   } else if (meta$ngroup$y == 1 && meta$ngroup$id == 1 && meta$mode$period) {
     meta$mode$period = FALSE
