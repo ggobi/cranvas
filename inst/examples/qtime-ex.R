@@ -71,6 +71,7 @@ wages.sub2.demog <- summarise(group_by(wages.sub2, id), n=length(lnw),
                              sdlnw = sd(lnw, na.rm=T),
                              startlnw = lnw[1],
                              endlnw = lnw[length(lnw)],
+                             inclnw = (lnw[length(lnw)]-lnw[1])/lnw[1]*100.0,
                              black = black[1],
                              hispanic = hispanic[1],
                              ged = ged[1], hgc = hgc[1],
@@ -79,7 +80,9 @@ qwages <- qdata(wages.sub2[,1:3])
 qwages.demog <- qdata(wages.sub2.demog)
 id = link_cat(qwages.demog, "id", qwages, "id")
 qtime(exper, lnw, qwages, group=id)
-qscatter(startlnw, endlnw, qwages.demog)
+qscatter(startlnw, inclnw, qwages.demog)
+qbar(hgc, qwages.demog)
+qhist(avunemp, qwages.demog)
 remove_link(qwages.demog, id[1])
 remove_link(qwages, id[2])
 # Now need to link scatterplots of demographics with time series
