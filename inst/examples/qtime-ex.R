@@ -1,17 +1,27 @@
 library(cranvas)
 
+# Aspect ratio is calculated by optimizing banking to 45 degrees
+
 ## example 1: NASA temperature data
 nasa2221 <- subset(nasa, Gridx == 22 & Gridy == 21)
 nasa2221$Year <- factor(nasa2221$Year)
 qnasa <- qdata(nasa2221)
 
+# Small test that things work
+# Use right/left arrow to wrap series
+# Click g to change shift period
+# Simple 1-1 linking between plots
 qtime(TimeIndx,ts,qnasa,shift=c(1,12))
 qscatter(ts,ps_tovs,data=qnasa)
 
+# Connections between consecutive year separated, to help readability
 qtime("TimeIndx","ts",qnasa,Year,shift=c(1,12))
+# Shift-u/d to split multivariate time series
+# R to make area plot
+# Shift-y to wrap vertically, make a density plot
+# m to change modes, so series can be selected
 qtime(TimeIndx,c("ts","ca_med","ps_tovs"),qnasa,shift=c(1,12))
 qtime("TimeIndx",c(ts,ca_med,ps_tovs),qnasa,Year)
-
 
 ##
 nasa2221 <- subset(nasa, Gridx %in% c(14,17,20) & Gridy == 21)
@@ -19,6 +29,9 @@ nasa2221 <- subset(nasa, Gridx %in% c(14,17,20) & Gridy == 21)
 nasa2221$Year <- factor(nasa2221$Year)
 nasa2221$Gridx <- factor(nasa2221$Gridx)
 qnasa <- qdata(nasa2221)
+# Example to show structural components, 
+# Shift u/d for multivariate
+# u/d for individual/location
 qtime("TimeIndx",c(ts,ca_med,o3_tovs),qnasa,Gridx,shift=c(1,12))
 qscatter(o3_tovs,ts,data=qnasa)
 library(ggplot2)
@@ -85,24 +98,23 @@ qbar(hgc, qwages.demog)
 qhist(avunemp, qwages.demog)
 remove_link(qwages.demog, id[1])
 remove_link(qwages, id[2])
-# Now need to link scatterplots of demographics with time series
 
 ## example 4: Lynx - for posterity
 # Good to show off wrapping to investigate irregular series
+# right/left arrow keys to shift series
 qlynx <- qdata(data.frame(Time=1:114, lynx))
 qtime(Time, lynx, qlynx, shift=1:13)
 
-
 ## example 5: Sunspots - for posterity
 # Good to show off wrapping to investigate irregular series
+# right/left arrow keys to shift series
 qsun <- qdata(data.frame(Time=1:2820, sunspots))
 qtime(Time, sunspots, qsun, shift=c(1,c(1,6,7,13,26)*10))
 
-
 ## example 6: Pigs
+# Show of cross-correlations using shifting a single series
 qpig <- qdata(pigs)
 qtime(TIME, c("GILTS","PROFIT","PRODUCTION","HERDSZ"), qpig, shift=c(1,4))
-
 
 ## example 7: flu trends
 flu.data <- read.table("http://www.google.org/flutrends/us/data.txt", skip=11, sep=",", header=TRUE)
@@ -117,12 +129,15 @@ colnames(flu.melt)[3] <- "FluSearches"
 flu.melt$days <- as.vector(difftime(flu.melt$Date,as.Date('2002-12-31')))
 summary(flu.melt$Date)
 flu.melt$Date[flu.melt$days>2500&flu.melt$days<2520]
+# u/d to separate states
+# left/right to wrap
 qflu <- qdata(flu.melt)
 qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,364))
 # winter of 2014
 flu2014 <- subset(flu.melt, days>3960)
 ord <- names(sort(tapply(flu2014$FluSearches,flu2014$State,function(x)which(x>(max(x)/5*3))[1])))
 flu2014$State <- factor(flu2014$State,levels=ord)
+# u/d to separate states
 qflu <- qdata(flu2014)
 qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,35,91))
 
