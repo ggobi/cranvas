@@ -39,6 +39,16 @@ nasa.locs <- subset(cranvas::nasa, TimeIndx == 1)
 nasa.locs$loc <- paste(nasa.locs$Gridx, nasa.locs$Gridy, sep=",")
 qplot(Long, Lat, data=nasa.locs, geom="text", label = loc)
 
+##
+nasa$Gridx <- factor(nasa$Gridx)
+nasa$Gridy <- factor(nasa$Gridy)
+nasa$Grid = factor(paste(nasa$Gridx,nasa$Gridy,sep=','))
+nasa$Year <- factor(nasa$Year)
+qnasa <- qdata(nasa)
+# hit the following keys in order: down arrow, shift+right arrow, H, V, shift+H, H
+qtime("TimeIndx",c(ts,ca_med),qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
+
+
 ## example 2: Remifentanil in the nlme package
 library(nlme)
 qRem <- qdata(Remifentanil[complete.cases(Remifentanil) & Remifentanil$ID==1,])
@@ -134,7 +144,7 @@ flu.melt$Date[flu.melt$days>2500&flu.melt$days<2520]
 qflu <- qdata(flu.melt)
 qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,364))
 # winter of 2014
-flu2014 <- subset(flu.melt, days>3960)
+flu2014 <- subset(flu.melt, days>3980 & days<4100)
 ord <- names(sort(tapply(flu2014$FluSearches,flu2014$State,function(x)which(x>(max(x)/5*3))[1])))
 flu2014$State <- factor(flu2014$State,levels=ord)
 # u/d to separate states
