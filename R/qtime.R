@@ -773,6 +773,7 @@ meta_xaxis = function(meta) {
     meta$limits[1:2] = extend_ranges(meta$data$xtmp)
     meta$xat = axis_loc(meta$limits[1:2])
     meta$xlabels = format(meta$xat)
+    meta$xlab = meta$varname$x
   }
 }
 
