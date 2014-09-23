@@ -41,13 +41,14 @@ qplot(Long, Lat, data=nasa.locs, geom="text", label = loc)
 
 ##
 nasa$Gridx <- factor(nasa$Gridx)
-nasa$Gridy <- factor(nasa$Gridy)
+nasa$Gridy <- factor(25-nasa$Gridy)
 nasa$Grid = factor(paste(nasa$Gridx,nasa$Gridy,sep=','))
 nasa$Year <- factor(nasa$Year)
 qnasa <- qdata(nasa)
 # hit the following keys in order: down arrow, shift+right arrow, H, V, shift+H, H
 qtime("TimeIndx",c(ts,ca_med),qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
-
+qtime(TimeIndx,ts,qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
+qtime(TimeIndx,o3_tovs,qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
 
 ## example 2: Remifentanil in the nlme package
 library(nlme)
