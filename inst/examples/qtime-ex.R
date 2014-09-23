@@ -46,7 +46,7 @@ nasa$Grid = factor(paste(nasa$Gridx,nasa$Gridy,sep=','))
 nasa$Year <- factor(nasa$Year)
 qnasa <- qdata(nasa)
 # hit the following keys in order: down arrow, shift+right arrow, H, V, shift+H, H
-qtime("TimeIndx",c(ts,ca_med),qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
+qtime("TimeIndx",c(ts,o3_tovs),qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
 qtime(TimeIndx,ts,qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
 qtime(TimeIndx,o3_tovs,qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12))
 
@@ -58,7 +58,7 @@ qtime(Time, conc, qRem)
 Remi <- Remifentanil[complete.cases(Remifentanil),]
 Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
-qtime(Time, conc, qRemi, group=ID)
+qtime(Time, conc, qRemi, group=ID,infolab=c('Sex','Age','Ht','Wt'))
 qscatter(Amt, conc, data=qRemi)
 # for categorical brushing self-link dataset by ID:
 # id <- link_cat(qRemi, "ID")
@@ -150,6 +150,6 @@ ord <- names(sort(tapply(flu2014$FluSearches,flu2014$State,function(x)which(x>(m
 flu2014$State <- factor(flu2014$State,levels=ord)
 # u/d to separate states
 qflu <- qdata(flu2014)
-qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,35,91))
+qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,35,91),infolab='Date')
 
 cranvas_off()
