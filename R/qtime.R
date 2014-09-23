@@ -754,10 +754,10 @@ meta_yaxis = function(meta) {
   if (meta$steplen$id) {
     if (meta$mode$varUP) {
       meta$yat = (meta$data$htid+meta$data$htvar)[!duplicated(meta$data$vidgroup)]+0.5*meta$steplen$id
-      meta$ylabels = format(unique(meta$data$vidgroup))
+      meta$ylabels = format(unique(meta$data$vidgroup),justify='right')
     } else {
       meta$yat = meta$data$htid[!duplicated(meta$data$idgroup)]+0.5*meta$steplen$id*ifelse(meta$mode$varUP,meta$ngroup$y,1)
-      meta$ylabels = format(unique(meta$data$idgroup))
+      meta$ylabels = format(unique(meta$data$idgroup),justify='right')
     }
     meta$ylab = meta$varname$g
   } else if (meta$mode$varUP) {
@@ -767,7 +767,7 @@ meta_yaxis = function(meta) {
     meta$ylab = ""
   } else if (meta$mode$varDOWN) {
     meta$yat = axis_loc(meta$limits[3:4])
-    meta$ylabels = format(meta$yat)
+    meta$ylabels = format(meta$yat,justify='right')
     meta$ylab = paste(meta$varname$y,collapse=', ')
     meta$mode$varUP = FALSE
   } else {
@@ -777,7 +777,7 @@ meta_yaxis = function(meta) {
     #  meta$yat = (1:meta$ngroup$id-0.5)*meta$steplen$id
     #}
     #if (meta$steplen$id==0) {
-      meta$ylabels = format(meta$yat)
+      meta$ylabels = format(meta$yat,justify='right')
       meta$ylab = meta$ylab.init
     #} else {
     #  meta$ylabels = format(unique(meta$data$idgroup))
