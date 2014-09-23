@@ -557,6 +557,8 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
   ## facet
   meta$data$vfacet = 0
   meta$data$hfacet = 0
+  meta$varname$hfacet = hdiv
+  meta$varname$vfacet = vdiv
 
   ## order the data by vargroup, idgroup, and x
   orderEnter = order(meta$data$vargroup, meta$data$idgroup, meta$data$x, decreasing=FALSE)
@@ -574,10 +576,10 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
   meta$mode$idSep = FALSE
   meta$mode$varUP = FALSE
   meta$mode$varDOWN = FALSE
+  meta$mode$hfacet = FALSE
+  meta$mode$vfacet = FALSE
 
   ## Other
-  meta$facet$hdiv = hdiv
-  meta$facet$vdiv = vdiv
   meta$steplen$xwrap = shift
   meta$steplen$xzoom = diff(range(meta$data$x,na.rm=TRUE))+1
   meta$steplen$ywrap = 0.9
@@ -585,6 +587,7 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
   meta$steplen$id = 0 # vertconst
   meta$shiftKey = FALSE
   meta$linkID = NULL
+  meta$varname$identify = infolab
 
   ## Range, axes, etc.
   meta$limits = matrix(c(extend_ranges(range(meta$data$xtmp, na.rm = TRUE)),
@@ -606,19 +609,22 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
   meta$brush.move = TRUE
   meta$brush.size = c(diff(meta$limits[1:2]),-diff(meta$limits[3:4]))/30
   
-  ## Identify
-  meta$varname$identify = infolab
-  if (!is.null(infolab) && length(setdiff(colnames(meta$data),infolab))) {
-    infolab = setdiff(infolab, colnames(meta$data))
-    meta$data = cbind(meta$data, data[orderEnter,infolab])
-    colnames(meta$data)[1:length(infolab) + ncol(meta$data) - length(infolab)] = infolab
-  }
-
   ## Title
   meta$main = if (is.null(main))
     sprintf("Time Plot of %s And %s", meta$varname$x,
             paste(meta$varname$y, collapse=', ')) else main
 
+  ## include the variables needed
+  include_var(c(hdiv,vdiv,infolab),meta, data)
+}
+
+# Include some variables in meta$data
+include_var = function(varname, meta, dat) {
+  if (!is.null(varname) && length(setdiff(colnames(meta$data),varname))) {
+    varname = setdiff(varname, colnames(meta$data))
+    meta$data = cbind(meta$data, dat[meta$data$order,varname])
+    colnames(meta$data)[1:length(varname) + ncol(meta$data) - length(varname)] = varname
+  }
 }
 
 # Update the groups of points to make the line
@@ -759,14 +765,24 @@ selected_draw = function(meta,b,hits,painter){
 
 # Set limits for xaxis in qtime
 meta_xaxis = function(meta) {
-  meta$limits[1:2] = extend_ranges(meta$data$xtmp)
-  meta$xat = axis_loc(meta$limits[1:2])
-  meta$xlabels = format(meta$xat)
+  if(meta$mode$hfacet) {
+    meta$xat = meta$data$hfacet[!duplicated(meta$data[,meta$varname$hfacet])]
+    meta$xlabels = unique(meta$data[,meta$varname$hfacet])
+    meta$xlab = meta$varname$hfacet
+  } else {
+    meta$limits[1:2] = extend_ranges(meta$data$xtmp)
+    meta$xat = axis_loc(meta$limits[1:2])
+    meta$xlabels = format(meta$xat)
+  }
 }
 
 # Set limits for yaxis in qtime
 meta_yaxis = function(meta) {
-  if (meta$steplen$id) {
+  if(meta$mode$vfacet) {
+    meta$yat = meta$data$vfacet[!duplicated(meta$data[,meta$varname$vfacet])]
+    meta$ylabels = format(unique(meta$data[,meta$varname$vfacet]),justify='right')
+    meta$ylab = meta$varname$vfacet
+  } else if (meta$steplen$id) {
     if (meta$mode$varUP) {
       meta$yat = (meta$data$htid+meta$data$htvar)[!duplicated(meta$data$vidgroup)]+0.5*meta$steplen$id
       meta$ylabels = format(unique(meta$data$vidgroup),justify='right')
@@ -916,15 +932,18 @@ mix_group = function(meta){
 
 # key H for faceting the series horizontally
 horizontal_facet = function(meta,data){
-  h = length(meta$facet$hdiv)
+  h = length(meta$varname$hfacet)
   if (h==0) return()
   if (meta$shiftKey) {
+    meta$mode$hfacet = FALSE
     meta$data$hfacet = 0
     meta$data$xtmp = meta$data$x
   } else {
-    meta$data$hfacet = as.integer(factor(data[meta$data$order,meta$facet$hdiv[1]])) - 1
+    meta$mode$hfacet = TRUE
+    meta$data$hfacet = as.integer(factor(data[meta$data$order,meta$varname$hfacet[1]])) - 1
     meta$data$hfacet = meta$data$hfacet * diff(range(meta$data$xtmp,na.rm=TRUE))*1.1
-    meta$data$xtmp = meta$data$xtmp + meta$data$hfacet
+    meta$data$hfacet = meta$data$hfacet + min(meta$data$xtmp)
+    meta$data$xtmp = meta$data$xtmp + meta$data$hfacet - min(meta$data$xtmp)
   }
   meta$limits[1:2] =  extend_ranges(range(meta$data$xtmp,na.rm=TRUE))
   meta_xaxis(meta)
@@ -932,13 +951,15 @@ horizontal_facet = function(meta,data){
 
 # key V for faceting the series vertically
 vertical_facet = function(meta,data){
-  v = length(meta$facet$vdiv)
+  v = length(meta$varname$vfacet)
   if (v==0) return()
   if (meta$shiftKey) {
+    meta$mode$vfacet = FALSE
     meta$data$vfacet = 0
     meta$data$ytmp = meta$data$yscaled
   } else {
-    meta$data$vfacet = as.integer(factor(data[meta$data$order,meta$facet$vdiv[1]])) - 1
+    meta$mode$vfacet = TRUE
+    meta$data$vfacet = as.integer(factor(data[meta$data$order,meta$varname$vfacet[1]])) - 1
     meta$data$vfacet = meta$data$vfacet * diff(range(meta$data$ytmp,na.rm=TRUE))*1.02 
     meta$data$vfacet = meta$data$vfacet + min(meta$data$ytmp)
     meta$data$ytmp = meta$data$ytmp + meta$data$vfacet - min(meta$data$ytmp)

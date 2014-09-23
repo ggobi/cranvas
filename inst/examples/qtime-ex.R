@@ -42,7 +42,8 @@ qplot(Long, Lat, data=nasa.locs, geom="text", label = loc)
 ##
 nasa$Gridx <- factor(nasa$Gridx)
 nasa$Gridy <- factor(25-nasa$Gridy)
-nasa$Grid = factor(paste(nasa$Gridx,nasa$Gridy,sep=','))
+nasa$Grid = paste(nasa$Gridx,nasa$Gridy,sep=',')
+nasa$Grid = factor(nasa$Grid,levels=as.character(outer(1:24,1:24,paste,sep=',')))
 nasa$Year <- factor(nasa$Year)
 qnasa <- qdata(nasa)
 # hit the following keys in order: down arrow, shift+right arrow, H, V, shift+H, H
