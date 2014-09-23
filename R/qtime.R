@@ -908,7 +908,7 @@ horizontal_facet = function(meta,data){
     meta$data$xtmp = meta$data$x
   } else {
     meta$data$hfacet = as.integer(factor(data[meta$data$order,meta$facet$hdiv[1]])) - 1
-    meta$data$hfacet = meta$data$hfacet * diff(range(meta$data$xtmp,na.rm=TRUE))*1.02 
+    meta$data$hfacet = meta$data$hfacet * diff(range(meta$data$xtmp,na.rm=TRUE))*1.1
     meta$data$xtmp = meta$data$xtmp + meta$data$hfacet
   }
   meta$limits[1:2] =  extend_ranges(range(meta$data$xtmp,na.rm=TRUE))
