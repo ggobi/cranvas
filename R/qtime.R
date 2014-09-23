@@ -722,13 +722,13 @@ compute_area = function(meta, data, fun.base){
   meta$area$x = data.frame(x1=meta$line$df$xs,x2=meta$line$df$xe,x3=meta$line$df$xe,
                            x4=meta$line$df$xs,x5=meta$line$df$xs,x6=NA)
   if (meta$mode$ywrap){
-    areabaseline = (meta$data$htvar + meta$data$htid)[meta$line$df$id]
+    areabaseline = (meta$data$htvar + meta$data$htid + meta$data$vfacet)[meta$line$df$id]
     meta$area$y = data.frame(y1=areabaseline,y2=areabaseline,y3=meta$line$df$ye,
                              y4=meta$line$df$ys,y5=areabaseline,y6=NA)
     meta$area$color = tmpcolor[meta$line$df$id]
   } else {
     areabaseline = tapply(meta$data$ytmp,meta$data$vargroup,fun.base)
-    meta$data$areabaseline = meta$data$htvar + meta$data$htid + meta$data$htperiod
+    meta$data$areabaseline = meta$data$htvar + meta$data$htid + meta$data$htperiod + meta$data$vfacet
     if (all(meta$data$areabaseline==0)) meta$data$areabaseline = areabaseline[meta$data$vargroup]
     meta$area$y = data.frame(y1=meta$data$areabaseline[-meta$line$lastrow],
                              y2=meta$data$areabaseline[-meta$line$lastrow],
@@ -940,7 +940,8 @@ vertical_facet = function(meta,data){
   } else {
     meta$data$vfacet = as.integer(factor(data[meta$data$order,meta$facet$vdiv[1]])) - 1
     meta$data$vfacet = meta$data$vfacet * diff(range(meta$data$ytmp,na.rm=TRUE))*1.02 
-    meta$data$ytmp = meta$data$ytmp + meta$data$vfacet
+    meta$data$vfacet = meta$data$vfacet + min(meta$data$ytmp)
+    meta$data$ytmp = meta$data$ytmp + meta$data$vfacet - min(meta$data$ytmp)
   }
   meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
   meta_yaxis(meta)
