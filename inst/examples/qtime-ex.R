@@ -80,8 +80,8 @@ wages.sub.demog <- summarise(group_by(wages.sub, idno), n=length(lnw),
                        ged = ged[1], hgc = hgc[1],
                        avunemp = mean(uerate, na.rm=T))
 #qwage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
-qwages <- qdata(wages.sub[,c(11,2:3)])
-qtime(exper, lnw, qwages, vdiv=idno)
+qwages <- qdata(wages.sub[,c(11,2:4)])
+qtime(exper, lnw, qwages, vdiv=idno, hdiv=ged)
 # id <- link_cat(wage, "id")
 # remove_link(wage, id)
 
@@ -99,10 +99,10 @@ wages.sub2.demog <- summarise(group_by(wages.sub2, id), n=length(lnw),
                              hispanic = hispanic[1],
                              ged = ged[1], hgc = hgc[1],
                              avunemp = mean(uerate, na.rm=T))
-qwages <- qdata(wages.sub2[,1:3])
+qwages <- qdata(wages.sub2[,1:4])
 qwages.demog <- qdata(wages.sub2.demog)
 id = link_cat(qwages.demog, "id", qwages, "id")
-qtime(exper, lnw, qwages, vdiv=id)
+qtime(exper, lnw, qwages, vdiv=id, hdiv=ged)
 qscatter(startlnw, inclnw, qwages.demog)
 qbar(hgc, qwages.demog)
 qhist(avunemp, qwages.demog)
