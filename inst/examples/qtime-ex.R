@@ -42,14 +42,12 @@ qplot(Long, Lat, data=nasa.locs, geom="text", label = loc)
 ##
 nasa$Gridx <- factor(nasa$Gridx)
 nasa$Gridy <- factor(25-nasa$Gridy)
-nasa$Grid = paste(nasa$Gridx,nasa$Gridy,sep=',')
-nasa$Grid = factor(nasa$Grid,levels=outer(1:24,1:24,paste,sep=','))
 nasa$Year <- factor(nasa$Year)
 qnasa <- qdata(nasa)
 # hit the following keys in order: down arrow, shift+right arrow, H, V, shift+H, H
-qtime("TimeIndx",c(ts,o3_tovs),qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12),asp=1)
-qtime(TimeIndx,ts,qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12),asp=1)
-qtime(TimeIndx,o3_tovs,qnasa,group=Grid,hdiv=Gridx,vdiv=Gridy,shift=c(1,12),asp=1)
+qtime("TimeIndx",c(ts,o3_tovs),qnasa,hdiv=Gridx,vdiv=Gridy,shift=c(1,12),asp=1)
+qtime(TimeIndx,ts,qnasa,hdiv=Gridx,vdiv=Gridy,shift=c(1,12),asp=1)
+qtime(TimeIndx,o3_tovs,qnasa,hdiv=Gridx,vdiv=Gridy,shift=c(1,12),asp=1)
 
 ## example 2: Remifentanil in the nlme package
 library(nlme)
@@ -59,7 +57,7 @@ qtime(Time, conc, qRem)
 Remi <- Remifentanil[complete.cases(Remifentanil),]
 Remi$ID <- factor(Remi$ID)
 qRemi <- qdata(Remi)
-qtime(Time, conc, qRemi, group=ID,infolab=c('Sex','Age','Ht','Wt'))
+qtime(Time, conc, qRemi, vdiv=ID, hdiv=Sex, infolab=c('Sex','Age','Ht','Wt'))
 qscatter(Amt, conc, data=qRemi)
 # for categorical brushing self-link dataset by ID:
 # id <- link_cat(qRemi, "ID")
@@ -83,7 +81,7 @@ wages.sub.demog <- summarise(group_by(wages.sub, idno), n=length(lnw),
                        avunemp = mean(uerate, na.rm=T))
 #qwage <- qdata(wages[as.integer(as.character(wages$id))<2000,1:3])
 qwages <- qdata(wages.sub[,c(11,2:3)])
-qtime(exper, lnw, qwages, group=idno)
+qtime(exper, lnw, qwages, vdiv=idno)
 # id <- link_cat(wage, "id")
 # remove_link(wage, id)
 
@@ -104,7 +102,7 @@ wages.sub2.demog <- summarise(group_by(wages.sub2, id), n=length(lnw),
 qwages <- qdata(wages.sub2[,1:3])
 qwages.demog <- qdata(wages.sub2.demog)
 id = link_cat(qwages.demog, "id", qwages, "id")
-qtime(exper, lnw, qwages, group=id)
+qtime(exper, lnw, qwages, vdiv=id)
 qscatter(startlnw, inclnw, qwages.demog)
 qbar(hgc, qwages.demog)
 qhist(avunemp, qwages.demog)
@@ -144,13 +142,13 @@ flu.melt$Date[flu.melt$days>2500&flu.melt$days<2520]
 # u/d to separate states
 # left/right to wrap
 qflu <- qdata(flu.melt)
-qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,364))
+qtime(days, FluSearches, data=qflu, vdiv=State,shift=c(1,7,28,364))
 # winter of 2014
 flu2014 <- subset(flu.melt, days>3980 & days<4100)
 ord <- names(sort(tapply(flu2014$FluSearches,flu2014$State,function(x)which(x>(max(x)/5*3))[1])))
 flu2014$State <- factor(flu2014$State,levels=ord)
 # u/d to separate states
 qflu <- qdata(flu2014)
-qtime(days, FluSearches, data=qflu, group="State",shift=c(1,7,28,35,91),infolab='Date')
+qtime(days, FluSearches, data=qflu, vdiv=State, shift=c(1,7,28,35,91), infolab='Date')
 
 cranvas_off()
