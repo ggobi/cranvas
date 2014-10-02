@@ -213,7 +213,7 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
            D = mix_group(meta),
            R = switch_area_mode(meta),
            Y = y_wrap_forward(meta,tdata),
-           H = horizontal_facet(meta,tdata),
+           H = horizontal_facet(meta),
            V = vertical_facet(meta,tdata),
            Left = x_wrap_backward(meta,tdata),
            Right = x_wrap_forward(meta,tdata),
@@ -542,26 +542,7 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
     meta$data$idgroup = 1
   } else {
     meta$ngroup$id = nrow(unique(data[,meta$varname$g,drop=FALSE]))
-    classes = sapply(data[,meta$varname$g,drop=FALSE],function(a) class(a)[1])
-    if (length(meta$varname$g)==1) {
-      meta$data$idgroup = data[,meta$varname$g]
-      if (is.character(meta$data$idgroup)) {
-        meta$data$idgroup = factor(meta$data$idgroup)
-      } else if (is.numeric(meta$data$idgroup)) {
-        meta$data$idgroup = factor(meta$data$idgroup, levels=sort(unique(meta$data$idgroup)))
-      }
-    } else {
-      group = apply(data[,meta$varname$g],1,paste,collapse=',')
-      level = list()
-      levelbind = 'start'
-      for (i in 1:length(meta$varname$g)){
-        tmpdat = data[,meta$varname$g[i]]
-        level[[i]] = if (classes[i] %in% c('factor','ordered')) {levels(tmpdat)} else {sort(unique(tmpdat))}
-        levelbind = as.vector(outer(levelbind,level[[i]],paste,sep=','))
-      }
-      levelbind = gsub('^start,','',levelbind)
-      meta$data$idgroup = factor(group,levels=levelbind[levelbind %in% group])
-    }
+    meta$data$idgroup = bind_var(data,meta$varname$g)
   }
 
   ## Other groups
@@ -598,8 +579,8 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
   meta$mode$idSep = FALSE
   meta$mode$varUP = FALSE
   meta$mode$varDOWN = FALSE
-  meta$mode$hfacet = FALSE
-  meta$mode$vfacet = FALSE
+  meta$mode$hfacet = 0
+  meta$mode$vfacet = 0
 
   ## Other
   meta$steplen$xwrap = shift
@@ -638,6 +619,29 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
 
   ## include the variables needed
   include_var(c(hdiv,vdiv,infolab),meta, data)
+}
+
+# bind variables into factor with reasonable levels
+bind_var = function(dat, varnames, simplify=TRUE) {
+  classes = sapply(dat[,varnames,drop=FALSE], function(a) class(a)[1])
+  if (length(varnames)==1) {
+    newgroup = dat[,varnames]
+    if (!classes %in% c('factor','ordered')) 
+      newgroup = factor(as.character(newgroup), levels=sort(unique(newgroup)))
+  } else {
+    group = unname(apply(dat[,varnames],1,paste,collapse=','))
+    level = list()
+    levelbind = 'start'
+    for (i in 1:length(varnames)){
+      tmpdat = dat[,varnames[i]]
+      level[[i]] = if (classes[i] %in% c('factor','ordered')) {levels(tmpdat)} else {as.character(sort(unique(tmpdat)))}
+      levelbind = as.vector(t(outer(levelbind,level[[i]],paste,sep=',')))
+    }
+    levelbind = gsub('^start,','',levelbind)
+    if (simplify) levelbind = levelbind[levelbind %in% group]
+    newgroup = factor(group,levels=levelbind)
+  }
+  return(newgroup)
 }
 
 # Include some variables in meta$data
@@ -788,9 +792,13 @@ selected_draw = function(meta,b,hits,painter){
 # Set limits for xaxis in qtime
 meta_xaxis = function(meta) {
   if(meta$mode$hfacet) {
-    meta$xat = meta$data$hfacet[!duplicated(meta$data[,meta$varname$hfacet])]
-    meta$xlabels = unique(meta$data[,meta$varname$hfacet])
-    meta$xlab = meta$varname$hfacet
+    tmpidx = !duplicated(meta$data[,meta$varname$hfacet[1:meta$mode$hfacet]])
+    meta$xat = meta$data$hfacet[tmpidx]
+    meta$xlabels = as.character(bind_var(meta$data,meta$varname$hfacet[1:meta$mode$hfacet]))[tmpidx]
+    tmporder = order(meta$xat)
+    meta$xat = meta$xat[tmporder]
+    meta$xlabels = meta$xlabels[tmporder]
+    meta$xlab = paste(meta$varname$hfacet[1:meta$mode$hfacet],collapse=',')
   } else {
     meta$limits[1:2] = extend_ranges(meta$data$xtmp)
     meta$xat = axis_loc(meta$limits[1:2])
@@ -954,19 +962,22 @@ mix_group = function(meta){
 }
 
 # key H for faceting the series horizontally
-horizontal_facet = function(meta,data){
+horizontal_facet = function(meta){
   h = length(meta$varname$hfacet)
   if (h==0) return()
   if (meta$shiftKey) {
-    meta$mode$hfacet = FALSE
+    meta$mode$hfacet = max(meta$mode$hfacet-1, 0)
+  } else {
+    meta$mode$hfacet = min(meta$mode$hfacet+1, h) 
+  }
+  if (meta$mode$hfacet == 0){
     meta$data$hfacet = 0
     meta$data$xtmp = meta$data$x
   } else {
-    meta$mode$hfacet = TRUE
-    meta$data$hfacet = as.integer(factor(data[meta$data$order,meta$varname$hfacet[1]])) - 1
-    meta$data$hfacet = meta$data$hfacet * diff(range(meta$data$xtmp,na.rm=TRUE))*1.1
-    meta$data$hfacet = meta$data$hfacet + min(meta$data$xtmp)
-    meta$data$xtmp = meta$data$xtmp + meta$data$hfacet - min(meta$data$xtmp)
+    meta$data$hfacet = as.integer(bind_var(meta$data,meta$varname$hfacet[1:meta$mode$hfacet])) - 1
+    meta$data$hfacet = meta$data$hfacet * diff(range(meta$data$x,na.rm=TRUE))*1.1
+    meta$data$hfacet = meta$data$hfacet + min(meta$data$x)
+    meta$data$xtmp = meta$data$x + meta$data$hfacet - min(meta$data$x)
   }
   meta$limits[1:2] =  extend_ranges(range(meta$data$xtmp,na.rm=TRUE))
   meta_xaxis(meta)
