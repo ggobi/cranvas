@@ -517,7 +517,7 @@ time_meta_initialize = function(meta, call, data, hdiv, vdiv,
                          yorig = data$.value)
 
   ## X axis setting
-  meta$data$xtmp = meta$data$x
+  meta$data$xtmp = meta$data$xtmp0 = meta$data$x
   meta$xlab = ifelse(is.null(xlab), meta$varname$x, xlab)
 
   ## Y axis setting
@@ -687,6 +687,7 @@ update_meta_xwrap = function(meta){
     meta$data$xtmp[meta$data$xtmp==0] = meta$steplen$xzoom
   }
   meta$data$xtmp = meta$data$xtmp + min(meta$data$x,na.rm=TRUE)-1
+  meta$data$xtmp0 = meta$data$xtmp
 }
 
 # Update the height of variables -- htvar
@@ -972,12 +973,12 @@ mix_group = function(meta){
 update_h_facet = function(meta){
   if (meta$mode$hfacet == 0){
     meta$data$hfacet = 0
-    meta$data$xtmp = meta$data$x
+    meta$data$xtmp = meta$data$xtmp0
   } else {
     meta$data$hfacet = as.integer(bind_var(meta$data,meta$varname$hfacet[1:meta$mode$hfacet])) - 1
-    meta$data$hfacet = meta$data$hfacet * diff(range(meta$data$x,na.rm=TRUE))*1.1
-    meta$data$hfacet = meta$data$hfacet + min(meta$data$x)
-    meta$data$xtmp = meta$data$x + meta$data$hfacet - min(meta$data$x)
+    meta$data$hfacet = meta$data$hfacet * diff(range(meta$data$xtmp0,na.rm=TRUE))*1.1
+    meta$data$hfacet = meta$data$hfacet + min(meta$data$xtmp0)
+    meta$data$xtmp = meta$data$xtmp0 + meta$data$hfacet - min(meta$data$xtmp0)
   }
   meta$limits[1:2] =  extend_ranges(range(meta$data$xtmp,na.rm=TRUE))
   meta_xaxis(meta)
@@ -1100,7 +1101,7 @@ x_wrap_forward = function(meta,data){
 # key Left for x-backward-wrapping
 x_wrap_backward = function(meta,data){
   if (meta$shiftKey) {
-    meta$data$xtmp = meta$data$x
+    meta$data$xtmp = meta$data$xtmp0 = meta$data$x
     meta$data$xwrapgroup = 1
     meta$steplen$xzoom = diff(range(meta$data$x, na.rm=TRUE))+1
     meta$mode$zoom = FALSE
