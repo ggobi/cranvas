@@ -201,7 +201,7 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
 
   key_press = function(layer, event){
     common_key_press(layer, event, tdata, meta)
-    keys = c('M','G','F','U','D','R','Y','H','V','T','Left','Right','Up','Down')
+    keys = c('M','G','F','U','D','R','Y','H','V','T','O','P','Left','Right','Up','Down')
     meta$shiftKey = shift_on(event)
     key = keys[match_key(keys,event)]
     if (!length(key)) return()
@@ -216,6 +216,8 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
            H = horizontal_facet(meta),
            V = vertical_facet(meta),
            T = transpose_facet(meta),
+           O = rotate_h_facet(meta),
+           P = rotate_v_facet(meta),
            Left = x_wrap_backward(meta,tdata),
            Right = x_wrap_forward(meta,tdata),
            Up = size_up(meta),
@@ -1020,7 +1022,7 @@ vertical_facet = function(meta){
   update_v_facet(meta)
 }
 
-# key T for transpose the h/v faceting
+# key T for transposing the h/v faceting
 transpose_facet = function(meta){
   tmp = meta$varname$hfacet
   meta$varname$hfacet = meta$varname$vfacet
@@ -1032,8 +1034,26 @@ transpose_facet = function(meta){
   update_v_facet(meta)
 }
 
-scaling = function(x){
-  (x-min(x,na.rm=TRUE))/(max(x,na.rm=TRUE)-min(x,na.rm=TRUE))
+# key for rotating h-faceting
+rotate_h_facet = function(meta){
+  h=length(meta$varname$hfacet)
+  if (meta$shiftKey) {
+    meta$varname$hfacet = meta$varname$hfacet[c(h,1:(h-1))]
+  } else {
+    meta$varname$hfacet = meta$varname$hfacet[c(2:h,1)]
+  }
+  update_h_facet(meta)
+}
+
+# key for rotating v-faceting
+rotate_v_facet = function(meta){
+  v = length(meta$varname$vfacet)
+  if (meta$shiftKey) {
+    meta$varname$vfacet = meta$varname$vfacet[c(v,1:(v-1))]
+  } else {
+    meta$varname$vfacet = meta$varname$vfacet[c(2:v,1)]
+  }
+  update_v_facet(meta)
 }
 
 # key Right for x-wrapping
