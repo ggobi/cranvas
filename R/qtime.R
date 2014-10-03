@@ -201,7 +201,7 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
 
   key_press = function(layer, event){
     common_key_press(layer, event, tdata, meta)
-    keys = c('M','G','F','U','D','R','Y','H','V','Left','Right','Up','Down')
+    keys = c('M','G','F','U','D','R','Y','H','V','T','Left','Right','Up','Down')
     meta$shiftKey = shift_on(event)
     key = keys[match_key(keys,event)]
     if (!length(key)) return()
@@ -214,7 +214,8 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
            R = switch_area_mode(meta),
            Y = y_wrap_forward(meta,tdata),
            H = horizontal_facet(meta),
-           V = vertical_facet(meta,tdata),
+           V = vertical_facet(meta),
+           T = transpose_facet(meta),
            Left = x_wrap_backward(meta,tdata),
            Right = x_wrap_forward(meta,tdata),
            Up = size_up(meta),
@@ -965,15 +966,8 @@ mix_group = function(meta){
   meta_yaxis(meta)
 }
 
-# key H for faceting the series horizontally
-horizontal_facet = function(meta){
-  h = length(meta$varname$hfacet)
-  if (h==0) return()
-  if (meta$shiftKey) {
-    meta$mode$hfacet = max(meta$mode$hfacet-1, 0)
-  } else {
-    meta$mode$hfacet = min(meta$mode$hfacet+1, h) 
-  }
+# update the horizontal faceting by the current setting
+update_h_facet = function(meta){
   if (meta$mode$hfacet == 0){
     meta$data$hfacet = 0
     meta$data$xtmp = meta$data$x
@@ -987,15 +981,8 @@ horizontal_facet = function(meta){
   meta_xaxis(meta)
 }
 
-# key V for faceting the series vertically
-vertical_facet = function(meta,data){
-  v = length(meta$varname$vfacet)
-  if (v==0) return()
-  if (meta$shiftKey) {
-    meta$mode$vfacet = max(meta$mode$vfacet-1, 0)
-  } else {
-    meta$mode$vfacet = min(meta$mode$vfacet+1, v)
-  }
+# update the vertical faceting by the current setting
+update_v_facet = function(meta){
   if (meta$mode$vfacet==0){
     meta$data$vfacet = 0
     meta$data$ytmp = meta$data$yscaled
@@ -1007,6 +994,42 @@ vertical_facet = function(meta,data){
   }
   meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
   meta_yaxis(meta)
+}
+
+# key H for faceting the series horizontally
+horizontal_facet = function(meta){
+  h = length(meta$varname$hfacet)
+  if (h==0) return()
+  if (meta$shiftKey) {
+    meta$mode$hfacet = max(meta$mode$hfacet-1, 0)
+  } else {
+    meta$mode$hfacet = min(meta$mode$hfacet+1, h) 
+  }
+  update_h_facet(meta)
+}
+
+# key V for faceting the series vertically
+vertical_facet = function(meta){
+  v = length(meta$varname$vfacet)
+  if (v==0) return()
+  if (meta$shiftKey) {
+    meta$mode$vfacet = max(meta$mode$vfacet-1, 0)
+  } else {
+    meta$mode$vfacet = min(meta$mode$vfacet+1, v)
+  }
+  update_v_facet(meta)
+}
+
+# key T for transpose the h/v faceting
+transpose_facet = function(meta){
+  tmp = meta$varname$hfacet
+  meta$varname$hfacet = meta$varname$vfacet
+  meta$varname$vfacet = tmp
+  tmp = meta$mode$hfacet
+  meta$mode$hfacet = meta$mode$vfacet
+  meta$mode$vfacet = tmp
+  update_h_facet(meta)
+  update_v_facet(meta)
 }
 
 scaling = function(x){
