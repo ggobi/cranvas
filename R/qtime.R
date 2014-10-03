@@ -810,9 +810,13 @@ meta_xaxis = function(meta) {
 # Set limits for yaxis in qtime
 meta_yaxis = function(meta) {
   if(meta$mode$vfacet) {
-    meta$yat = meta$data$vfacet[!duplicated(meta$data[,meta$varname$vfacet])]
-    meta$ylabels = format(unique(meta$data[,meta$varname$vfacet]),justify='right')
-    meta$ylab = meta$varname$vfacet
+    tmpidx = !duplicated(meta$data[,meta$varname$vfacet[1:meta$mode$vfacet]])
+    meta$yat = meta$data$vfacet[tmpidx]
+    meta$ylabels = format(bind_var(meta$data,meta$varname$vfacet[1:meta$mode$vfacet])[tmpidx],justify='right')
+    tmporder = order(meta$yat)
+    meta$yat = meta$yat[tmporder]
+    meta$ylabels = meta$ylabels[tmporder]
+    meta$ylab = paste(meta$varname$vfacet[1:meta$mode$vfacet],collapse=',')
   } else if (meta$steplen$id) {
     if (meta$mode$varUP) {
       meta$yat = (meta$data$htid+meta$data$htvar)[!duplicated(meta$data$vidgroup)]+0.5*meta$steplen$id
@@ -988,15 +992,18 @@ vertical_facet = function(meta,data){
   v = length(meta$varname$vfacet)
   if (v==0) return()
   if (meta$shiftKey) {
-    meta$mode$vfacet = FALSE
+    meta$mode$vfacet = max(meta$mode$vfacet-1, 0)
+  } else {
+    meta$mode$vfacet = min(meta$mode$vfacet+1, v)
+  }
+  if (meta$mode$vfacet==0){
     meta$data$vfacet = 0
     meta$data$ytmp = meta$data$yscaled
   } else {
-    meta$mode$vfacet = TRUE
-    meta$data$vfacet = as.integer(factor(data[meta$data$order,meta$varname$vfacet[1]])) - 1
-    meta$data$vfacet = meta$data$vfacet * diff(range(meta$data$ytmp,na.rm=TRUE))*1.02 
-    meta$data$vfacet = meta$data$vfacet + min(meta$data$ytmp)
-    meta$data$ytmp = meta$data$ytmp + meta$data$vfacet - min(meta$data$ytmp)
+    meta$data$vfacet = as.integer(bind_var(meta$data,meta$varname$vfacet[1:meta$mode$vfacet])) - 1
+    meta$data$vfacet = meta$data$vfacet * diff(range(meta$data$yscaled,na.rm=TRUE))*1.02 
+    meta$data$vfacet = meta$data$vfacet + min(meta$data$yscaled)
+    meta$data$ytmp = meta$data$yscaled + meta$data$vfacet - min(meta$data$yscaled)
   }
   meta$limits[3:4] =  extend_ranges(range(meta$data$ytmp,na.rm=TRUE))
   meta_yaxis(meta)
