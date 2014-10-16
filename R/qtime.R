@@ -649,7 +649,7 @@ bind_var = function(dat, varnames, simplify=TRUE) {
 
 # Include some variables in meta$data
 include_var = function(varname, meta, dat) {
-  if (!is.null(varname) && length(setdiff(colnames(meta$data),varname))) {
+  if (length(varname) && length(setdiff(colnames(meta$data),varname))) {
     varname = setdiff(varname, colnames(meta$data))
     meta$data = cbind(meta$data, dat[meta$data$order,varname])
     colnames(meta$data)[1:length(varname) + ncol(meta$data) - length(varname)] = varname
