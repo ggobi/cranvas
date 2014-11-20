@@ -779,7 +779,8 @@ compute_area = function(meta, data, fun.base){
       tmpcolor = alpha(meta$yfoldline$.color,meta$yfoldline$fill*meta$alpha/2)
       tmpdat = meta$yfoldline
       areabaseline = tapply(tmpdat$ytmp,tmpdat$vargroup,fun.base)
-      tmpdat$areabaseline = areabaseline[tmpdat$vargroup]
+      areabaseline2 = tapply(meta$data$htid,meta$data$finalgroup,`[`,1)
+      tmpdat$areabaseline = areabaseline[tmpdat$vargroup] + areabaseline2[tmpdat$finalgroup]
     } else {
       tmpdat = meta$data
     }
@@ -911,10 +912,13 @@ switch_area_mode = function(meta){
 # key F for fold/unfold the time series by mean
 switch_fold_mode = function(meta,data){
   meta$mode$yfold = !meta$mode$yfold
+  tmpdat = if (meta$steplen$id>0 & (!meta$mode$varUP)) {
+    (meta$data$yscaled - min(meta$data$yscaled))/diff(range(meta$data$yscaled))
+  } else {meta$data$yscaled}
   if (meta$mode$yfold) {
-    hrznbaseline = tapply(meta$data$yscaled,meta$data$vargroup,mean,na.rm=TRUE)
+    hrznbaseline = tapply(tmpdat,meta$data$vargroup,mean,na.rm=TRUE)
     meta$data$hrznbaseline = hrznbaseline[meta$data$vargroup]
-    meta$data$hrznydiff = meta$data$yscaled - meta$data$hrznbaseline
+    meta$data$hrznydiff = tmpdat - meta$data$hrznbaseline
     meta$data$ytmp = abs(meta$data$hrznydiff) + meta$data$hrznbaseline + meta$data$htvar + meta$data$htid
     meta$data$hrzncolor = data$.color[meta$data$order]
     meta$data$hrznborder = data$.border[meta$data$order]
@@ -922,11 +926,11 @@ switch_fold_mode = function(meta,data){
     data$.border = data$.color
     
     meta$yfoldline = cbind(meta$data[,c('xtmp','ytmp','hrznydiff','vargroup','finalgroup','fill')],data[meta$data$order,'.color',drop=FALSE])
-    meta$yfoldline$vargroup = as.integer(factor(meta$yfoldline$vargroup))
+    meta$yfoldline$finalgroup = as.integer(factor(meta$yfoldline$finalgroup))
     rownames(meta$yfoldline) = 1:nrow(meta$yfoldline)
-    idx = which((abs(diff(sign(meta$yfoldline$hrznydiff)))==2) & (diff(meta$yfoldline$vargroup)==0))
+    idx = which((abs(diff(sign(meta$yfoldline$hrznydiff)))==2) & (diff(meta$yfoldline$finalgroup)==0))
     zeroline = data.frame(xtmp=(meta$yfoldline$xtmp[idx]*abs(meta$yfoldline$hrznydiff[idx+1])+meta$yfoldline$xtmp[idx+1]*abs(meta$yfoldline$hrznydiff[idx]))/(abs(meta$yfoldline$hrznydiff[idx])+abs(meta$yfoldline$hrznydiff[idx+1])),
-                          ytmp=meta$data$hrznbaseline[idx],
+                          ytmp=meta$data$hrznbaseline[idx] + meta$data$htvar[idx] + meta$data$htid[idx],
                           hrznydiff=NA,
                           vargroup=meta$yfoldline$vargroup[idx],
                           finalgroup=meta$yfoldline$finalgroup[idx],
@@ -937,7 +941,7 @@ switch_fold_mode = function(meta,data){
     meta$yfoldline = meta$yfoldline[order(as.numeric(rownames(meta$yfoldline))),]
     meta$yfoldline$id = round(as.numeric(rownames(meta$yfoldline)))
   } else {
-    meta$data$ytmp = meta$data$yscaled + meta$data$htvar + meta$data$htid
+    meta$data$ytmp = tmpdat + meta$data$htvar + meta$data$htid
     data$.color[meta$data$order] = meta$data$hrzncolor
     data$.border[meta$data$order] = meta$data$hrznborder
   }
