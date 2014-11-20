@@ -459,6 +459,7 @@ Time.meta = setRefClass("Time_meta",
                         hits = 'list',
                         cutbound = 'list', # including orig,cut
                         ywrapline = 'list',
+                        yfoldline = 'data.frame',
                         facet = 'list', # hdiv, vdiv
                         steplen = 'list',
                         singleVarLen = 'integer',
@@ -741,14 +742,22 @@ compute_line = function(meta, data){
     }
     return()
   }
-  meta$line$lastrow = which(c(diff(as.integer(factor(meta$data$finalgroup)))!=0,TRUE))
+  if (meta$mode$yfold) {
+    tmpcolor = alpha(meta$yfoldline$.color,meta$yfoldline$fill*meta$alpha)
+    tmpdat = meta$yfoldline
+    tmpid = tmpdat$id
+  } else {
+    tmpdat = meta$data
+    tmpid = 1:nrow(meta$data)
+  }
+  meta$line$lastrow = which(c(diff(as.integer(factor(tmpdat$finalgroup)))!=0,TRUE))
   meta$line$firstrow = c(1,(meta$line$lastrow[-length(meta$line$lastrow)]+1))
-  meta$line$df = data.frame(xs=meta$data$xtmp[-meta$line$lastrow],
-                            ys=meta$data$ytmp[-meta$line$lastrow],
-                            xe=meta$data$xtmp[-meta$line$firstrow],
-                            ye=meta$data$ytmp[-meta$line$firstrow],
+  meta$line$df = data.frame(xs=tmpdat$xtmp[-meta$line$lastrow],
+                            ys=tmpdat$ytmp[-meta$line$lastrow],
+                            xe=tmpdat$xtmp[-meta$line$firstrow],
+                            ye=tmpdat$ytmp[-meta$line$firstrow],
                             col=tmpcolor[-meta$line$lastrow],
-                            id=(1:nrow(meta$data))[-meta$line$lastrow])
+                            id=tmpid[-meta$line$lastrow])
 }
 
 # Set up meta$area
@@ -766,10 +775,18 @@ compute_area = function(meta, data, fun.base){
     areabaseline = tapply(meta$data$ytmp,meta$data$vargroup,fun.base)
     meta$data$areabaseline = meta$data$htvar + meta$data$htid + meta$data$htperiod + meta$data$vfacet
     if (all(meta$data$areabaseline==0)) meta$data$areabaseline = areabaseline[meta$data$vargroup]
-    meta$area$y = data.frame(y1=meta$data$areabaseline[-meta$line$lastrow],
-                             y2=meta$data$areabaseline[-meta$line$lastrow],
+    if (meta$mode$yfold) {
+      tmpcolor = alpha(meta$yfoldline$.color,meta$yfoldline$fill*meta$alpha/2)
+      tmpdat = meta$yfoldline
+      areabaseline = tapply(tmpdat$ytmp,tmpdat$vargroup,fun.base)
+      tmpdat$areabaseline = areabaseline[tmpdat$vargroup]
+    } else {
+      tmpdat = meta$data
+    }
+    meta$area$y = data.frame(y1=tmpdat$areabaseline[-meta$line$lastrow],
+                             y2=tmpdat$areabaseline[-meta$line$lastrow],
                              y3=meta$line$df$ye, y4=meta$line$df$ys,
-                             y5=meta$data$areabaseline[-meta$line$lastrow],
+                             y5=tmpdat$areabaseline[-meta$line$lastrow],
                              y6=NA)
     meta$area$color = tmpcolor[-meta$line$lastrow]
   }
@@ -895,14 +912,30 @@ switch_area_mode = function(meta){
 switch_fold_mode = function(meta,data){
   meta$mode$yfold = !meta$mode$yfold
   if (meta$mode$yfold) {
-    hrznbaseline = tapply(meta$data$yscaled,meta$data$vidgroup,mean,na.rm=TRUE)
-    meta$data$hrznbaseline = hrznbaseline[meta$data$vidgroup]
+    hrznbaseline = tapply(meta$data$yscaled,meta$data$vargroup,mean,na.rm=TRUE)
+    meta$data$hrznbaseline = hrznbaseline[meta$data$vargroup]
     meta$data$hrznydiff = meta$data$yscaled - meta$data$hrznbaseline
     meta$data$ytmp = abs(meta$data$hrznydiff) + meta$data$hrznbaseline + meta$data$htvar + meta$data$htid
     meta$data$hrzncolor = data$.color[meta$data$order]
     meta$data$hrznborder = data$.border[meta$data$order]
     data$.color[meta$data$order] = c('#E69F00','grey15','#56B4E9')[sign(meta$data$hrznydiff)+2]
     data$.border = data$.color
+    
+    meta$yfoldline = cbind(meta$data[,c('xtmp','ytmp','hrznydiff','vargroup','finalgroup','fill')],data[meta$data$order,'.color',drop=FALSE])
+    meta$yfoldline$vargroup = as.integer(factor(meta$yfoldline$vargroup))
+    rownames(meta$yfoldline) = 1:nrow(meta$yfoldline)
+    idx = which((abs(diff(sign(meta$yfoldline$hrznydiff)))==2) & (diff(meta$yfoldline$vargroup)==0))
+    zeroline = data.frame(xtmp=(meta$yfoldline$xtmp[idx]*abs(meta$yfoldline$hrznydiff[idx+1])+meta$yfoldline$xtmp[idx+1]*abs(meta$yfoldline$hrznydiff[idx]))/(abs(meta$yfoldline$hrznydiff[idx])+abs(meta$yfoldline$hrznydiff[idx+1])),
+                          ytmp=meta$data$hrznbaseline[idx],
+                          hrznydiff=NA,
+                          vargroup=meta$yfoldline$vargroup[idx],
+                          finalgroup=meta$yfoldline$finalgroup[idx],
+                          fill=meta$yfoldline$fill[idx],
+                          .color=meta$yfoldline$.color[idx+1])
+    rownames(zeroline) = idx+0.5
+    meta$yfoldline = rbind(meta$yfoldline,zeroline)
+    meta$yfoldline = meta$yfoldline[order(as.numeric(rownames(meta$yfoldline))),]
+    meta$yfoldline$id = round(as.numeric(rownames(meta$yfoldline)))
   } else {
     meta$data$ytmp = meta$data$yscaled + meta$data$htvar + meta$data$htid
     data$.color[meta$data$order] = meta$data$hrzncolor
