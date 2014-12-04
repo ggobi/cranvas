@@ -87,8 +87,8 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
   #if(length(intersect(vdiv,hdiv))) hdiv = setdiff(hdiv, vdiv)
   group = union(vdiv,hdiv)
   tdata = time_qdata(data, y, c(time,group))
-  b = brush(tdata)
   meta = Time.meta$new(varname = list(x = time, y = y), minor = 'xy')
+  meta$brush = brush(tdata)
   time_meta_initialize(meta, call, data=tdata, hdiv=hdiv, vdiv=vdiv,
                        shift=shift, alpha=alpha, size=size, asp=asp,
                        main=main, xlab=xlab, ylab=ylab, infolab=infolab)
@@ -106,14 +106,14 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
   mouse_press = function(layer, event) {
     common_mouse_press(layer, event, tdata, meta)
     if ((meta$mode$serie | meta$mode$zoom) & event$button() == Qt$Qt$LeftButton) {
-      b$cursor = 18L
+      meta$brush$cursor = 18L
       meta$data$xstart = meta$data$xtmp
     }
   }
 
   mouse_move = function(layer, event) {
     if (event$button() != Qt$Qt$NoButton) {
-      b$cursor = 0L
+      meta$brush$cursor = 0L
     }
     meta$pos = as.numeric(event$pos())
     if (meta$mode$serie) {
@@ -166,8 +166,8 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
   }
 
   identify_hover = function(item, event, ...) {
-    if (!b$identify && !meta$mode$serie) return()
-    b$cursor = 2L
+    if (!meta$brush$identify && !meta$mode$serie) return()
+    meta$brush$cursor = 2L
     meta$pos = as.numeric(event$pos())
     rect = as.matrix(identify_rect(meta))
     if (meta$mode$serie){
@@ -271,7 +271,7 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
   }
 
   identify_draw = function(item, painter, exposed, ...) {
-    if (!b$identify || !length(hits <- meta$identified)) return()
+    if (!meta$brush$identify || !length(hits <- meta$identified)) return()
     if (meta$ngroup$id==1) {
       info = data.frame(meta$varname$x,meta$data[hits,c('x','yorig','vargroup',meta$varname$identify),drop=FALSE])
     } else {
@@ -293,12 +293,12 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
     }
     draw_identify(layer, painter, tdata, meta)
     if (all(tdata$.size==tdata$.size[1])) {
-      qdrawGlyph(painter, qglyphCircle(r = sqrt(b$size) * meta$radius),
-                 meta$data$xtmp[hits], meta$data$ytmp[hits], stroke = b$color, fill = NA)
+      qdrawGlyph(painter, qglyphCircle(r = sqrt(meta$brush$size) * meta$radius),
+                 meta$data$xtmp[hits], meta$data$ytmp[hits], stroke = meta$brush$color, fill = NA)
     } else {
       qdrawCircle(painter, meta$data$xtmp[hits], meta$data$ytmp[hits],
-                  r = sqrt(b$size) * tdata$.size[meta$data$order][hits],
-                  stroke = b$color, fill = NA)
+                  r = sqrt(meta$brush$size) * tdata$.size[meta$data$order][hits],
+                  stroke = meta$brush$color, fill = NA)
     }
   }
 
@@ -416,8 +416,8 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
   qconnect(layer.point, 'destroyed', function(x) {
     remove_listener(tdata, d.idx)
   })
-  b$cursorChanged$connect(function() {
-    set_cursor(view, b$cursor)
+  meta$brush$cursorChanged$connect(function() {
+    set_cursor(view, meta$brush$cursor)
   })
   sync_limits(meta, layer.point, layer.line, layer.area, layer.brush, layer.identify,layer.keys,
               if (series.stats){layer.stats} else {NA})
@@ -466,7 +466,8 @@ Time.meta = setRefClass("Time_meta",
                         shiftKey = 'logical',
                         linkID = 'character',
                         radius = 'numeric',
-                        ylab.init = 'character'
+                        ylab.init = 'character',
+                        brush = 'BRUSH'
                        )))
 
 ## Create a new mutaframe for drawing time plots
@@ -799,15 +800,15 @@ compute_area = function(meta, data, fun.base){
 # Draw the selected data in qtime
 selected_draw = function(meta,b,hits,painter){
   qdrawGlyph(painter, qglyphCircle(r = meta$radius*2), meta$data$xtmp[hits],
-             meta$data$ytmp[hits], stroke = b$color, fill = b$color)
+             meta$data$ytmp[hits], stroke = meta$brush$color, fill = meta$brush$color)
   qlineWidth(painter) = max(meta$radius,1)
   idx = (hits[-length(hits)] & hits[-1])[-meta$line$lastrow]
   qdrawSegment(painter,meta$area$x[idx,4],meta$area$y[idx,4],
-               meta$area$x[idx,3],meta$area$y[idx,3],stroke=b$color)
+               meta$area$x[idx,3],meta$area$y[idx,3],stroke=meta$brush$color)
   if (meta$mode$area){
     tmpx=as.vector(as.matrix(t(meta$area$x[idx,])))
     tmpy=as.vector(as.matrix(t(meta$area$y[idx,])))
-    qdrawPolygon(painter, tmpx, tmpy, stroke=alpha(b$color,0.01), fill=alpha(b$color,0.8))
+    qdrawPolygon(painter, tmpx, tmpy, stroke=alpha(meta$brush$color,0.01), fill=alpha(meta$brush$color,0.8))
   }
 }
 
@@ -1112,12 +1113,12 @@ x_wrap_forward = function(meta,data){
     update_meta_xwrap(meta)
   } else {
     crt_range = diff(range(meta$data$xtmp,na.rm=TRUE))+1
-    b = max(c(3,min(abs(diff(meta$data$x)))))
+    bd = max(c(3,min(abs(diff(meta$data$x)))))
     while (diff(range(meta$data$xtmp,na.rm=TRUE))+1 >= crt_range &
-           meta$steplen$xzoom > max(c(b,meta$steplen$xwrap[1])) ) {
+           meta$steplen$xzoom > max(c(bd,meta$steplen$xwrap[1])) ) {
       meta$steplen$xzoom = meta$steplen$xzoom - meta$steplen$xwrap[1]
-      if (meta$steplen$xwrap[1]==1 & meta$steplen$xzoom<b){
-        meta$steplen$xzoom = b
+      if (meta$steplen$xwrap[1]==1 & meta$steplen$xzoom<bd){
+        meta$steplen$xzoom = bd
       } else if (meta$steplen$xwrap[1]!=1 & meta$steplen$xzoom<meta$steplen$xwrap[1]){
         meta$steplen$xzoom = meta$steplen$xzoom %% meta$steplen$xwrap[1]
         #if (meta$steplen$xzoom<=0) meta$steplen$xzoom = meta$steplen$xwrap[1]
