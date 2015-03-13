@@ -4,7 +4,7 @@ library(cranvas)
 theta=seq(0,2*pi,length=100)
 x=c(cos(theta),NA,cos(theta)+2);y=c(sin(theta),NA,sin(theta)+1)
 
-res=cart_polygon(x, y, c('x','y'),c(1,5),diffuse=100,nrow=100,ncol=100,blank.init =0.1)
+res=cart_polygon(x,y,c('x','y'),c(1,5),nrow=80,ncol=80,blank.init=0.4,sea.init=0.1,sea.width=0.5)
 
 plot(res$x,res$y,type='n')
 polygon(x,y); text(c(0,2),c(0,1),c(1,5))  # original polygons

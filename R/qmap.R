@@ -439,7 +439,6 @@ Map.meta = setRefClass(
 #'   cartogram; if \code{TRUE}, the shape of the cartogram will be determined by
 #'   the \code{size} parameter in the data (i.e. \code{data$.size}); see
 #'   \code{\link{cart_polygon}} for details
-#' @param diffuse passed into \code{\link{cart_polygon}}. Default to be 5.
 #' @param ... passed to \code{\link{cart_polygon}}
 #' @return A mutaframe of region names and labels, with an attribute
 #'   \code{MapData} containing the coordinates of polygons.
@@ -448,7 +447,7 @@ Map.meta = setRefClass(
 #' @examples library(cranvas); map_qdata('state'); map_qdata('county', 'iowa')
 map_qdata = function(
   database, regions = '.',  color = 'gray50', border = 'gray90', size = 4,
-  cartogram = FALSE, diffuse = 5, label = NULL, ...
+  cartogram = FALSE, label = NULL, ...
 ) {
   library(maps)
   df = map(database, regions, plot = FALSE, fill = TRUE)
@@ -468,7 +467,7 @@ map_qdata = function(
   xy = as.data.frame(df[1:2])
   if (cartogram && length(size) > 1 && !near_constant(size)) {
     ## FIXME: cartogram() depends on the magnitude of size!!! so I did not use mf$.size
-    xy = cart_polygon(xy$x, xy$y, df$names, size, diffuse, ...)
+    xy = cart_polygon(xy$x, xy$y, df$names, size, ...)
     xy$origx = df$x
     xy$origy = df$y
     xy$finalx = xy$x
@@ -488,28 +487,32 @@ map_qdata = function(
 #' @param name the names of original polygons
 #' @param size the size vector of polygons (length must be equal to the number
 #'   of polygons, i.e. the number of \code{NA}'s plus 1)
-#' @param diffuse a positive value to control the diffusing/shrinking rate
-#' @param blank.init fill the NA's of the grids with blank.init * min(size)
 #' @param nrow,ncol numbers to define a grid for the cartogram algorithm (see
 #'   references in \pkg{Rcartogram}); this can affect the convergence and speed
 #'   of the algorithm, so may need to be adjusted for a few times
-#' @param ... other arguments passed to \code{\link[Rcartogram]{cartogram}}
+#' @param blank.init weight to fill the NA's of the grids between the range
+#'   of density. It will control the diffusing/shrinking within the boundary.
+#' @param sea.init weight between the range of density to fill in the sea.
+#'   It will control the diffusing/shrinking out of the map boundary.
+#' @param sea.width a positive multiplier to pass to the argument \code{sea}
+#'   in function \code{\link[Rcartogram]{addBoundary}}.
+#' @param blur a non-negative value passed to \code{\link[Rcartogram]{cartogram}}
 #' @return A data frame of two columns \code{x} and \code{y} (coordinates of
 #'   transformed polygons)
 #' @author Yihui Xie and Xiaoyue Cheng
 #' @export
 #' @example inst/examples/cart_polygon-ex.R
-cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank.init = .8, ...) {
+cart_polygon = function(x, y, name, size, nrow = 100, ncol = 100, blank.init=0, sea.init=0,  sea.width=1, blur=0) {
   library(Rcartogram)
   if (length(size) != sum(is.na(x)) + 1)
     stop("the length of 'size' vector must be the same as the number of polygons")
-  if (diffuse <= 0) {
-    message("diffuse must be greater than 0. Set to be 1.")
-    diffuse = 1
+  if (sea.width <= 0) {
+    message("sea.width must be greater than 0. Set to be 1.")
+    sea.width = 1
   }
-  if (blank.init>1 | blank.init<=0) {
-    message("blank.init must be in (0,1]. Set to be 1.")
-    blank.init = 1
+  if (blur < 0) {
+    message("blur must be non-negative. Set to be 0.")
+    blur = 0
   }
   xlim = range(x, na.rm = TRUE); ylim = range(y, na.rm = TRUE)
   dx = c(0, diff(xlim)/1000); dy = c(0, diff(ylim)/1000)  # to construct query rectangle
@@ -521,7 +524,7 @@ cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank
     qdrawPolygon(painter, x, y)
   }, limits = qrect(xlim, ylim))
   ## generate the population density matrix (time consuming)
-  message('Generating the population density grid...')
+  message(paste('Generating the',nrow,'x',ncol,'population density grid...'))
   pb = txtProgressBar(min = 0, max = nrow, style = 3)
   on.exit(close(pb))
   for (i in seq_len(nrow)) {
@@ -531,17 +534,18 @@ cart_polygon = function(x, y, name, size, diffuse, nrow = 100, ncol = 100, blank
     }
     setTxtProgressBar(pb, i)
   }
-  gridrecog[is.na(gridrecog)] = 0
-  gridcount = matrix(sapply(gridrecog, function(x){sum(gridrecog==x)}),nrow=nrow(gridrecog))
-  gridcount[is.na(gridsize)] = diffuse
+  #gridrecog[is.na(gridrecog)] = 0
+  gridcount = matrix(sapply(gridrecog, function(x){sum(gridrecog==x,na.rm=TRUE)}),nrow=nrow(gridrecog))
+  gridcount[is.na(gridsize)] = 1
   # fill NA's with 1% less than min; add margin with min too later
-  gridsize[is.na(gridsize)] = min(gridsize, na.rm = TRUE) * blank.init
+  gridsize[is.na(gridsize)] = min(gridsize, na.rm = TRUE)
   tmp=as.vector(gridsize)/as.vector(gridcount)
+  tmp[is.na(gridrecog)] = sum(range(tmp[!is.na(gridrecog)])*c(1-blank.init,blank.init))
   grid = matrix(tmp,nrow=nrow,ncol = ncol)
-  grid = addBoundary(grid, sea=1, land.mean = min(grid))
+  grid = addBoundary(grid, sea=sea.width, land.mean = sum(range(grid)*c(1-sea.init,sea.init)))
   extra = attr(grid, 'extra')  # extra rows/cols added
   message(paste('Calculating cartogram coordinates for a',dim(grid)[1],'x',dim(grid)[2],'matrix...'))
-  res = cartogram(grid, ...)
+  res = cartogram(grid, zero=TRUE, blur=blur, sea=NA)
   pred = predict(res, (x - xlim[1]) / (diff(xlim)) * (ncol - 1) + 1 + extra[1],
                  (y - ylim[1]) / (diff(ylim)) * (nrow - 1) + 1 + extra[2])
   data.frame(x = (pred$x - extra[1] - 1) / (ncol - 1) * diff(xlim) + xlim[1],
