@@ -1,6 +1,6 @@
-##' Draw a time plot
+##' Draw an interactive time plot
 ##'
-##' Draw a time-series plot.
+##' Draw an interactive time plot.
 ##'
 ##' Arrow up/down: in-/de-crease size of points.
 ##'
@@ -62,6 +62,8 @@
 ##' @param ylab label on vertical axis, default is name of y variable
 ##' @param infolab the variable(s) shown when identifying the points.
 ##' Note that the x, y, and group information is already shown.
+##' @return A time plot.
+##' @author Xiaoyue Cheng
 ##' @example inst/examples/qtime-ex.R
 ##' @export
 ##' @family plots
@@ -92,13 +94,13 @@ qtime = function(time, y, data, vdiv=NULL,hdiv=NULL,
   time_meta_initialize(meta, call, data=tdata, hdiv=hdiv, vdiv=vdiv,
                        shift=shift, alpha=alpha, size=size, asp=asp,
                        main=main, xlab=xlab, ylab=ylab, infolab=infolab)
-  if ('g' %in% names(meta$varname) & series.stats) series.stats = FALSE
+  #if ('g' %in% names(meta$varname) & series.stats) series.stats = FALSE
   meta$active = TRUE
   tree = createTree(data.frame(x=meta$data$xtmp,y=meta$data$ytmp))
   update_meta_group(meta)
   update_meta_xwrap_color(meta,tdata)
   compute_area(meta,tdata,fun.base)
-
+  
   ####################
   ## event handlers ##----------
   ####################
