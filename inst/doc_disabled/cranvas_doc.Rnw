@@ -1,0 +1,1734 @@
+%% LyX 2.0.5 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,bmargin=3cm,lmargin=3cm,rmargin=3cm}
+\usepackage{color}
+\usepackage{float}
+\usepackage{fancybox}
+\usepackage{calc}
+\usepackage{url}
+\usepackage{amstext}
+\usepackage{graphicx}
+\usepackage[unicode=true]
+ {hyperref}
+\usepackage{breakurl}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\newenvironment{lyxlist}[1]
+{\begin{list}{}
+{\settowidth{\labelwidth}{#1}
+ \setlength{\leftmargin}{\labelwidth}
+ \addtolength{\leftmargin}{\labelsep}
+ \renewcommand{\makelabel}[1]{##1\hfil}}}
+{\end{list}}
+
+\makeatother
+
+\begin{document}
+
+\title{Exploratory Data Analysis with \texttt{cranvas}}
+
+
+\author{Xiaoyue Cheng }
+
+\maketitle
+
+\section{Introduction}
+
+We assume that you already know some basic stuffs about \texttt{R},
+for example, how to (1) install \texttt{R} from \href{http://www.r-project.org}{CRAN};
+(2) install a package; (3) run simple operations; (4) read and write
+data; (5)find help. If you are a novice user and want to get familiar
+with \texttt{R} quickly, visit \href{http://tryr.codeschool.com/}{here}
+for a one-hour free training.
+
+The goal of this document is to have you use \texttt{cranvas}, the
+interactive graphical tool to explore the data. However, Section \ref{sec:Reaction-Mechanism}
+introduces some reaction concepts in deep, you may skip the section
+and revisit it when interested in the ideas behind \texttt{cranvas}.
+
+
+\subsection{Why to visualize your data interactively?}
+
+Why not if you can? A good graph should deliver as much information
+as possible in a short time. Compared to the static graphs, interactive
+graphs play multiple frames of pictures in one window. During the
+procedure you can easily reflect to anything in a trend or against
+a trend with your short memory.
+
+
+\subsection{Why \texttt{cranvas}?}
+
+Of course you can use other interactive graphical tools. There are
+a lot of choices -- \texttt{Tableau}, \texttt{D3.js}, \texttt{Processing},
+\texttt{GGobi}, another \texttt{R} packages \texttt{iplots}, etc.
+Feel free to try them, and come back if you are not satisfied. \texttt{cranvas}
+is programmable, very easy to use, and it has a great map interaction
+module -- this is really a plus if you ever tried \texttt{Processing},
+\texttt{GGobi}, and \texttt{iplots}.
+
+
+\section{Installation}
+
+Right now \texttt{cranvas} is not on CRAN but on \href{https://github.com/ggobi/cranvas}{Github}.
+The official instruction for installation is \href{https://github.com/ggobi/cranvas/wiki}{here}.
+If you are a Ubuntu or mac user, then congratulations you can use
+\texttt{cranvas} freely. If you are a 100\% Windows user, well, this
+part will be full of pain. But you will get great rewards - very neat
+plots - if you manage to install it on your system. 
+
+
+\subsection{Ubuntu}
+\begin{enumerate}
+\item To get the latest version of \texttt{R}, you need to add an entry 
+
+\begin{quote}
+\texttt{deb http://cran.fhcrc.org/bin/linux/ubuntu precise/ }
+\end{quote}
+
+to your \texttt{/etc/apt/sources.list.d/source.list}. Create the file
+if you do not have one. 
+
+\item Then run:
+
+\begin{quote}
+\texttt{sudo apt-get update }
+
+\texttt{sudo apt-get install r-base r-base-dev libqt4-dev qt4-qmake
+cmake libcurl4-gnutls-dev}
+\end{quote}
+\item Open \texttt{R} (type ``\texttt{R}'' in your terminal), paste the
+following:
+
+
+<<echo=TRUE,eval=FALSE>>=
+if (!require('devtools')) install.packages('devtools') 
+library(devtools)
+install.packages(c('scales', 'tourr', 'objectSignals', 'objectProperties', 'plumbr','SearchTrees'))
+install_github('qtbase', 'ggobi')
+install_github('qtpaint', 'ggobi')
+install_github('productplots','hadley')
+install_github('densityvis','hadley')
+install_github('cranvas', 'ggobi', args="--no-multiarch")
+@
+
+\end{enumerate}
+
+\subsection{Mac}
+\begin{enumerate}
+\item Install \texttt{R} from \url{http://cran.fhcrc.org/bin/macosx/R-latest.pkg}
+\item Install \texttt{xcode} from \url{https://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12}
+\item Install \texttt{cmake} from \url{http://www.cmake.org/files/v2.8/cmake-2.8.11.1-Darwin64-universal.dmg}
+\item Install \texttt{Qt} from \url{http://download.qt-project.org/archive/qt/4.8/4.8.4/qt-mac-opensource-4.8.4.dmg}
+\item Check your PATH, ensuring that \texttt{R}, \texttt{cmake}, and \texttt{Qt}
+are visible.
+\item Open \texttt{R} and run:
+
+
+<<echo=TRUE,eval=FALSE>>=
+if (!require('devtools')) install.packages('devtools') 
+library(devtools)
+install.packages(c('scales', 'tourr', 'objectSignals', 'objectProperties', 'plumbr','SearchTrees'))
+install_github('qtbase', 'ggobi')
+install_github('qtpaint', 'ggobi')
+install_github('productplots','hadley')
+install_github('densityvis','hadley')
+install_github('cranvas', 'ggobi', args="--no-multiarch")
+@
+
+\end{enumerate}
+\begin{itemize}
+\item The alternative method via \texttt{homebrew} does not work for us.
+\end{itemize}
+
+\subsection{Windows 32-bit}
+
+
+\subsubsection{Build \texttt{qtbase}}
+\begin{enumerate}
+\item Install \texttt{R} and \texttt{Rtools}.
+\item Install \texttt{cmake} 2.8.11 from \url{http://www.cmake.org/files/v2.8/cmake-2.8.11-win32-x86.exe}.
+\item Download and install the \texttt{Qt} libraries (32 bit Windows) from
+\url{http://download.qt-project.org/official_releases/qt/4.8/4.8.4/qt-win-opensource-4.8.4-mingw.exe}
+\item Install \texttt{perl} from Run Advertised Programs.
+\item Set the CMAKE environment variable to point to your cmake.exe. (in
+my system, the variable value is \texttt{C:\textbackslash{}Program
+Files\textbackslash{}CMake 2.8\textbackslash{}bin\textbackslash{}cmake.exe})
+\item Set QMAKE environment variable to point to qmake.exe. (variable value
+is \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}bin\textbackslash{}qmake.exe})
+\item Set RC\_COMPILER environment variable to point to windres.exe from
+Rtools. (variable value is \texttt{C:/Program Files/Rtools/gcc-4.6.3/bin/windres.exe})
+\item Set QTBASE\_QT\_PATH to the directory containing qmake.exe. (variable
+value is \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}bin})
+\item Make sure \texttt{perl}, \texttt{cmake}, \texttt{Qt}, \texttt{R}-32bit,
+\texttt{Rtools}, \texttt{Rtools-gcc} are on your PATH. Example PATH
+to build \texttt{qtbase} (better to put these before others): 
+
+\begin{quote}
+\texttt{C:\textbackslash{}Program Files\textbackslash{}Rtools\textbackslash{}bin; }
+
+\texttt{C:\textbackslash{}Program Files\textbackslash{}Rtools\textbackslash{}gcc-4.6.3\textbackslash{}bin; }
+
+\texttt{C:\textbackslash{}Program Files\textbackslash{}R\textbackslash{}bin\textbackslash{}i386; }
+
+\texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}bin; }
+
+\texttt{C:\textbackslash{}Perl\textbackslash{}strawberry\textbackslash{}perl\textbackslash{}bin\textbackslash{}; }
+
+\texttt{C:\textbackslash{}Program Files\textbackslash{}CMake 2.8\textbackslash{}bin;} 
+
+{[}... other directories ...{]}
+\end{quote}
+\item Download \texttt{qtbase} from \url{https://github.com/ggobi/qtbase}.
+Assume that \texttt{qtbase} is under the folder ``\texttt{somewhere}''.
+\item (This should be fixed in code) Check \texttt{somewhere/qtbase/src/mkdef.sh}
+
+
+Change 
+\begin{quote}
+\texttt{sed -n \$1 tmp >\textcompwordmark{}> qtbase.def} 
+\end{quote}
+
+to 
+\begin{quote}
+\texttt{sed -n 's/\textasciicircum{}.{*} {[}BCDRT{]} \_/ /p' tmp >\textcompwordmark{}>
+qtbase.def}
+\end{quote}
+
+You can run 
+\begin{quote}
+\texttt{grep \textendash{}r \textquotedbl{}SYMPAT\textquotedbl{} C:\textbackslash{}\textquotedbl{}Program
+Files\textquotedbl{}\textbackslash{}R\textbackslash{}etc} 
+\end{quote}
+
+in the command line to copy the regular expression \texttt{'s/\textasciicircum{}.{*}
+{[}BCDRT{]} \_/ /p'}. Note that the directory above includes the path
+you install \texttt{R}.
+
+\item Start the command shell, go to the directory \texttt{somewhere}. Run: 
+
+\begin{quote}
+\texttt{R CMD INSTALL -{}-build qtbase}
+\end{quote}
+
+Please make sure the folder \texttt{qtbase} is completely clean (i.e.,
+not pre-installed).
+
+\end{enumerate}
+
+\subsubsection{Build \texttt{qtpaint}}
+\begin{enumerate}
+\item Add the following directory to PATH: 
+
+\begin{quote}
+\texttt{...\textbackslash{}qtbase\textbackslash{}local\textbackslash{}lib;}
+\end{quote}
+
+where \texttt{...} is replaced by your \texttt{R} library path. If
+you do not know what it is, open \texttt{R} and enter \texttt{.libPaths()},
+the first directory returned is your \texttt{R} library path. You
+can check if \texttt{qtbase} is in that folder.
+
+\item Download \texttt{glext.h} from \url{www.opengl.org/registry/api/glext.h}
+
+
+And copy it to \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}src\textbackslash{}opengl}
+
+
+Add a line to \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}include\textbackslash{}QtOpenGL\textbackslash{}qgl.h}
+:
+\begin{quote}
+\texttt{\#include \textquotedbl{}../../src/opengl/glext.h\textquotedbl{}}
+\end{quote}
+\item Download \texttt{qtpaint} from \url{https://github.com/ggobi/qtpaint}
+\item Start the command shell, go to the directory containing \texttt{qtpaint}.
+Run: 
+
+\begin{quote}
+\texttt{R CMD INSTALL -{}-build qtpaint}
+\end{quote}
+\end{enumerate}
+
+\subsubsection{Last step}
+
+Open \texttt{R} and run:
+
+<<echo=TRUE,eval=FALSE>>=
+if (!require('devtools')) install.packages('devtools') 
+library(devtools)
+install.packages(c('scales', 'tourr', 'objectSignals', 'objectProperties', 'plumbr','SearchTrees'))
+install_github('qtbase', 'ggobi')
+install_github('qtpaint', 'ggobi')
+install_github('productplots','hadley')
+install_github('densityvis','hadley')
+install_github('cranvas', 'ggobi', args="--no-multiarch")
+@
+
+
+\subsection{Windows 64-bit}
+
+It is basically the same as 32 bit installation.
+
+
+\subsubsection{Build \texttt{qtbase}}
+\begin{enumerate}
+\item Install \texttt{R} and \texttt{Rtools}.
+\item Install \texttt{cmake} 2.8.11 from \url{http://www.cmake.org/files/v2.8/cmake-2.8.11-win32-x86.exe}.
+\item Download and install the \texttt{Qt} libraries (32 bit Windows) from
+\url{http://download.qt-project.org/official_releases/qt/4.8/4.8.4/qt-win-opensource-4.8.4-mingw.exe}
+\item Download \texttt{MinGW} from \url{http://sourceforge.net/projects/mingwbuilds/}
+then add it to PATH. (C:\textbackslash{}MinGW\textbackslash{}bin;)
+\item Download \texttt{Qt} from \url{http://download.qt-project.org/official_releases/qt/4.8/4.8.4/qt-everywhere-opensource-src-4.8.4.zip}
+and extract it \texttt{\textcolor{green}{somewhere}}. Add it to PATH.
+(\texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}bin})
+\item Open \texttt{\textcolor{green}{somewhere}}\texttt{/mkspecs/win32-g++/qmake.conf}
+and set QMAKE\_CFLAGS and QMAKE\_LFLAGS to \textquotedbl{}\texttt{-m64}\textquotedbl{}.
+Also, add \textquotedbl{}\texttt{-F pe-x86-64}\textquotedbl{} to QMAKE\_RC.
+In \texttt{qmake/Makefile.win32-g++-sh}, add \textquotedbl{}\texttt{-m64}\textquotedbl{}
+to CFLAGS and change LFLAGS in that file to \textquotedbl{}\texttt{-s
+-m64}\textquotedbl{}.
+\item Run the following in command line under the directory \texttt{\textcolor{green}{somewhere}}
+to compile \texttt{Qt}. It takes about 3-4 hours. 
+
+\begin{quote}
+\texttt{configure -release -opensource -nomake examples -nomake demos
+-no-qt3support}
+
+\texttt{mingw32-make}
+\end{quote}
+\item Install \texttt{perl} from Run Advertised Programs.
+\item Set the CMAKE environment variable to point to your cmake.exe. (in
+my system, the variable value is \texttt{C:\textbackslash{}Program
+Files\textbackslash{}CMake 2.8\textbackslash{}bin\textbackslash{}cmake.exe})
+\item Set QMAKE environment variable to point to qmake.exe. (variable value
+is \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}bin\textbackslash{}qmake.exe})
+\item Set RC\_COMPILER environment variable to point to windres.exe from
+Rtools. (variable value is \texttt{C:/Program Files/Rtools/gcc-4.6.3/bin/windres.exe})
+\item Set QTBASE\_QT\_PATH to the directory containing qmake.exe. (variable
+value is \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}bin})
+\item Make sure \texttt{perl}, \texttt{cmake}, \texttt{Qt}, \texttt{R}-64bit,
+\texttt{Rtools}, \texttt{Rtools-gcc}, \texttt{MinGW} are on your PATH.
+Example PATH to build \texttt{qtbase} (better to put these before
+others): 
+
+\begin{quote}
+\texttt{C:\textbackslash{}MinGW\textbackslash{}bin;}
+
+\texttt{C:\textbackslash{}Program Files\textbackslash{}Rtools\textbackslash{}bin; }
+
+\texttt{C:\textbackslash{}Program Files\textbackslash{}Rtools\textbackslash{}gcc-4.6.3\textbackslash{}bin; }
+
+\texttt{C:\textbackslash{}Program Files\textbackslash{}R\textbackslash{}bin\textbackslash{}x64; }
+
+\texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}bin; }
+
+\texttt{C:\textbackslash{}Perl\textbackslash{}strawberry\textbackslash{}perl\textbackslash{}bin\textbackslash{}; }
+
+\texttt{C:\textbackslash{}Program Files\textbackslash{}CMake 2.8\textbackslash{}bin;} 
+
+{[}... other directories ...{]}
+\end{quote}
+\item Download \texttt{qtbase} from \url{https://github.com/ggobi/qtbase}.
+Assume that \texttt{qtbase} is under the folder ``\texttt{\textcolor{green}{somewhere2}}''.
+\item (This should be fixed in code) Check ``\texttt{\textcolor{green}{somewhere2}}\texttt{/qtbase/src/mkdef.sh}
+
+
+Change 
+\begin{quote}
+\texttt{sed -n \$1 tmp >\textcompwordmark{}> qtbase.def} 
+\end{quote}
+
+to 
+\begin{quote}
+\texttt{sed -n 's/\textasciicircum{}.{*} {[}BCDRT{]} / /p' tmp >\textcompwordmark{}>
+qtbase.def}
+\end{quote}
+\item Start the command shell, go to the directory \texttt{\textcolor{green}{somewhere2}}.
+Run: 
+
+\begin{quote}
+\texttt{R CMD INSTALL -{}-build qtbase}
+\end{quote}
+
+Please make sure the folder \texttt{qtbase} is completely clean (i.e.,
+not pre-installed).
+
+\end{enumerate}
+
+\subsubsection{Build \texttt{qtpaint}}
+\begin{enumerate}
+\item Add the following directory to PATH: 
+
+\begin{quote}
+\texttt{...\textbackslash{}qtbase\textbackslash{}local\textbackslash{}lib;}
+\end{quote}
+
+where \texttt{...} is replaced by your \texttt{R} library path. If
+you do not know what it is, open \texttt{R} and enter \texttt{.libPaths()},
+the first directory returned is your \texttt{R} library path. You
+can check if \texttt{qtbase} is in that folder.
+
+\item Download \texttt{glext.h} from \url{www.opengl.org/registry/api/glext.h}
+
+
+And copy it to \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}src\textbackslash{}opengl}
+
+
+Add a line to \texttt{C:\textbackslash{}Qt\textbackslash{}4.8.4\textbackslash{}include\textbackslash{}QtOpenGL\textbackslash{}qgl.h}
+:
+\begin{quote}
+\texttt{\#include \textquotedbl{}../../src/opengl/glext.h\textquotedbl{}}
+\end{quote}
+\item Download \texttt{qtpaint} from \url{https://github.com/ggobi/qtpaint}
+\item Start the command shell, go to the directory containing \texttt{qtpaint}.
+Run: 
+
+\begin{quote}
+\texttt{R CMD INSTALL -{}-build qtpaint}
+\end{quote}
+\end{enumerate}
+
+\subsubsection{Last step}
+
+Open \texttt{R} and run:
+
+<<echo=TRUE,eval=FALSE>>=
+if (!require('devtools')) install.packages('devtools') 
+library(devtools)
+install.packages(c('scales', 'tourr', 'objectSignals', 'objectProperties', 'plumbr','SearchTrees'))
+install_github('qtbase', 'ggobi')
+install_github('qtpaint', 'ggobi')
+install_github('productplots','hadley')
+install_github('densityvis','hadley')
+install_github('cranvas', 'ggobi', args="--no-multiarch")
+@
+
+
+\subsection{RHEL5}
+\begin{enumerate}
+\item Manually install R into your home directory from source, see the discussion
+at \url{http://stackoverflow.com/questions/13146852/r-2-15-install-in-redhat}
+
+\begin{enumerate}
+\item Download the latest \texttt{R} from \url{http://cran.at.r-project.org/src/base/R-latest.tar.gz}
+
+\begin{enumerate}
+\item Extract the tar.gz file.
+\item Go into the \texttt{R-3.x.x} directory in Terminal.
+\item Terminal commands: (could change ``Rsoftware'' to any name)
+
+\begin{quote}
+\texttt{mkdir /home/YOURNAME/Rsoftware}
+
+\texttt{./configure -{}-prefix=/home/YOURNAME/Rsoftware/ -{}-enable-R-shlib}
+
+\texttt{make}
+
+\texttt{make install}
+
+\texttt{export PATH=/home/YOURNAME/Rsoftware/bin/:\$PATH}
+\end{quote}
+\end{enumerate}
+\end{enumerate}
+\item Install \texttt{Qt 4.8}
+
+\begin{enumerate}
+\item See \url{http://qt-project.org/doc/qt-4.8/install-x11.html} Caution:
+it takes about two hours to compile \texttt{Qt} by '\texttt{make}'
+\item Add \texttt{Qt} to \texttt{PATH}
+
+\begin{quote}
+\texttt{export PATH=/usr/local/Trolltech/Qt-4.8.4/bin:\$PATH}
+\end{quote}
+\item Add \texttt{/usr/local/Trolltech/Qt-4.8.4/lib} to \texttt{LD\_LIBRARY\_PATH}
+by
+
+\begin{quote}
+\texttt{export LD\_LIBRARY\_PATH=/usr/local/Trolltech/Qt-4.8.4/lib}
+\end{quote}
+
+because for some reason it cannot load '\texttt{libQtDeclarative.so.4}'
+
+\end{enumerate}
+\item Install \texttt{cmake 2.8.11} manually 
+
+\begin{enumerate}
+\item Follow: \url{http://www.cmake.org/cmake/help/install.html} Caution:
+\texttt{yum install cmake} will build version 2.6, which is unqualified.
+\item Add \texttt{cmake} to \texttt{PATH}
+
+\begin{quote}
+\texttt{export PATH=/opt/cmake/bin:\$PATH}
+\end{quote}
+\end{enumerate}
+\item Install \texttt{curl} by
+
+\begin{quote}
+\texttt{sudo yum install curl-devel.x86\_64}
+\end{quote}
+\item Install \texttt{cranvas}
+
+
+Open \texttt{R} and run:
+
+
+<<echo=TRUE,eval=FALSE>>=
+if (!require('devtools')) install.packages('devtools') 
+library(devtools)
+install.packages(c('scales', 'tourr', 'objectSignals', 'objectProperties', 'plumbr','SearchTrees'))
+install_github('qtbase', 'ggobi')
+install_github('qtpaint', 'ggobi')
+install_github('productplots','hadley')
+install_github('densityvis','hadley')
+install_github('cranvas', 'ggobi', args="--no-multiarch")
+@
+
+\end{enumerate}
+
+\section{Layers}
+
+If you ever used the plus sign ``+'' to draw a plot in \texttt{ggplot2},
+you should have known something about layers. Similarly \texttt{cranvas}
+builds multiple layers, but the major differences are: 
+\begin{enumerate}
+\item Layers are interactive in \texttt{cranvas}. Obviously you cannot change
+anything on-the-fly to a \texttt{ggplot2} graph.
+\item Updating a single layer in \texttt{cranvas} does not require other
+layers to change, though in many cases they change simultaneously.
+In \texttt{ggplot2}, if you change the code of any layer, then the
+whole picture will be re-plotted, which means it first cleans up everything,
+then plots everything. But in \texttt{cranvas}, the other layers might
+remain untouched.
+\end{enumerate}
+In this section we will introduce the structure of a plot -- layers
+that could be overlapped. It may give you an idea of the whole story,
+but we hope you will not need to add/delete/modify a layer by hand.
+
+
+\subsection{Root layer vs. child layer\label{sub:Root-layer,child-layer}}
+
+Section 2.3 in \cite{key-3} introduces the layout strategy of a plot
+drawn by \texttt{qtpaint}, where \texttt{cranvas} is built on. In
+short, for every \texttt{cranvas} plot, a root layer is created on
+the scene, which is the Figure space. Then a number of child layers
+are built on the root layer. Now look at the layout part of a \texttt{cranvas}
+function - \texttt{qscatter()}:
+
+<<echo=TRUE,eval=FALSE>>=
+scene <- qscene()
+layer.root <- qlayer(scene)
+layer.root[0, 2] <- layer.title
+layer.root[2, 2] <- layer.xaxis
+layer.root[3, 2] <- layer.xlab
+layer.root[1, 1] <- layer.yaxis
+layer.root[1, 0] <- layer.ylab
+layer.root[1, 2] <- layer.grid
+layer.root[1, 2] <- layer.main
+layer.root[1, 2] <- layer.brush
+layer.root[1, 2] <- layer.identify
+layer.root[1, 2] <- layer.keys
+@
+
+In this example, \texttt{layer.root} is the root layer on \texttt{scene},
+and all the other layers -- \texttt{layer.title}, \texttt{layer.xaxis},
+..., \texttt{layer.keys} are the child layers that are on top of \texttt{layer.root}
+with a pre-assigned location. We will discuss the locations in Section
+\ref{sub:Sync-the-limits}.
+
+
+\subsection{Axes, labels, grid, title\label{sub:Axes-label-grid-title}}
+
+Axes, labels, grids, and title are relatively ``static'' layers,
+because we do not need to change them a lot. However, axes and grids
+will be updated if the user zoom in/out, labels will be changed in
+some cases when the mode changes, e.g., the y-axis of time plot changes
+when we mix/seperate the series (series names are given when they
+are seperated). 
+
+Let us start from a simple example of the layers. The data set is
+randomly generated as shown in the plot.
+
+\begin{center}
+\begin{figure}[H]
+<<echo=TRUE,eval=TRUE,out.width="0.5\\linewidth",fig.align="center">>=
+set.seed(100)
+mydf = data.frame(x=rnorm(100),y=rgamma(100,3,1))
+plot(y~x,mydf,pch=20)
+@
+
+\caption{Data}
+\end{figure}
+
+\par\end{center}
+
+The following code give the initial values to the reference classes
+(See Section \ref{sub:Reference-classes}) that is needed for plot.
+
+<<echo=TRUE,eval=TRUE,package=library(methods),message=FALSE>>=
+library(qtpaint)
+library(cranvas)
+myqd = qdata(mydf)
+@
+<<echo=TRUE,eval=FALSE>>=
+meta = Scat.meta$new(
+    xy = as.matrix(mydf), minor = 'xy',
+    xlab = 'x', ylab = 'y', main = 'my data'
+)
+meta$xlim = range(meta$xy[, 1], na.rm = TRUE, finite = TRUE)
+meta$ylim = range(meta$xy[, 2], na.rm = TRUE, finite = TRUE)
+r = extend_ranges(cbind(meta$xlim, meta$ylim))
+meta$limits = r
+meta$xlabels = format(meta$xat <- axis_loc(r[, 1]))
+meta$ylabels = format(meta$yat <- axis_loc(r[, 2]))
+@
+
+Below are the results. The first one only has two axes. The second
+graph has both axes and labels. Next we add a title. The last plot
+provides the grid background like \texttt{ggplot2}!
+
+<<echo=TRUE,eval=FALSE>>=
+layer.xaxis = qaxis(meta = meta, side = 1)
+layer.yaxis = qaxis(meta = meta, side = 2)
+
+scene = qscene()
+layer.root = qlayer(scene)
+layer.root[2, 2] = layer.xaxis
+layer.root[1, 1] = layer.yaxis
+
+set_layout()
+view = qplotView(scene = scene)
+print(view)
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.5\textwidth]{figure/cranvas_axes}
+\par\end{centering}
+
+\caption{Axes}
+\end{figure}
+
+\par\end{center}
+
+<<echo=TRUE,eval=FALSE>>=
+layer.xlab = qmtext(meta = meta, side = 1)
+layer.ylab = qmtext(meta = meta, side = 2)
+layer.xaxis = qaxis(meta = meta, side = 1)
+layer.yaxis = qaxis(meta = meta, side = 2)
+
+scene = qscene()
+layer.root = qlayer(scene)
+layer.root[2, 2] = layer.xaxis
+layer.root[1, 1] = layer.yaxis
+layer.root[3, 2] = layer.xlab
+layer.root[1, 0] = layer.ylab
+
+set_layout()
+view = qplotView(scene = scene)
+print(view)
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.5\textwidth]{figure/cranvas_labels}
+\par\end{centering}
+
+\caption{Labels + Axes}
+\end{figure}
+
+\par\end{center}
+
+<<echo=TRUE,eval=FALSE>>=
+layer.xlab = qmtext(meta = meta, side = 1)
+layer.ylab = qmtext(meta = meta, side = 2)
+layer.xaxis = qaxis(meta = meta, side = 1)
+layer.yaxis = qaxis(meta = meta, side = 2)
+layer.title = qmtext(meta = meta, side = 3)
+
+scene = qscene()
+layer.root = qlayer(scene)
+layer.root[2, 2] = layer.xaxis
+layer.root[1, 1] = layer.yaxis
+layer.root[3, 2] = layer.xlab
+layer.root[1, 0] = layer.ylab
+layer.root[0, 2] = layer.title
+
+set_layout()
+view = qplotView(scene = scene)
+print(view)
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.5\textwidth]{figure/cranvas_title}
+\par\end{centering}
+
+\caption{Title + Labels + Axes}
+\end{figure}
+
+\par\end{center}
+
+<<echo=TRUE,eval=FALSE>>=
+layer.xlab = qmtext(meta = meta, side = 1)
+layer.ylab = qmtext(meta = meta, side = 2)
+layer.xaxis = qaxis(meta = meta, side = 1)
+layer.yaxis = qaxis(meta = meta, side = 2)
+layer.title = qmtext(meta = meta, side = 3)
+layer.grid = qgrid(meta = meta)
+
+scene = qscene()
+layer.root = qlayer(scene)
+layer.root[2, 2] = layer.xaxis
+layer.root[1, 1] = layer.yaxis
+layer.root[3, 2] = layer.xlab
+layer.root[1, 0] = layer.ylab
+layer.root[0, 2] = layer.title
+layer.root[1, 2] = layer.grid
+
+set_layout()
+view = qplotView(scene = scene)
+print(view)
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.5\textwidth]{figure/cranvas_grid}
+\par\end{centering}
+
+\caption{Grid + Title + Labels + Axes}
+\end{figure}
+
+\par\end{center}
+
+
+\subsection{Points, lines, rectangles, polygons\label{sub:Points-lines-rectangles-polygons}}
+
+The points, lines, rectangles, and polygons are very basic elements
+of a plot. In the example above, we can add a point layer via qscatter():
+
+<<echo=TRUE,eval=FALSE>>=
+qscatter(x,y,data=myqd)
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_scatter}
+\par\end{centering}
+
+\caption{Point layer}
+\end{figure}
+
+\par\end{center}
+
+Or, add a line layer by qdensity(). Note that the y axis and y label
+have changed.
+
+<<echo=TRUE,eval=FALSE>>=
+qdensity(x,data=myqd)
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_density}
+\par\end{centering}
+
+\caption{Line layer}
+\end{figure}
+
+\par\end{center}
+
+Instead of density plot, if we draw a histogram, then we actually
+add a rectangle layer to the plot.
+
+<<echo=TRUE,eval=FALSE>>=
+qhist(x,data=myqd)
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_histogram}
+\par\end{centering}
+
+\caption{Rectangle layer}
+\end{figure}
+
+\par\end{center}
+
+The polygon layer is a little different, please read Section \ref{sub:Other-types-of-qdata}.
+
+These layers are kind of ``static'', because the locations of data
+points are fixed, in most cases we do not need to move them. Nevertheless,
+the change happens when we resize the points, or zoom in/out the plot,
+or change the bin width of rectangles.
+
+
+\subsection{Brushing, identifying, event-indicating}
+
+Compared with Section \ref{sub:Axes-label-grid-title} and \ref{sub:Points-lines-rectangles-polygons},
+the layers in this subsection are very dynamic - they are only painted
+as a reaction to the user command, and disappear when the command
+ends or replaced by another command.
+
+The brushing layer is on top of the point/line/rectangle/polygon layer.
+That means, the yellow color is not the feature of points, but from
+the brushing layer. We use yellow to attract attention, and it can
+be changed to red, brown, or whatever.
+
+<<echo=TRUE,eval=FALSE>>=
+b=brush(myqd)
+b$color='brown'
+b$alpha=0.5
+b$style$color='blue'
+@
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_brush} \includegraphics[width=0.48\textwidth]{figure/cranvas_brush_style}
+\par\end{centering}
+
+\caption{Brushing layer. Right clicking changes the brush size. Left: brush
+style by default. Right: a custom brush.}
+\end{figure}
+
+\par\end{center}
+
+The identifying layer looks like a transparent message box. It is
+applied to display the case information. Under the identifying mode
+(or query mode in some graph types), the background information pops
+up when the mouse icon stops by a point or a polygon area.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_identify}
+\par\end{centering}
+
+\caption{Identifying layer}
+\end{figure}
+
+\par\end{center}
+
+The event-indicating layer is a text layer that shows what key the
+user hits. It is helpful when the user wants to demonstrate the interaction.
+The cue on the top-right will disappear automatically after 2 seconds.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_key}
+\par\end{centering}
+
+\caption{Event-indicating layer}
+\end{figure}
+
+\par\end{center}
+
+
+\subsection{Legend}
+
+The legend layer has not been well developed yet. The goal is to make
+the legend brush-able, so the categories of interest can be highlighted
+easily.
+
+
+\subsection{Sync the limits among layers\label{sub:Sync-the-limits}}
+
+When we have so many layers, one of the most important thing is to
+synchronize the limits of those layers. We mean the layer range when
+we say ``limits''. In the self-made example, the range of \texttt{myqd\$x}
+is (\Sexpr{round(range(mydf$x),2)}), but this could not be used as
+the layer range, because we need more space on the left and right
+to make the plot look comfortable. So in \texttt{cranvas} the function
+\texttt{extend\_ranges()} helps to extend the data range to a layer
+range. The result is (\Sexpr{round(range(mydf$x)+ c(-1, 1) * 0.05 * diff(range(mydf$x)),2)})
+, and it is the ``limits'' for x-axis.
+
+As we see in Section \ref{sub:Root-layer,child-layer}, the root layer
+is divided into a matrix, and the child layers are thrown into the
+cells. So \texttt{layer.root{[}1,2{]}} is critical since it contains
+many layers, we need to ensure the limits of the layers are the same.
+Besides, the range of {[}2,2{]}, x-axis must be identical with the
+horizontal range of {[}1,2{]}, and the range of {[}1,1{]} y-axis must
+be the same as the vertival range of {[}1,2{]}.
+
+\begin{center}
+\begin{tabular}{ccccccc}
+\hline 
+{[}0,0{]} &  & {[}0,1{]} &  & {[}0,2{]} & title & {[}0,3{]}\tabularnewline
+{[}1,0{]} & y-label & {[}1,1{]} & y-axis & {[}1,2{]} & grid, points, brush... & {[}1,3{]}\tabularnewline
+{[}2,0{]} &  & {[}2,1{]} &  & {[}2,2{]} & x-axis & {[}2,3{]}\tabularnewline
+{[}3,0{]} &  & {[}3,1{]} &  & {[}3,2{]} & x-label & {[}3,3{]}\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+This limits information is stored in the meta data (see Section \ref{sub:Reference-classes})
+as \texttt{meta\$limits}, and the function \texttt{sync\_limits(meta,...)}
+could sync the limits of layers. In fact, an event is attached to
+\texttt{meta\$limits} so that whenever it is changed, the limits of
+all the layers will be reset by the method \texttt{layer\$setLimits()}.
+
+
+\section{Reaction Mechanism\label{sec:Reaction-Mechanism}}
+
+Reaction mechanism is the essential part of \texttt{cranvas}. The
+static plotting is from data to graph, while the reaction mechanism
+builds a pipeline from graph to data, then back to graph. The pipeline
+starts from a stimulation by command or a mouse/keyboard event, then
+the core data and the dynamic settings may change. Then the change
+turns into a trigger that update some layers in the graphs. Figure
+\ref{fig:Mini-example:-Reaction} is a mini example of the reaction
+machenism.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\ovalbox{\parbox[c]{1\columnwidth}{%
+\begin{center}
+Event: Mouse releasing
+\par\end{center}%
+}}
+\par\end{centering}
+
+\begin{centering}
+$\Downarrow$
+\par\end{centering}
+
+\begin{centering}
+\ovalbox{\parbox[c]{1\columnwidth}{%
+\begin{center}
+Handler on \texttt{Layer.main} calls function \texttt{brush\_mouse\_release}
+\par\end{center}%
+}}
+\par\end{centering}
+
+\begin{centering}
+$\Downarrow$
+\par\end{centering}
+
+\begin{centering}
+\ovalbox{\parbox[c]{1\columnwidth}{%
+\begin{center}
+\texttt{brush\_mouse\_release} finds the obs. in the brush, checks
+the brush mode
+\par\end{center}%
+}}
+\par\end{centering}
+
+\begin{centering}
+$\Downarrow$
+\par\end{centering}
+
+\begin{centering}
+\ovalbox{$\begin{array}{cccccc}
+\nearrow & \textrm{brushing mode} & \Longrightarrow & \textrm{change the ".brushed" column in mutaframe} & \Longrightarrow & \textrm{signal calls the listener}\\
+\searrow & \textrm{zooming mode} & \Longrightarrow & \textrm{change the x/y limits in the reference class} & \Longrightarrow & \textrm{signal calls }\mathtt{sync\_limits}
+\end{array}$}
+\par\end{centering}
+
+\begin{centering}
+$\Downarrow$
+\par\end{centering}
+
+\begin{centering}
+\ovalbox{\parbox[c]{1\columnwidth}{%
+\begin{center}
+Update the corresponding layers
+\par\end{center}%
+}}
+\par\end{centering}
+
+\caption{\label{fig:Mini-example:-Reaction}Mini example: reaction by a mouse
+releasing event}
+\end{figure}
+
+\par\end{center}
+
+In the fourth step, different modes cause different reflections --
+one through mutaframe, the other through reference class. Table \ref{tab:Comparison-mutaframe-refclass}
+is a brief summary of the two categories. We will introduce them with
+more details in this section.
+
+\begin{center}
+\begin{table}[H]
+\begin{centering}
+\begin{tabular}{l|c|c}
+\hline 
+ & Mutaframe & Reference Classes\tabularnewline
+\hline 
+\hline 
+Target & data & dynamic settings\tabularnewline
+\hline 
+Element & data \& properties of every obs. & paramters that may be updated by the\tabularnewline
+ & \& signals & interaction (e.g. x/y limits) \& signals\tabularnewline
+\hline 
+\texttt{R} Class & mutaframe & e.g., xxx\_meta\tabularnewline
+\hline 
+Base class & data frame & list\tabularnewline
+\hline 
+Is an Environment? & yes & yes\tabularnewline
+\hline 
+Record the changes by & Signal & Signal\tabularnewline
+\hline 
+Handler on & listener & listener\tabularnewline
+\hline 
+Function to create & \texttt{mutaframe()} & \texttt{setRefClass()}\tabularnewline
+\hline 
+Dependent packages & \texttt{plumbr} <-- \texttt{objectSignals} & \texttt{objectProperties} <-- \texttt{objectSignals}\tabularnewline
+\hline 
+\end{tabular}
+\par\end{centering}
+
+\caption{\label{tab:Comparison-mutaframe-refclass}Summary of mutaframe and
+reference classes}
+\end{table}
+
+\par\end{center}
+
+
+\subsection{Mutaframe\label{sub:Mutaframe}}
+
+Do you know the difference between ``\texttt{<-}'' and ``\texttt{<\textcompwordmark{}<-}''
+in \texttt{R}? Both of them are the assignment operators. ``\texttt{<-}''
+assigns into the environment in which the operator is evaluated, while
+``\texttt{<\textcompwordmark{}<-}'' assigns into the global environment.
+So ``\texttt{<\textcompwordmark{}<-}'' is often seen in functions,
+to define an object that can be used out of the function. The mini
+example below show the difference explicitly.
+
+<<echo=TRUE,eval=TRUE>>=
+a = b = 1
+f = function(){
+  a <- 0
+  b <<- 0
+}
+f() # The function changes b, but not a
+a
+b
+@
+
+The data used in \texttt{cranvas} face to frequent changes caused
+by events. All of the changes happen in functions, for instance, handlers.
+But the data are drawn in other functions, meaning that if not using
+``\texttt{<\textcompwordmark{}<-}'', then we need to provide a specific
+environment for the data.
+
+This environment is mutaframe. Any change to the elements of a mutaframe
+can be saved no matter where and when.
+
+The function \texttt{mutaframe} from package \texttt{plumbr} can create
+a mutaframe. As we see below, an attribute ``\texttt{changed}''
+is attached to the data frame. ``\texttt{changed}'' belongs to the
+reference class ``Signal'' and has 7 fields as well as 19 methods.
+Now the Signal doesn't contain any listener, and we can add some listeners
+to it later.
+
+<<echo=TRUE,eval=TRUE,package=library(methods)>>=
+library(plumbr)
+mymf=mutaframe(mydf)
+str(mymf)
+@
+
+Now we can have a test on the mutaframe and the data frame.
+
+<<echo=TRUE,eval=TRUE>>=
+f = function(){
+  mydf[1,] <- 0
+  mymf[1,] <- 0
+}
+f() # The function changes the mutaframe, but not the data frame
+mydf[1,]
+mymf[1,]
+@
+
+
+\subsubsection{Usage of \texttt{qdata}}
+
+\texttt{qdata()} is the function that we actually use in \texttt{cranvas},
+not \texttt{mutaframe()}. This is because in additional to the environment,
+something else is needed for plotting. In Section \ref{sub:Axes-label-grid-title}
+we created \texttt{myqd} by \texttt{qdata()}. What is the difference
+between \texttt{myqd} and \texttt{mymf}?
+
+<<echo=TRUE,eval=TRUE>>=
+class(myqd)
+class(mymf)
+head(myqd)
+head(mymf)
+@
+
+They are of the same classes -- mutaframe and environment, which means
+they should have the similar (if not the same) Signal settings. But
+apparently \texttt{myqd} has five more columns than \texttt{mymf},
+which are the characteristics of the points on a canvas:
+\begin{lyxlist}{00.00.0000}
+\item [{.brushed}] if the point is highlighted. It is generated by the
+argument ``brushed'' of function \texttt{qdata()}and default all
+FALSE. It is a very important linkage between the data and plots. 
+\item [{.visible}] if the point is visible. Generated by the argument ``visible''
+and default all TRUE. If any FALSE, it means that the observations
+are not drawn on the plot. Deleting a point by brushing it then pressing
+'D' will turn off to FALSE.
+\item [{.color}] the color filled in the graphical elements. Generated
+by the argument ``color''. The input of ``color'' can be a vector
+of valid R colors, or a name of variable in the data frame, or an
+R expression to calculate colors.
+\item [{.border}] the color for the border of graphical elements. Generated
+by the argument ``border''. NA means to suppress the border.
+\item [{.size}] the radius of the circle. Generated by the argument ``size''.
+Possible input of ``size'' is similar to ``color'', but the variable
+used must be a numeric variable.
+\end{lyxlist}
+The usage of \texttt{qdata()} is as follows, in which \texttt{...}
+is for setting the color palette.
+
+<<echo=TRUE,eval=FALSE>>=
+qdata(data, color = "gray15", border = color, size = 4, brushed = FALSE, visible = TRUE, ...)
+@
+
+
+\subsubsection{Other types of ``\texttt{qdata}''\label{sub:Other-types-of-qdata}}
+
+
+\paragraph{\texttt{map\_qdata()}}
+
+To plot a choropleth map, we need two data sets. One is the geo data,
+i.e., the latitude and longitude of all polygons. The other one is
+the real data, e.g. population by polygon. \texttt{map\_qdata()} converts
+the map data in the ``\texttt{maps}'' package or in a ``map''
+format to a mutaframe with a new attribute ``MapData''.
+
+In the example below, ``state'' is the map database of the United
+States mainland in package ``\texttt{maps}''. \texttt{map\_qdata()}
+extracts the polygon names and upper-level region labels to a data
+frame, then uses \texttt{qdata()} to re-format it to a mutaframe,
+at the end it attaches an attribute ``MapData'' that includes all
+the coordinates.
+
+<<echo=TRUE,eval=TRUE>>=
+library(maps)
+myUS = map_qdata("state")
+class(myUS)
+head(myUS)
+str(attr(myUS,'MapData'))
+@
+
+Usage of \texttt{map\_qdata()} is as follows. If \texttt{cartogram
+= TRUE}, the argument \texttt{diffuse} will be passed into \texttt{cart\_polygon()},
+which calculates the coordinates of transformed polygons to make cartograms.
+
+<<echo=TRUE,eval=FALSE>>=
+map_qdata(database, regions = ".", color = "gray50", border = "gray90", size = 4, cartogram = FALSE, diffuse = 5, label = NULL, ...)
+@
+
+
+\paragraph{\texttt{time\_qdata()}}
+
+Time data consist of two pieces of information, time and the corresponding
+values. It seems easy to draw a time plot -- just let time be the
+x-axis, the values be the y-axis. However, things turn to be a little
+complicated when multiple variables in a data frame are wanted in
+one time plot. Suppose we have a data set with time and two other
+variables. If using \texttt{qdata()}, then the mutaframe for plotting
+will look like
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c}
+\hline 
+ & time & Var1 & Var2 & \textcolor{blue}{.brushed} & \textcolor{blue}{.visible} & \textcolor{blue}{color} & \textcolor{blue}{border} & \textcolor{blue}{size}\tabularnewline
+\hline 
+1 & 0 & 1.11 & 2.22 & \textcolor{blue}{FALSE} & \textcolor{blue}{TRUE} & \textcolor{blue}{``gray15''} & \textcolor{blue}{``gray15''} & \textcolor{blue}{4}\tabularnewline
+\hline 
+... & ... & ... & ... & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...}\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+In this case, any attempts to separate the feature of one variable
+from the other will be impossible. If Variable 1 at time 0 is brushed,
+then ``.brushed'' will turn to TRUE, and then Variable 2 at time
+0 will be highlighted when updating the layers. Similarly, any settings
+created by \texttt{qdata()} are shared between two variables. The
+two points at time 0 must have the same color and size, must be visible
+or invisible at the same time.
+
+To make things flexible, the only choice is to assign those features
+to each of the variables. In other words, we have to pull out Variable
+2 and create another table for it. And this is the reason we employ
+\texttt{time\_qdata()}. The usage of \texttt{time\_qdata()} is
+
+<<echo=TRUE,eval=FALSE>>=
+time_qdata(regular_qdata, y, timeVar)
+@
+
+in which \texttt{regular\_qdata} is the output of \texttt{qdata()},
+\texttt{y} is a vector of variable names that are needed in the plot,
+\texttt{timeVar} indicates the time variable. The outcome for the
+example is
+
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c}
+\hline 
+ & .variable & .value & time & Var1 & Var2 & \textcolor{blue}{.brushed} & \textcolor{blue}{.visible} & \textcolor{blue}{color} & \textcolor{blue}{border} & \textcolor{blue}{size}\tabularnewline
+\hline 
+1 & Var1 & 1.11 & 0 & TRUE & FALSE & \textcolor{blue}{FALSE} & \textcolor{blue}{TRUE} & \textcolor{blue}{``gray15''} & \textcolor{blue}{``gray15''} & \textcolor{blue}{4}\tabularnewline
+\hline 
+... & ... & ... & ... & ... & ... & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...}\tabularnewline
+\hline 
+n+1 & Var2 & 2.22 & 0 & FALSE & TRUE & \textcolor{blue}{FALSE} & \textcolor{blue}{TRUE} & \textcolor{blue}{``gray15''} & \textcolor{blue}{``gray15''} & \textcolor{blue}{4}\tabularnewline
+\hline 
+... & ... & ... & ... & ... & ... & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...} & \textcolor{blue}{...}\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}
+
+The size of the table is doubled since we have two variables of interest
+here. If we need three variables, the size will be tripled, and so
+forth.
+
+This function also creates a link between \texttt{regular\_qdata}
+and the new \texttt{time\_qdata} by \texttt{timeVar}. The link method
+is introduced in Section \ref{sub:Categorical-linking}.
+
+
+\subsection{Linkage}
+
+Generally speaking, all the objects and views from the same data set
+are linked in a chain. A lot of links created by the listeners (see
+Section \ref{sub:Listener}) are embedded in the \texttt{q-}functions.
+
+In some cases users may need an additional short link to brush points
+from two data sets. So \texttt{cranvas} provides the functions to
+build two types of linkage for both self linkage and cross linkage 
+between two mutaframes. 
+
+
+\subsubsection{Categorical linking\label{sub:Categorical-linking}}
+
+The categorical linking can link two mutaframes together (or one mutaframe
+to itself) by one or more common categorical variable(s) so that whenever
+one element (or multiple elements) in a category (or multiple categories)
+is brushed, all elements in the categorie(s) will be brushed.
+
+Categorical linking is achieved by a series of logical operations:
+first, look for which rows are brushed in the first mutaframe, and
+find out the values of its linking variable as well as the categories
+they belong to, then look for which elements of the linking variable
+in the second mutaframe (possibly the same mutaframe) are in these
+categories, and brush these elements (corresponding to rows).
+
+The usage of categorical linking is 
+
+<<echo=TRUE,eval=FALSE>>=
+link_cat(mf1, var1, mf2 = NULL, var2 = NULL) 
+@
+
+The mutaframes will be linked together by their linking variables
+(\texttt{var1} and \texttt{var2}), and the id's of the listeners attached
+on each mutaframe will be returned as a vector (first element for
+the first mutaframe; second element for the second one).
+
+In additional to the examples given with the function, another typical
+example of categorical linking is the link between \texttt{qdata}
+and \texttt{map\_qdata} outputs. In the function \texttt{qmap} there
+is a short paragraph:
+
+<<echo=TRUE,eval=FALSE>>=
+if (!is.null(linkto)) {
+    id = link_cat(linkto, as.character(z$linkby), data, 'labels')
+}
+@
+
+\texttt{linkto} is the outcome of \texttt{qdata}, \texttt{linkby}
+is the name of linking variable (indicating the column of polygon
+names) in \texttt{linkto}. \texttt{data} is the outcome of \texttt{map\_qdata},
+and 'labels' is apparently a column in \texttt{data} that contains
+the names of polygons.
+
+The link between \texttt{qdata} and \texttt{time\_qdata} outputs is
+also a categorical linking. The code to create the link is in the
+function \texttt{time\_qdata}:
+
+<<echo=TRUE,eval=FALSE>>=
+link_cat(newdat,timeVar,regular_qdata,timeVar)
+@
+
+
+\subsubsection{K-nearest neighbor linking}
+
+When a number of elements in a data are brushed, their k-nearest neighbors
+(based on a certain distance measure) are brushed as well. A center
+point for the variables based on the selected rows is calculated in
+the first dataset, then the k nearest rows in the second dataset (if
+not provided, it will be the same as the first dataset) to this center
+are selected. Only the Euclidean distance has been implemented at
+the moment.
+
+The usage of categorical linking is 
+
+<<echo=TRUE,eval=FALSE>>=
+link_knn(mf1, var1 = NULL, mf2 = NULL, var2 = var1, k = 10) 
+@
+
+Similar to categorical linking \texttt{link\_cat}, this function also
+links two mutaframes together (or one mutaframe to itself), and id's
+of listeners are returned.
+
+
+\subsection{Reference classes\label{sub:Reference-classes}}
+
+\texttt{R }has three object oriented systems: S3, S4 and Reference
+Classes \cite{key-4}. As John Chambers says in \cite{key-5}, 
+\begin{quotation}
+\textit{... In some other situations, one would like all the code
+dealing with an object to see the exact same content, so that changes
+made in any computation would be reflected everywhere. This is often
+suitable if the object has some \textquotedblleft{}objective\textquotedblright{}
+reality, such as a window in a user interface.}
+\end{quotation}
+This is exactly the reason why \texttt{cranvas} employs reference
+classes. Below is a simplified example of the reference classes in
+cranvas, only four fields are set in \texttt{setRefClass()}. 
+
+<<echo=TRUE,eval=TRUE,package=library(objectProperties)>>=
+example.meta = setRefClass( "Example_meta", 
+  fields = properties(
+    list(var = 'character', order = 'numeric', 
+         xy = 'matrix', samesize = 'logical')
+  )
+)
+example.meta$fields()
+example.meta$methods()
+obj=example.meta$new()
+class(obj)
+@
+
+Thanks to the function \texttt{properties()} from R package \texttt{objectProperties},
+every input field is multiplied by five. Hence 20 fields are listed
+in \texttt{example.meta\$fields()}. Taking 'order' as an example,
+below are the five fields, in which orderChanged and .orderChanged
+are the signals. In other words, \texttt{properties()} help the fields
+register their own signals.
+
+<<echo=TRUE,eval=TRUE>>=
+str(obj$order)
+str(obj$.order)
+str(obj$orderChanged)
+str(obj$.orderChanged)
+str(obj$.init.orderChanged)
+@
+
+In \texttt{cranvas}, ``meta'' is used to denote reference classes.
+``Scat.meta'' is set for the scatterplot, ``Bar.meta'' is set
+for the barchart, ``Parallel.meta'' is set for the parallel coordinates
+plot, and so on. The repeat part of those meta's is collected in a
+reference class called CommonMeta. The fields in CommonMeta are listed
+as follows.
+
+<<echo=TRUE,eval=FALSE,tidy=FALSE>>=
+Common.meta = list(
+  alpha = 'numeric',
+  main = 'character',
+  xlim = 'numeric',
+  ylim = 'numeric',
+  xat = 'numeric',
+  yat = 'numeric',
+  xlab = 'character',
+  ylab = 'character',
+  xlabels = 'character',
+  ylabels = 'character',
+  limits = 'matrix',
+  color = 'character',
+  border = 'character',
+  size = 'numeric',
+  start = 'numeric',
+  pos = 'numeric',
+  active = 'logical',
+  brush.move = 'logical',
+  brush.size = 'numeric',
+  brush.adj = 'numeric',
+  manual.brush = 'function',
+  minor = 'character',
+  keys = 'character',
+  identified = 'integer',
+  identify.labels = 'character',
+  handlers = 'list'
+)
+@
+
+Then different meta's will add different fields for their plot types.
+For instance, ``Scat.meta'' has the following additional fields.
+
+<<echo=TRUE,eval=FALSE,tidy=FALSE>>=
+Scat.meta = setRefClass( "Scat_meta", contains = "CommonMeta",
+  fields = properties(
+    list(xvar = 'character',
+         yvar = 'character',
+         order = 'numeric',
+         xy = 'matrix',
+         asp = 'numeric',
+         samesize = 'logical',
+         dim3 = 'character')
+  )
+)
+@
+
+
+\subsection{Signal}
+
+We claimed in the last subsection that the fields in a meta register
+their own signals. In Section \ref{sub:Mutaframe} we also said that
+the attribute ``Changed'' in a mutaframe is a Signal. So what is
+a Signal? How does it work? The answers are in R package \texttt{objectSignals}.
+
+A Signal object is an object created in the Signal reference class.
+It originally has seven fields: .listener, emit, .idCounter, .blocked,
+.buffered, .queue, and .accumulator. Among these fields, emit is the
+real ear that listens to some input. Then emit will call .listener
+which stores any number of handler functions. The other fields work
+like the assistants to organize the functions in .listener. A Signal
+object has 19 methods, the most frequently used ones are: connect,
+disconnect, block, unblock, buffer, flush, and accumulator. Method
+connect and disconnect are used to add and remove listeners from the
+field .listener. Method block and unblock will block and unblock the
+emission of the signal, the field .blocked indicates the blocking
+status. Method buffer and flush could hold and release the emission,
+the field .buffered records the status. Method accumulator combines
+the events in the buffer waiting list into one event, and the waiting
+list is saved in field .accumulator.
+
+A signal itself cannot detect the change of the object where the signal
+attaches. Hence we have to bind a ``speaker'' on the changing event
+to tell the emit field in a signal. For a mutaframe, any functions
+that work on it are inspected -- whether a ``speaker'' is needed,
+what kind of ``speaker'' should be installed on the function. The
+example is given in the next subsection - listener.
+
+For any field in a reference class, one of the multiplied fields added
+by \texttt{properties} is used to save the current value of the field,
+any new input will be matched with the current one, if different,
+then it tells the emit field in the signal. In the following example,
+the signal is emitted when the value of 'order' changes, but not emitted
+when 'order' is assigned the same number.
+
+<<echo=TRUE,eval=TRUE>>=
+obj$orderChanged$connect(function(){ print("Order changed.") })
+obj$order <- 1
+obj$order <- 1
+obj$order <- 2
+@
+
+
+\subsection{Listener\label{sub:Listener}}
+
+A listener is the same as a handler. It is a function that is executed
+only when emitted. For a Signal object, no listeners are attached
+when the object is created, but we can add or remove a listener by
+the method connect or disconnect. Similarly for a mutaframe, no listeners
+are contained when constructed. To add a listener to a mutaframe,
+we can use the function \texttt{add\_listener()}. The function is
+very short -- it firstly picks up the attribute ``changed'' of a
+mutaframe, then adds a listener (function) by method ``connect''.
+Note that \texttt{callback} must be a function with two arguments,
+\texttt{i} and \texttt{j}. This is because the attribute ``changed''
+is designed as a Signal reference class with the two arguments \texttt{i}
+and \texttt{j}. \texttt{remove\_listener()}is used to remove a listener
+by its id.
+
+<<echo=TRUE,eval=FALSE>>=
+add_listener <- function(mf, callback) {
+  changed(mf)$connect(callback)
+}
+remove_listener <- function(mf, id) {
+  changed(mf)$disconnect(id)
+}
+@
+
+Here is a simple example of the two functions.
+
+<<echo=TRUE,eval=TRUE>>=
+id <- add_listener(mymf, function(i,j) {
+  message("Row ",i," & Column ",j," is changed.")
+})
+mymf[2,] <- 0
+remove_listener(mymf, id)
+mymf[2,] <- 1
+@
+
+Below is a more complex example of \texttt{add\_listener()} used in
+\texttt{qscatter}.
+
+<<echo=TRUE,eval=FALSE>>=
+d.idx = add_listener(data, function(i, j) {
+    idx = which(j == c(meta$xvar, meta$yvar, '.brushed', '.visible', '.color', '.border'))
+    if (length(idx) < 1) {
+      compute_coords(); compute_aes()
+      meta$samesize = near_constant(data$.size)
+      qupdate(layer.grid); qupdate(layer.xaxis); qupdate(layer.yaxis)
+      qupdate(layer.main)
+      return()
+    } else idx = c(1, 1, 2, 3, 4, 4)[idx]
+    switch(idx, {
+      compute_coords();
+      tree <<- createTree(meta$xy)
+    }, qupdate(layer.brush), {
+      compute_coords(); selected(data)[!visible(data)] = FALSE
+    }, {
+      compute_order(); compute_aes(); qupdate(layer.main)
+    })
+  })
+@
+
+It may be important to keep track of the id's of listeners to avoid
+unnecessary burden of updating data objects in a linking chain infinitely.
+
+
+\section{General events}
+
+All the plots in this Section use the data created in Section \ref{sub:Axes-label-grid-title}
+and are drawn in the scatterplot (except for the left/right key in
+histogram). Note that the ``Alt'' key shows in every picture since
+we pressed ``Alt+PrintScreen'' to take the screenshot, please ingore
+all the ``Alt''s.
+
+
+\subsection{Keyboard}
+
+
+\subsubsection{Up/Down}
+
+The Up and Down keys will increase and decrease the size of points
+for a plot with points in it. It is better to have smaller points
+when they are dense.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_up}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_down}
+\par\end{centering}
+
+\caption{Keyboard events: up and down}
+\end{figure}
+
+\par\end{center}
+
+
+\subsubsection{Plus/Minus}
+
+Plus (+) and Minus (-) can increase or decrease the alpha transparency
+exponentially. The range of alpha is (0,1{]}. The default value is
+1, the darkest. Adjusting alpha helps when many points are overlapped.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_plus}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_minus}
+\par\end{centering}
+
+\caption{Keyboard events: plus and minus}
+\end{figure}
+
+\par\end{center}
+
+
+\subsubsection{`A'nd, `O'r, `N'ot, `X'or, `C'omplement}
+
+The keys A, O, X, N and C corresponds to the selection mode AND, OR,
+XOR, NOT and COMPLEMENT respectively. Assume E and F are two sets
+of points, E AND F means $E\cap F$ (intersection); E OR F means $E\cup F$
+(union); E XOR F means $E\cup F-E\cap F$; E NOT F means $E-E\cap F$,
+E COMPLEMENT means $E^{C}$.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_before_scatter}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_after_A}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_after_O}
+\par\end{centering}
+
+\begin{centering}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_after_X}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_after_N}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_after_C}
+\par\end{centering}
+
+\caption{Keyboard events: A, O, X, N, C. The top left panel is the first selection
+before hitting any keys. }
+\end{figure}
+
+\par\end{center}
+
+
+\subsubsection{Delete/F5}
+
+The key Delete will make the selected elements invisible, and F5 makes
+all the elements visible. F5 is the ``refresh'' botton, which guides
+you to the initial view when zooming in/out or having some points
+invisible.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_delete}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_F5}
+\par\end{centering}
+
+\caption{Keyboard events: delete and F5}
+\end{figure}
+
+\par\end{center}
+
+
+\subsubsection{PageUp/PageDown}
+
+When the mouse is released, the brush history will be saved. If PageUp
+or PageDown is pressed (or equivalently use square brackets {[} and
+{]} ), we show the brush history step by step.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_history_1}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_history_2}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_history_3}
+\par\end{centering}
+
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_history_PageUp}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_history_PageDown}
+\par\end{centering}
+
+\caption{Keyboard events: PageUp and PageDown (second row) with the history
+(first row)}
+\end{figure}
+
+\par\end{center}
+
+
+\subsubsection{Question key}
+
+The question key (?) toggles the identify mode (on or off). The cross
+cursor shape (+) indicates it is in the identify mode, and a normal
+cursor (arrow) indicates the brush mode.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_keyboard_question}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_identify}
+\par\end{centering}
+
+\caption{Keyboard events: question. The cursor should be in cross shape, but
+the screenshot could not capture the shape of cursor.}
+\end{figure}
+
+\par\end{center}
+
+
+\subsubsection{`S' and `Z'\label{sub:S-and-Z}}
+
+When the `S' mode (also called the selection brush) is off, the points
+are highlighted in the brush frame in real time. When the `S' mode
+is on, dragging the mouse will only create a shaded area, and the
+points will be highlighted when releasing the mouse button. `Z' toggles
+the zooming mode under the `S' mode. In the `S+Z' mode, the view will
+be zoomed into the brushing rectangle. F5 could zoom out the view
+to the original limits.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_S_before}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_S_after}
+\includegraphics[width=0.32\textwidth]{figure/cranvas_keyboard_S_and_Z}
+\par\end{centering}
+
+\caption{\label{fig:Keyboard-events:S-Z}Keyboard events: S and Z. The left
+plot is in the original mode. The middle one is in ``S'' mode. The
+right panel is the result after brushing the same area in ``S+Z''
+mode.}
+\end{figure}
+
+\par\end{center}
+
+
+\subsubsection{Shift}
+
+Shift plays as a modifier. Currently \texttt{qdensity()} and \texttt{qtime()}
+need to use the shift modifier.
+
+
+\subsection{Mouse}
+
+
+\subsubsection{Buttons}
+
+Left click to brush the plot with a rectangle brush, and right click
+to resize the brush (the cursor shape will become a cross). The middle
+button acts like the `S' key, which toggles the `S' mode.
+
+
+\subsubsection{Wheel}
+
+Rolling the wheel forward will zoom in the plot, while rolling backward
+will zoom out.
+
+\begin{center}
+\begin{figure}[H]
+\begin{centering}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_wheel_zoom_in}
+\includegraphics[width=0.48\textwidth]{figure/cranvas_wheel_zoom_out}
+\par\end{centering}
+
+\caption{Wheel events: zoom in and zoom out}
+\end{figure}
+
+\par\end{center}
+
+
+\subsection{Animation}
+
+Can \texttt{cranvas} do animation? Kind of. It can manually (instead
+of interactively) brush the points, which means if you provide the
+brushing order, then cranvas can display the brushing layers one after
+another. For example, we randomly generate 30 brushing rectangles,
+then play them on the scatterplot. The points falling into the brushing
+area will be highlighted automatically.
+
+<<echo=TRUE,eval=FALSE>>=
+o1 = qscatter(x,y,data=myqd)
+l = attr(o1$view, 'meta')$limits
+p = cbind(runif(30, l[1, 1], l[2, 1]), runif(30, l[1, 2], l[2, 2]))
+o1
+manual_brush(o1$view, p, pause = 0.5)
+@
+\begin{thebibliography}{1}
+\bibitem[1]{key-3}Michael Lawrence. An Introduction to \texttt{qtpaint}.
+\url{http://cran.r-project.org/web/packages/qtpaint/vignettes/intro.pdf}
+
+\bibitem[2]{key-4}Hadley Wickham. Reference classes. \url{https://github.com/hadley/devtools/wiki/R5}
+
+\bibitem[3]{key-5}John Chambers. Objects With Fields Treated by Reference
+(OOP-style). \url{http://stat.ethz.ch/R-manual/R-devel/library/methods/html/refClass.html}\end{thebibliography}
+
+\end{document}
